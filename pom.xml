@@ -250,7 +250,7 @@
 		<repository>
 			<id>openkm.com</id>
 			<name>OpenKM Maven Repository</name>
-			<url>http://maven.openkm.com/maven2</url>
+			<url>https://maven.openkm.com</url>
 		</repository>
 	</repositories>
 
@@ -265,7 +265,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.0.2</version>
 			</plugin>
-			<plugin>
+		<!--	<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
 				<version>2.2.4</version>
@@ -290,7 +290,7 @@
 						<dirty>-dirty</dirty>
 					</gitDescribe>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -316,7 +316,7 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-			<plugin>
+		<!--	<plugin>
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<version>1.2.1.Final</version>
@@ -335,7 +335,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
