@@ -10,8 +10,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import com.iemr.mmu.utils.config.ConfigProperties;
 import com.iemr.mmu.utils.gateway.email.EmailService;
 import com.iemr.mmu.utils.gateway.email.GenericEmailServiceImpl;
-import com.iemr.mmu.utils.km.KMService;
-import com.iemr.mmu.utils.km.openkm.OpenKMServiceImpl;
 import com.iemr.mmu.utils.redis.RedisStorage;
 import com.iemr.mmu.utils.sessionobject.SessionObject;
 import com.iemr.mmu.utils.validator.Validator;
@@ -22,11 +20,12 @@ public class IEMRApplBeans {
 	private @Value("${spring.redis.host}") String redisHost;
 	private @Value("${spring.redis.port}") int redisPort;
 
+	/*
 	@Bean
 	public KMService getOpenKMService() {
 		KMService kmService = new OpenKMServiceImpl();
 		return kmService;
-	}
+	}*/
 
 	@Bean
 	public Validator getVaidator() {

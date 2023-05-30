@@ -4,8 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 
 import com.iemr.mmu.utils.config.ConfigProperties;
-import com.iemr.mmu.utils.km.KMService;
-import com.iemr.mmu.utils.km.openkm.OpenKMServiceImpl;
 import com.iemr.mmu.utils.redis.RedisStorage;
 
 @EnableAutoConfiguration
@@ -43,11 +41,13 @@ public class CommonMain {
 		return new RedisHttpSessionConfiguration();
 	}
 
+	/*
 	@Bean
 	public KMService getOpenKMService() {
 		KMService kmService = new OpenKMServiceImpl();
 		return kmService;
 	}
+	*/
 
 	@Bean
 	public RedisStorage redisStorage() {
