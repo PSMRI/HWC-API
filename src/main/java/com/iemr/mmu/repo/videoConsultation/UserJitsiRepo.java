@@ -1,4 +1,4 @@
-package com.iemr.mmu.repo.swymed;
+package com.iemr.mmu.repo.videoConsultation;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
-import com.iemr.mmu.data.swymed.UserJitsi;
+import com.iemr.mmu.data.videoConsultation.UserJitsi;
 
 @Repository
 @RestResource(exported = false)

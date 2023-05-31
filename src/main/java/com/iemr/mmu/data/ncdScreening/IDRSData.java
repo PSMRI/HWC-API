@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 import com.google.gson.annotations.Expose;
 import com.iemr.mmu.annotation.sqlInjectionSafe.SQLInjectionSafe;
 import com.iemr.mmu.data.benFlowStatus.BeneficiaryFlowStatus;
-import com.iemr.mmu.data.swymed.UserSwymed;
+import com.iemr.mmu.data.videoConsultation.VideoConsultationUser;
 @Entity
 @Table(name = "t_idrsDetails")
 public class IDRSData {

@@ -1,4 +1,4 @@
-package com.iemr.mmu.data.swymed;
+package com.iemr.mmu.data.videoConsultation;
 
 import java.sql.Timestamp;
 
@@ -16,10 +16,9 @@ import javax.persistence.Transient;
 import com.google.gson.annotations.Expose;
 import com.iemr.mmu.utils.mapper.OutputMapper;
 
-
 @Entity
 @Table(name = "m_userswymedmapping")
-public class UserSwymed {
+public class VideoConsultationUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,11 +35,11 @@ public class UserSwymed {
 	@Expose
 	@Column(name = "SwymedPassword")
 	private String swymedPassword;
-	
+
 	@Expose
 	@Column(name = "SwymedEmailID")
 	private String swymedEmailID;
-	
+
 	@Expose
 	@Column(name = "SwymedDomain")
 	private String swymedDomain;
@@ -55,46 +54,41 @@ public class UserSwymed {
 	@Column(name = "LastModDate", insertable = false, updatable = false)
 	private Timestamp LastModDate;
 
-	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "UserID", insertable = false, updatable = false)
 	@Expose
 	private M_UserTemp user;
-	
+
 	@Transient
 	private OutputMapper outputMapper = new OutputMapper();
-	
+
 	@Transient
-	private String username ;
+	private String username;
 
 	@Override
 	public String toString() {
 		return outputMapper.gson().toJson(this);
 	}
 
-	
-	public UserSwymed(){
-		
+	public VideoConsultationUser() {
+
 	}
-	
-	public UserSwymed(UserSwymed sw,String username){
-		this.swymedDomain=sw.getSwymedDomain();
-		this.swymedPassword=sw.getSwymedPassword();
-		this.swymedEmailID=sw.getSwymedEmailID();
-		this.username=username;
-		
+
+	public VideoConsultationUser(VideoConsultationUser sw, String username) {
+		this.swymedDomain = sw.getSwymedDomain();
+		this.swymedPassword = sw.getSwymedPassword();
+		this.swymedEmailID = sw.getSwymedEmailID();
+		this.username = username;
+
 	}
-	
-	
+
 	public String getUsername() {
 		return username;
 	}
 
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
 
 	public Long getUserSwymedMapID() {
 		return userSwymedMapID;
@@ -200,5 +194,4 @@ public class UserSwymed {
 		this.outputMapper = outputMapper;
 	}
 
-	
 }

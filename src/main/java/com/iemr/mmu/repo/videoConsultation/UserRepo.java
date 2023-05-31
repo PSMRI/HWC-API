@@ -1,4 +1,4 @@
-package com.iemr.mmu.repo.swymed;
+package com.iemr.mmu.repo.videoConsultation;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
-import com.iemr.mmu.data.swymed.M_UserTemp;
+import com.iemr.mmu.data.videoConsultation.M_UserTemp;
 
 @Repository
 @RestResource(exported = false)
