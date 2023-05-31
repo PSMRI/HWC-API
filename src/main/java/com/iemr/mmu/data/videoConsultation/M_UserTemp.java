@@ -1,4 +1,4 @@
-package com.iemr.mmu.data.swymed;
+package com.iemr.mmu.data.videoConsultation;
 
 import java.sql.Timestamp;
 
@@ -68,7 +68,7 @@ public class M_UserTemp {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "UserID", insertable = false, updatable = false)
 	@Expose
-	private UserSwymed userSwymed;
+	private VideoConsultationUser userSwymed;
 
 	@Transient
 	private OutputMapper outputMapper = new OutputMapper();
@@ -278,11 +278,11 @@ public class M_UserTemp {
 		LastModDate = lastModDate;
 	}
 
-	public UserSwymed getUserSwymed() {
+	public VideoConsultationUser getUserSwymed() {
 		return userSwymed;
 	}
 
-	public void setUserSwymed(UserSwymed userSwymed) {
+	public void setUserSwymed(VideoConsultationUser userSwymed) {
 		this.userSwymed = userSwymed;
 	}
 

@@ -1,16 +1,16 @@
 package com.iemr.mmu.utils.exception;
 
-public class SwymedException extends Exception {
+public class VideoConsultationException extends Exception {
 	private static final long serialVersionUID = 1L;
 	private String message = null;
 
-	public SwymedException(String message, Throwable cause) {
+	public VideoConsultationException(String message, Throwable cause) {
 		super(message);
 		this.message = message;
 		super.setStackTrace(cause.getStackTrace());
 	}
 
-	public SwymedException(String message) {
+	public VideoConsultationException(String message) {
 		super(message);
 		this.message = message;
 	}

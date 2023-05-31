@@ -1,51 +1,43 @@
-package com.iemr.mmu.service.swymed;
-
-import java.util.ArrayList;
+package com.iemr.mmu.service.videoConsultation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.iemr.mmu.data.swymed.UserJitsi;
-import com.iemr.mmu.data.swymed.UserSwymed;
+import com.iemr.mmu.data.videoConsultation.UserJitsi;
+import com.iemr.mmu.data.videoConsultation.VideoConsultationUser;
 import com.iemr.mmu.repo.login.MasterVanRepo;
-import com.iemr.mmu.repo.swymed.UserJitsiRepo;
-import com.iemr.mmu.repo.swymed.UserRepo;
-import com.iemr.mmu.repo.swymed.UserSwymedRepo;
+import com.iemr.mmu.repo.videoConsultation.UserJitsiRepo;
+import com.iemr.mmu.repo.videoConsultation.VideoConsultationUserRepo;
 import com.iemr.mmu.utils.config.ConfigProperties;
-import com.iemr.mmu.utils.exception.SwymedException;
+import com.iemr.mmu.utils.exception.VideoConsultationException;
 
 @Service
-public class SwymedServiceImpl implements SwymedService {
+public class VideoConsultationServiceImpl implements VideoConsultationService {
 
 	// swymed://dnsname?l=mylogin&p=mypassword&d=mydomain&c=callnumber&m=1
-	private String swymed_dnsname = ConfigProperties.getPropertyByName("swymed_dnsname");
-	
+	private String videoConsultationDNS = ConfigProperties.getPropertyByName("swymed_dnsname");
+
 	private String jitsi_dnsname = ConfigProperties.getPropertyByName("jitsi_dnsname");
 
-	@Autowired
-	private UserRepo userRepo;
-	
 	@Autowired
 	private UserJitsiRepo userJitsiRepo;
 
 	@Autowired
-	private UserSwymedRepo userSwymedRepo;
+	private VideoConsultationUserRepo userRepo;
 
 	@Autowired
 	private MasterVanRepo masterVanRepo;
 
 	@Override
-	public String login(Long userid) throws SwymedException {
-		// TODO Auto-generated method stub
-		UserSwymed user = userSwymedRepo.findOneMap(userid);
+	public String login(Long userid) throws VideoConsultationException {
+		VideoConsultationUser user = userRepo.findOneMap(userid);
 
 		if (user == null) {
-			throw new SwymedException("User doesnt have access to Swymed");
+			throw new VideoConsultationException("User doesnt have access to video consultation");
 		}
-		//
 		StringBuilder data = new StringBuilder();
 
-		data.append(swymed_dnsname);
+		data.append(videoConsultationDNS);
 		data.append("?l=");
 		data.append(user.getSwymedEmailID());
 		data.append("&p=");
@@ -57,21 +49,20 @@ public class SwymedServiceImpl implements SwymedService {
 	}
 
 	@Override
-	public String callUser(Long fromuserid, Long touserid) throws SwymedException {
-		// TODO Auto-generated method stub
-		UserSwymed user = userSwymedRepo.findOneMap(fromuserid);
-		UserSwymed touser = userSwymedRepo.findOneMap(touserid);
+	public String callUser(Long fromuserid, Long touserid) throws VideoConsultationException {
+		VideoConsultationUser user = userRepo.findOneMap(fromuserid);
+		VideoConsultationUser touser = userRepo.findOneMap(touserid);
 
 		if (user == null) {
-			throw new SwymedException("User doesnt have access to Swymed");
+			throw new VideoConsultationException("User doesnt have access to video consultation");
 		}
 		if (touser == null) {
-			throw new SwymedException("Callee  couldnt be found. Please call manually");
+			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
 		}
 
 		StringBuilder data = new StringBuilder();
 
-		data.append(swymed_dnsname);
+		data.append(videoConsultationDNS);
 		data.append("?l=");
 		data.append(user.getSwymedEmailID());
 		data.append("&p=");
@@ -83,27 +74,25 @@ public class SwymedServiceImpl implements SwymedService {
 
 		return data.toString();
 	}
-	
+
 	@Override
-	public String callUserjitsi(Long fromuserid, Long touserid) throws SwymedException {
-		// TODO Auto-generated method stub
+	public String callUserjitsi(Long fromuserid, Long touserid) throws VideoConsultationException {
 		UserJitsi user = userJitsiRepo.findOneJitsiMap(fromuserid);
 		UserJitsi touser = userJitsiRepo.findOneJitsiMap(touserid);
 
 		if (user == null) {
-			throw new SwymedException("User doesnt have access to Swymed");
+			throw new VideoConsultationException("User doesnt have access to video consultation");
 		}
 		if (touser == null) {
-			throw new SwymedException("Callee  couldnt be found. Please call manually");
-		}	
-		
+			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
+		}
 
 		StringBuilder data = new StringBuilder();
 
 		data.append(jitsi_dnsname);
 		data.append("/");
 		data.append(user.getJitsiUserName());
-		if(user.getJitsiPassword() != null) {
+		if (user.getJitsiPassword() != null) {
 			data.append("/");
 			data.append(user.getJitsiPassword());
 		}
@@ -112,23 +101,20 @@ public class SwymedServiceImpl implements SwymedService {
 	}
 
 	@Override
-	public String callVan(Long fromuserid, Integer vanID) throws SwymedException {
-		// TODO Auto-generated method stubUserSwymed user =
-		// userSwymedRepo.findOneMap(fromuserid);
-		UserSwymed user = userSwymedRepo.findOneMap(fromuserid);
+	public String callVan(Long fromuserid, Integer vanID) throws VideoConsultationException {
+		VideoConsultationUser user = userRepo.findOneMap(fromuserid);
 		String vanSwymesEmail = masterVanRepo.getSpokeEmail(vanID);
-		// MasterVan van = masterVanRepo.findOne(vanid);
 
 		if (user == null) {
-			throw new SwymedException("User doesnt have access to Swymed");
+			throw new VideoConsultationException("User doesnt have access to video consultation");
 		}
 		if (vanSwymesEmail == null) {
-			throw new SwymedException("Callee  couldnt be found. Please call manually");
+			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
 		}
 
 		StringBuilder data = new StringBuilder();
 
-		data.append(swymed_dnsname);
+		data.append(videoConsultationDNS);
 		data.append("?l=");
 		data.append(user.getSwymedEmailID());
 		data.append("&p=");
@@ -140,29 +126,25 @@ public class SwymedServiceImpl implements SwymedService {
 
 		return data.toString();
 	}
-	
+
 	@Override
-	public String callVanJitsi(Long fromuserid, Integer vanID) throws SwymedException {
-		// TODO Auto-generated method stubUserSwymed user =
-		// userSwymedRepo.findOneMap(fromuserid);
+	public String callVanJitsi(Long fromuserid, Integer vanID) throws VideoConsultationException {
 		UserJitsi user = userJitsiRepo.findOneJitsiMap(fromuserid);
 		UserJitsi userVan = userJitsiRepo.findOneJitsiMapVan(vanID);
-		// MasterVan van = masterVanRepo.findOne(vanid);
 
 		if (user == null) {
-			throw new SwymedException("User doesnt have access to Swymed");
+			throw new VideoConsultationException("User doesnt have access to video consultation");
 		}
 		if (userVan == null) {
-			throw new SwymedException("Callee  couldnt be found. Please call manually");
+			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
 		}
-		
 
 		StringBuilder data = new StringBuilder();
 
 		data.append(jitsi_dnsname);
 		data.append("/");
 		data.append(userVan.getJitsiUserName());
-		if(user.getJitsiPassword() != null) {
+		if (user.getJitsiPassword() != null) {
 			data.append("/");
 			data.append(userVan.getJitsiPassword());
 		}
@@ -172,10 +154,8 @@ public class SwymedServiceImpl implements SwymedService {
 
 	@Override
 	public String logout() {
-		// TODO Auto-generated method stub
-
 		StringBuilder data = new StringBuilder();
-		data.append(swymed_dnsname);
+		data.append(videoConsultationDNS);
 		data.append("?logout");
 		return data.toString();
 	}
