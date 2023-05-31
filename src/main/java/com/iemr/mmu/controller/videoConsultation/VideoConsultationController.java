@@ -1,4 +1,4 @@
-package com.iemr.mmu.controller.swymedcontroller;
+package com.iemr.mmu.controller.videoConsultation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iemr.mmu.service.swymed.SwymedService;
+import com.iemr.mmu.service.videoConsultation.VideoConsultationService;
 import com.iemr.mmu.utils.response.OutputResponse;
 
 @RestController
-@RequestMapping(value = "/swymed", headers = "Authorization")
-public class SwymedController {
+@RequestMapping(value = "/videoConsultation", headers = "Authorization")
+public class VideoConsultationController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
-	private SwymedService swymedService;
+	private VideoConsultationService videoConsultationService;
 
 	@CrossOrigin()
 	@RequestMapping(value = "/login/{userID}", headers = "Authorization", method = { RequestMethod.GET }, produces = {
@@ -30,7 +30,7 @@ public class SwymedController {
 
 		try {
 
-			String createdData = swymedService.login(userID);
+			String createdData = videoConsultationService.login(userID);
 
 			response.setResponse(createdData.toString());
 
@@ -39,23 +39,20 @@ public class SwymedController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
 
 	}
 
 	@CrossOrigin()
-	@RequestMapping(value = "/call/{fromuserID}/{touserID}", headers = "Authorization", method = {
+	@RequestMapping(value = "/call/{fromUserID}/{touserID}", headers = "Authorization", method = {
 			RequestMethod.GET }, produces = { "application/json" })
-	public String call(@PathVariable("fromuserID") Long fromuserID, @PathVariable("touserID") Long touserID) {
+	public String call(@PathVariable("fromUserID") Long fromUserID, @PathVariable("toUserID") Long toUserID) {
 
 		OutputResponse response = new OutputResponse();
 
 		try {
 
-			String createdData = swymedService.callUser(fromuserID, touserID);
+			String createdData = videoConsultationService.callUser(fromUserID, toUserID);
 
 			response.setResponse(createdData.toString());
 
@@ -64,27 +61,24 @@ public class SwymedController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
 
 	}
 
 	@CrossOrigin()
-	@RequestMapping(value = "/call/{fromuserID}/{touserID}/{type}", headers = "Authorization", method = {
+	@RequestMapping(value = "/call/{fromUserID}/{toUserID}/{type}", headers = "Authorization", method = {
 			RequestMethod.GET }, produces = { "application/json" })
-	public String CallSwymedAndJitsi(@PathVariable("fromuserID") Long fromuserID,
-			@PathVariable("touserID") Long touserID, @PathVariable("type") String Type) {
+	public String CallSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
+			@PathVariable("toUserID") Long toUserID, @PathVariable("type") String Type) {
 
 		OutputResponse response = new OutputResponse();
 
 		try {
 			String createdData = null;
 			if (Type.equalsIgnoreCase("Swymed")) {
-				createdData = swymedService.callUser(fromuserID, touserID);
+				createdData = videoConsultationService.callUser(fromUserID, toUserID);
 			} else {
-				createdData = swymedService.callUserjitsi(fromuserID, touserID);
+				createdData = videoConsultationService.callUserjitsi(fromUserID, toUserID);
 			}
 
 			response.setResponse(createdData.toString());
@@ -94,23 +88,20 @@ public class SwymedController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
 
 	}
 
 	@CrossOrigin()
-	@RequestMapping(value = "/callvan/{fromuserID}/{vanID}", headers = "Authorization", method = {
+	@RequestMapping(value = "/callvan/{fromUserID}/{vanID}", headers = "Authorization", method = {
 			RequestMethod.GET }, produces = { "application/json" })
-	public String callvan(@PathVariable("fromuserID") Long fromuserID, @PathVariable("vanID") Integer vanID) {
+	public String callvan(@PathVariable("fromUserID") Long fromUserID, @PathVariable("vanID") Integer vanID) {
 
 		OutputResponse response = new OutputResponse();
 
 		try {
 
-			String createdData = swymedService.callVan(fromuserID, vanID);
+			String createdData = videoConsultationService.callVan(fromUserID, vanID);
 
 			response.setResponse(createdData.toString());
 
@@ -119,28 +110,25 @@ public class SwymedController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
 
 	}
 
 	@CrossOrigin()
-	@RequestMapping(value = "/callvan/{fromuserID}/{vanID}/{type}", headers = "Authorization", method = {
+	@RequestMapping(value = "/callvan/{fromUserID}/{vanID}/{type}", headers = "Authorization", method = {
 			RequestMethod.GET }, produces = { "application/json" })
-	public String CallVanSwymedAndJitsi(@PathVariable("fromuserID") Long fromuserID,
-			@PathVariable("vanID") Integer vanID, @PathVariable("type") String Type) {
+	public String CallVanSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
+			@PathVariable("vanID") Integer vanID, @PathVariable("type") String type) {
 
 		OutputResponse response = new OutputResponse();
 
 		try {
 
 			String createdData = null;
-			if (Type.equalsIgnoreCase("Swymed")) {
-				createdData = swymedService.callVan(fromuserID, vanID);
+			if (type.equalsIgnoreCase("Swymed")) {
+				createdData = videoConsultationService.callVan(fromUserID, vanID);
 			} else {
-				createdData = swymedService.callVanJitsi(fromuserID, vanID);
+				createdData = videoConsultationService.callVanJitsi(fromUserID, vanID);
 			}
 
 			response.setResponse(createdData.toString());
@@ -150,9 +138,6 @@ public class SwymedController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
 
 	}
@@ -166,7 +151,7 @@ public class SwymedController {
 
 		try {
 
-			String createdData = swymedService.logout();
+			String createdData = videoConsultationService.logout();
 
 			response.setResponse(createdData.toString());
 
@@ -175,9 +160,6 @@ public class SwymedController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
 
 	}
