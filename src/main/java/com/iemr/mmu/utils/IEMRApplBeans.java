@@ -20,13 +20,6 @@ public class IEMRApplBeans {
 	private @Value("${spring.redis.host}") String redisHost;
 	private @Value("${spring.redis.port}") int redisPort;
 
-	/*
-	@Bean
-	public KMService getOpenKMService() {
-		KMService kmService = new OpenKMServiceImpl();
-		return kmService;
-	}*/
-
 	@Bean
 	public Validator getVaidator() {
 		Validator validator = new Validator();
@@ -60,16 +53,10 @@ public class IEMRApplBeans {
 		return new RedisStorage();
 	}
 
-	// @Beanss
-	// public RedisConnection redisConnection()
-	// {
-	// return new RedisConnection();
-	// }
-
-	// @Configuration
-	// @EnableRedisHttpSession
-	// public class Config
-	//// {
+	@Bean
+	public CryptoUtil cryptoUtil() {
+		return new CryptoUtil();
+	}
 
 	@Bean
 	public LettuceConnectionFactory connectionFactory() {
@@ -78,24 +65,4 @@ public class IEMRApplBeans {
 		return new LettuceConnectionFactory(redisHost, redisPort);
 	}
 
-	/*
-	 * @Bean public RedisHttpSessionConfiguration redisSession() { return new
-	 * RedisHttpSessionConfiguration(); }
-	 */
-
-	// @Bean
-	// public HTTPRequestInterceptor myInterceptor()
-	// {
-	// return new HTTPRequestInterceptor();
-	// }
-	// @Bean
-	// public KMService getOpenKMService()
-	// {
-	// KMService kmService = new OpenKMServiceImpl();
-	// return kmService;
-	// }
-
-	// public static void main(String[] args) {
-	// SpringApplication.run(CommonMain.class, args);
-	// }
 }
