@@ -1,11 +1,5 @@
 package com.iemr.mmu.config;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -13,6 +7,7 @@ import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -25,6 +20,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.iemr.mmu.utils.CryptoUtil;
 import com.iemr.mmu.utils.config.ConfigProperties;
 
 @Configuration
@@ -34,9 +30,8 @@ import com.iemr.mmu.utils.config.ConfigProperties;
 public class DBConfig {
 	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	private static final String ALGORITHM = "AES";
-	// Key has to be 16 bytes
-	private static final String SECRET_KEY = "dev-envro-secret";
+	@Autowired
+	private CryptoUtil cryptoUtil;
 
 	@Primary
 	@Bean(name = "dataSource")
@@ -56,23 +51,10 @@ public class DBConfig {
 		p.setValidationQuery("SELECT 1");
 		org.apache.tomcat.jdbc.pool.DataSource datasource = new org.apache.tomcat.jdbc.pool.DataSource();
 		datasource.setPoolProperties(p);
-		datasource.setUsername(decrypt(ConfigProperties.getPropertyByName("encDbUserName")));
-		datasource.setPassword(decrypt(ConfigProperties.getPropertyByName("encDbPass")));
+		datasource.setUsername(cryptoUtil.decrypt(ConfigProperties.getPropertyByName("encDbUserName")));
+		datasource.setPassword(cryptoUtil.decrypt(ConfigProperties.getPropertyByName("encDbPass")));
 
 		return datasource;
-	}
-
-	private String decrypt(String encryptedValue) {
-		try {
-			SecretKey secretKey = new SecretKeySpec(SECRET_KEY.getBytes(StandardCharsets.UTF_8), ALGORITHM);
-			Cipher cipher = Cipher.getInstance(ALGORITHM);
-			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-			byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedValue));
-			return new String(decryptedBytes, StandardCharsets.UTF_8);
-		} catch (Exception e) {
-			logger.error("Exception while decrypting password string", e);
-			return null;
-		}
 	}
 
 	@Primary
