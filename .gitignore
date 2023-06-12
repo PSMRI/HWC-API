@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /target
+/logs
 
 # dependencies
 /node_modules
@@ -42,3 +43,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Additional files to ignore
+mvnw.cmd
+.sts4-cache
+mvnw
