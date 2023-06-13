@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.data.institution;
 
 import java.sql.Timestamp;

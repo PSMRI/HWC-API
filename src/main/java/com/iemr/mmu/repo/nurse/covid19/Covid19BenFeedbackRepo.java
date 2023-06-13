@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.repo.nurse.covid19;
 
 import org.springframework.data.repository.CrudRepository;

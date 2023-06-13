@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.service.snomedct;
 
 import com.iemr.mmu.data.snomedct.SCTDescription;

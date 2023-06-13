@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.utils.mapper;
 
 import com.google.gson.Gson;

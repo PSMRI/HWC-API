@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.data.benFlowStatus;
 
 import java.sql.Timestamp;

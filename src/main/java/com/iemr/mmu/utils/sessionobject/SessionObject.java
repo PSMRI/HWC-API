@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.utils.sessionobject;
 
 import org.springframework.beans.factory.annotation.Autowired;

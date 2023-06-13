@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.controller.registrar.master;
 
 import org.springframework.web.bind.annotation.CrossOrigin;

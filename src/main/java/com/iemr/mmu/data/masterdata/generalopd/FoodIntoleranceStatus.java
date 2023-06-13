@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.data.masterdata.generalopd;
 
 import javax.persistence.Column;

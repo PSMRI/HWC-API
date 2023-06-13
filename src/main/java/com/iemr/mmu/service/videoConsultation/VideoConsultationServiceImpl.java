@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.service.videoConsultation;
 
 import org.springframework.beans.factory.annotation.Autowired;

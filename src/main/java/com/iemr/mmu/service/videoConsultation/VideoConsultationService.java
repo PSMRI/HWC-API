@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.service.videoConsultation;
 
 import com.iemr.mmu.utils.exception.VideoConsultationException;

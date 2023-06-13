@@ -1,3 +1,4 @@
+/* LicenseInfo : Copyright © 2023 Piramal */ 
 package com.iemr.mmu.repo.tc_consultation;
 
 import org.springframework.data.jpa.repository.Query;
