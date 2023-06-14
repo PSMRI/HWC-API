@@ -1,4 +1,4 @@
-package com.iemr.mmu.data.videoConsultation;
+package com.iemr.mmu.data.videoconsultation;
 
 import java.sql.Timestamp;
 

@@ -15,15 +15,10 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class HttpUtils {
 	public static final String AUTHORIZATION = "Authorization";
-	// @Autowired
 	private RestTemplate rest;
-	// @Autowired
 	private HttpHeaders headers;
-	// @Autowired
 	private HttpStatus status;
 
-	// @Autowired(required = true)
-	// @Qualifier("hibernateCriteriaBuilder")
 	public HttpUtils() {
 		if (rest == null) {
 			rest = new RestTemplate();
@@ -68,19 +63,14 @@ public class HttpUtils {
 	}
 
 	public String post(String uri, String data, HashMap<String, Object> header) {
-		String body;
 		HttpHeaders headers = new HttpHeaders();
 		if (header.containsKey(HttpHeaders.AUTHORIZATION)) {
 			headers.add(HttpHeaders.AUTHORIZATION, header.get(HttpHeaders.AUTHORIZATION).toString());
 		}
-		// headers.add("Content-Type", MediaType.APPLICATION_JSON);
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-		HttpEntity<String> requestEntity;
-		requestEntity = new HttpEntity<String>(data, headers);
-		responseEntity = rest.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(data, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(uri, HttpMethod.POST, requestEntity, String.class);
 		setStatus(responseEntity.getStatusCode());
-		body = responseEntity.getBody();
-		return body;
+		return responseEntity.getBody();
 	}
 
 	public ResponseEntity<String> postWithResponseEntity(String uri, String data, HashMap<String, Object> header) {
@@ -93,10 +83,8 @@ public class HttpUtils {
 			headers.add("apiKey", header.get("apiKey").toString());
 		}
 		headers.add("Content-Type", MediaType.APPLICATION_JSON);
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-		HttpEntity<String> requestEntity;
-		requestEntity = new HttpEntity<String>(data, headers);
-		responseEntity = rest.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(data, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(uri, HttpMethod.POST, requestEntity, String.class);
 		return responseEntity;
 	}
 

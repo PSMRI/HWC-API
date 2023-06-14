@@ -1,23 +1,23 @@
-package com.iemr.mmu.service.videoConsultation;
+package com.iemr.mmu.service.videoconsultation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.iemr.mmu.data.videoConsultation.UserJitsi;
-import com.iemr.mmu.data.videoConsultation.VideoConsultationUser;
+import com.iemr.mmu.data.videoconsultation.UserJitsi;
+import com.iemr.mmu.data.videoconsultation.VideoConsultationUser;
 import com.iemr.mmu.repo.login.MasterVanRepo;
-import com.iemr.mmu.repo.videoConsultation.UserJitsiRepo;
-import com.iemr.mmu.repo.videoConsultation.VideoConsultationUserRepo;
+import com.iemr.mmu.repo.videoconsultation.UserJitsiRepo;
+import com.iemr.mmu.repo.videoconsultation.VideoConsultationUserRepo;
 import com.iemr.mmu.utils.config.ConfigProperties;
 import com.iemr.mmu.utils.exception.VideoConsultationException;
 
 @Service
 public class VideoConsultationServiceImpl implements VideoConsultationService {
 
-	// swymed://dnsname?l=mylogin&p=mypassword&d=mydomain&c=callnumber&m=1
 	private String videoConsultationDNS = ConfigProperties.getPropertyByName("swymed_dnsname");
-
-	private String jitsi_dnsname = ConfigProperties.getPropertyByName("jitsi_dnsname");
+	private String jitsiDNS = ConfigProperties.getPropertyByName("jitsi_dnsname");
+	private static final String noAccessToVideoConsultationError = "User doesnt have access to video consultation";
+	private static final String calleeNotFoundError = "Callee couldn't be found. Please call manually";
 
 	@Autowired
 	private UserJitsiRepo userJitsiRepo;
@@ -33,7 +33,7 @@ public class VideoConsultationServiceImpl implements VideoConsultationService {
 		VideoConsultationUser user = userRepo.findOneMap(userid);
 
 		if (user == null) {
-			throw new VideoConsultationException("User doesnt have access to video consultation");
+			throw new VideoConsultationException(noAccessToVideoConsultationError);
 		}
 		StringBuilder data = new StringBuilder();
 
@@ -54,10 +54,10 @@ public class VideoConsultationServiceImpl implements VideoConsultationService {
 		VideoConsultationUser touser = userRepo.findOneMap(touserid);
 
 		if (user == null) {
-			throw new VideoConsultationException("User doesnt have access to video consultation");
+			throw new VideoConsultationException(noAccessToVideoConsultationError);
 		}
 		if (touser == null) {
-			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
+			throw new VideoConsultationException(calleeNotFoundError);
 		}
 
 		StringBuilder data = new StringBuilder();
@@ -81,15 +81,15 @@ public class VideoConsultationServiceImpl implements VideoConsultationService {
 		UserJitsi touser = userJitsiRepo.findOneJitsiMap(touserid);
 
 		if (user == null) {
-			throw new VideoConsultationException("User doesnt have access to video consultation");
+			throw new VideoConsultationException(noAccessToVideoConsultationError);
 		}
 		if (touser == null) {
-			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
+			throw new VideoConsultationException(calleeNotFoundError);
 		}
 
 		StringBuilder data = new StringBuilder();
 
-		data.append(jitsi_dnsname);
+		data.append(jitsiDNS);
 		data.append("/");
 		data.append(user.getJitsiUserName());
 		if (user.getJitsiPassword() != null) {
@@ -106,10 +106,10 @@ public class VideoConsultationServiceImpl implements VideoConsultationService {
 		String vanSwymesEmail = masterVanRepo.getSpokeEmail(vanID);
 
 		if (user == null) {
-			throw new VideoConsultationException("User doesnt have access to video consultation");
+			throw new VideoConsultationException(noAccessToVideoConsultationError);
 		}
 		if (vanSwymesEmail == null) {
-			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
+			throw new VideoConsultationException(calleeNotFoundError);
 		}
 
 		StringBuilder data = new StringBuilder();
@@ -133,15 +133,15 @@ public class VideoConsultationServiceImpl implements VideoConsultationService {
 		UserJitsi userVan = userJitsiRepo.findOneJitsiMapVan(vanID);
 
 		if (user == null) {
-			throw new VideoConsultationException("User doesnt have access to video consultation");
+			throw new VideoConsultationException(noAccessToVideoConsultationError);
 		}
 		if (userVan == null) {
-			throw new VideoConsultationException("Callee couldn't be found. Please call manually");
+			throw new VideoConsultationException(calleeNotFoundError);
 		}
 
 		StringBuilder data = new StringBuilder();
 
-		data.append(jitsi_dnsname);
+		data.append(jitsiDNS);
 		data.append("/");
 		data.append(userVan.getJitsiUserName());
 		if (user.getJitsiPassword() != null) {

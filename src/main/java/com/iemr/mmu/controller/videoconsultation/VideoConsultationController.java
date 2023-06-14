@@ -1,4 +1,4 @@
-package com.iemr.mmu.controller.videoConsultation;
+package com.iemr.mmu.controller.videoconsultation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iemr.mmu.service.videoConsultation.VideoConsultationService;
+import com.iemr.mmu.service.videoconsultation.VideoConsultationService;
 import com.iemr.mmu.utils.response.OutputResponse;
 
 @RestController
@@ -68,7 +68,7 @@ public class VideoConsultationController {
 	@CrossOrigin()
 	@RequestMapping(value = "/call/{fromUserID}/{toUserID}/{type}", headers = "Authorization", method = {
 			RequestMethod.GET }, produces = { "application/json" })
-	public String CallSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
+	public String callSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
 			@PathVariable("toUserID") Long toUserID, @PathVariable("type") String Type) {
 
 		OutputResponse response = new OutputResponse();
@@ -117,7 +117,7 @@ public class VideoConsultationController {
 	@CrossOrigin()
 	@RequestMapping(value = "/callvan/{fromUserID}/{vanID}/{type}", headers = "Authorization", method = {
 			RequestMethod.GET }, produces = { "application/json" })
-	public String CallVanSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
+	public String callVanSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
 			@PathVariable("vanID") Integer vanID, @PathVariable("type") String type) {
 
 		OutputResponse response = new OutputResponse();
