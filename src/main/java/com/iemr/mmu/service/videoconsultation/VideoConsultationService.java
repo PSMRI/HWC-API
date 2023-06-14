@@ -1,4 +1,4 @@
-package com.iemr.mmu.service.videoConsultation;
+package com.iemr.mmu.service.videoconsultation;
 
 import com.iemr.mmu.utils.exception.VideoConsultationException;
 

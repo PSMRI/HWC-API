@@ -20,9 +20,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo metaData() {
-		ApiInfo apiInfo = new ApiInfo("Spring Boot REST API", "Spring Boot REST API for Piramal MMUs application",
-				"1.0", "Terms of service", new Contact("Wipro HCIT", "https://www.wipro.com", "mywipro@wipro.com"), "",
-				"");
-		return apiInfo;
+		return new ApiInfo("Spring Boot REST API", "Spring Boot REST API for Piramal MMUs application", "1.0",
+				"Terms of service", new Contact("Wipro HCIT", "https://www.wipro.com", "mywipro@wipro.com"), "", "");
 	}
 }

@@ -43,10 +43,9 @@ public class CreateAdolescentController {
 		try {
 			logger.info("Request object for child-adolescent-care nurse data saving :" + requestObj);
 
-			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+			JsonObject jsnOBJ = jsnElmnt.getAsJsonObject();
 
 			if (jsnOBJ != null) {
 				String genOPDRes = adolescentAndChildCareService.saveNurseData(jsnOBJ, Authorization);
@@ -74,10 +73,9 @@ public class CreateAdolescentController {
 		try {
 			logger.info("Request object for child-adolescent-care doctor data saving :" + requestObj);
 
-			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+			JsonObject jsnOBJ = jsnElmnt.getAsJsonObject();
 			if (jsnOBJ != null) {
 				 int i = adolescentAndChildCareService.saveDoctorDataCAC(jsnOBJ, Authorization);
 				

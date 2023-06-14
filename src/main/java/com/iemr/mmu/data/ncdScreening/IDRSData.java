@@ -8,19 +8,13 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.google.gson.annotations.Expose;
-import com.iemr.mmu.annotation.sqlInjectionSafe.SQLInjectionSafe;
-import com.iemr.mmu.data.benFlowStatus.BeneficiaryFlowStatus;
-import com.iemr.mmu.data.videoConsultation.VideoConsultationUser;
+
 @Entity
 @Table(name = "t_idrsDetails")
 public class IDRSData {
@@ -29,7 +23,7 @@ public class IDRSData {
 	@Expose
 	@Column(name = "Idrsid")
 	private Long id;
-	
+
 	@Expose
 	@Column(name = "BeneficiaryRegID")
 	private Long beneficiaryRegID;
@@ -56,19 +50,19 @@ public class IDRSData {
 	@Expose
 	@Column(name = "SuspectedDiseases")
 	private String suspectedDisease;
-	
+
 	@Expose
 	@Column(name = "ConfirmedDiseases")
 	private String confirmedDisease;
-	
-    @Transient
-    private IDRSData[] questionArray;
-    @Transient
-    private String[] suspectArray;
-    
-    @Transient
-    private String[] confirmArray;
-	
+
+	@Transient
+	private IDRSData[] questionArray;
+	@Transient
+	private String[] suspectArray;
+
+	@Transient
+	private String[] confirmArray;
+
 //    @OneToOne(fetch = FetchType.EAGER)
 //	@JoinColumn(name = "visitCode",insertable = false, updatable = false)
 //	@Expose
@@ -123,7 +117,7 @@ public class IDRSData {
 	@Transient
 	@Expose
 	private List<Map<String, Object>> suspectDetails;
-	
+
 	public String getConfirmedDisease() {
 		return confirmedDisease;
 	}
@@ -147,6 +141,7 @@ public class IDRSData {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public Boolean getIsDiabetic() {
 		return isDiabetic;
 	}
@@ -198,6 +193,7 @@ public class IDRSData {
 	public String getQuestion() {
 		return question;
 	}
+
 	public String getSuspectedDisease() {
 		return suspectedDisease;
 	}
@@ -209,11 +205,11 @@ public class IDRSData {
 	public String getAnswer() {
 		return answer;
 	}
+
 	public void setQuestion(String question) {
 		this.question = question;
 	}
 
-	
 	public String getDiseaseQuestionType() {
 		return diseaseQuestionType;
 	}
@@ -237,6 +233,7 @@ public class IDRSData {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
 	public IDRSData[] getQuestionArray() {
 		return questionArray;
 	}
@@ -244,8 +241,6 @@ public class IDRSData {
 	public void setQuestionArray(IDRSData[] questionArray) {
 		this.questionArray = questionArray;
 	}
-
-	
 
 	public String[] getSuspectArray() {
 		return suspectArray;
@@ -258,6 +253,7 @@ public class IDRSData {
 	public void setAnswer(String answer) {
 		this.answer = answer;
 	}
+
 	public String getProcessed() {
 		return processed;
 	}
@@ -329,9 +325,7 @@ public class IDRSData {
 	public void setParkingPlaceID(Integer parkingPlaceID) {
 		this.parkingPlaceID = parkingPlaceID;
 	}
-	
-	
-	
+
 	public List<Map<String, Object>> getIdrsDetails() {
 		return idrsDetails;
 	}
@@ -352,9 +346,9 @@ public class IDRSData {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	public IDRSData(Long beneficiaryRegID, Long benVisitID, Integer providerServiceMapID,Integer idrsScore, String suspectedDisease,
-			 String confirmedDisease, Long visitCode) {
+
+	public IDRSData(Long beneficiaryRegID, Long benVisitID, Integer providerServiceMapID, Integer idrsScore,
+			String suspectedDisease, String confirmedDisease, Long visitCode) {
 		super();
 		this.beneficiaryRegID = beneficiaryRegID;
 		this.benVisitID = benVisitID;
@@ -363,77 +357,66 @@ public class IDRSData {
 		this.suspectedDisease = suspectedDisease;
 		this.confirmedDisease = confirmedDisease;
 		this.visitCode = visitCode;
-		
+
 	}
-	
-	public IDRSData(Long ID, Integer idrsQuestionID, String question,
-			String answer, String diseaseQuestionType) {
+
+	public IDRSData(Long ID, Integer idrsQuestionID, String question, String answer, String diseaseQuestionType) {
 		super();
-		this.id =ID;
+		this.id = ID;
 		this.idrsQuestionID = idrsQuestionID;
 		this.question = question;
 		this.answer = answer;
 		this.diseaseQuestionType = diseaseQuestionType;
-		
-		
+
 	}
-	public IDRSData(Long visitCode,Timestamp createdDate,String suspected)
-	{
+
+	public IDRSData(Long visitCode, Timestamp createdDate, String suspected) {
 		super();
-		this.visitCode=visitCode;
-		this.createdDate=createdDate;
-		this.suspectedDisease=suspected;
+		this.visitCode = visitCode;
+		this.createdDate = createdDate;
+		this.suspectedDisease = suspected;
 	}
-	public IDRSData(Long visitCode,Timestamp createdDate,String question,String answer,Long idrsID,Integer idrsQuestionID,String diseaseQuestionType)
-	{
+
+	public IDRSData(Long visitCode, Timestamp createdDate, String question, String answer, Long idrsID,
+			Integer idrsQuestionID, String diseaseQuestionType) {
 		super();
-		this.visitCode=visitCode;
-		this.createdDate=createdDate;
-		this.question=question;
-		this.answer=answer;
-		this.id=idrsID;
-		this.idrsQuestionID=idrsQuestionID;
-		this.diseaseQuestionType=diseaseQuestionType;
+		this.visitCode = visitCode;
+		this.createdDate = createdDate;
+		this.question = question;
+		this.answer = answer;
+		this.id = idrsID;
+		this.idrsQuestionID = idrsQuestionID;
+		this.diseaseQuestionType = diseaseQuestionType;
 	}
+
 	public static IDRSData getIDRSData(ArrayList<Object[]> idrsHistory) {
 		IDRSData benIdrsHistory = null;
 		if (null != idrsHistory && idrsHistory.size() > 0) {
 			Object[] obj1 = idrsHistory.get(0);
 
-			benIdrsHistory = new IDRSData((Long) obj1[1], (Long) obj1[2], (Integer) obj1[3],(Integer) obj1[5], (String) obj1[8],(String)obj1[11],
-					 (Long) obj1[9]);
+			benIdrsHistory = new IDRSData((Long) obj1[1], (Long) obj1[2], (Integer) obj1[3], (Integer) obj1[5],
+					(String) obj1[8], (String) obj1[11], (Long) obj1[9]);
 
 			List<Map<String, Object>> idrsDetails = new ArrayList<Map<String, Object>>();
 
 			for (Object[] obj : idrsHistory) {
-				IDRSData idDetails = new IDRSData((Long) obj[0],(Integer) obj[4], (String) obj[6],
-						(String) obj[7], (String) obj[10]);
+				IDRSData idDetails = new IDRSData((Long) obj[0], (Integer) obj[4], (String) obj[6], (String) obj[7],
+						(String) obj[10]);
 
 				Map<String, Object> idrsData = new HashMap<String, Object>();
 				idrsData.put("ID", idDetails.getId());
-				idrsData.put("idrsQuestionId", idDetails.getIdrsQuestionID());		
-				
+				idrsData.put("idrsQuestionId", idDetails.getIdrsQuestionID());
+
 				idrsData.put("question", idDetails.getQuestion());
 				idrsData.put("answer", idDetails.getAnswer());
 				idrsData.put("suspectDisease", idDetails.getDiseaseQuestionType());
 
 				idrsDetails.add(idrsData);
 			}
-			
-//			for (Object[] obj : idrsHistory) {
-//				IDRSData idDetails = new IDRSData((String) obj[8]);
-//				if (idDetails.getSuspectedDisease() != null) {
-//					String[] susDisease = idDetails.getSuspectedDisease().split(",");
-//					if (susDisease != null)
-//						idDetails.setSuspectArray(susDisease);
-//				}
-//				
-//			}
 
 			benIdrsHistory.setIdrsDetails(idrsDetails);
 		}
 		return benIdrsHistory;
 	}
-
 
 }
