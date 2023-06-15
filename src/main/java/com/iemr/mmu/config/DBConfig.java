@@ -28,7 +28,6 @@ import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -41,18 +40,12 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.iemr.mmu.utils.CryptoUtil;
-import com.iemr.mmu.utils.config.ConfigProperties;
-
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = { "com.iemr.mmu.repo",
 		"com.iemr.mmu.repo", "com.iemr.mmu.*", "com.iemr.mmu.*" })
 public class DBConfig {
 	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-	@Autowired
-	private CryptoUtil cryptoUtil;
 
 	@Primary
 	@Bean(name = "dataSource")
@@ -72,9 +65,6 @@ public class DBConfig {
 		p.setValidationQuery("SELECT 1");
 		org.apache.tomcat.jdbc.pool.DataSource datasource = new org.apache.tomcat.jdbc.pool.DataSource();
 		datasource.setPoolProperties(p);
-		datasource.setUsername(cryptoUtil.decrypt(ConfigProperties.getPropertyByName("encDbUserName")));
-		datasource.setPassword(cryptoUtil.decrypt(ConfigProperties.getPropertyByName("encDbPass")));
-
 		return datasource;
 	}
 

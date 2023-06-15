@@ -41,7 +41,9 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo metaData() {
-		return new ApiInfo("Spring Boot REST API", "Spring Boot REST API for Piramal MMUs application", "1.0",
-				"Terms of service", new Contact("Wipro HCIT", "https://www.wipro.com", "mywipro@wipro.com"), "", "");
+		ApiInfo apiInfo = new ApiInfo("HWC API", "Health and Wellness centre (HWC) is one of the comprehensive applications of AMRIT designed to capture details of 7 Service packages as per guidelines which should be available at Health and Wellness centre.",
+				"1.0", "Terms of service", new Contact("AMRIT", "https://psmri.github.io/PSMRI/", "amrit@piramalswasthya.org"), "",
+				"");
+		return apiInfo;
 	}
 }
