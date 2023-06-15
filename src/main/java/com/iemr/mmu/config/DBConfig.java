@@ -40,6 +40,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.iemr.mmu.utils.config.ConfigProperties;
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = { "com.iemr.mmu.repo",
@@ -65,6 +67,8 @@ public class DBConfig {
 		p.setValidationQuery("SELECT 1");
 		org.apache.tomcat.jdbc.pool.DataSource datasource = new org.apache.tomcat.jdbc.pool.DataSource();
 		datasource.setPoolProperties(p);
+		datasource.setUsername(ConfigProperties.getPropertyByName("encDbUserName"));
+		datasource.setPassword(ConfigProperties.getPropertyByName("encDbPass"));
 		return datasource;
 	}
 
