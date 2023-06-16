@@ -44,12 +44,11 @@ import com.iemr.mmu.utils.config.ConfigProperties;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = { "com.iemr.mmu.repo",
-		"com.iemr.mmu.repo", "com.iemr.mmu.*", "com.iemr.mmu.*" })
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = { "com.iemr.mmu.*" })
 public class DBConfig {
 	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	@Primary
+	
 	@Bean(name = "dataSource")
 	@ConfigurationProperties(prefix = "spring.datasource")
 	public DataSource dataSource() {
@@ -72,16 +71,16 @@ public class DBConfig {
 		return datasource;
 	}
 
-	@Primary
-	@Bean(name = "entityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
-			@Qualifier("dataSource") DataSource dataSource) {
-		return builder.dataSource(dataSource)
-				.packages("com.iemr.mmu.data", "com.iemr.mmu.*", "com.iemr.mmu.*", "com.iemr.mmu.*")
-				.persistenceUnit("db_iemr").build();
-	}
+//	@Primary
+//	@Bean(name = "entityManagerFactory")
+//	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+//			@Qualifier("dataSource") DataSource dataSource) {
+//		return builder.dataSource(dataSource)
+//				.packages("com.iemr.mmu.data", "com.iemr.mmu.*", "com.iemr.mmu.*", "com.iemr.mmu.*")
+//				.persistenceUnit("db_iemr").build();
+//	}
 
-	@Primary
+	
 	@Bean(name = "transactionManager")
 	public PlatformTransactionManager transactionManager(
 			@Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
