@@ -38,6 +38,8 @@ import com.iemr.mmu.utils.IEMRApplBeans;
 @SpringBootApplication
 @EnableCaching(proxyTargetClass = true)
 public class Application {
+	
+	// This is a test comment 
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
