@@ -22,6 +22,7 @@
 package com.iemr.mmu.service.ncdCare;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.iemr.mmu.data.anc.BenAdherence;
 import com.iemr.mmu.data.anc.BenAllergyHistory;
@@ -58,6 +60,7 @@ import com.iemr.mmu.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.mmu.data.nurse.CommonUtilityClass;
 import com.iemr.mmu.data.quickConsultation.PrescribedDrugDetail;
 import com.iemr.mmu.data.quickConsultation.PrescriptionDetail;
+import com.iemr.mmu.data.snomedct.SCTDescription;
 import com.iemr.mmu.data.tele_consultation.TeleconsultationRequestOBJ;
 import com.iemr.mmu.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.mmu.service.common.transaction.CommonDoctorServiceImpl;
@@ -768,7 +771,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 					&& !requestOBJ.get("diagnosis").getAsJsonObject().get("specialistDiagnosis").isJsonNull()) {
 				instruction = requestOBJ.get("diagnosis").getAsJsonObject().get("specialistDiagnosis").getAsString();
 			}
-			
+
 			String prescription_counsellingProvided = null;
 			if (requestOBJ.has("counsellingProvidedList") && !requestOBJ.get("counsellingProvidedList").isJsonNull()
 					&& requestOBJ.get("counsellingProvidedList") != null) {
@@ -780,13 +783,40 @@ public class NCDCareServiceImpl implements NCDCareService {
 						sb.append(s).append("||");
 					}
 					if (sb.length() >= 2)
-				    tempPrescription.setCounsellingProvided(sb.substring(0, sb.length() - 2));
+						tempPrescription.setCounsellingProvided(sb.substring(0, sb.length() - 2));
 					prescription_counsellingProvided = tempPrescription.getCounsellingProvided();
 
 				}
 
 			}
-			
+			// creating prescription object
+			PrescriptionDetail prescriptionDetail = new PrescriptionDetail();
+
+			if (requestOBJ.has("diagnosis") && !requestOBJ.get("diagnosis").isJsonNull()) {
+				JsonObject diagnosisObj = requestOBJ.getAsJsonObject("diagnosis");
+
+				prescriptionDetail = InputMapper.gson().fromJson(diagnosisObj, PrescriptionDetail.class);
+
+				if (diagnosisObj.has("provisionalDiagnosisList")
+						&& !diagnosisObj.get("provisionalDiagnosisList").isJsonNull()) {
+					JsonArray provisionalDiagnosisArray = diagnosisObj.getAsJsonArray("provisionalDiagnosisList");
+
+					ArrayList<SCTDescription> provisionalDiagnosisList = new ArrayList<>();
+
+					// Populate the provisionalDiagnosisList from the JSON array
+
+					for (JsonElement element : provisionalDiagnosisArray) {
+
+						SCTDescription sctDescription = InputMapper.gson().fromJson(element, SCTDescription.class);
+
+						provisionalDiagnosisList.add(sctDescription);
+
+					}
+					prescriptionDetail.setProvisionalDiagnosisList(provisionalDiagnosisList);
+				}
+
+			} else {
+			}
 
 			// generate prescription
 			WrapperBenInvestigationANC wrapperBenInvestigationANC = InputMapper.gson()
@@ -795,7 +825,8 @@ public class NCDCareServiceImpl implements NCDCareService {
 					wrapperBenInvestigationANC.getBeneficiaryRegID(), wrapperBenInvestigationANC.getBenVisitID(),
 					wrapperBenInvestigationANC.getProviderServiceMapID(), wrapperBenInvestigationANC.getCreatedBy(),
 					wrapperBenInvestigationANC.getExternalInvestigations(), wrapperBenInvestigationANC.getVisitCode(),
-					wrapperBenInvestigationANC.getVanID(), wrapperBenInvestigationANC.getParkingPlaceID(), instruction, prescription_counsellingProvided);
+					wrapperBenInvestigationANC.getVanID(), wrapperBenInvestigationANC.getParkingPlaceID(), instruction,
+					prescription_counsellingProvided, prescriptionDetail.getProvisionalDiagnosisList());
 
 			// save diagnosis
 			if (requestOBJ.has("diagnosis") && !requestOBJ.get("diagnosis").isJsonNull()) {
@@ -1116,7 +1147,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 		String diagnosis_prescription = ncdCareDoctorServiceImpl.getNCDCareDiagnosisDetails(benRegID, visitCode);
 		resMap.put("diagnosis", diagnosis_prescription);
-		
+
 		if (diagnosis_prescription != null) {
 
 			PrescriptionDetail pd = new Gson().fromJson(diagnosis_prescription, PrescriptionDetail.class);
@@ -1209,12 +1240,11 @@ public class NCDCareServiceImpl implements NCDCareService {
 				if (ncdCareDiagnosis != null && ncdCareDiagnosis.getSpecialistDiagnosis() != null)
 					prescriptionDetail.setInstruction(ncdCareDiagnosis.getSpecialistDiagnosis());
 			}
-			
+
 			if (requestOBJ.has("counsellingProvidedList") && !requestOBJ.get("counsellingProvidedList").isJsonNull()
 					&& requestOBJ.get("counsellingProvidedList") != null) {
-            PrescriptionDetail tempPrescription = InputMapper.gson().fromJson(requestOBJ, PrescriptionDetail.class);
-				
-				
+				PrescriptionDetail tempPrescription = InputMapper.gson().fromJson(requestOBJ, PrescriptionDetail.class);
+
 				if (tempPrescription != null && tempPrescription.getCounsellingProvidedList() != null
 						&& tempPrescription.getCounsellingProvidedList().length > 0) {
 					StringBuffer sb = new StringBuffer();
@@ -1224,7 +1254,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 					if (sb.length() >= 2)
 						prescriptionDetail.setCounsellingProvided(sb.substring(0, sb.length() - 2));
 
-				}else
+				} else
 					prescriptionDetail.setCounsellingProvided("");
 			}
 
