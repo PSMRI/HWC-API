@@ -32,12 +32,15 @@ import javax.persistence.Table;
 
 import com.google.gson.annotations.Expose;
 
+import lombok.Data;
+
 /**
  * 
  * @author SH20094090 17-08-2022
  */
 
 @Entity
+@Data
 @Table(name = "t_diabetesscreening")
 public class DiabetesScreening {
 	@Id
@@ -59,6 +62,11 @@ public class DiabetesScreening {
 
 	@Column(name = "bloodGlucose")
 	private Integer bloodGlucose;
+	
+	@Expose
+	@Column(name = "BloodGlucoseRemarks")
+	private String bloodGlucoseRemarks;
+
 
 //	@Column(name = "facilityId")
 //	Integer facilityId;

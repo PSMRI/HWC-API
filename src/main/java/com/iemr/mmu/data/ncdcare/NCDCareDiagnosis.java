@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.google.gson.annotations.Expose;
+import com.iemr.mmu.data.snomedct.SCTDescription;
 
 @Entity
 @Table(name = "t_ncddiagnosis")
@@ -148,6 +149,44 @@ public class NCDCareDiagnosis {
 	@Transient
 	@Expose
 	private String counsellingProvided;
+	
+	@Expose
+	@Transient
+	private ArrayList<SCTDescription> provisionalDiagnosisList;
+	
+	@Expose
+	@Transient
+	private String diagnosisProvided;
+	
+	@Expose
+	@Transient
+	private String diagnosisProvided_SCTCode;
+	
+	
+
+	public String getDiagnosisProvided() {
+		return diagnosisProvided;
+	}
+
+	public void setDiagnosisProvided(String diagnosisProvided) {
+		this.diagnosisProvided = diagnosisProvided;
+	}
+
+	public String getDiagnosisProvided_SCTCode() {
+		return diagnosisProvided_SCTCode;
+	}
+
+	public void setDiagnosisProvided_SCTCode(String diagnosisProvided_SCTCode) {
+		this.diagnosisProvided_SCTCode = diagnosisProvided_SCTCode;
+	}
+
+	public ArrayList<SCTDescription> getProvisionalDiagnosisList() {
+		return provisionalDiagnosisList;
+	}
+
+	public void setProvisionalDiagnosisList(ArrayList<SCTDescription> provisionalDiagnosisList) {
+		this.provisionalDiagnosisList = provisionalDiagnosisList;
+	}
 
 	public String getNcdScreeningCondition() {
 		return ncdScreeningCondition;

@@ -2838,7 +2838,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	public Long savePrescriptionDetailsAndGetPrescriptionID(Long benRegID, Long benVisitID, Integer psmID,
 			String createdBy, String externalInvestigation, Long benVisitCode, Integer vanID, Integer parkingPlaceID,
-			String instruction, String prescription_counsellingProvided) {
+			String instruction, String prescription_counsellingProvided, ArrayList<SCTDescription> provisionalDiagnosisList) {
 		PrescriptionDetail prescriptionDetail = new PrescriptionDetail();
 		prescriptionDetail.setBeneficiaryRegID(benRegID);
 		prescriptionDetail.setBenVisitID(benVisitID);
@@ -2854,6 +2854,8 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		if (prescription_counsellingProvided != null)
 			prescriptionDetail.setCounsellingProvided(prescription_counsellingProvided);
+		if(provisionalDiagnosisList != null)
+			prescriptionDetail.setProvisionalDiagnosisList(provisionalDiagnosisList);
 
 		Long prescriptionID = saveBenPrescription(prescriptionDetail);
 		return prescriptionID;
@@ -3266,7 +3268,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					wrapperBenInvestigationANC.getBeneficiaryRegID(), wrapperBenInvestigationANC.getBenVisitID(),
 					wrapperBenInvestigationANC.getProviderServiceMapID(), wrapperBenInvestigationANC.getCreatedBy(),
 					wrapperBenInvestigationANC.getExternalInvestigations(), wrapperBenInvestigationANC.getVisitCode(),
-					wrapperBenInvestigationANC.getVanID(), wrapperBenInvestigationANC.getParkingPlaceID(), null, null);
+					wrapperBenInvestigationANC.getVanID(), wrapperBenInvestigationANC.getParkingPlaceID(), null, null, null);
 
 			wrapperBenInvestigationANC.setPrescriptionID(prescriptionID);
 			investigationSuccessFlag = saveBenInvestigation(wrapperBenInvestigationANC);
