@@ -152,7 +152,6 @@ public class FetchCommonController {
 			String s = commonNurseServiceImpl.getNurseWorkList();
 			response.setResponse(s);
 		} catch (Exception e) {
-			// e.printStackTrace();
 			logger.error("Error in getNurseWorklist:" + e);
 			response.setError(e);
 		}
