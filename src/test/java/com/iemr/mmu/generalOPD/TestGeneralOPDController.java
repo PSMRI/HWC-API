@@ -36,11 +36,11 @@ import static org.mockito.Mockito.when;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.iemr.mmu.controller.generalOPD.GeneralOPDCreateController;
-import com.iemr.mmu.controller.generalOPD.GeneralOPDFetchController;
-import com.iemr.mmu.controller.generalOPD.GeneralOPDUpdateController;
-import com.iemr.mmu.data.nurse.BeneficiaryVisitDetail;
-import com.iemr.mmu.service.generalOPD.GeneralOPDServiceImpl;
+import com.iemr.hwc.controller.generalOPD.GeneralOPDCreateController;
+import com.iemr.hwc.controller.generalOPD.GeneralOPDFetchController;
+import com.iemr.hwc.controller.generalOPD.GeneralOPDUpdateController;
+import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 
 public class TestGeneralOPDController {
 	

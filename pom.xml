@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.iemr.mmu</groupId>
+	<groupId>com.iemr.hwc</groupId>
 	<artifactId>hwc-facility-service</artifactId>
 	<version>v-1.0</version>
 	<packaging>war</packaging>
@@ -33,15 +33,6 @@
 		<environment>test</environment>
 		<target-properties>target/classes/application.properties</target-properties>
 		<source-properties>src/main/environment/common_${environment}.properties</source-properties>
-		<hostname-test>10.208.122.38</hostname-test>
-		<port-test>9990</port-test>
-		<hostname-dev>10.208.122.32</hostname-dev>
-		<port-dev>9990</port-dev>
-		<hostname-uat>deviemr.piramalswasthya.org</hostname-uat>
-		<port-uat>9990</port-uat>
-		<server-id>wildfly-${environment}</server-id>
-		<server-hostname>{hostname-${environment}}</server-hostname>
-		<server-port>{port-${environment}}</server-port>
 	</properties>
 
 	<dependencies>
@@ -234,7 +225,6 @@
 								<echo>
 									concatinating properties file ${target-properties} and
 									${source-properties}
-									<!-- $${server-hostname} $${server-port} ${server-id} $${server-username} 
 										$${server-password} -->
 								</echo>
 								<concat destfile="${target-properties}" append="yes"

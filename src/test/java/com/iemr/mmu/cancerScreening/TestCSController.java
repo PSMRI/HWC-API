@@ -31,12 +31,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
-import com.iemr.mmu.controller.cancerscreening.CancerScreeningCreateController;
-import com.iemr.mmu.controller.cancerscreening.CancerScreeningFetchController;
-import com.iemr.mmu.controller.cancerscreening.CancerScreeningUpdateController;
-import com.iemr.mmu.data.doctor.CancerDiagnosis;
-import com.iemr.mmu.data.nurse.BenCancerVitalDetail;
-import com.iemr.mmu.service.cancerScreening.CSServiceImpl;
+import com.iemr.hwc.controller.cancerscreening.CancerScreeningCreateController;
+import com.iemr.hwc.controller.cancerscreening.CancerScreeningFetchController;
+import com.iemr.hwc.controller.cancerscreening.CancerScreeningUpdateController;
+import com.iemr.hwc.data.doctor.CancerDiagnosis;
+import com.iemr.hwc.data.nurse.BenCancerVitalDetail;
+import com.iemr.hwc.service.cancerScreening.CSServiceImpl;
 
 public class TestCSController {
 

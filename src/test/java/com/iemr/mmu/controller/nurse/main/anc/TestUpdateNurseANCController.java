@@ -44,10 +44,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.iemr.mmu.Application;
-import com.iemr.mmu.data.anc.BenMedHistory;
-import com.iemr.mmu.repo.nurse.anc.BenMedHistoryRepo;
-import com.iemr.mmu.service.anc.ANCNurseServiceImpl;
+import com.iemr.hwc.Application;
+import com.iemr.hwc.data.anc.BenMedHistory;
+import com.iemr.hwc.repo.nurse.anc.BenMedHistoryRepo;
+import com.iemr.hwc.service.anc.ANCNurseServiceImpl;
 
 /*@RunWith(SpringRunner.class)
 @DataJpaTest
