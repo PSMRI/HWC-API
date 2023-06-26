@@ -28,8 +28,8 @@ import static org.mockito.Mockito.spy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.iemr.mmu.controller.ncdCare.NCDCareCreateController;
-import com.iemr.mmu.service.ncdCare.NCDCareServiceImpl;
+import com.iemr.hwc.controller.ncdCare.NCDCareCreateController;
+import com.iemr.hwc.service.ncdCare.NCDCareServiceImpl;
 
 public class TestNCDCareController {
 	private static NCDCareCreateController createController = spy(NCDCareCreateController.class);
