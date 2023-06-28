@@ -57,7 +57,7 @@ public class CommonMasterController {
 	 * @Objective provides list of visit reasons and visit categories
 	 * @return list of visit reasons and visit categories
 	 */
-	@ApiOperation(value = "Master Data for Visit Reasons & Categories", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get visit reasons and categories", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/get/visitReasonAndCategories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String getVisitReasonAndCategories() {
 		logger.info("getVisitReasonAndCategories ...");
@@ -72,7 +72,7 @@ public class CommonMasterController {
 	 * @param visitCategoryID
 	 * @return nurse master data for the provided visitCategoryID
 	 */
-	@ApiOperation(value = "Master Data API for Nurse", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get master data for selected beneficiary for nurse", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/nurse/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String NurseMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender) {
@@ -86,8 +86,6 @@ public class CommonMasterController {
 					commonMasterServiceImpl.getMasterDataForNurse(visitCategoryID, providerServiceMapID, gender));
 			logger.info("Nurse master Data for categoryID:" + response.toString());
 		} catch (Exception e) {
-
-			// TODO: handle exception
 			logger.error(e.getLocalizedMessage());
 			response.setError(5000, "error in getting nurse master data : " + e.getLocalizedMessage());
 		}
@@ -99,7 +97,7 @@ public class CommonMasterController {
 	 * @param visitCategoryID
 	 * @return doctor master data for the provided visitCategoryID
 	 */
-	@ApiOperation(value = "Master Data API for Doctor", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get master data for selected beneficiary for doctor", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/doctor/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}/{facilityID}/{vanID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String DoctorMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender,
@@ -119,7 +117,7 @@ public class CommonMasterController {
 	 * @return vaccines with details like - dose, route, site of injection for given
 	 *         cisId
 	 */
-	@ApiOperation(value = "Master Data API for Doctor", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get current immunization data for selected beneficiary for doctor", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/common/masterData/getVaccine/{currentImmunizationServiceID}/{visitCategoryID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String getVaccineDetailsForCISID(
 			@PathVariable("currentImmunizationServiceID") Integer currentImmunizationServiceID,
@@ -130,13 +128,13 @@ public class CommonMasterController {
 				throw new IEMRException("invalid request / NULL");
 			logger.info("current-immunization-service-id:" + currentImmunizationServiceID);
 
-			response.setResponse(commonMasterServiceImpl.getVaccineDetailsForCISID(currentImmunizationServiceID, visitCategoryID));
+			response.setResponse(
+					commonMasterServiceImpl.getVaccineDetailsForCISID(currentImmunizationServiceID, visitCategoryID));
 			logger.info("response data for : " + currentImmunizationServiceID + response.toString());
 
 		} catch (IEMRException e) {
 			logger.error(e.getLocalizedMessage());
 			response.setError(5000, e.getLocalizedMessage());
-			// TODO: handle exception
 		}
 		return response.toString();
 	}
