@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iemr.hwc.controller.registrar.master.RegistrarController;
 import com.iemr.hwc.service.login.IemrMmuLoginServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -41,7 +40,7 @@ import com.iemr.hwc.utils.response.OutputResponse;
 @RestController
 public class IemrMmuLoginController {
 
-	private Logger logger = LoggerFactory.getLogger(RegistrarController.class);
+	private Logger logger = LoggerFactory.getLogger(IemrMmuLoginController.class);
 	private InputMapper inputMapper = new InputMapper();
 
 	private IemrMmuLoginServiceImpl iemrMmuLoginServiceImpl;
