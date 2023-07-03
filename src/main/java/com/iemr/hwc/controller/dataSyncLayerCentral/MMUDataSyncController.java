@@ -40,15 +40,13 @@ import io.swagger.annotations.ApiOperation;
 
 /***
  * 
- * @author NE298657
- * @date 16-08-2018
  * @operation Class used for data sync from van-to-server & server-to-van
  *
  */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/dataSync", headers = "Authorization")
-public class MMU_DataSync_VanToServer {
+public class MMUDataSyncController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
@@ -57,7 +55,7 @@ public class MMU_DataSync_VanToServer {
 	private GetMasterDataFromCentralForVanImpl getMasterDataFromCentralForVanImpl;
 
 	@CrossOrigin()
-	@ApiOperation(value = "sync data from van-to-server", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Sync data from van (Mobile Medical Unit) to server", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/van-to-server" }, method = { RequestMethod.POST })
 	public String dataSyncToServer(@RequestBody String requestOBJ,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -70,13 +68,13 @@ public class MMU_DataSync_VanToServer {
 				response.setError(5000, "data dync failed");
 		} catch (Exception e) {
 			response.setError(e);
-			logger.error("Upload SYNC Exception" + e);
+			logger.error("Exception while sync data from van to server", e);
 		}
 		return response.toString();
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "download data from server-to-van", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Download data from server to van (Mobile Medical Unit)", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/server-to-van" }, method = { RequestMethod.POST })
 	public String dataDownloadFromServer(@RequestBody SyncDownloadMaster syncDownloadMaster,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -94,6 +92,7 @@ public class MMU_DataSync_VanToServer {
 			}
 		} catch (Exception e) {
 			response.setError(e);
+			logger.error("Exception while downloading data from server to van", e);
 		}
 		return response.toStringWithSerialization();
 	}

@@ -21,9 +21,11 @@
 */
 package com.iemr.hwc.controller.family_planning;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.service.family_planning.FamilyPlanningService;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -44,14 +47,14 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/family-planning", headers = "Authorization")
-public class CreateFamilyPlanningController {
+public class FamilyPlanningController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
 	private FamilyPlanningService familyPlanningService;
 
-	@ApiOperation(value = "Save family-planning nurse data.", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save family planning data collected by nurse", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/save-family-planning-nurse-data", method = RequestMethod.POST)
 	public String saveFamilyPlanningNuseData(@ApiParam(value = "{\r\n" + "  \"visitDetails\": {\r\n"
 			+ "    \"visitDetails\": {\r\n" + "      \"beneficiaryRegID\": \"274661\",\r\n"
@@ -136,7 +139,6 @@ public class CreateFamilyPlanningController {
 			} else
 				throw new IEMRException("Invalid request object / NULL");
 		} catch (Exception e) {
-			// TODO: handle exception
 			logger.error("error in saving family-planning nurse data : " + e.getLocalizedMessage());
 			response.setError(5000, "error in saving family-planning nurse data : " + e.getLocalizedMessage());
 		}
@@ -145,7 +147,7 @@ public class CreateFamilyPlanningController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "save family planning doctor data", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save family planning data collected by doctor", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "save-family-planning-doctor-data" }, method = { RequestMethod.POST })
 	public String saveFamilyPlanningDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -170,6 +172,226 @@ public class CreateFamilyPlanningController {
 			logger.error("Error while saving doctor data:" + e);
 			response.setError(5000, "Unable to save data. " + e.getMessage());
 		}
+		return response.toString();
+	}
+
+	/**
+	 * @Objective Fetching beneficiary visit details enterted by nurse.
+	 * @param benRegID and benVisitID
+	 * @return visit details in JSON format
+	 */
+
+	@CrossOrigin()
+	@ApiOperation(value = "Get family planning beneficiary visit details", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/getBenVisitDetails-Nurse-FamilyPlanning" }, method = { RequestMethod.POST })
+	@Transactional(rollbackFor = Exception.class)
+	public String getBenVisitDetailsFrmNurseFamilyPlanning(
+			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+		OutputResponse response = new OutputResponse();
+
+		logger.info("Request object for FamilyPlanning visit data fetching :" + commonUtilityClass.toString());
+		try {
+			if (commonUtilityClass != null && commonUtilityClass.getBenRegID() != null
+					&& commonUtilityClass.getVisitCode() != null) {
+				String s = familyPlanningService.getBenVisitDetailsFrmNurseFP(commonUtilityClass.getBenRegID(),
+						commonUtilityClass.getVisitCode());
+				if (s != null)
+					response.setResponse(s);
+				else
+					throw new IEMRException("No record found");
+			} else
+				throw new IEMRException("Invalid request - Beneficiary and visit info required");
+			// call service to fetch data
+		} catch (Exception e) {
+			response.setError(5000, "Error while getting beneficiary visit data : " + e.getLocalizedMessage());
+			logger.error("Error while getting beneficiary visit data:" + e);
+		}
+		return response.toString();
+	}
+
+	/**
+	 * @Objective Fetching beneficiary vital details entered by nurse.
+	 * @param benRegID and benVisitID
+	 * @return vital details in JSON format
+	 */
+	@CrossOrigin()
+	@ApiOperation(value = "Get family planning beneficiary vitals", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/getBenVitalDetailsFrmNurseFamilyPlanning" }, method = { RequestMethod.POST })
+	public String getBenVitalDetailsFrmNurseFamilyPlanning(
+			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+		OutputResponse response = new OutputResponse();
+
+		logger.info("Request object for FamilyPlanning vital data fetching :" + commonUtilityClass.toString());
+		try {
+			if (commonUtilityClass.getBenRegID() != null && commonUtilityClass.getVisitCode() != null) {
+				String s = familyPlanningService.getBeneficiaryVitalDetailsFP(commonUtilityClass.getBenRegID(),
+						commonUtilityClass.getVisitCode());
+				if (s != null)
+					response.setResponse(s);
+				else
+					throw new IEMRException("No record found");
+			} else
+				throw new IEMRException("Invalid request - Beneficiary and visit info required");
+		} catch (Exception e) {
+			response.setError(5000, "Error while getting beneficiary vital data : " + e.getLocalizedMessage());
+			logger.error("Error while getting beneficiary vital data :" + e);
+		}
+		return response.toString();
+	}
+
+	/**
+	 * @Objective Fetching beneficiary FamilyPlanning details entered by nurse.
+	 * @param benRegID and benVisitID
+	 * @return FamilyPlanning details in JSON format
+	 */
+	@CrossOrigin()
+	@ApiOperation(value = "Get family planning beneficiary details", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/getBenFPDetailsFrmNurseFamilyPlanning" }, method = { RequestMethod.POST })
+	@Transactional(rollbackFor = Exception.class)
+	public String getBenFPDetailsFrmNurseFamilyPlanning(
+			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+		OutputResponse response = new OutputResponse();
+
+		logger.info("Request object for FamilyPlanning details data fetching :" + commonUtilityClass.toString());
+		try {
+			String s = familyPlanningService.getBeneficiaryFPDetailsFP(commonUtilityClass.getBenRegID(),
+					commonUtilityClass.getVisitCode());
+			if (s != null)
+				response.setResponse(s);
+			else
+				throw new IEMRException("No record found");
+		} catch (Exception e) {
+			response.setError(5000, "Error while getting beneficiary FamilyPlanning data " + e.getLocalizedMessage());
+			logger.error("Error while getting beneficiary FamilyPlanning data:" + e);
+		}
+		return response.toString();
+	}
+
+	/**
+	 * @Objective Fetching beneficiary doctor details.
+	 * @param comingRequest
+	 * @return doctor details in JSON format
+	 */
+	@CrossOrigin()
+	@ApiOperation(value = "Get family planning beneficiary case record", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/getBenCaseRecordFromDoctor" }, method = { RequestMethod.POST })
+	@Transactional(rollbackFor = Exception.class)
+	public String getBenCaseRecordFromDoctor(
+			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+		OutputResponse response = new OutputResponse();
+
+		logger.info("getBenCaseRecordFromDoctor FP request:" + comingRequest);
+		try {
+			JSONObject obj = new JSONObject(comingRequest);
+			if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+				Long benRegID = obj.getLong("benRegID");
+				Long visitCode = obj.getLong("visitCode");
+
+				String res = familyPlanningService.getBenCaseRecordFromDoctorFP(benRegID, visitCode);
+				response.setResponse(res);
+			} else {
+				logger.info("Invalid Request Data.");
+				response.setError(5000, "Invalid request");
+			}
+			logger.info("getBenCaseRecordFromDoctor FP  response:" + response);
+		} catch (Exception e) {
+			response.setError(5000, "Error while getting beneficiary doctor data : " + e.getLocalizedMessage());
+			logger.error("Error in getBenCaseRecordFromDoctor FP :" + e);
+		}
+		return response.toString();
+	}
+
+	@CrossOrigin
+	@ApiOperation(value = "Update family planning data", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/update/FamilyPlanningScreen" }, method = { RequestMethod.POST })
+	public String updateFamilyPlanningNurse(@RequestBody String requestObj) {
+
+		OutputResponse response = new OutputResponse();
+		logger.info("Request object for FamilyPlanning data updating :" + requestObj);
+
+		try {
+			JsonObject jsnOBJ = new JsonObject();
+			JsonParser jsnParser = new JsonParser();
+			JsonElement jsnElmnt = jsnParser.parse(requestObj);
+			jsnOBJ = jsnElmnt.getAsJsonObject();
+
+			String s = familyPlanningService.updateFPDataFP(jsnOBJ);
+
+			if (s != null)
+				response.setResponse(s);
+			else
+				throw new IEMRException("error in updating data - NULL");
+
+		} catch (Exception e) {
+			response.setError(5000, "Unable to modify data : " + e.getLocalizedMessage());
+			logger.error("Error while updating beneficiary FamilyPlanning data :" + e);
+		}
+
+		return response.toString();
+	}
+
+	@CrossOrigin
+	@ApiOperation(value = "Update family planning beneficiary vitals", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/update/vitalScreen" }, method = { RequestMethod.POST })
+	public String updateVitalNurseFamilyPlanning(@RequestBody String requestObj) {
+
+		OutputResponse response = new OutputResponse();
+		logger.info("Request object for FamilyPlanning Vital data updating :" + requestObj);
+
+		try {
+			JsonObject jsnOBJ = new JsonObject();
+			JsonParser jsnParser = new JsonParser();
+			JsonElement jsnElmnt = jsnParser.parse(requestObj);
+			jsnOBJ = jsnElmnt.getAsJsonObject();
+
+			int i = familyPlanningService.updateBenVitalDetailsFP(jsnOBJ);
+			if (i == 1)
+				response.setResponse("Data updated successfully");
+			else
+				response.setError(500, "Unable to modify data, please contact administrator");
+
+			logger.info("FamilyPlanning vital data update Response:" + response);
+		} catch (Exception e) {
+			response.setError(5000, "Unable to modify data : " + e.getLocalizedMessage());
+			logger.error("Error while updating beneficiary vital data :" + e);
+		}
+
+		return response.toString();
+	}
+
+	/**
+	 * 
+	 * @param requestObj
+	 * @return success or failure response
+	 * @objective Update FamilyPlanning doctor data for the doctor next visit
+	 */
+	@CrossOrigin
+	@ApiOperation(value = "Update family planning data", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/update/doctorData" }, method = { RequestMethod.POST })
+	public String updateFamilyPlanningDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) {
+
+		OutputResponse response = new OutputResponse();
+		logger.info("Request object for doctor data updating :" + requestObj);
+		try {
+			JsonObject jsnOBJ = new JsonObject();
+			JsonParser jsnParser = new JsonParser();
+			JsonElement jsnElmnt = jsnParser.parse(requestObj);
+			jsnOBJ = jsnElmnt.getAsJsonObject();
+
+			Long result = familyPlanningService.updateDoctorDataFP(jsnOBJ, Authorization);
+
+			if (null != result && result > 0) {
+				response.setResponse("Data updated successfully");
+			} else
+				throw new IEMRException("error in updating data - NULL");
+
+			logger.info("Doctor data update response:" + response);
+		} catch (Exception e) {
+			response.setError(5000, "Unable to modify data. " + e.getLocalizedMessage());
+			logger.error("Error while updating FamilyPlanning  doctor data:" + e);
+		}
+
 		return response.toString();
 	}
 
