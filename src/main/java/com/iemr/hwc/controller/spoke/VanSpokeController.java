@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.controller.login;
+package com.iemr.hwc.controller.spoke;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -33,16 +33,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iemr.hwc.service.login.IemrMmuLoginServiceImpl;
-import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
+
+import io.swagger.annotations.ApiOperation;
 
 @RequestMapping(value = "/user", headers = "Authorization")
 @RestController
-public class IemrMmuLoginController {
+public class VanSpokeController {
 
-	private Logger logger = LoggerFactory.getLogger(IemrMmuLoginController.class);
-	private InputMapper inputMapper = new InputMapper();
-
+	private Logger logger = LoggerFactory.getLogger(VanSpokeController.class);
 	private IemrMmuLoginServiceImpl iemrMmuLoginServiceImpl;
 
 	@Autowired
@@ -51,6 +50,7 @@ public class IemrMmuLoginController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Get user service point van details", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/getUserServicePointVanDetails", method = { RequestMethod.POST }, produces = {
 			"application/json" })
 	public String getUserServicePointVanDetails(@RequestBody String comingRequest) {
@@ -62,7 +62,6 @@ public class IemrMmuLoginController {
 			String responseData = iemrMmuLoginServiceImpl.getUserServicePointVanDetails(obj.getInt("userID"));
 			response.setResponse(responseData);
 		} catch (Exception e) {
-			// e.printStackTrace();
 			response.setError(5000, "Error while getting service points and van data");
 			logger.error("get User SP and van details failed with " + e.getMessage(), e);
 
@@ -72,6 +71,7 @@ public class IemrMmuLoginController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Get service point villages", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/getServicepointVillages", method = { RequestMethod.POST }, produces = {
 			"application/json" })
 	public String getServicepointVillages(@RequestBody String comingRequest) {
@@ -93,6 +93,7 @@ public class IemrMmuLoginController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Get user van details", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/getUserVanSpDetails", method = { RequestMethod.POST }, produces = { "application/json" })
 	public String getUserVanSpDetails(@RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
@@ -108,7 +109,6 @@ public class IemrMmuLoginController {
 				response.setError(5000, "Invalid request");
 			}
 		} catch (Exception e) {
-			// e.printStackTrace();
 			response.setError(5000, "Error while getting van and service points data");
 			logger.error("getUserVanSpDetails failed with " + e.getMessage(), e);
 
@@ -116,12 +116,12 @@ public class IemrMmuLoginController {
 		logger.info("getUserVanSpDetails response " + response.toString());
 		return response.toString();
 	}
-	
-	/* created by = DU20091017 */
-	
+
 	@CrossOrigin()
-	@RequestMapping(value = "/getUserSpokeDetails/{psmId}", method = { RequestMethod.GET }, produces = { "application/json" })
-	public String getUserSpokeDetails(@PathVariable ("psmId") Integer psmId) {
+	@ApiOperation(value = "Get user spoke details", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/getUserSpokeDetails/{psmId}", method = { RequestMethod.GET }, produces = {
+			"application/json" })
+	public String getUserSpokeDetails(@PathVariable("psmId") Integer psmId) {
 		OutputResponse response = new OutputResponse();
 		try {
 			if (psmId != null)

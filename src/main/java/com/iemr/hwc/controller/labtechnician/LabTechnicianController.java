@@ -40,7 +40,6 @@ import io.swagger.annotations.ApiOperation;
 
 /***
  * 
- * @author NE298657
  * @Objective Saving lab test results given by LabTechnician
  *
  */
@@ -48,24 +47,24 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/labTechnician", headers = "Authorization")
-public class LabtechnicianCreateController {
-	
+public class LabTechnicianController {
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-	
+
 	private LabTechnicianServiceImpl labTechnicianServiceImpl;
-	
+
 	@Autowired
 	public void setLabTechnicianServiceImpl(LabTechnicianServiceImpl labTechnicianServiceImpl) {
 		this.labTechnicianServiceImpl = labTechnicianServiceImpl;
 	}
-	
+
 	/**
 	 * @Objective Save lab test results given by LabTechnician
-	 * @param JSON requestObj 
+	 * @param JSON requestObj
 	 * @return success or failure response
 	 */
 	@CrossOrigin
-	@ApiOperation(value = "Save Lab Test Result Entered by LabTechnician..", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save lab test result", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/LabTestResult" }, method = { RequestMethod.POST })
 	public String saveLabTestResult(@RequestBody String requestObj) {
 		OutputResponse response = new OutputResponse();
@@ -94,4 +93,69 @@ public class LabtechnicianCreateController {
 		}
 		return response.toString();
 	}
+
+	/**
+	 * @Objective Fetching beneficiary lab tests prescribed by doctor.
+	 * @param requestOBJ
+	 * @return lab tests prescribed by doctor
+	 */
+	@CrossOrigin
+	@ApiOperation(value = "Get beneficiary lab test prescription", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/get/prescribedProceduresList" }, method = { RequestMethod.POST })
+	public String getBeneficiaryPrescribedProcedure(@RequestBody String requestOBJ) {
+		OutputResponse response = new OutputResponse();
+		try {
+			logger.info("Request obj to fetch lab tests :" + requestOBJ);
+			JsonObject jsnOBJ = new JsonObject();
+			JsonParser jsnParser = new JsonParser();
+			JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
+			jsnOBJ = jsnElmnt.getAsJsonObject();
+
+			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("beneficiaryRegID") && jsnOBJ.has("visitCode")) {
+
+				String s = labTechnicianServiceImpl.getBenePrescribedProcedureDetails(
+						jsnOBJ.get("beneficiaryRegID").getAsLong(), jsnOBJ.get("visitCode").getAsLong());
+				if (s != null)
+					response.setResponse(s);
+				else
+					response.setError(5000, "Error in prescribed procedure details");
+			} else {
+				response.setError(5000, "Invalid request");
+			}
+		} catch (Exception e) {
+			logger.error("Error while getting prescribed procedure data:" + e);
+			response.setError(5000, "Error while getting prescribed procedure data");
+		}
+		return response.toString();
+	}
+
+	// API for getting lab result based on beneficiaryRegID and visitCode
+	@CrossOrigin()
+	@ApiOperation(value = "Get lab test result for a beneficiary visit", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = { "/get/labResultForVisitcode" }, method = { RequestMethod.POST })
+	public String getLabResultForVisitCode(@RequestBody String requestOBJ) {
+		OutputResponse response = new OutputResponse();
+		try {
+			JsonObject jsnOBJ = new JsonObject();
+			JsonParser jsnParser = new JsonParser();
+			JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
+			jsnOBJ = jsnElmnt.getAsJsonObject();
+
+			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("beneficiaryRegID") && jsnOBJ.has("visitCode")) {
+				String s = labTechnicianServiceImpl.getLabResultForVisitcode(jsnOBJ.get("beneficiaryRegID").getAsLong(),
+						jsnOBJ.get("visitCode").getAsLong());
+
+				if (s != null)
+					response.setResponse(s);
+				else
+					response.setError(5000, "Error while getting lab report");
+			} else
+				response.setError(5000, "Invalid request");
+		} catch (Exception e) {
+			logger.error("Error while getting lab result for requested data:" + requestOBJ);
+			response.setError(5000, "Error while getting lab report");
+		}
+		return response.toString();
+	}
+
 }

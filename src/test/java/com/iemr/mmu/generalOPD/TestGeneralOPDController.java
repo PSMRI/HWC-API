@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.iemr.hwc.controller.generalOPD.GeneralOPDCreateController;
+import com.iemr.hwc.controller.generalOPD.GeneralOPDController;
 import com.iemr.hwc.controller.generalOPD.GeneralOPDFetchController;
 import com.iemr.hwc.controller.generalOPD.GeneralOPDUpdateController;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
@@ -47,7 +47,7 @@ public class TestGeneralOPDController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	@InjectMocks
-	private static GeneralOPDCreateController createControllerMock = spy(GeneralOPDCreateController.class);
+	private static GeneralOPDController createControllerMock = spy(GeneralOPDController.class);
 	private static GeneralOPDUpdateController updateControllerMock = spy(GeneralOPDUpdateController.class);
 	private static GeneralOPDFetchController  fetchControllerMock = spy(GeneralOPDFetchController.class);
 	private static GeneralOPDServiceImpl generalOPDServiceImplMock = mock(GeneralOPDServiceImpl.class);

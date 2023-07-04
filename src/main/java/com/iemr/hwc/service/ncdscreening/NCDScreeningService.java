@@ -41,6 +41,22 @@ public interface NCDScreeningService {
 	public String getNCDScreeningData(Long beneficiaryRegID, Long visitCode) throws IEMRException;
 
 	public String updateNCDScreeningData(JsonObject jsonObject) throws IEMRException;
-	
+
 	public String getCbacData(Long beneficiaryRegId, Long visitCode) throws IEMRException;
+
+	public int updateBenVitalDetails(JsonObject jsnOBJ) throws Exception;
+
+	public Long saveDoctorData(JsonObject jsnOBJ, String authorization) throws Exception;
+
+	public String getNcdScreeningVisitCnt(Long beneficiaryRegID);
+
+	public String getBenCaseRecordFromDoctorNCDScreening(Long benRegID, Long visitCode);
+
+	public String getBenVisitDetailsFrmNurseNCDScreening(Long benRegID, Long visitCode);
+
+	public String getBenHistoryDetails(Long benRegID, Long visitCode);
+
+	public String getBeneficiaryVitalDetails(Long benRegID, Long visitCode);
+
+	public String getBenIdrsDetailsFrmNurse(Long benRegID, Long visitCode);
 }
