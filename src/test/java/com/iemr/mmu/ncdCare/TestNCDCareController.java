@@ -28,11 +28,11 @@ import static org.mockito.Mockito.spy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.iemr.hwc.controller.ncdCare.NCDCareCreateController;
+import com.iemr.hwc.controller.ncdCare.NCDCareController;
 import com.iemr.hwc.service.ncdCare.NCDCareServiceImpl;
 
 public class TestNCDCareController {
-	private static NCDCareCreateController createController = spy(NCDCareCreateController.class);
+	private static NCDCareController createController = spy(NCDCareController.class);
 	private static NCDCareServiceImpl ncdCareServiceImplMock = mock(NCDCareServiceImpl.class);
 
 	private static String nurseObjPve;
