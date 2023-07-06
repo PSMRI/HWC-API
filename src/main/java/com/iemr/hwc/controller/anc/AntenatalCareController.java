@@ -50,7 +50,6 @@ import io.swagger.annotations.ApiParam;
 /**
  * 
  * @Objective Saving ANC data for Nurse and Doctor.
- * @Date 19-01-2018
  *
  */
 
@@ -135,7 +134,7 @@ public class AntenatalCareController {
 	}
 
 	/**
-	 * @Objective Fetching beneficiary visit details enterted by nurse.
+	 * @Objective Fetching beneficiary visit details entered by nurse.
 	 * @param benRegID and benVisitID
 	 * @return visit details in JSON format
 	 */
@@ -169,7 +168,7 @@ public class AntenatalCareController {
 	}
 
 	/**
-	 * @Objective Fetching beneficiary anc care details enterted by nurse.
+	 * @Objective Fetching beneficiary anc care details entered by nurse.
 	 * @param benRegID and benVisitID
 	 * @return anc care details in JSON format
 	 */
@@ -206,7 +205,7 @@ public class AntenatalCareController {
 	}
 
 	/**
-	 * @Objective Fetching beneficiary history details enterted by nurse.
+	 * @Objective Fetching beneficiary history details entered by nurse.
 	 * @param benRegID and benVisitID
 	 * @return history details in JSON format
 	 */
@@ -239,7 +238,7 @@ public class AntenatalCareController {
 	}
 
 	/**
-	 * @Objective Fetching beneficiary vital details enterted by nurse.
+	 * @Objective Fetching beneficiary vital details entered by nurse.
 	 * @param benRegID and benVisitID
 	 * @return vital details in JSON format
 	 */
@@ -272,7 +271,7 @@ public class AntenatalCareController {
 	}
 
 	/**
-	 * @Objective Fetching beneficiary examination details enterted by nurse.
+	 * @Objective Fetching beneficiary examination details entered by nurse.
 	 * @param benRegID and benVisitID
 	 * @return examination details in JSON format
 	 */
@@ -305,7 +304,7 @@ public class AntenatalCareController {
 	}
 
 	/**
-	 * @Objective Fetching beneficiary details enterted by doctor.
+	 * @Objective Fetching beneficiary details entered by doctor.
 	 * @param benRegID and benVisitID
 	 * @return doctor entered details in JSON format
 	 */
