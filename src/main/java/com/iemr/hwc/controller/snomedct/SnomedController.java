@@ -52,7 +52,7 @@ public class SnomedController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Retrives Snomed clinical term", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Retrieve Snomed clinical term", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/getSnomedCTRecord", method = RequestMethod.POST, headers = "Authorization")
 	public String getSnomedCTRecord(@ApiParam(value = "{\"term\":\"String\"}") @RequestBody String request) {
 		OutputResponse output = new OutputResponse();
@@ -78,7 +78,7 @@ public class SnomedController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Retrives Snomed clinical term list", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Retrieve Snomed clinical term list", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/getSnomedCTRecordList", method = RequestMethod.POST, headers = "Authorization")
 	public String getSnomedCTRecordList(@ApiParam(value = "{\"term\":\"String\"}") @RequestBody String request) {
 		OutputResponse output = new OutputResponse();

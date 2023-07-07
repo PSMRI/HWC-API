@@ -113,7 +113,7 @@ public class TeleConsultationController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Create TC request from worklist whose visit is created", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Create tele consultation request from worklist whose visit is created", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/create/benTCRequestWithVisitCode" }, method = { RequestMethod.POST })
 	public String createTCRequestForBeneficiary(@RequestBody String requestOBJ, @RequestHeader String Authorization) {
 		OutputResponse response = new OutputResponse();
@@ -140,7 +140,7 @@ public class TeleConsultationController {
 
 	// TC request List
 	@CrossOrigin
-	@ApiOperation(value = "Get TC request list for a specialist", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get tele consultation request list for a specialist", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/getTCRequestList" }, method = { RequestMethod.POST })
 	public String getTCSpecialistWorkListNew(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
