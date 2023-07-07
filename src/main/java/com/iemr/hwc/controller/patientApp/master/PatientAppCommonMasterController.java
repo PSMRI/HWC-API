@@ -56,7 +56,7 @@ public class PatientAppCommonMasterController {
 	 * @return nurse master data for the provided visitCategoryID
 	 * 
 	 */
-	@ApiOperation(value = "Master Data API for PatientApp", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Master data API for patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/patientApp/chiefComplaintsMaster/{visitCategoryID}/{providerServiceMapID}/{gender}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String patientAppChiefComplaintsMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender) {
@@ -70,7 +70,7 @@ public class PatientAppCommonMasterController {
 		return response.toString();
 	}
 
-	@ApiOperation(value = "Master Data API for PatientApp", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Master data API for patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/patientApp/covidMaster/{visitCategoryID}/{providerServiceMapID}/{gender}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String patientAppCovidMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender) {
@@ -85,7 +85,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Save Covid  data.. patient app", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save covid  data patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/covidScreeningDataPatientApp" }, method = { RequestMethod.POST })
 	public String saveBenCovidDoctorDataPatientApp(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -105,7 +105,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Save chief-Complaints  data.. patient app", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save chief-complaints  data patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/chiefComplaintsDataPatientApp" }, method = { RequestMethod.POST })
 	public String saveBenChiefComplaintsDataPatientApp(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -125,7 +125,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Save tele-consultation slot data.. patient app", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save tele-consultation slot data patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/tcSlotDetailsDataPatientApp" }, method = { RequestMethod.POST })
 	public String saveTCSlotDataPatientApp(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -146,7 +146,7 @@ public class PatientAppCommonMasterController {
 		return response.toString();
 	}
 
-	@ApiOperation(value = "Master Data  for Patient", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Master data  for patient", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = {
 			"/patientApp/details/{stateID}" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String patientAppMasterData(@PathVariable("stateID") Integer stateID) {
@@ -159,7 +159,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "get Patient Episode data for specialist - mobile APP", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get patient episode data for specialist - patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/get/getPatientEpisodeData" }, method = { RequestMethod.POST })
 	public String getPatientEpisodeDataMobileApp(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -181,7 +181,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "get Patient booked slot data - mobile APP", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get patient booked slot data - patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/get/getPatientBookedSlotDetails" }, method = { RequestMethod.POST })
 	public String getPatientBookedSlotDetails(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -203,7 +203,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "save specialist diagnosis data - mobile APP", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "save specialist diagnosis data - patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/saveSpecialistDiagnosisData" }, method = { RequestMethod.POST })
 	public String saveSpecialistDiagnosisData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -225,7 +225,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "get specialist diagnosis data - mobile APP", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get specialist diagnosis data - patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/getSpecialistDiagnosisData" }, method = { RequestMethod.POST })
 	public String getSpecialistDiagnosisData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
@@ -247,7 +247,7 @@ public class PatientAppCommonMasterController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "get getPatientsLast_3_Episode data - mobile APP", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get last 3 episode data of the patient - patient app", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/get/getPatientsEpisodes" }, method = { RequestMethod.POST })
 	public String getPatientsLast_3_Episode(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {

@@ -46,7 +46,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/uptsu",headers = "Authorization")
 @RestController
 @CrossOrigin
-public class UptsuController {
+public class UPTechnicalSupportUnitController {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	@Autowired
@@ -84,7 +84,7 @@ public class UptsuController {
 		return response.toString();
 	}
 	@CrossOrigin
-	@ApiOperation(value = " close visit submit API ", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = " Close visit submit API ", consumes = "application/json", produces = "application/json")
 	@PostMapping("/submit/closevisit")
 	public String saveReferred104Details(@RequestBody String request) {
 		ObjectMapper mapper = new ObjectMapper();

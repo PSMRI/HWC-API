@@ -52,7 +52,7 @@ public class RegistrarMasterController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get Master Data for Registrar", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Get master data for registrar", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/registrarMasterData" }, method = { RequestMethod.POST })
 	public String masterDataForRegistration(
 			@ApiParam(value = "{\"spID\": \"Integer\"}") @RequestBody String comingRequest) {
