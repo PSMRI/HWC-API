@@ -67,11 +67,7 @@ public class CRMReportController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
-
 	}
 
 	@CrossOrigin()
@@ -92,11 +88,7 @@ public class CRMReportController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toStringWithSerialization();
-
 	}
 
 	@CrossOrigin()
@@ -117,11 +109,7 @@ public class CRMReportController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
-
 	}
 
 	@CrossOrigin()
@@ -142,11 +130,7 @@ public class CRMReportController {
 			response.setError(e);
 
 		}
-		/**
-		 * sending the response...
-		 */
 		return response.toString();
-
 	}
 
 	@CrossOrigin()

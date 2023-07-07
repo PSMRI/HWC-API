@@ -43,16 +43,17 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.annotations.ApiOperation;
 
-@RequestMapping(value = "/uptsu",headers = "Authorization")
+@RequestMapping(value = "/uptsu", headers = "Authorization")
 @RestController
 @CrossOrigin
-public class UptsuController {
-	
+public class UPTechnicalSupportUnitController {
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	@Autowired
 	private UptsuService uptsuService;
+
 	@CrossOrigin
-	@ApiOperation(value = "104 Action Master Data", produces = "application/json")
+	@ApiOperation(value = "Fetch 104 action master data", produces = "application/json")
 	@RequestMapping(value = "/get/action-master", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	public String getActionMaster() {
 
@@ -65,13 +66,14 @@ public class UptsuController {
 
 		return response.toString();
 	}
+
 	@CrossOrigin
-	@ApiOperation(value = " 104 work list data ", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Fetch 104 work list data", consumes = "application/json", produces = "application/json")
 	@GetMapping("/getWorklistByVanID/{vanId}")
 	public String getWolklist104Data(@PathVariable Integer vanId) {
 		OutputResponse response = new OutputResponse();
 		String resp = null;
-		logger.info("Entered into getWorklist method with vanId : "+vanId);
+		logger.info("Entered into getWorklist method with vanId : " + vanId);
 		try {
 			resp = uptsuService.getWorklist(vanId);
 			if (null != resp) {
@@ -83,8 +85,9 @@ public class UptsuController {
 		}
 		return response.toString();
 	}
+
 	@CrossOrigin
-	@ApiOperation(value = " close visit submit API ", consumes = "application/json", produces = "application/json")
+	@ApiOperation(value = "Save 104 referred details", consumes = "application/json", produces = "application/json")
 	@PostMapping("/submit/closevisit")
 	public String saveReferred104Details(@RequestBody String request) {
 		ObjectMapper mapper = new ObjectMapper();
