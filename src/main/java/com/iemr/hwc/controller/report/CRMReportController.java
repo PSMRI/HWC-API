@@ -40,6 +40,8 @@ import com.iemr.hwc.data.report.TMDailyReport;
 import com.iemr.hwc.service.report.CRMReportService;
 import com.iemr.hwc.utils.response.OutputResponse;
 
+import io.swagger.annotations.ApiOperation;
+
 @RequestMapping("/TMReport")
 @RestController
 public class CRMReportController {
@@ -50,6 +52,7 @@ public class CRMReportController {
 	private CRMReportService cRMReportService;
 
 	@CrossOrigin()
+	@ApiOperation(value = "Fetch chief complaints report", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/chiefcomplaintreport", headers = "Authorization", method = {
 			RequestMethod.POST }, produces = { "application/json" })
 	public String chiefcomplaintreport(@RequestBody ReportInput input) {
@@ -71,6 +74,7 @@ public class CRMReportController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Fetch consultation report", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/ConsultationReport", headers = "Authorization", method = {
 			RequestMethod.POST }, produces = { "application/json" })
 	public String getConsultationReport(@RequestBody ReportInput input) {
@@ -92,6 +96,7 @@ public class CRMReportController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Fetch total consultation report", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/TotalConsultationReport", headers = "Authorization", method = {
 			RequestMethod.POST }, produces = { "application/json" })
 	public String getTotalConsultationReport(@RequestBody ReportInput input) {
@@ -113,6 +118,7 @@ public class CRMReportController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Fetch monthly report", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/MonthlyReport", headers = "Authorization", method = { RequestMethod.POST }, produces = {
 			"application/json" })
 	public String getMonthlyReport(@RequestBody ReportInput input) {
@@ -134,6 +140,7 @@ public class CRMReportController {
 	}
 
 	@CrossOrigin()
+	@ApiOperation(value = "Fetch daily report", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/DailyReport", headers = "Authorization", method = { RequestMethod.POST }, produces = {
 			"application/json" })
 	public String getDailyReport(@RequestBody ReportInput input) {
