@@ -24,7 +24,9 @@ package com.iemr.hwc.service.common.transaction;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -448,6 +450,27 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	}
 
+	public int getMaxCurrentdate(Long beneficiaryRegID,String visitreason,String visitcategory) throws IEMRException{
+		String maxDate=benVisitDetailRepo.getMaxCreatedDate(beneficiaryRegID,visitreason,visitcategory);
+		
+	    int i=0;
+		if(maxDate!=null) {
+		try {
+			DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String maxdateTrim=maxDate.substring(0, maxDate.indexOf("."));
+			java.util.Date  d = timeFormat.parse(maxdateTrim);
+			Calendar cal = Calendar.getInstance();
+			Calendar cal1 = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.MINUTE, 10);
+			 i= cal.compareTo(cal1);
+			 
+		} catch (ParseException e) {
+			throw new IEMRException("Error while parseing created date :" + e.getMessage());
+		}
+		}
+		return i;
+	}
 	public Long generateVisitCode(Long visitID, Integer vanID, Integer sessionID) {
 		String visitCode = "";
 
