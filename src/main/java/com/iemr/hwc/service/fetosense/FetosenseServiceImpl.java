@@ -191,7 +191,6 @@ public class FetosenseServiceImpl implements FetosenseService {
 				Path path = Paths.get(filePathLocal);
 				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			}
-			// base64 = readPDFANDGetBase64(filePathLocal);
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
