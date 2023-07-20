@@ -73,6 +73,9 @@ public class FetosenseServiceImpl implements FetosenseService {
 	@Value("${fetosenseAPIKey}")
 	private String fetosenseAPIKey;
 
+	@Value("${fetosenseReportPath}")
+	private String fetosenseReportPath;
+
 	static HttpURLConnection con;
 
 	private static HttpUtils httpUtils = new HttpUtils();
@@ -179,14 +182,15 @@ public class FetosenseServiceImpl implements FetosenseService {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
 		try {
-			URL url = new URL(filePath);
-			con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("GET");
-			con.setDoInput(true);
-			filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
-			Path path = Paths.get(filePathLocal);
-			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
+			if (filePath.startsWith(fetosenseReportPath)) {
+				URL url = new URL(filePath);
+				con = (HttpURLConnection) url.openConnection();
+				con.setRequestMethod("GET");
+				con.setDoInput(true);
+				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
+				Path path = Paths.get(filePathLocal);
+				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			}
 			// base64 = readPDFANDGetBase64(filePathLocal);
 
 		} catch (IOException e) {
