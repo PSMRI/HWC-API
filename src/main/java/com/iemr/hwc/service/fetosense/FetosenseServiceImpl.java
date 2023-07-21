@@ -74,8 +74,8 @@ public class FetosenseServiceImpl implements FetosenseService {
 	@Value("${fetosenseAPIKey}")
 	private String fetosenseAPIKey;
 
-	@Value("${fetosenseReportPath}")
-	private String fetosenseReportPath;
+	@Value("${fetosenseReportPathHost}")
+	private String fetosenseReportPathHost;
 
 	static HttpURLConnection con;
 
@@ -182,7 +182,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 	private String generatePDF(String filePath) throws IEMRException {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
-		URL safeUrl = URLValidator.convertToSafeURL(filePath, fetosenseReportPath);
+		URL safeUrl = URLValidator.convertToSafeURL(filePath, fetosenseReportPathHost);
 		try {
 				con = (HttpURLConnection) safeUrl.openConnection();
 				con.setRequestMethod("GET");
