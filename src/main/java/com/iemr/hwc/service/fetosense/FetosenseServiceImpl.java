@@ -182,7 +182,6 @@ public class FetosenseServiceImpl implements FetosenseService {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
 		try {
-			if (filePath.startsWith(fetosenseReportPath)) {
 				URL url = new URL(filePath);
 				con = (HttpURLConnection) url.openConnection();
 				con.setRequestMethod("GET");
@@ -190,7 +189,6 @@ public class FetosenseServiceImpl implements FetosenseService {
 				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
 				Path path = Paths.get(filePathLocal);
 				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			}
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
