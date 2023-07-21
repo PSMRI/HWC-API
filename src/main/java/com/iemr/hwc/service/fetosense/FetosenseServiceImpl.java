@@ -62,6 +62,7 @@ import com.iemr.hwc.repo.fetosense.FetosenseRepo;
 import com.iemr.hwc.utils.config.ConfigProperties;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.http.HttpUtils;
+import com.iemr.hwc.utils.validator.URLValidator;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -181,16 +182,15 @@ public class FetosenseServiceImpl implements FetosenseService {
 	private String generatePDF(String filePath) throws IEMRException {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
+		URL safeUrl = URLValidator.convertToSafeURL(filePath, fetosenseReportPath);
 		try {
-			if (filePath.startsWith(fetosenseReportPath)) {
-				URL url = new URL(filePath);
-				con = (HttpURLConnection) url.openConnection();
+				con = (HttpURLConnection) safeUrl.openConnection();
 				con.setRequestMethod("GET");
 				con.setDoInput(true);
 				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
 				Path path = Paths.get(filePathLocal);
 				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			}
+		
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
