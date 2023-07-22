@@ -184,7 +184,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 		try {
 			if (filePath.startsWith(fetosenseReportPath)) {
 				URL url = new URL(filePath);
-				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				con = (HttpURLConnection) url.openConnection();
 				con.setRequestMethod("GET");
 				con.setDoInput(true);
 	
