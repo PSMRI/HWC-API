@@ -182,20 +182,29 @@ public class FetosenseServiceImpl implements FetosenseService {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
 		try {
+			if (filePath.startsWith(fetosenseReportPath)) {
 				URL url = new URL(filePath);
-				con = (HttpURLConnection) url.openConnection();
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
 				con.setRequestMethod("GET");
 				con.setDoInput(true);
+	
+				// Check if the URL is from an allowed domain
+				String host = url.getHost();
+				if (!fetosenseReportPath.contains(host)) {
+					throw new IllegalArgumentException("The URL is not from an allowed domain");
+				}
+	
 				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
 				Path path = Paths.get(filePathLocal);
 				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
+			}
+	
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		} finally {
 			con.disconnect();
 		}
-
+	
 		return filePathLocal;
 	}
 
