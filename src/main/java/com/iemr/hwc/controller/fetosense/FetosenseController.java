@@ -192,6 +192,8 @@ public class FetosenseController {
 		try {
 			if (requestObj != null) {
 				Fetosense fetosenseData = InputMapper.gson().fromJson(requestObj, Fetosense.class);
+				String reportPath = fetosenseData.getReportPath();
+				if (reportPath.contains("feto.com")){
 				int responseValue = fetosenseService.updateFetosenseData(fetosenseData);
 				if (responseValue == 1)
 					response.setResponse("Data updated successfully");
@@ -199,6 +201,7 @@ public class FetosenseController {
 				response.setError(404, "Invalid request");
 				logger.error("Invalid request");
 			}
+		}
 		} catch (IEMRException e) {
 			response.setError(5000, e.getMessage());
 			logger.error("Error while updating fetosense data :" + e);
