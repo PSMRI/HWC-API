@@ -22,7 +22,9 @@
 package com.iemr.hwc.service.fetosense;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -35,6 +37,16 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
@@ -179,27 +191,47 @@ public class FetosenseServiceImpl implements FetosenseService {
 
 	// generate report file in file storage
 	private String generatePDF(String filePath) throws IEMRException {
-		String filePathLocal = "";
-		Long timeStamp = System.currentTimeMillis();
-		try {
-			if (filePath.startsWith(fetosenseReportPath)) {
-				URL url = new URL(filePath);
-				con = (HttpURLConnection) url.openConnection();
-				con.setRequestMethod("GET");
-				con.setDoInput(true);
-				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
-				Path path = Paths.get(filePathLocal);
-				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			}
+    String filePathLocal = "";
+    Long timeStamp = System.currentTimeMillis();
 
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
-		} finally {
-			con.disconnect();
-		}
+    try {
+        if (filePath.startsWith(fetosenseReportPath)) {
+            URL url = new URL(filePath);
 
-		return filePathLocal;
-	}
+            // Check if the URL is from an allowed domain
+            String host = url.getHost();
+            if (!fetosenseReportPath.contains(host)) {
+                throw new IllegalArgumentException("The URL is not from an allowed domain");
+            }
+
+            filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
+
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                HttpGet httpGet = new HttpGet(filePath);
+                HttpResponse httpResponse = httpClient.execute(httpGet);
+
+                // Check if the request was successful (status code 200)
+                if (httpResponse.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException("Failed to download PDF. HTTP status code: " + httpResponse.getStatusLine().getStatusCode());
+                }
+
+                try (InputStream inputStream = httpResponse.getEntity().getContent();
+                     FileOutputStream outputStream = new FileOutputStream(filePathLocal)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+            }
+        }
+
+    } catch (IOException e) {
+        throw new RuntimeException(e.getMessage());
+    }
+
+    return filePathLocal;
+}
 
 	// generate report file in file storage
 	@Override
