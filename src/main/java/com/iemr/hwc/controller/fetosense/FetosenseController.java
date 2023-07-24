@@ -23,10 +23,18 @@ package com.iemr.hwc.controller.fetosense;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +44,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.iemr.hwc.data.fetosense.Fetosense;
 import com.iemr.hwc.service.fetosense.FetosenseService;
 import com.iemr.hwc.utils.exception.IEMRException;
@@ -45,10 +55,16 @@ import com.iemr.hwc.utils.response.OutputResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/fetosense", headers = "Authorization")
+@PropertySource("classpath:application.properties")
 public class FetosenseController {
+
+	@Value("${fetosenseReportPath}")
+	private String fetosenseReportPathHost;
+
 	@Autowired
 	private FetosenseService fetosenseService;
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -170,6 +186,9 @@ public class FetosenseController {
 	 * @param requestObj
 	 * @param Authorization
 	 * @return
+	 * @throws URISyntaxException
+	 * @throws UnknownHostException
+	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
 	@CrossOrigin
@@ -186,11 +205,23 @@ public class FetosenseController {
 					+ "\"partnerMotherId\":\"String\", \r\n" + "\"partnerFetosenseID\":\"Long\",\r\n"
 					+ "\"partnerId\":\"String\", \r\n" + "\"partnerName\":\"String\", \r\n"
 					+ "\"motherName\":\"String\", \r\n" + "}\r\n" + "}") @RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+			@RequestHeader(value = "Authorization") String Authorization) throws  UnknownHostException, MalformedURLException {
 		OutputResponse response = new OutputResponse();
 		logger.info("Fetosense API test result data  :" + requestObj);
 		try {
 			if (requestObj != null) {
+				Gson gson = new Gson();
+				JsonObject jsonObject = gson.fromJson(requestObj, JsonObject.class);
+				String reportPath = jsonObject.get("reportPath").getAsString();
+				
+				URL url = new URL(reportPath);
+
+				if (url.getProtocol().equals("https") && 
+				url.getHost().contains(fetosenseReportPathHost) && 
+				!InetAddress.getByName(url.getHost()).isLoopbackAddress() &&
+				!InetAddress.getByName(url.getHost()).isAnyLocalAddress() &&
+				!InetAddress.getByName(url.getHost()).isLinkLocalAddress()){
+
 				Fetosense fetosenseData = InputMapper.gson().fromJson(requestObj, Fetosense.class);
 				int responseValue = fetosenseService.updateFetosenseData(fetosenseData);
 				if (responseValue == 1)
@@ -198,10 +229,16 @@ public class FetosenseController {
 			} else {
 				response.setError(404, "Invalid request");
 				logger.error("Invalid request");
-			}
+			}}
 		} catch (IEMRException e) {
 			response.setError(5000, e.getMessage());
 			logger.error("Error while updating fetosense data :" + e);
+		}catch (MalformedURLException e){
+			response.setError(5001, e.getMessage());
+			logger.error("reportPath is not a valid URI :" + e);
+		}catch (UnknownHostException e){
+			response.setError(5002, e.getMessage());
+			logger.error("reportPath contains UnknownHostException :" + e);
 		}
 		return response.toStringWithHttpStatus();
 	}
