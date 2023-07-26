@@ -24,6 +24,7 @@ package com.iemr.hwc.service.dataSyncActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.sql.Timestamp;
 
 import javax.sql.DataSource;
 
@@ -85,13 +86,16 @@ public class DataSyncRepository {
 			String autoIncreamentColumn, String user) throws Exception {
 		jdbcTemplate = getJdbcTemplate();
 		String query = " UPDATE " + schemaName + "." + tableName
-				+ " SET processed = 'P' , SyncedDate = now(), Syncedby = '" + user + "' WHERE " + autoIncreamentColumn
+				+ " SET processed = 'P' , SyncedDate = ?, Syncedby = ? WHERE " + autoIncreamentColumn
 				+ " IN (" + vanSerialNos + ")";
-		System.out.println("hello");
+		// System.out.println("hello");
 
-		int i = jdbcTemplate.update(query);
+		// int i = jdbcTemplate.update(query);
 
-		return i;
+		Timestamp syncedDate = new Timestamp(System.currentTimeMillis());
+        int updatedRows = jdbcTemplate.update(query, syncedDate, user);
+
+		return updatedRows;
 
 	}
 
