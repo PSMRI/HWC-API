@@ -23,8 +23,11 @@ package com.iemr.hwc.service.dataSyncLayerCentral;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -73,6 +76,9 @@ public class DataSyncRepositoryCentral {
 	}
 
 	// End of Data Upload Repository
+
+	private static final Set<String> ALLOWED_SCHEMAS = new HashSet<>(Arrays.asList("schema1", "schema2", "schema3"));
+	private static final Set<String> ALLOWED_TABLES = new HashSet<>(Arrays.asList("table1", "table2", "table3"));
 
 	// Data Download Repository
 	public List<Map<String, Object>> getMasterDataFromTable(String schema, String table, String columnNames,
@@ -138,10 +144,9 @@ public class DataSyncRepositoryCentral {
 			return false;
 		}
 
-		// Ensure the name adheres to the naming conventions
-		// It should start with a letter (either uppercase or lowercase)
-		// followed by alphanumeric characters and underscores
-		return name.matches("^[A-Za-z][A-Za-z0-9_]*$");
+		// Ensure the name adheres to the naming conventions and is in the white-list
+		return name.matches("^[A-Za-z][A-Za-z0-9_]*$") &&
+				(ALLOWED_SCHEMAS.contains(name) || ALLOWED_TABLES.contains(name));
 	}
 
 	// End of Data Download Repository
