@@ -23,11 +23,8 @@ package com.iemr.hwc.service.dataSyncLayerCentral;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -77,22 +74,12 @@ public class DataSyncRepositoryCentral {
 
 	// End of Data Upload Repository
 
-	// private static final Set<String> ALLOWED_SCHEMAS = new
-	// HashSet<>(Arrays.asList("schema1", "schema2", "schema3"));
-	// private static final Set<String> ALLOWED_TABLES = new
-	// HashSet<>(Arrays.asList("table1", "table2", "table3"));
-
 	// Data Download Repository
 	public List<Map<String, Object>> getMasterDataFromTable(String schema, String table, String columnNames,
 			String masterType, Timestamp lastDownloadDate, Integer vanID, Integer psmID) throws Exception {
 
 		jdbcTemplate = getJdbcTemplate();
 		List<Map<String, Object>> resultSetList;
-
-		// Validate and sanitize schema and table names to avoid SQL injection
-		// if (!isValidName(schema) || !isValidName(table)) {
-		// throw new IllegalArgumentException("Invalid schema or table name.");
-		// }
 
 		StringBuilder queryBuilder = new StringBuilder("SELECT ");
 
@@ -142,18 +129,6 @@ public class DataSyncRepositoryCentral {
 		resultSetList = jdbcTemplate.queryForList(query, queryParams);
 		return resultSetList;
 	}
-
-	// Helper method to validate schema and table names
-	// private boolean isValidName(String name) {
-	// // Check if the name is not null or empty
-	// if (name == null || name.isEmpty()) {
-	// return false;
-	// }
-
-	// // Ensure the name adheres to the naming conventions and is in the white-list
-	// return name.matches("^[A-Za-z][A-Za-z0-9_]*$") &&
-	// (ALLOWED_SCHEMAS.contains(name) || ALLOWED_TABLES.contains(name));
-	// }
 
 	// End of Data Download Repository
 }
