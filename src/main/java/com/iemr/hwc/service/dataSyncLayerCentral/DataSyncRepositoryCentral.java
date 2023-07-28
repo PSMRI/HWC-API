@@ -97,11 +97,14 @@ public class DataSyncRepositoryCentral {
 		// Append the column names directly, they are not dynamic and safe
 		queryBuilder.append(columnNames);
 		queryBuilder.append(" FROM ");
-		queryBuilder.append(schema).append(".").append(table);
+		queryBuilder.append("?.?");
 
 		List<Object> params = new ArrayList<>();
+		params.add(schema);
+		params.add(table);
 
 		StringBuilder whereClause = new StringBuilder();
+
 		if (masterType != null) {
 			whereClause.append(" WHERE ");
 			if (lastDownloadDate != null) {
