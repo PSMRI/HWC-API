@@ -94,12 +94,13 @@ public class DataSyncRepositoryCentral {
 
 		StringBuilder queryBuilder = new StringBuilder("SELECT ");
 
-		// Append the column names directly, they are not dynamic and safe
-		queryBuilder.append(columnNames);
+		// used parameterised query builder
+		queryBuilder.append("?");
 		queryBuilder.append(" FROM ");
 		queryBuilder.append("?.?");
 
 		List<Object> params = new ArrayList<>();
+		params.add(columnNames);
 		params.add(schema);
 		params.add(table);
 
