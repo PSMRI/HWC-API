@@ -79,15 +79,23 @@ public class DataSyncRepositoryCentral {
 			String masterType, Timestamp lastDownloadDate, Integer vanID, Integer psmID) throws Exception {
 
 		jdbcTemplate = getJdbcTemplate();
+		List<Map<String, Object>> resultSetList;
+
+		// Validate and sanitize schema and table names to avoid SQL injection
+		if (!isValidName(schema) || !isValidName(table)) {
+			throw new IllegalArgumentException("Invalid schema or table name.");
+		}
+
 		StringBuilder queryBuilder = new StringBuilder("SELECT ");
+
+		// Append the column names directly, they are not dynamic and safe
 		queryBuilder.append(columnNames);
 		queryBuilder.append(" FROM ");
-		queryBuilder.append("?.?");
-		List<Object> params = new ArrayList<>();
-		params.add(schema);
-		params.add(table);
-		StringBuilder whereClause = new StringBuilder();
+		queryBuilder.append(schema).append(".").append(table);
 
+		List<Object> params = new ArrayList<>();
+
+		StringBuilder whereClause = new StringBuilder();
 		if (masterType != null) {
 			whereClause.append(" WHERE ");
 			if (lastDownloadDate != null) {
@@ -118,8 +126,23 @@ public class DataSyncRepositoryCentral {
 		String query = queryBuilder.toString();
 		Object[] queryParams = params.toArray();
 
-		List<Map<String, Object>> resultSetList = jdbcTemplate.queryForList(query, queryParams);
+		// Use PreparedStatement for the entire query
+		resultSetList = jdbcTemplate.queryForList(query, queryParams);
 		return resultSetList;
 	}
+
+	// Helper method to validate schema and table names
+	private boolean isValidName(String name) {
+		// Check if the name is not null or empty
+		if (name == null || name.isEmpty()) {
+			return false;
+		}
+
+		// Ensure the name adheres to the naming conventions
+		// It should start with a letter (either uppercase or lowercase)
+		// followed by alphanumeric characters and underscores
+		return name.matches("^[A-Za-z][A-Za-z0-9_]*$");
+	}
+
 	// End of Data Download Repository
 }
