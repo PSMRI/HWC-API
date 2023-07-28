@@ -83,34 +83,48 @@ public class DataSyncRepositoryCentral {
 
 		StringBuilder queryBuilder = new StringBuilder("SELECT ");
 
-		// used parameterised query builder
-		queryBuilder.append("?");
-		queryBuilder.append(" FROM ");
-		queryBuilder.append("?.?");
-
 		List<Object> params = new ArrayList<>();
-		params.add(columnNames);
-		params.add(schema);
-		params.add(table);
 
 		StringBuilder whereClause = new StringBuilder();
 
 		if (masterType != null) {
-			whereClause.append(" WHERE ");
-			if (lastDownloadDate != null) {
-				whereClause.append("Date(LastModDate) >= ?");
-				params.add(lastDownloadDate);
-			}
 
 			if (masterType.equalsIgnoreCase("A")) {
-				// No additional condition needed for masterType "A"
-			} else if (masterType.equalsIgnoreCase("V")) {
+				queryBuilder.append("?");
+				queryBuilder.append(" FROM ");
+				queryBuilder.append("?.?");
+				params.add(columnNames);
+				params.add(schema);
+				params.add(table);
 				if (lastDownloadDate != null) {
+					whereClause.append(" WHERE ");
+					whereClause.append("Date(LastModDate) >= ?");
+					params.add(lastDownloadDate);
+				}
+
+			} else if (masterType.equalsIgnoreCase("V")) {
+				queryBuilder.append("?");
+				queryBuilder.append(" FROM ");
+				queryBuilder.append("?.?");
+				params.add(columnNames);
+				params.add(schema);
+				params.add(table);
+				whereClause.append(" WHERE ");
+				if (lastDownloadDate != null) {
+					whereClause.append("Date(LastModDate) >= ?");
+					params.add(lastDownloadDate);
 					whereClause.append(" AND ");
 				}
 				whereClause.append("VanID = ?");
 				params.add(vanID);
 			} else if (masterType.equalsIgnoreCase("P")) {
+				queryBuilder.append("?");
+				queryBuilder.append(" FROM ");
+				queryBuilder.append("?.?");
+				params.add(columnNames);
+				params.add(schema);
+				params.add(table);
+				whereClause.append(" WHERE ");
 				if (lastDownloadDate != null) {
 					whereClause.append(" AND ");
 				}
