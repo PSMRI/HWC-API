@@ -206,14 +206,30 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		Path normalizedPath = Paths.get(filePath).toRealPath();
-		if (!Files.exists(normalizedPath)) {
-			throw new FileNotFoundException("File does not exist: " + normalizedPath);
+		Path normalizedPath = Paths.get(filePath);
+		String normalizedPathString = normalizedPath.toString();
+
+		// Check if the path contains any invalid characters.
+		boolean isPathSafe = true;
+		for (int i = 0; i < normalizedPathString.length(); i++) {
+			char c = normalizedPathString.charAt(i);
+			if (!Character.isLetterOrDigit(c) && c != '.' && c != '-' && c != '_') {
+				isPathSafe = false;
+				break;
+			}
 		}
-		// Path normalizedPath = FileSystems.getDefault().getPath(filePath).normalize();
-		// FileInputStream file = new FileInputStream(filePath);
+
+		if (!isPathSafe) {
+			throw new IEMRException("Path is not safe: " + filePath);
+		}
+
+		if (!Files.exists(normalizedPath)) {
+			throw new FileNotFoundException("File does not exist: " + filePath);
+		}
+
 		byte[] byteArray = Files.readAllBytes(normalizedPath);
 		return Base64.getEncoder().encodeToString(byteArray);
+
 	}
 
 	/***
