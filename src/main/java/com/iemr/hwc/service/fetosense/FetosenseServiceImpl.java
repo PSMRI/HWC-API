@@ -206,7 +206,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		Path normalizedPath = Paths.get(filePath).normalize();
+		Path normalizedPath = Paths.get(filePath).toRealPath();
 		if (!Files.exists(normalizedPath)) {
 			throw new FileNotFoundException("File does not exist: " + filePath);
 		}
