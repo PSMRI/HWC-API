@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.jasper.tagplugins.jstl.core.If;
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -207,41 +205,10 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		if (!isValidFilePath(filePath)) {
-			throw new IEMRException("Invalid file path: " + filePath);
-		}
+		Path absolutePath = Paths.get(filePath).toAbsolutePath();
 		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
+		byte[] byteArray = Files.readAllBytes(absolutePath);
 		return Base64.getEncoder().encodeToString(byteArray);
-	}
-
-	private boolean isValidFilePath(String filePath) {
-		// add the allowed directory path
-		String allowedDirectory = fotesenseFilePath;
-		String[] allowedExtensions = { "pdf", "docx", "jpg", "png" };
-		Path normalizedPath = FileSystems.getDefault().getPath(filePath).normalize();
-		if (!normalizedPath.startsWith(Paths.get(allowedDirectory).normalize())) {
-			return false;
-		}
-		// Check if the file extension is among the allowed extensions
-		String fileExtension = getFileExtension(filePath);
-
-		for (String allowedExtension : allowedExtensions) {
-			if (fileExtension.equalsIgnoreCase(allowedExtension)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private String getFileExtension(String filePath) {
-		String extension = "";
-		int lastDotIndex = filePath.lastIndexOf(".");
-		if (lastDotIndex > 0) {
-			extension = filePath.substring(lastDotIndex + 1);
-		}
-		return extension;
 	}
 
 	/***
