@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -205,9 +206,10 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		Path absolutePath = Paths.get(filePath).toAbsolutePath();
+
+		Path normalizedPath = FileSystems.getDefault().getPath(filePath).normalize();
 		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(absolutePath);
+		byte[] byteArray = Files.readAllBytes(normalizedPath);
 		return Base64.getEncoder().encodeToString(byteArray);
 	}
 
