@@ -21,6 +21,7 @@
 */
 package com.iemr.hwc.service.fetosense;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.jasper.tagplugins.jstl.core.If;
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -204,9 +206,46 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-//		FileInputStream file = new FileInputStream(filePath);
+		if (!isValidFilePath(filePath)) {
+			throw new IEMRException("Invalid file path: " + filePath);
+		}
+		// FileInputStream file = new FileInputStream(filePath);
 		byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
 		return Base64.getEncoder().encodeToString(byteArray);
+	}
+
+	private boolean isValidFilePath(String filePath) {
+		// add the allowed directory path
+		String allowedDirectory = fotesenseFilePath;
+		String[] allowedExtensions = { "pdf", "docx", "jpg", "png" };
+		File file = new File(filePath);
+		String absolutePath;
+		try {
+			absolutePath = file.getCanonicalPath();
+		} catch (IOException e) {
+			return false;
+		}
+
+		if (!absolutePath.startsWith(allowedDirectory)) {
+			return false;
+		}
+		String fileExtension = getFileExtension(filePath);
+		for (String allowedExtension : allowedExtensions) {
+			if (fileExtension.equalsIgnoreCase(allowedExtension)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private String getFileExtension(String filePath) {
+		String extension = "";
+		int lastDotIndex = filePath.lastIndexOf(".");
+		if (lastDotIndex > 0) {
+			extension = filePath.substring(lastDotIndex + 1);
+		}
+		return extension;
 	}
 
 	/***
@@ -280,35 +319,35 @@ public class FetosenseServiceImpl implements FetosenseService {
 			} else
 				throw new RuntimeException("Unable to generate fetosense id in TM");
 
-		} 
+		}
 		/**
 		 * @author SH20094090
 		 * @purpose To get response body in case of exception
 		 */
-		catch(HttpClientErrorException e)
-		{
+		catch (HttpClientErrorException e) {
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(e.getResponseBodyAsString());
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 			if (request != null && request.getPartnerFetosenseId() != null && request.getPartnerFetosenseId() > 0) {
-				 //String response = e.getres;
+				// String response = e.getres;
 				logger.info("fetosense test request transaction roll-backed");
 				request.setDeleted(true);
 				fetosenseRepo.save(request);
 			}
-			if(jsnOBJ.get("status") !=null && jsnOBJ.get("message") !=null)
-//			throw new Exception("Unable to raise test request, error is : " + ("status code "+(jsnOBJ.get("status").getAsString())
-//					+","+(jsnOBJ.get("message").getAsString())));
-				throw new Exception("Unable to raise test request, error is : " + (jsnOBJ.get("message").getAsString()));
+			if (jsnOBJ.get("status") != null && jsnOBJ.get("message") != null)
+				// throw new Exception("Unable to raise test request, error is : " + ("status
+				// code "+(jsnOBJ.get("status").getAsString())
+				// +","+(jsnOBJ.get("message").getAsString())));
+				throw new Exception(
+						"Unable to raise test request, error is : " + (jsnOBJ.get("message").getAsString()));
 			else
 				throw new Exception("Unable to raise test request, error is :  " + e.getMessage());
-			
-		}
-		catch (Exception e) {
+
+		} catch (Exception e) {
 			// if record is created, and not raised in fetosense device, soft delete it
 			if (request != null && request.getPartnerFetosenseId() != null && request.getPartnerFetosenseId() > 0) {
-				 //String response = e.getres;
+				// String response = e.getres;
 				logger.info("fetosense test request transaction roll-backed");
 				request.setDeleted(true);
 				fetosenseRepo.save(request);
