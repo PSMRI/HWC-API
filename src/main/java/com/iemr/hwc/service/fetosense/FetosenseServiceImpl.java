@@ -84,6 +84,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 
 	private static HttpUtils httpUtils = new HttpUtils();
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private static final Pattern INVALID_CHARACTERS_PATTERN = Pattern.compile("[\\.\\*\\?\\|<>\\|:\"/]");
 
 	@Autowired
 	private FetosenseRepo fetosenseRepo;
@@ -206,28 +207,37 @@ public class FetosenseServiceImpl implements FetosenseService {
 	}
 
 	// generate report file in file storage
+
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
 
+		String sanitisedPath = sanitizePath(filePath);
 		Path basePath = Paths.get("/path/to/allowed/directory");
 		Path normalizedPath;
 		Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\.\\-_]+$");
 
-		if (!pattern.matcher(filePath).matches()) {
+		if (!pattern.matcher(sanitisedPath).matches()) {
 			throw new IEMRException("Path contains unsafe characters: " + filePath);
 		}
 
-		normalizedPath = basePath.resolve(filePath).toRealPath();
+		normalizedPath = basePath.resolve(sanitisedPath).toRealPath();
 
 		if (!normalizedPath.startsWith(basePath)) {
-			throw new IEMRException("Path is not allowed: " + filePath);
+			throw new IEMRException("Path is not allowed: " + sanitisedPath);
 		}
 
 		if (!Files.exists(normalizedPath)) {
-			throw new FileNotFoundException("File does not exist: " + filePath);
+			throw new FileNotFoundException("File does not exist: " + sanitisedPath);
 		}
 		byte[] byteArray = Files.readAllBytes(normalizedPath);
 		return Base64.getEncoder().encodeToString(byteArray);
+	}
+
+	public static String sanitizePath(String filePath) {
+		// Sanitize the file path.
+		filePath = INVALID_CHARACTERS_PATTERN.matcher(filePath).replaceAll("");
+		// Return the sanitized path.
+		return filePath;
 	}
 
 	/***
