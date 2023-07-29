@@ -35,6 +35,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.InvalidPathException;
 
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
@@ -205,8 +206,17 @@ public class FetosenseServiceImpl implements FetosenseService {
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
 		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
-		return Base64.getEncoder().encodeToString(byteArray);
+		try {
+			Path file = Paths.get(filePath);
+			if (!Files.isRegularFile(file) || !Files.exists(file)) {
+				throw new FileNotFoundException("The file does not exist or is not a regular file.");
+			}
+
+			byte[] byteArray = Files.readAllBytes(file);
+			return Base64.getEncoder().encodeToString(byteArray);
+		} catch (InvalidPathException e) {
+			throw new IEMRException("Invalid file path provided.", e);
+		}
 	}
 
 	/***
