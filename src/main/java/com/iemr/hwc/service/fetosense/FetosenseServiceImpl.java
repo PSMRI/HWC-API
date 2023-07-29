@@ -212,9 +212,14 @@ public class FetosenseServiceImpl implements FetosenseService {
 		Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\.\\-_]+$");
 
 		if (pattern.matcher(filePath).matches()) {
-			normalizedPath = Paths.get(filePath).toAbsolutePath();
+			normalizedPath = Paths.get(filePath).toRealPath();
 		} else {
 			throw new IEMRException("Path is not safe: " + filePath);
+		}
+
+		String basePath = "/path/to/allowed/directory"; // Replace with the allowed directory path
+		if (!normalizedPath.startsWith(basePath)) {
+			throw new IEMRException("Path is not allowed: " + filePath);
 		}
 
 		if (!Files.exists(normalizedPath)) {
