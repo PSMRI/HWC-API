@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -218,18 +219,13 @@ public class FetosenseServiceImpl implements FetosenseService {
 		// add the allowed directory path
 		String allowedDirectory = fotesenseFilePath;
 		String[] allowedExtensions = { "pdf", "docx", "jpg", "png" };
-		File file = new File(filePath);
-		String absolutePath;
-		try {
-			absolutePath = file.getCanonicalPath();
-		} catch (IOException e) {
+		Path normalizedPath = FileSystems.getDefault().getPath(filePath).normalize();
+		if (!normalizedPath.startsWith(Paths.get(allowedDirectory).normalize())) {
 			return false;
 		}
-
-		if (!absolutePath.startsWith(allowedDirectory)) {
-			return false;
-		}
+		// Check if the file extension is among the allowed extensions
 		String fileExtension = getFileExtension(filePath);
+
 		for (String allowedExtension : allowedExtensions) {
 			if (fileExtension.equalsIgnoreCase(allowedExtension)) {
 				return true;
