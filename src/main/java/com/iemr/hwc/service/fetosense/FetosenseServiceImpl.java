@@ -37,6 +37,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
@@ -206,20 +208,12 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		Path normalizedPath = Paths.get(filePath);
-		String normalizedPathString = normalizedPath.toString();
+		Path normalizedPath = null;
+		Pattern pattern = Pattern.compile("^[a-zA-Z0-9\\.\\-_]+$");
 
-		// Check if the path contains any invalid characters.
-		boolean isPathSafe = true;
-		for (int i = 0; i < normalizedPathString.length(); i++) {
-			char c = normalizedPathString.charAt(i);
-			if (!Character.isLetterOrDigit(c) && c != '.' && c != '-' && c != '_') {
-				isPathSafe = false;
-				break;
-			}
-		}
-
-		if (!isPathSafe) {
+		if (pattern.matcher(filePath).matches()) {
+			normalizedPath = Paths.get(filePath);
+		} else {
 			throw new IEMRException("Path is not safe: " + filePath);
 		}
 
@@ -229,7 +223,6 @@ public class FetosenseServiceImpl implements FetosenseService {
 
 		byte[] byteArray = Files.readAllBytes(normalizedPath);
 		return Base64.getEncoder().encodeToString(byteArray);
-
 	}
 
 	/***
