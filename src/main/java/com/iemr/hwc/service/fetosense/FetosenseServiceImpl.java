@@ -183,15 +183,14 @@ public class FetosenseServiceImpl implements FetosenseService {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
 		try {
-			if (filePath.startsWith(fetosenseReportPath)) {
-				URL url = new URL(filePath);
-				con = (HttpURLConnection) url.openConnection();
-				con.setRequestMethod("GET");
-				con.setDoInput(true);
-				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
-				Path path = Paths.get(filePathLocal);
-				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			}
+
+			URL url = new URL(filePath);
+			con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.setDoInput(true);
+			filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
+			Path path = Paths.get(filePathLocal);
+			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
@@ -206,7 +205,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
 		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(Paths.get(filePath).toRealPath());
+		byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
 		return Base64.getEncoder().encodeToString(byteArray);
 	}
 
