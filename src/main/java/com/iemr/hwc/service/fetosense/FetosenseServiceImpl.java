@@ -37,14 +37,18 @@ import java.util.List;
 import java.util.Map;
 import java.nio.file.InvalidPathException;
 
+import java.io.InputStream;
+
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -81,6 +85,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 
 	private static HttpUtils httpUtils = new HttpUtils();
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private ResourceLoader resourceLoader = new ResourceLoader();
 
 	@Autowired
 	private FetosenseRepo fetosenseRepo;
@@ -90,6 +95,11 @@ public class FetosenseServiceImpl implements FetosenseService {
 
 	@Autowired
 	private FetosenseDeviceIDRepo fetosenseDeviceIDRepo;
+
+	@Autowired
+	public void FileService(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
 
 	/***
 	 * @author DU20091017 update the feto-sense data in the DB
@@ -204,11 +214,19 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		String sanitizedFilePath = filePath.replaceAll("\\", "/").replaceAll("../", "");
-		Path realPath = Paths.get(sanitizedFilePath).normalize();
-		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(realPath);
-		return Base64.getEncoder().encodeToString(byteArray);
+
+		Resource resource = resourceLoader.getResource(filePath);
+		try (InputStream inputStream = resource.getInputStream()) {
+			// convert input stream to bite array
+			byte[] byteArray = new byte[inputStream.available()];
+			inputStream.read(byteArray);
+			// convert byte array to base64 encoded string
+			String base64String = Base64.getEncoder().encodeToString(byteArray);
+			return base64String;
+		} catch (IOException e) {
+			// Handle the exception
+			throw e;
+		}
 	}
 
 	/***
