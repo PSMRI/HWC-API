@@ -205,8 +205,9 @@ public class FetosenseServiceImpl implements FetosenseService {
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
 		String sanitizedFilePath = filePath.replaceAll("\\", "/").replaceAll("../", "");
+		Path realPath = Paths.get(sanitizedFilePath).normalize();
 		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(Paths.get(sanitizedFilePath));
+		byte[] byteArray = Files.readAllBytes(realPath);
 		return Base64.getEncoder().encodeToString(byteArray);
 	}
 
