@@ -224,7 +224,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 			String base64String = Base64.getEncoder().encodeToString(byteArray);
 			return base64String;
 		} catch (IOException e) {
-			// Handle the exception
+			// Handle the exceptionw
 			throw e;
 		}
 	}
