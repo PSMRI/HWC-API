@@ -182,15 +182,14 @@ public class FetosenseServiceImpl implements FetosenseService {
 		String filePathLocal = "";
 		Long timeStamp = System.currentTimeMillis();
 		try {
-			if (filePath.startsWith(fetosenseReportPath)) {
-				URL url = new URL(filePath);
-				con = (HttpURLConnection) url.openConnection();
-				con.setRequestMethod("GET");
-				con.setDoInput(true);
-				filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
-				Path path = Paths.get(filePathLocal);
-				Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			}
+
+			URL url = new URL(filePath);
+			con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.setDoInput(true);
+			filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
+			Path path = Paths.get(filePathLocal);
+			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
@@ -204,7 +203,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-//		FileInputStream file = new FileInputStream(filePath);
+		// FileInputStream file = new FileInputStream(filePath);
 		byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
 		return Base64.getEncoder().encodeToString(byteArray);
 	}
@@ -280,35 +279,35 @@ public class FetosenseServiceImpl implements FetosenseService {
 			} else
 				throw new RuntimeException("Unable to generate fetosense id in TM");
 
-		} 
+		}
 		/**
 		 * @author SH20094090
 		 * @purpose To get response body in case of exception
 		 */
-		catch(HttpClientErrorException e)
-		{
+		catch (HttpClientErrorException e) {
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(e.getResponseBodyAsString());
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 			if (request != null && request.getPartnerFetosenseId() != null && request.getPartnerFetosenseId() > 0) {
-				 //String response = e.getres;
+				// String response = e.getres;
 				logger.info("fetosense test request transaction roll-backed");
 				request.setDeleted(true);
 				fetosenseRepo.save(request);
 			}
-			if(jsnOBJ.get("status") !=null && jsnOBJ.get("message") !=null)
-//			throw new Exception("Unable to raise test request, error is : " + ("status code "+(jsnOBJ.get("status").getAsString())
-//					+","+(jsnOBJ.get("message").getAsString())));
-				throw new Exception("Unable to raise test request, error is : " + (jsnOBJ.get("message").getAsString()));
+			if (jsnOBJ.get("status") != null && jsnOBJ.get("message") != null)
+				// throw new Exception("Unable to raise test request, error is : " + ("status
+				// code "+(jsnOBJ.get("status").getAsString())
+				// +","+(jsnOBJ.get("message").getAsString())));
+				throw new Exception(
+						"Unable to raise test request, error is : " + (jsnOBJ.get("message").getAsString()));
 			else
 				throw new Exception("Unable to raise test request, error is :  " + e.getMessage());
-			
-		}
-		catch (Exception e) {
+
+		} catch (Exception e) {
 			// if record is created, and not raised in fetosense device, soft delete it
 			if (request != null && request.getPartnerFetosenseId() != null && request.getPartnerFetosenseId() > 0) {
-				 //String response = e.getres;
+				// String response = e.getres;
 				logger.info("fetosense test request transaction roll-backed");
 				request.setDeleted(true);
 				fetosenseRepo.save(request);
