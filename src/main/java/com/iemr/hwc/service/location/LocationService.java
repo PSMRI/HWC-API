@@ -33,6 +33,8 @@ public interface LocationService {
 
 	public String getDistrictList(Integer stateID);
 
+	public String getVillageListByDistrictID(Integer districtID);
+
 	public String getDistrictBlockList(Integer districtID);
 
 	public String getParkingPlaceList(Integer districtBlockID);

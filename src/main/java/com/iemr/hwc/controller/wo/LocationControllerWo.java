@@ -19,29 +19,22 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.controller.location;
-
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+package com.iemr.hwc.controller.wo;
 
 import com.iemr.hwc.controller.common.master.CommonMasterController;
 import com.iemr.hwc.service.location.LocationServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
-
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/location", headers = "Authorization")
-public class LocationController {
+@RequestMapping(value = "wo/location")
+public class LocationControllerWo {
 	private OutputResponse response;
 	private Logger logger = LoggerFactory.getLogger(CommonMasterController.class);
 
@@ -52,48 +45,48 @@ public class LocationController {
 		this.locationServiceImpl = locationServiceImpl;
 	}
 
-	@ApiOperation(value = "Get country master for beneficiary", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/countryMaster", method = RequestMethod.GET)
-	public String getCountryMaster() {
-		logger.info("get country master ...");
-		response = new OutputResponse();
-		String s = locationServiceImpl.getCountryList();
-		if (s != null)
-			response.setResponse(s);
-		else
-			response.setError(5000, "Error while getting country");
-		return response.toString();
-	}
-
-	@ApiOperation(value = "Get country city master for beneficiary", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/countryCityMaster/{countryID}", method = RequestMethod.GET)
-	public String getCountryCityMaster(@PathVariable("countryID") Integer countryID) {
-		logger.info("get country citymaster ...");
-		response = new OutputResponse();
-		String s = locationServiceImpl.getCountryCityList(countryID);
-		if (s != null)
-			response.setResponse(s);
-		else
-			response.setError(5000, "Error while getting country city");
-		return response.toString();
-	}
-
-	@ApiOperation(value = "Get state master for beneficiary", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/stateMaster", method = RequestMethod.GET)
-	public String getStateMaster() {
-		logger.info("get state master ...");
-		response = new OutputResponse();
-		String s = locationServiceImpl.getStateList();
-		if (s != null)
-			response.setResponse(s);
-		else
-			response.setError(5000, "Error while getting states");
-		logger.info("stateMaster" + response.toString());
-		return response.toString();
-	}
+//	@ApiOperation(value = "Get country master for beneficiary", consumes = "application/json", produces = "application/json")
+//	@RequestMapping(value = "/get/countryMaster", method = RequestMethod.GET)
+//	public String getCountryMaster() {
+//		logger.info("get country master ...");
+//		response = new OutputResponse();
+//		String s = locationServiceImpl.getCountryList();
+//		if (s != null)
+//			response.setResponse(s);
+//		else
+//			response.setError(5000, "Error while getting country");
+//		return response.toString();
+//	}
+//
+//	@ApiOperation(value = "Get country city master for beneficiary", consumes = "application/json", produces = "application/json")
+//	@RequestMapping(value = "/get/countryCityMaster/{countryID}/wo", method = RequestMethod.GET)
+//	public String getCountryCityMaster(@PathVariable("countryID") Integer countryID) {
+//		logger.info("get country citymaster ...");
+//		response = new OutputResponse();
+//		String s = locationServiceImpl.getCountryCityList(countryID);
+//		if (s != null)
+//			response.setResponse(s);
+//		else
+//			response.setError(5000, "Error while getting country city");
+//		return response.toString();
+//	}
+//
+//	@ApiOperation(value = "Get state master for beneficiary", consumes = "application/json", produces = "application/json")
+//	@RequestMapping(value = "/get/stateMaster", method = RequestMethod.GET)
+//	public String getStateMaster() {
+//		logger.info("get state master ...");
+//		response = new OutputResponse();
+//		String s = locationServiceImpl.getStateList();
+//		if (s != null)
+//			response.setResponse(s);
+//		else
+//			response.setError(5000, "Error while getting states");
+//		logger.info("stateMaster" + response.toString());
+//		return response.toString();
+//	}
 
 	@ApiOperation(value = "Get district master from state id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/districtMaster/{stateID}", method = RequestMethod.GET)
+	@RequestMapping(value = "/get/districtMaster/{stateID}/wo", method = RequestMethod.GET)
 	public String getDistrictMaster(@PathVariable("stateID") Integer stateID) {
 		logger.info("get District master ...");
 		response = new OutputResponse();
@@ -107,7 +100,7 @@ public class LocationController {
 	}
 
 	@ApiOperation(value = "Get village master from village id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/LocationMaster/{villageID}", method = RequestMethod.GET)
+	@RequestMapping(value = "/get/LocationMaster/{villageID}/wo", method = RequestMethod.GET)
 	public String getLocationMaster(@PathVariable("villageID") Integer villageID) {
 		logger.info("get Location master ...");
 		response = new OutputResponse();
@@ -121,7 +114,7 @@ public class LocationController {
 	}
 
 	@ApiOperation(value = "Get block master from district id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/districtBlockMaster/{districtID}", method = RequestMethod.GET)
+	@RequestMapping(value = "/get/districtBlockMaster/{districtID}/wo", method = RequestMethod.GET)
 	public String getDistrictBlockMaster(@PathVariable("districtID") Integer districtID) {
 		logger.info("get District Block master districtID ..." + districtID);
 		response = new OutputResponse();
@@ -135,7 +128,7 @@ public class LocationController {
 	}
 
 	@ApiOperation(value = "Get village master from block id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/villageMasterFromBlockID/{blockID}", method = RequestMethod.GET)
+	@RequestMapping(value = "/get/villageMasterFromBlockID/{blockID}/wo", method = RequestMethod.GET)
 	public String getVillageMaster(@PathVariable("blockID") Integer blockID) {
 		logger.info("get District Block master districtID ..." + blockID);
 		response = new OutputResponse();
@@ -149,7 +142,7 @@ public class LocationController {
 	}
 
 	@ApiOperation(value = "Get village from district id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/get/villageFromDistrictID/{districtID}", method = RequestMethod.GET)
+	@RequestMapping(value = "/get/villageFromDistrictID/{districtID}/wo", method = RequestMethod.GET)
 	public String getVillageByDistrictID(@PathVariable("districtID") Integer districtID) {
 		logger.info("get village by districtID ..." + districtID);
 		response = new OutputResponse();
