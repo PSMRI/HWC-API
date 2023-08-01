@@ -45,56 +45,18 @@ public class LocationControllerWo {
 		this.locationServiceImpl = locationServiceImpl;
 	}
 
-//	@ApiOperation(value = "Get country master for beneficiary", consumes = "application/json", produces = "application/json")
-//	@RequestMapping(value = "/get/countryMaster", method = RequestMethod.GET)
-//	public String getCountryMaster() {
-//		logger.info("get country master ...");
-//		response = new OutputResponse();
-//		String s = locationServiceImpl.getCountryList();
-//		if (s != null)
-//			response.setResponse(s);
-//		else
-//			response.setError(5000, "Error while getting country");
-//		return response.toString();
-//	}
-//
-//	@ApiOperation(value = "Get country city master for beneficiary", consumes = "application/json", produces = "application/json")
-//	@RequestMapping(value = "/get/countryCityMaster/{countryID}/wo", method = RequestMethod.GET)
-//	public String getCountryCityMaster(@PathVariable("countryID") Integer countryID) {
-//		logger.info("get country citymaster ...");
-//		response = new OutputResponse();
-//		String s = locationServiceImpl.getCountryCityList(countryID);
-//		if (s != null)
-//			response.setResponse(s);
-//		else
-//			response.setError(5000, "Error while getting country city");
-//		return response.toString();
-//	}
-//
-//	@ApiOperation(value = "Get state master for beneficiary", consumes = "application/json", produces = "application/json")
-//	@RequestMapping(value = "/get/stateMaster", method = RequestMethod.GET)
-//	public String getStateMaster() {
-//		logger.info("get state master ...");
-//		response = new OutputResponse();
-//		String s = locationServiceImpl.getStateList();
-//		if (s != null)
-//			response.setResponse(s);
-//		else
-//			response.setError(5000, "Error while getting states");
-//		logger.info("stateMaster" + response.toString());
-//		return response.toString();
-//	}
-
 	@ApiOperation(value = "Get district master from state id", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = "/get/districtMaster/{stateID}/wo", method = RequestMethod.GET)
 	public String getDistrictMaster(@PathVariable("stateID") Integer stateID) {
 		logger.info("get District master ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getDistrictList(stateID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting districts");
+		}
 		logger.info("districtMaster" + response.toString());
 		return response.toString();
 	}
@@ -105,10 +67,12 @@ public class LocationControllerWo {
 		logger.info("get Location master ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getLocationMasterData(villageID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting data");
+		}
 		logger.info("villageMaster" + response.toString());
 		return response.toString();
 	}
@@ -133,10 +97,12 @@ public class LocationControllerWo {
 		logger.info("get District Block master districtID ..." + blockID);
 		response = new OutputResponse();
 		String s = locationServiceImpl.getVillageMasterFromBlockID(blockID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting villages");
+		}
 		logger.info("village master" + response.toString());
 		return response.toString();
 	}
@@ -147,10 +113,12 @@ public class LocationControllerWo {
 		logger.info("get village by districtID ..." + districtID);
 		response = new OutputResponse();
 		String s = locationServiceImpl.getVillageListByDistrictID(districtID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting villages");
+		}
 		logger.info("village master" + response.toString());
 		return response.toString();
 	}
