@@ -20,6 +20,7 @@ public interface MapperUtils {
             @Mapping(target = "spouseName", expression = "java(patientExt.getSpouseName().asStringValue())"),
             @Mapping(target = "ageAtMarriage", expression = "java(patientExt.getAgeAtMarriage().toString())"),
             @Mapping(target = "providerServiceMapId", expression = "java(Integer.parseInt(patientExt.getProviderServiceMapId().asStringValue()))"),
+            @Mapping(target = "providerServiceMapIdCopy", expression = "java(Integer.parseInt(patientExt.getProviderServiceMapId().asStringValue()))"),
             @Mapping(target = "parkingPlaceID", expression = "java(Integer.parseInt(patientExt.getParkingPlaceID().asStringValue()))"),
             @Mapping(target = "vanID", expression = "java(Integer.parseInt(patientExt.getVanID().asStringValue()))"),
             @Mapping(target = "createdBy", expression = "java(patientExt.getCreatedBy().asStringValue())"),

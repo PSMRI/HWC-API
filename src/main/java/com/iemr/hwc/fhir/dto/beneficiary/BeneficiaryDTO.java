@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class BeneficiaryDTO {
     private String firstName;
-    private String LastName;
+    private String lastName;
     private String fatherName;
     private String spouseName;
     private String genderName;
@@ -22,6 +22,8 @@ public class BeneficiaryDTO {
     private String maritalStatusName;
     private String ageAtMarriage;
     private Integer providerServiceMapId;
+    @SerializedName("providerServiceMapID")
+    private Integer providerServiceMapIdCopy;
     private DemographicsDTO i_bendemographics;
     private List<PhoneDetailsDTO> benPhoneMaps;
     private List<GovtIdentitiesDTO> beneficiaryIdentities;
