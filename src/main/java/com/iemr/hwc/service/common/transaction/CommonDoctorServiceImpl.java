@@ -82,11 +82,6 @@ import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.mapper.OutputMapper;
 
-/***
- * 
- * @author NE298657
- *
- */
 @Service
 @PropertySource("classpath:application.properties")
 public class CommonDoctorServiceImpl {
@@ -318,8 +313,6 @@ public class CommonDoctorServiceImpl {
 				benClinicalObservations
 						.setClinicalObservationSctcode(clinicalConceptID.substring(0, clinicalConceptID.length() - 2));
 
-//			benClinicalObservations.setClinicalObservation(clinicalTerm.toString());
-//			benClinicalObservations.setClinicalObservationSctcode(clinicalConceptID.toString());
 		}
 
 		if (wrapperAncFindings != null && wrapperAncFindings.getSignificantFindingsList() != null
@@ -360,10 +353,7 @@ public class CommonDoctorServiceImpl {
 				benChiefComplaint.setCreatedBy(wrapperAncFindings.getCreatedBy());
 
 				if (null != complaintsDetails.getChiefComplaintID()) {
-					/*
-					 * Double d = (Double) complaintsDetails.getChiefComplaintID(); if (d == null)
-					 * continue;
-					 */
+					
 					benChiefComplaint.setChiefComplaintID(complaintsDetails.getChiefComplaintID());
 				}
 				if (null != complaintsDetails.getChiefComplaint())
@@ -416,9 +406,6 @@ public class CommonDoctorServiceImpl {
 	public String getDocWorkListNewFutureScheduledForTM(Integer providerServiceMapId, Integer serviceID,
 			Integer vanID) {
 
-		// Calendar cal = Calendar.getInstance();
-		// cal.add(Calendar.DAY_OF_YEAR, -7);
-		// long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> docWorkListFutureScheduled = new ArrayList<>();
 		if (serviceID != null && serviceID == 4) {
@@ -549,30 +536,14 @@ public class CommonDoctorServiceImpl {
 	}
 
 	public String getPrescribedDrugs(Long beneficiaryRegID, Long visitCode) {
-		// ArrayList<Object[]> prescriptions =
-		// prescriptionDetailRepo.getBenPrescription(beneficiaryRegID, visitCode);
-		//
-		// PrescriptionDetail prescriptionData =
-		// PrescriptionDetail.getPrescriptions(prescriptions);
-		// if (null != prescriptionData) {
 		ArrayList<Object[]> resList = prescribedDrugDetailRepo.getBenPrescribedDrugDetails(beneficiaryRegID, visitCode);
 
 		ArrayList<PrescribedDrugDetail> prescribedDrugs = PrescribedDrugDetail.getprescribedDrugs(resList);
-		// prescriptionData.setPrescribedDrugs(prescribedDrugs);
-		// }
 
 		return new Gson().toJson(prescribedDrugs);
 	}
 
-	/*
-	 * public PrescriptionDetail getLatestPrescription(Long beneficiaryRegID, Long
-	 * benVisitID) { ArrayList<Object[]> prescriptions =
-	 * prescriptionDetailRepo.getBenPrescription(beneficiaryRegID, benVisitID);
-	 * 
-	 * PrescriptionDetail prescriptionData =
-	 * PrescriptionDetail.getPrescriptions(prescriptions); return prescriptionData;
-	 * }
-	 */
+	
 
 	public String getReferralDetails(Long beneficiaryRegID, Long visitCode, Boolean rrList) {
 		ArrayList<BenReferDetails> resList = benReferDetailsRepo.findByBeneficiaryRegIDAndVisitCode(beneficiaryRegID,
@@ -735,7 +706,6 @@ public class CommonDoctorServiceImpl {
 		short docFlag = (short) 1;
 		short tcSpecialistFlag = (short) 0;
 
-		// for feto sense
 		short labTechnicianFlag = (short) 0;
 		int tcUserID = 0;
 		Timestamp tcDate = null;
@@ -768,7 +738,6 @@ public class CommonDoctorServiceImpl {
 			if (isTestPrescribed) {
 				tcSpecialistFlag = (short) 2;
 			} else {
-				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 				tcSpecialistFlag = (short) 9;
@@ -780,7 +749,6 @@ public class CommonDoctorServiceImpl {
 				docFlag = (short) 2;
 			} else {
 				docFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -803,15 +771,9 @@ public class CommonDoctorServiceImpl {
 
 		int i = 0;
 
-//		if(labTechnicianFlag == 3) {
-//			docFlag = 9;
-//		}else {
-//			docFlag = 2;
-//		}
 
 		if (commonUtilityClass != null && commonUtilityClass.getIsSpecialist() != null
 				&& commonUtilityClass.getIsSpecialist() == true) {
-			// updating lab technician flag as well after feto sense
 			i = commonBenStatusFlowServiceImpl.updateBenFlowAfterDocDataFromSpecialist(tmpBenFlowID,
 					tmpbeneficiaryRegID, tmpBeneficiaryID, tmpBenVisitID, docFlag, pharmaFalg, (short) 0,
 					tcSpecialistFlag, labTechnicianFlag);
@@ -840,7 +802,6 @@ public class CommonDoctorServiceImpl {
 			i = commonBenStatusFlowServiceImpl.updateBenFlowAfterDocData(tmpBenFlowID, tmpbeneficiaryRegID,
 					tmpBeneficiaryID, tmpBenVisitID, docFlag, pharmaFalg, (short) 0, tcSpecialistFlag, tcUserID, tcDate,
 					labTechnicianFlag);
-		// Shubham Shekhar,15-10-2020,TM Prescription SMS
 		if (commonUtilityClass.getIsSpecialist() == true) {
 			if (tcSpecialistFlag == 9) {
 				if (commonUtilityClass.getPrescriptionID() != null) {
@@ -867,9 +828,6 @@ public class CommonDoctorServiceImpl {
 		return i;
 	}
 
-	/// ------End of beneficiary flow table after doctor data save-------------
-
-	/// ------Start of beneficiary flow table after doctor data update-------------
 	/**
 	 * 
 	 * 
@@ -889,7 +847,6 @@ public class CommonDoctorServiceImpl {
 		int tcUserID = 0;
 		Timestamp tcDate = null;
 
-		// for feto sense
 		short labTechnicianFlag = (short) 0;
 
 		Long tmpBenFlowID = commonUtilityClass.getBenFlowID();
@@ -918,7 +875,6 @@ public class CommonDoctorServiceImpl {
 				tcSpecialistFlag = (short) 2;
 			else {
 				tcSpecialistFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -959,7 +915,6 @@ public class CommonDoctorServiceImpl {
 				docFlag = (short) 2;
 			else {
 				docFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -982,7 +937,6 @@ public class CommonDoctorServiceImpl {
 
 		}
 
-		// Shubham Shekhar,15-10-2020,TM Prescription SMS
 		if (commonUtilityClass.getIsSpecialist() == true) {
 			if (tcSpecialistFlag == 9) {
 				if (commonUtilityClass.getPrescriptionID() != null)
@@ -997,7 +951,6 @@ public class CommonDoctorServiceImpl {
 		return i;
 	}
 
-	/// ------End of beneficiary flow table after doctor data update-------------
 
 	public String deletePrescribedMedicine(JSONObject obj) {
 		int i = 0;
@@ -1015,7 +968,6 @@ public class CommonDoctorServiceImpl {
 	public int callTmForSpecialistSlotBook(TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ,
 			String Authorization) {
 		int successFlag = 0;
-		// OutputMapper outputMapper = new OutputMapper();
 		String requestOBJ = OutputMapper.gson().toJson(tcSpecialistSlotBookingRequestOBJ);
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -1025,7 +977,6 @@ public class CommonDoctorServiceImpl {
 		HttpEntity<Object> request = new HttpEntity<Object>(requestOBJ, headers);
 		ResponseEntity<String> response = restTemplate.exchange(tcSpecialistSlotBook, HttpMethod.POST, request,
 				String.class);
-		// System.out.println(response.getBody());
 
 		if (response.getStatusCodeValue() == 200 && response.hasBody()) {
 			JsonObject jsnOBJ = new JsonObject();
@@ -1038,7 +989,6 @@ public class CommonDoctorServiceImpl {
 		return successFlag;
 	}
 
-	// Shubham Shekhar,15-10-2020,TM Prescription SMS
 	public void createTMPrescriptionSms(CommonUtilityClass commonUtilityClass) throws IEMRException {
 		List<Object> diagnosis = null;
 		List<PrescribedDrugDetail> prescriptionDetails = null;
