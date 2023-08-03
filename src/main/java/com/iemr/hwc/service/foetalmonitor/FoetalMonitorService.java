@@ -19,21 +19,21 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.service.fetosense;
+package com.iemr.hwc.service.foetalmonitor;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.iemr.hwc.data.fetosense.Fetosense;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitor;
 import com.iemr.hwc.utils.exception.IEMRException;
 
-public interface FetosenseService {
+public interface FoetalMonitorService {
 
-	int updateFetosenseData(Fetosense fetosenseData) throws IEMRException;
+	int updateFoetalMonitorData(FoetalMonitor foetalMonitorData) throws IEMRException;
 
-	String sendFetosenseTestDetails(Fetosense request, String auth) throws Exception;
+	String sendFoetalMonitorTestDetails(FoetalMonitor request, String auth) throws Exception;
 
-	String getFetosenseDetails(Long benFlowID) throws IEMRException;
+	String getFoetalMonitorDetails(Long benFlowID) throws IEMRException;
 
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException;
 }

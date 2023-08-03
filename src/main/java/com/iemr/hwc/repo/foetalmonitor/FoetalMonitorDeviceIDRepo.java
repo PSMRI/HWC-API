@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.repo.fetosense;
+package com.iemr.hwc.repo.foetalmonitor;
 
 import java.util.ArrayList;
 
@@ -32,13 +32,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
-import com.iemr.hwc.data.fetosense.FetosenseDeviceID;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitorDeviceID;
 
 @Repository
 @RestResource(exported = false)
-public interface FetosenseDeviceIDRepo extends CrudRepository<FetosenseDeviceID, Integer>  {
+public interface FoetalMonitorDeviceIDRepo extends CrudRepository<FoetalMonitorDeviceID, Integer>  {
 	
-	@Query("SELECT f FROM FetosenseDeviceID f WHERE f.vanID = :vanID AND f.deactivated = false ")
-	public FetosenseDeviceID getDeviceIDForVanID(@Param("vanID") Integer vanID);
+	@Query("SELECT f FROM FoetalMonitorDeviceID f WHERE f.vanID = :vanID AND f.deactivated = false ")
+	public FoetalMonitorDeviceID getDeviceIDForVanID(@Param("vanID") Integer vanID);
 	
 }

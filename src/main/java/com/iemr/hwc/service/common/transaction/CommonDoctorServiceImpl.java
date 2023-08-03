@@ -51,7 +51,7 @@ import com.iemr.hwc.data.anc.WrapperAncFindings;
 import com.iemr.hwc.data.anc.WrapperBenInvestigationANC;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.data.doctor.BenReferDetails;
-import com.iemr.hwc.data.fetosense.Fetosense;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitor;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.BenClinicalObservations;
@@ -65,7 +65,7 @@ import com.iemr.hwc.data.tele_consultation.TeleconsultationStats;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.doctor.BenReferDetailsRepo;
 import com.iemr.hwc.repo.doctor.DocWorkListRepo;
-import com.iemr.hwc.repo.fetosense.FetosenseRepo;
+import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorRepo;
 import com.iemr.hwc.repo.nurse.ncdcare.NCDCareDiagnosisRepo;
 import com.iemr.hwc.repo.nurse.pnc.PNCDiagnosisRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
@@ -122,7 +122,7 @@ public class CommonDoctorServiceImpl {
 	@Autowired
 	private SMSGatewayServiceImpl sMSGatewayServiceImpl;
 	@Autowired
-	private FetosenseRepo fetosenseRepo;
+	private FoetalMonitorRepo foetalMonitorRepo;
 
 	@Autowired
 	public void setSnomedServiceImpl(SnomedServiceImpl snomedServiceImpl) {
@@ -747,21 +747,19 @@ public class CommonDoctorServiceImpl {
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 4) {
-			ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsByFlowId(tmpBenFlowID);
-			if (fetosenseData.size() > 0) {
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
+			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
-				for (Fetosense data : fetosenseData) {
+				for (FoetalMonitor data : foetalMonitorData) {
 					if (data != null && !data.getResultState()) {
 						labTechnicianFlag = 2;
 					}
 					if (data != null && data.getVisitCode() == null) {
-						fetosenseRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
+						foetalMonitorRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
 					}
 				}
 			}
 		}
-		// get lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
-		// Short labFlag= beneficiaryFlowStatusRepo.getLabTechnicianFlag(tmpBenFlowID);
 
 		// check if TC specialist or doctor
 		if (commonUtilityClass != null && commonUtilityClass.getIsSpecialist() != null
@@ -770,7 +768,7 @@ public class CommonDoctorServiceImpl {
 			if (isTestPrescribed) {
 				tcSpecialistFlag = (short) 2;
 			} else {
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
+				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 				tcSpecialistFlag = (short) 9;
@@ -782,7 +780,7 @@ public class CommonDoctorServiceImpl {
 				docFlag = (short) 2;
 			} else {
 				docFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
+				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -899,27 +897,20 @@ public class CommonDoctorServiceImpl {
 		Long tmpBenVisitID = commonUtilityClass.getBenVisitID();
 		Long tmpbeneficiaryRegID = commonUtilityClass.getBeneficiaryRegID();
 
-		// fetosense related update in visitcode and lab flag
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 4) {
-			ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsByFlowId(tmpBenFlowID);
-			if (fetosenseData.size() > 0) {
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
+			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
-				for (Fetosense data : fetosenseData) {
+				for (FoetalMonitor data : foetalMonitorData) {
 					if (data != null && !data.getResultState()) {
 						labTechnicianFlag = 2;
 					}
 					if (data != null && data.getVisitCode() == null) {
-						fetosenseRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
+						foetalMonitorRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
 					}
 				}
 			}
-//			commonUtilityClass.getVisitCategoryID()
-
-//			if(fetosenseData != null && fetosenseData.get(1).getResultState()) 
-//				labTechnicianFlag = 3;
-//			else if(fetosenseData != null && fetosenseData.get(1).getResultState())
-//				labTechnicianFlag = 2;
 		}
 
 		if (commonUtilityClass.getIsSpecialist() != null && commonUtilityClass.getIsSpecialist() == true) {
@@ -927,7 +918,7 @@ public class CommonDoctorServiceImpl {
 				tcSpecialistFlag = (short) 2;
 			else {
 				tcSpecialistFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
+				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -968,7 +959,7 @@ public class CommonDoctorServiceImpl {
 				docFlag = (short) 2;
 			else {
 				docFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
+				// update lab technician flag,SH20094090,19-7-2021(Foetal Monitor flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -1086,12 +1077,12 @@ public class CommonDoctorServiceImpl {
 			logger.info("SMS not sent for TM Prescription");
 	}
 
-	public String getFetosenseData(Long beneFiciaryRegID, Long visitCode) {
+	public String getFoetalMonitorData(Long beneFiciaryRegID, Long visitCode) {
 
-		ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsForCaseRecord(beneFiciaryRegID,
+		ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsForCaseRecord(beneFiciaryRegID,
 				visitCode);
 
-		return new Gson().toJson(fetosenseData);
+		return new Gson().toJson(foetalMonitorData);
 
 	}
 }

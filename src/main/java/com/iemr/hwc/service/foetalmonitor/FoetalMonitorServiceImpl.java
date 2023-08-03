@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.service.fetosense;
+package com.iemr.hwc.service.foetalmonitor;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -53,28 +53,26 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.iemr.hwc.data.fetosense.Fetosense;
-import com.iemr.hwc.data.fetosense.FetosenseData;
-import com.iemr.hwc.data.fetosense.FetosenseDeviceID;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitor;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitorData;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitorDeviceID;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
-import com.iemr.hwc.repo.fetosense.FetosenseDeviceIDRepo;
-import com.iemr.hwc.repo.fetosense.FetosenseRepo;
+import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorDeviceIDRepo;
+import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorRepo;
 import com.iemr.hwc.utils.config.ConfigProperties;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.http.HttpUtils;
 
 @Service
 @PropertySource("classpath:application.properties")
-public class FetosenseServiceImpl implements FetosenseService {
+public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 
 	@Value("${fotesenseFilePath}")
-	private String fotesenseFilePath;
+	private String foetalMonitorFilePath;
 
 	@Value("${fetosenseAPIKey}")
-	private String fetosenseAPIKey;
+	private String foetalMonitorAPIKey;
 
-	@Value("${fetosenseReportPath}")
-	private String fetosenseReportPath;
 
 	static HttpURLConnection con;
 
@@ -82,13 +80,13 @@ public class FetosenseServiceImpl implements FetosenseService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
-	private FetosenseRepo fetosenseRepo;
+	private FoetalMonitorRepo foetalMonitorRepo;
 
 	@Autowired
 	private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
 
 	@Autowired
-	private FetosenseDeviceIDRepo fetosenseDeviceIDRepo;
+	private FoetalMonitorDeviceIDRepo foetalMonitorDeviceIDRepo;
 
 	/***
 	 * @author DU20091017 update the feto-sense data in the DB
@@ -96,73 +94,71 @@ public class FetosenseServiceImpl implements FetosenseService {
 	 * @throws DocumentException
 	 */
 	@Override
-	public int updateFetosenseData(Fetosense fetosenseDataOutside) throws IEMRException {
+	public int updateFoetalMonitorData(FoetalMonitor foetalMonitorDataOutside) throws IEMRException {
 
 		try {
-			logger.info("start test reult data into DB : " + fetosenseDataOutside.toString());
-			fetosenseDataOutside.setAccelerationsListDB(fetosenseDataOutside.getAccelerationsList().toString());
-			fetosenseDataOutside.setDecelerationsListDB(fetosenseDataOutside.getAccelerationsList().toString());
-			fetosenseDataOutside.setMovementEntriesDB(fetosenseDataOutside.getMovementEntries().toString());
-			fetosenseDataOutside.setAutoFetalMovementDB(fetosenseDataOutside.getAutoFetalMovement().toString());
-			fetosenseDataOutside.setFetosenseMotherID(fetosenseDataOutside.getMother().get("cmMotherId"));
-			fetosenseDataOutside.setFetosensePartnerID(fetosenseDataOutside.getMother().get("partnerId"));
-			fetosenseDataOutside.setPartnerName(fetosenseDataOutside.getMother().get("partnerName"));
+			logger.info("start test reult data into DB : " + foetalMonitorDataOutside.toString());
+			foetalMonitorDataOutside.setAccelerationsListDB(foetalMonitorDataOutside.getAccelerationsList().toString());
+			foetalMonitorDataOutside.setDecelerationsListDB(foetalMonitorDataOutside.getAccelerationsList().toString());
+			foetalMonitorDataOutside.setMovementEntriesDB(foetalMonitorDataOutside.getMovementEntries().toString());
+			foetalMonitorDataOutside.setAutoFetalMovementDB(foetalMonitorDataOutside.getAutoFetalMovement().toString());
+			foetalMonitorDataOutside.setFoetalMonitorMotherID(foetalMonitorDataOutside.getMother().get("cmMotherId"));
+			foetalMonitorDataOutside.setFoetalMonitorPartnerID(foetalMonitorDataOutside.getMother().get("partnerId"));
+			foetalMonitorDataOutside.setPartnerName(foetalMonitorDataOutside.getMother().get("partnerName"));
 
 			// fetching data from the db
-			Fetosense fetosenseFetchDataDB = fetosenseRepo.getFetosenseDetails(fetosenseDataOutside.getFetosenseID());
-			if (fetosenseFetchDataDB == null || fetosenseFetchDataDB.getFetosenseID() == null)
+			FoetalMonitor foetalMonitorFetchDataDB = foetalMonitorRepo.getFoetalMonitorDetails(foetalMonitorDataOutside.getFoetalMonitorID());
+			if (foetalMonitorFetchDataDB == null || foetalMonitorFetchDataDB.getFoetalMonitorID() == null)
 				throw new IEMRException("Invalid partnerFetosenseID");
 
-			fetosenseDataOutside.setBeneficiaryID(fetosenseFetchDataDB.getBeneficiaryID());
-			fetosenseDataOutside.setBeneficiaryRegID(fetosenseFetchDataDB.getBeneficiaryRegID());
+			foetalMonitorDataOutside.setBeneficiaryID(foetalMonitorFetchDataDB.getBeneficiaryID());
+			foetalMonitorDataOutside.setBeneficiaryRegID(foetalMonitorFetchDataDB.getBeneficiaryRegID());
 
-			// setting the values from the DB response
-			// fetosenseDataOutside.setBeneficiaryRegID(fetosenseFetchDataDB.getBeneficiaryRegID());
-			if (fetosenseFetchDataDB.getVisitCode() != null)
-				fetosenseDataOutside.setVisitCode(fetosenseFetchDataDB.getVisitCode());
-			fetosenseDataOutside.setTestTime(fetosenseFetchDataDB.getTestTime());
-			fetosenseDataOutside.setMotherLMPDate(fetosenseFetchDataDB.getMotherLMPDate());
-			fetosenseDataOutside.setMotherName(fetosenseFetchDataDB.getMotherName());
-			fetosenseDataOutside.setFetosenseTestId(fetosenseFetchDataDB.getFetosenseTestId());
-			fetosenseDataOutside.setProviderServiceMapID(fetosenseFetchDataDB.getProviderServiceMapID());
-			fetosenseDataOutside.setBenFlowID(fetosenseFetchDataDB.getBenFlowID());
-			fetosenseDataOutside.setVanID(fetosenseFetchDataDB.getVanID());
-			fetosenseDataOutside.setTestName(fetosenseFetchDataDB.getTestName());
-			fetosenseDataOutside.setCreatedBy(fetosenseFetchDataDB.getCreatedBy());
+			if (foetalMonitorFetchDataDB.getVisitCode() != null)
+				foetalMonitorDataOutside.setVisitCode(foetalMonitorFetchDataDB.getVisitCode());
+			foetalMonitorDataOutside.setTestTime(foetalMonitorFetchDataDB.getTestTime());
+			foetalMonitorDataOutside.setMotherLMPDate(foetalMonitorFetchDataDB.getMotherLMPDate());
+			foetalMonitorDataOutside.setMotherName(foetalMonitorFetchDataDB.getMotherName());
+			foetalMonitorDataOutside.setFoetalMonitorTestId(foetalMonitorFetchDataDB.getFoetalMonitorTestId());
+			foetalMonitorDataOutside.setProviderServiceMapID(foetalMonitorFetchDataDB.getProviderServiceMapID());
+			foetalMonitorDataOutside.setBenFlowID(foetalMonitorFetchDataDB.getBenFlowID());
+			foetalMonitorDataOutside.setVanID(foetalMonitorFetchDataDB.getVanID());
+			foetalMonitorDataOutside.setTestName(foetalMonitorFetchDataDB.getTestName());
+			foetalMonitorDataOutside.setCreatedBy(foetalMonitorFetchDataDB.getCreatedBy());
 
-			fetosenseDataOutside.setResultState(true);
-			fetosenseDataOutside.setDeleted(fetosenseFetchDataDB.getDeleted());
+			foetalMonitorDataOutside.setResultState(true);
+			foetalMonitorDataOutside.setDeleted(foetalMonitorFetchDataDB.getDeleted());
 
 			// need to write the code for changing the report path data to base 64 and save
 			// it in DB
 
-			String filePath = generatePDF(fetosenseDataOutside.getReportPath());
-			fetosenseDataOutside.setaMRITFilePath(filePath);
+			String filePath = generatePDF(foetalMonitorDataOutside.getReportPath());
+			foetalMonitorDataOutside.setaMRITFilePath(filePath);
 
 			// saving the feto sense response to DB
-			fetosenseDataOutside = fetosenseRepo.save(fetosenseDataOutside);
+			foetalMonitorDataOutside = foetalMonitorRepo.save(foetalMonitorDataOutside);
 
 			int flagUpdate = 0;
 
 			// updating lab technician flag to 3 from 2 as we got the response from feto
 			// sense
-			if (fetosenseDataOutside != null && fetosenseDataOutside.getFetosenseID() > 0) {
+			if (foetalMonitorDataOutside != null && foetalMonitorDataOutside.getFoetalMonitorID() > 0) {
 
 				// need to check how many records are there with benflowID
 				short lab_technician_flag = 3;
-				ArrayList<Fetosense> fetosenseDataOnBenFlowID = fetosenseRepo
-						.getFetosenseDetailsByFlowId(fetosenseFetchDataDB.getBenFlowID());
-				if (fetosenseDataOnBenFlowID.size() > 0) {
+				ArrayList<FoetalMonitor> foetalMonitorDataOnBenFlowID = foetalMonitorRepo
+						.getFoetalMonitorDetailsByFlowId(foetalMonitorFetchDataDB.getBenFlowID());
+				if (foetalMonitorDataOnBenFlowID.size() > 0) {
 					// if any of the record is not updated then marking lab flag as 2 - not able to
 					// open in doctor screen.
-					for (Fetosense data : fetosenseDataOnBenFlowID) {
+					for (FoetalMonitor data : foetalMonitorDataOnBenFlowID) {
 						if (data != null && !data.getResultState()) {
 							lab_technician_flag = 2;
 						}
 					}
 				}
 				flagUpdate = beneficiaryFlowStatusRepo.updateLabTechnicianFlag(lab_technician_flag,
-						fetosenseFetchDataDB.getBenFlowID());
+						foetalMonitorFetchDataDB.getBenFlowID());
 				if (flagUpdate > 0) {
 					logger.info("End test reult data into DB ");
 					return 1;
@@ -187,7 +183,7 @@ public class FetosenseServiceImpl implements FetosenseService {
 			con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setDoInput(true);
-			filePathLocal = fotesenseFilePath + "/" + timeStamp.toString() + ".pdf";
+			filePathLocal = foetalMonitorFilePath + "/" + timeStamp.toString() + ".pdf";
 			Path path = Paths.get(filePathLocal);
 			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
@@ -209,40 +205,39 @@ public class FetosenseServiceImpl implements FetosenseService {
 	}
 
 	/***
-	 * sends the details to fetosense.
+	 * sends the details to foetal monitor.
 	 */
 	@Override
 	// @Transactional(rollbackFor = Exception.class)
-	public String sendFetosenseTestDetails(Fetosense request, String auth) throws Exception {
+	public String sendFoetalMonitorTestDetails(FoetalMonitor request, String auth) throws Exception {
 
-		// Fetosense response = null;
 		logger.info("start fetosense test request : " + request.getTestName());
 		try {
-			Long benID = fetosenseRepo.getBenID(request.getBeneficiaryRegID());
+			Long benID = foetalMonitorRepo.getBenID(request.getBeneficiaryRegID());
 			request.setBeneficiaryID(benID);
-			// Saving Fetosense Data in Amrit DB
-			request = fetosenseRepo.save(request);
+			// Saving Foetal Monitor Data in Amrit DB
+			request = foetalMonitorRepo.save(request);
 
-			if (request != null && request.getFetosenseID() > 0) {
+			if (request != null && request.getFoetalMonitorID() > 0) {
 
-				FetosenseData fetosenseTestDetails = new FetosenseData();
-				fetosenseTestDetails.setPartnerFetosenseID(request.getFetosenseID());
+				FoetalMonitorData foetalMonitorTestDetails = new FoetalMonitorData();
+				foetalMonitorTestDetails.setPartnerFoetalMonitorId(request.getFoetalMonitorID());
 
-				// send benid in place of benregid to fetosense
-				fetosenseTestDetails.setBeneficiaryRegID(benID);
+				// send benid in place of benregid to foetal monitor
+				foetalMonitorTestDetails.setBeneficiaryRegID(benID);
 
 				String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 				SimpleDateFormat sdf = new SimpleDateFormat(ISO_FORMAT);
 
-				fetosenseTestDetails.setMotherLMPDate(sdf.format(request.getMotherLMPDate()));
-				fetosenseTestDetails.setMotherName(request.getMotherName());
-				fetosenseTestDetails.setTestName(request.getTestName());
+				foetalMonitorTestDetails.setMotherLMPDate(sdf.format(request.getMotherLMPDate()));
+				foetalMonitorTestDetails.setMotherName(request.getMotherName());
+				foetalMonitorTestDetails.setTestName(request.getTestName());
 
 				// checking whether device ID is mapped or not
-				FetosenseDeviceID deviceIDForVanID = fetosenseDeviceIDRepo.getDeviceIDForVanID(request.getVanID());
+				FoetalMonitorDeviceID deviceIDForVanID = foetalMonitorDeviceIDRepo.getDeviceIDForVanID(request.getVanID());
 
 				if (deviceIDForVanID != null && deviceIDForVanID.getDeviceID() != null) {
-					fetosenseTestDetails.setDeviceID(deviceIDForVanID.getDeviceID());
+					foetalMonitorTestDetails.setDeviceID(deviceIDForVanID.getDeviceID());
 				} else
 					throw new RuntimeException("Spoke is not mapped with Fetosense deviceID");
 
@@ -250,22 +245,22 @@ public class FetosenseServiceImpl implements FetosenseService {
 				ResponseEntity<String> result = null;
 
 				HashMap<String, Object> header = new HashMap<>();
-				header.put("apiKey", fetosenseAPIKey);
+				header.put("apiKey", foetalMonitorAPIKey);
 
-				String requestObj = new Gson().toJson(fetosenseTestDetails).toString();
+				String requestObj = new Gson().toJson(foetalMonitorTestDetails).toString();
 
-				logger.info("calling fetosense API with request OBJ : " + requestObj);
-				// Invoking Fetosense API - Sending mother data and test details to fetosense
+				logger.info("calling foetal monitor API with request OBJ : " + requestObj);
+				// Invoking Foetal monitor API - Sending mother data and test details to foetal monitor
 				result = httpUtils.postWithResponseEntity(
 						ConfigProperties.getPropertyByName("fetosense-api-url-ANCTestDetails"), requestObj, header);
-				logger.info("Fetosense register mother API response : " + result.toString());
+				logger.info("Foetal monitor register mother API response : " + result.toString());
 
-				// check fetosense API response code
+				// check foetal monitor API response code
 				if (result != null && Integer.parseInt(result.getStatusCode().toString()) == 200) {
 					JsonObject responseObj = (JsonObject) parser.parse(result.getBody());
 					String responseData = responseObj.get("message").getAsString();
 					if (responseData != null) {
-						logger.info("end fetosense test request: " + request.getTestName());
+						logger.info("end foetal monitor test request: " + request.getTestName());
 						return "Patient details sent to fetosense device successfully. Please select patient name on device and start the test";
 					} else {
 						throw new RuntimeException("fetosense register mother API is giving response as null");
@@ -289,11 +284,11 @@ public class FetosenseServiceImpl implements FetosenseService {
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(e.getResponseBodyAsString());
 			jsnOBJ = jsnElmnt.getAsJsonObject();
-			if (request != null && request.getPartnerFetosenseId() != null && request.getPartnerFetosenseId() > 0) {
+			if (request != null && request.getPartnerFoetalMonitorId() != null && request.getPartnerFoetalMonitorId() > 0) {
 				// String response = e.getres;
-				logger.info("fetosense test request transaction roll-backed");
+				logger.info("Foetal monitor test request transaction roll-backed");
 				request.setDeleted(true);
-				fetosenseRepo.save(request);
+				foetalMonitorRepo.save(request);
 			}
 			if (jsnOBJ.get("status") != null && jsnOBJ.get("message") != null)
 				// throw new Exception("Unable to raise test request, error is : " + ("status
@@ -305,12 +300,12 @@ public class FetosenseServiceImpl implements FetosenseService {
 				throw new Exception("Unable to raise test request, error is :  " + e.getMessage());
 
 		} catch (Exception e) {
-			// if record is created, and not raised in fetosense device, soft delete it
-			if (request != null && request.getPartnerFetosenseId() != null && request.getPartnerFetosenseId() > 0) {
+			// if record is created, and not raised in foetal monitor device, soft delete it
+			if (request != null && request.getPartnerFoetalMonitorId() != null && request.getPartnerFoetalMonitorId() > 0) {
 				// String response = e.getres;
-				logger.info("fetosense test request transaction roll-backed");
+				logger.info("Foetal monitor test request transaction roll-backed");
 				request.setDeleted(true);
-				fetosenseRepo.save(request);
+				foetalMonitorRepo.save(request);
 			}
 			throw new Exception("Unable to raise test request, error is :  " + e.getMessage());
 		}
@@ -318,19 +313,19 @@ public class FetosenseServiceImpl implements FetosenseService {
 	}
 
 	@Override
-	public String getFetosenseDetails(Long benFlowID) throws IEMRException {
+	public String getFoetalMonitorDetails(Long benFlowID) throws IEMRException {
 
 		try {
 			Map<String, Object> resMap = new HashMap<>();
-			ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsByFlowId(benFlowID);
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(benFlowID);
 
-			List<Fetosense> fetosenseList = new ArrayList<Fetosense>();
-			for (Fetosense data : fetosenseData) {
-				Fetosense listData = new Fetosense(data.getFetosenseID(), data.getBeneficiaryRegID(),
-						data.getBenFlowID(), data.getVisitCode(), data.getFetosenseTestId(), data.getResultState());
-				fetosenseList.add(listData);
+			List<FoetalMonitor> foetalMonitorList = new ArrayList<FoetalMonitor>();
+			for (FoetalMonitor data : foetalMonitorData) {
+				FoetalMonitor listData = new FoetalMonitor(data.getFoetalMonitorID(), data.getBeneficiaryRegID(),
+						data.getBenFlowID(), data.getVisitCode(), data.getFoetalMonitorTestId(), data.getResultState());
+				foetalMonitorList.add(listData);
 			}
-			resMap.put("benFetosenseData", fetosenseList);
+			resMap.put("benFetosenseData", foetalMonitorList);
 			return new Gson().toJson(resMap);
 		} catch (Exception e) {
 			throw new IEMRException("Error in fetching fetosense details " + e.getMessage());

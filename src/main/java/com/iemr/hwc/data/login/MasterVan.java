@@ -71,35 +71,18 @@ public class MasterVan {
 	@Expose
 	@Column(name = "SwymedEmailID")
 	private String swymedEmailID;
-	
+
 	@Expose
 	@Column(name = "vanfetosenseIDmapped")
-	private Boolean vanfetosenseIDmapped;
-	
+	private Boolean vanfoetalMonitorIDmapped;
+
 	@Expose
 	@Column(name = "VanTypeID")
 	private Integer VanTypeID;
 
-//	@ManyToOne
-//	@JoinColumn(name = "ParkingPlaceID", insertable = false, updatable = false)
-//	private UserParkingplaceMapping userParkingplaceMapping;
-
-//	@OneToOne(mappedBy = "masterVan")
-//	private BeneficiaryFlowStatus beneficiaryFlowStatus;
-
 	public MasterVan() {
 	}
 
-//	public MasterVan(Integer vanID, String vehicalNo, Integer providerServiceMapID, Integer parkingPlaceID,
-//			Boolean deleted, UserParkingplaceMapping userParkingplaceMapping) {
-//		super();
-//		this.vanID = vanID;
-//		this.vehicalNo = vehicalNo;
-//		this.providerServiceMapID = providerServiceMapID;
-//		this.parkingPlaceID = parkingPlaceID;
-//		this.deleted = deleted;
-//		this.userParkingplaceMapping = userParkingplaceMapping;
-//	}
 	public MasterVan(Integer vanID, String vehicalNo) {
 		this.vanID = vanID;
 		this.vehicalNo = vehicalNo;
@@ -160,14 +143,6 @@ public class MasterVan {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
-
-//	public UserParkingplaceMapping getUserParkingplaceMapping() {
-//		return userParkingplaceMapping;
-//	}
-//
-//	public void setUserParkingplaceMapping(UserParkingplaceMapping userParkingplaceMapping) {
-//		this.userParkingplaceMapping = userParkingplaceMapping;
-//	}
 
 	public String getSwymedEmailID() {
 		return swymedEmailID;

@@ -34,7 +34,7 @@ import com.iemr.hwc.data.doctor.ChiefComplaintMaster;
 import com.iemr.hwc.data.doctor.DrugDoseMaster;
 import com.iemr.hwc.data.doctor.DrugDurationUnitMaster;
 import com.iemr.hwc.data.doctor.DrugFrequencyMaster;
-import com.iemr.hwc.data.fetosense.FetosenseTestMaster;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitorTestMaster;
 import com.iemr.hwc.data.institution.Institute;
 import com.iemr.hwc.data.labModule.ProcedureData;
 import com.iemr.hwc.data.masterdata.anc.ComorbidCondition;
@@ -71,7 +71,7 @@ import com.iemr.hwc.repo.doctor.ChiefComplaintMasterRepo;
 import com.iemr.hwc.repo.doctor.DrugDoseMasterRepo;
 import com.iemr.hwc.repo.doctor.DrugDurationUnitMasterRepo;
 import com.iemr.hwc.repo.doctor.DrugFrequencyMasterRepo;
-import com.iemr.hwc.repo.fetosense.FetosenseTestsRepo;
+import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorTestsRepo;
 import com.iemr.hwc.repo.labModule.ProcedureRepo;
 import com.iemr.hwc.repo.login.MasterVanRepo;
 import com.iemr.hwc.repo.masterrepo.anc.AllergicReactionTypesRepo;
@@ -193,7 +193,7 @@ public class ANCMasterDataServiceImpl {
 	private MasterVanRepo masterVanRepo;
 
 	@Autowired
-	private FetosenseTestsRepo fetosenseTestRepo;
+	private FoetalMonitorTestsRepo foetalMonitorTestRepo;
 	@Autowired
 	private ReferralReasonRepo referralReasonRepo;
 
@@ -618,10 +618,10 @@ public class ANCMasterDataServiceImpl {
 			resMap.put("covidRecommendationMaster", covidRecommnedationMasterRepo.findByDeleted(false));
 		}
 
-		// To Fetch Fetosense Test Master Details
+		// To Fetch Foetal Monitor Test Master Details
 		if (visitCategoryID == 4) {
-			ArrayList<Object[]> fetoTestList = fetosenseTestRepo.getFetosenseTestsDetails(providerServiceMapID);
-			resMap.put("fetosenseTestMaster", FetosenseTestMaster.getFetosenseMasters(fetoTestList));
+			ArrayList<Object[]> fetoTestList = foetalMonitorTestRepo.getFoetalMonitorTestsDetails(providerServiceMapID);
+			resMap.put("fetosenseTestMaster", FoetalMonitorTestMaster.getFoetalMonitorMasters(fetoTestList));
 		}
 		
 		//To fetch sub visit category master details for general opd
