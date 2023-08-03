@@ -13,92 +13,92 @@ import org.hl7.fhir.r4.model.StringType;
 public class PatientExt extends Patient {
 
     @Description(shortDefinition = "Contains father's name")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.fatherName", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.fatherName", isModifier = false, definedLocally = true)
     @Child(name = "fatherName")
     private StringType fatherName;
 
     @Description(shortDefinition = "Contains spouse's name, If beneficiary is married")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.spouseName", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.spouseName", isModifier = false, definedLocally = true)
     @Child(name = "spouseName")
     private StringType spouseName;
 
     @Description(shortDefinition = "Contains age when married, If beneficiary is married")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.ageAtMarriage", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.ageAtMarriage", isModifier = false, definedLocally = true)
     @Child(name = "ageAtMarriage")
     private StringType ageAtMarriage;
 
     @Description(shortDefinition = "Mentions Abha generation mode")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.abhaGenerationMode", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.abhaGenerationMode", isModifier = false, definedLocally = true)
     @Child(name = "abhaGenerationMode")
     private Coding abhaGenerationMode;
 
     @Description(shortDefinition = "Contains providerServiceMapId ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.providerServiceMapId", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.providerServiceMapId", isModifier = false, definedLocally = true)
     @Child(name = "providerServiceMapId")
     private StringType providerServiceMapId;
 
     @Description(shortDefinition = "Contains vanID ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.vanID", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.vanID", isModifier = false, definedLocally = true)
     @Child(name = "vanID")
     private StringType vanID;
 
     @Description(shortDefinition = "Contains parkingPlaceID ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.parkingPlaceID", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.parkingPlaceID", isModifier = false, definedLocally = true)
     @Child(name = "parkingPlaceID")
     private StringType parkingPlaceID;
 
     @Description(shortDefinition = "Contains createdBy ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.main.createdBy", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.createdBy", isModifier = false, definedLocally = true)
     @Child(name = "createdBy")
     private StringType createdBy;
 
     @Description(shortDefinition = "Contains State details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.demographics.state", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.state", isModifier = false, definedLocally = true)
     @Child(name = "state")
     private Coding state;
 
     @Description(shortDefinition = "Contains District details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.demographics.district", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.district", isModifier = false, definedLocally = true)
     @Child(name = "district")
     private Coding district;
 
     @Description(shortDefinition = "Contains block details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.demographics.block", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.block", isModifier = false, definedLocally = true)
     @Child(name = "block")
     private Coding block;
 
     @Description(shortDefinition = "Contains districtBranch details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.demographics.districtBranch", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.districtBranch", isModifier = false, definedLocally = true)
     @Child(name = "districtBranch")
     private Coding districtBranch;
 
     @Description(shortDefinition = "Contains religion details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.demographics.religion", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.religion", isModifier = false, definedLocally = true)
     @Child(name = "religion")
     private Coding religion;
 
     @Description(shortDefinition = "Contains community details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.demographics.community", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.community", isModifier = false, definedLocally = true)
     @Child(name = "community")
     private Coding community;
 
     @Description(shortDefinition = "Contains govtIdentityType details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.identity.govtIdentityType", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.govtIdentityType", isModifier = false, definedLocally = true)
     @Child(name = "govtIdentityType")
     private Coding govtIdentityType;
 
     @Description(shortDefinition = "Contains govtIdentityNo ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.identity.govtIdentityNo", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.govtIdentityNo", isModifier = false, definedLocally = true)
     @Child(name = "govtIdentityNo")
     private StringType govtIdentityNo;
 
     @Description(shortDefinition = "Contains govtHealthProgramType details ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.identity.govtHealthProgramType", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.govtHealthProgramType", isModifier = false, definedLocally = true)
     @Child(name = "govtHealthProgramType")
     private Coding govtHealthProgramType;
 
     @Description(shortDefinition = "Contains govtHealthProgramId ")
-    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.identity.govtHealthProgramId", isModifier = false, definedLocally = true)
+    @Extension(url = "http://hl7.org/fhir/StructureDefinition/Patient#Patient.govtHealthProgramId", isModifier = false, definedLocally = true)
     @Child(name = "govtHealthProgramId")
     private StringType govtHealthProgramId;
 
