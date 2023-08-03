@@ -67,7 +67,7 @@ import com.iemr.hwc.utils.http.HttpUtils;
 @PropertySource("classpath:application.properties")
 public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 
-	@Value("${fotesenseFilePath}")
+	@Value("${foetalMonitorFilePath}")
 	private String foetalMonitorFilePath;
 
 	@Value("${fetosenseAPIKey}")
@@ -261,18 +261,18 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 					String responseData = responseObj.get("message").getAsString();
 					if (responseData != null) {
 						logger.info("end foetal monitor test request: " + request.getTestName());
-						return "Patient details sent to fetosense device successfully. Please select patient name on device and start the test";
+						return "Patient details sent to foetal monitor device successfully. Please select patient name on device and start the test";
 					} else {
-						throw new RuntimeException("fetosense register mother API is giving response as null");
+						throw new RuntimeException("Foetal monitor register mother API is giving response as null");
 					}
 				} else {
 					throw new RuntimeException(
-							"Error while registering mother in fetosense, fetosense response status code : "
+							"Error while registering mother in foetal monitor, foetal monitor response status code : "
 									+ Integer.parseInt(result.getStatusCode().toString()));
 				}
 
 			} else
-				throw new RuntimeException("Unable to generate fetosense id in TM");
+				throw new RuntimeException("Unable to generate foetal monitor id in TM");
 
 		}
 		/**
@@ -291,9 +291,6 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				foetalMonitorRepo.save(request);
 			}
 			if (jsnOBJ.get("status") != null && jsnOBJ.get("message") != null)
-				// throw new Exception("Unable to raise test request, error is : " + ("status
-				// code "+(jsnOBJ.get("status").getAsString())
-				// +","+(jsnOBJ.get("message").getAsString())));
 				throw new Exception(
 						"Unable to raise test request, error is : " + (jsnOBJ.get("message").getAsString()));
 			else
@@ -302,7 +299,6 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 		} catch (Exception e) {
 			// if record is created, and not raised in foetal monitor device, soft delete it
 			if (request != null && request.getPartnerFoetalMonitorId() != null && request.getPartnerFoetalMonitorId() > 0) {
-				// String response = e.getres;
 				logger.info("Foetal monitor test request transaction roll-backed");
 				request.setDeleted(true);
 				foetalMonitorRepo.save(request);
@@ -328,7 +324,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			resMap.put("benFetosenseData", foetalMonitorList);
 			return new Gson().toJson(resMap);
 		} catch (Exception e) {
-			throw new IEMRException("Error in fetching fetosense details " + e.getMessage());
+			throw new IEMRException("Error in fetching foetal monitor details " + e.getMessage());
 		}
 
 	}
