@@ -70,7 +70,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 	@Value("${foetalMonitorFilePath}")
 	private String foetalMonitorFilePath;
 
-	@Value("${fetosenseAPIKey}")
+	@Value("${foetalMonitorAPIKey}")
 	private String foetalMonitorAPIKey;
 
 
@@ -109,7 +109,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			// fetching data from the db
 			FoetalMonitor foetalMonitorFetchDataDB = foetalMonitorRepo.getFoetalMonitorDetails(foetalMonitorDataOutside.getFoetalMonitorID());
 			if (foetalMonitorFetchDataDB == null || foetalMonitorFetchDataDB.getFoetalMonitorID() == null)
-				throw new IEMRException("Invalid partnerFetosenseID");
+				throw new IEMRException("Invalid partnerfoetalMonitorID");
 
 			foetalMonitorDataOutside.setBeneficiaryID(foetalMonitorFetchDataDB.getBeneficiaryID());
 			foetalMonitorDataOutside.setBeneficiaryRegID(foetalMonitorFetchDataDB.getBeneficiaryRegID());
@@ -165,10 +165,10 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				} else
 					throw new IEMRException("Error in updating the lab technician flag");
 			} else
-				throw new IEMRException("Error in updating fetosense data");
+				throw new IEMRException("Error in updating foetal monitor data");
 
 		} catch (Exception e) {
-			throw new IEMRException("Error in updating fetosense data" + e.getMessage());
+			throw new IEMRException("Error in updating foetal monitor data" + e.getMessage());
 		}
 
 	}
@@ -211,7 +211,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 	// @Transactional(rollbackFor = Exception.class)
 	public String sendFoetalMonitorTestDetails(FoetalMonitor request, String auth) throws Exception {
 
-		logger.info("start fetosense test request : " + request.getTestName());
+		logger.info("start foetal monitor test request : " + request.getTestName());
 		try {
 			Long benID = foetalMonitorRepo.getBenID(request.getBeneficiaryRegID());
 			request.setBeneficiaryID(benID);
@@ -239,7 +239,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				if (deviceIDForVanID != null && deviceIDForVanID.getDeviceID() != null) {
 					foetalMonitorTestDetails.setDeviceID(deviceIDForVanID.getDeviceID());
 				} else
-					throw new RuntimeException("Spoke is not mapped with Fetosense deviceID");
+					throw new RuntimeException("Spoke is not mapped with foetal monitor deviceID");
 
 				JsonParser parser = new JsonParser();
 				ResponseEntity<String> result = null;
@@ -252,7 +252,7 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				logger.info("calling foetal monitor API with request OBJ : " + requestObj);
 				// Invoking Foetal monitor API - Sending mother data and test details to foetal monitor
 				result = httpUtils.postWithResponseEntity(
-						ConfigProperties.getPropertyByName("fetosense-api-url-ANCTestDetails"), requestObj, header);
+						ConfigProperties.getPropertyByName("foetalMonitor-api-url-ANCTestDetails"), requestObj, header);
 				logger.info("Foetal monitor register mother API response : " + result.toString());
 
 				// check foetal monitor API response code

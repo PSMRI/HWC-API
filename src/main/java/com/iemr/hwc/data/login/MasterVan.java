@@ -34,14 +34,6 @@ import com.google.gson.annotations.Expose;
 public class MasterVan {
 	@Id
 	@GeneratedValue
-//	private Integer id;
-//	public Integer getId() {
-//		return id;
-//	}
-//
-//	public void setId(Integer id) {
-//		this.id = id;
-//	}
 
 	@Expose
 	@Column(name = "VanID")
@@ -74,7 +66,7 @@ public class MasterVan {
 
 	@Expose
 	@Column(name = "vanfetosenseIDmapped")
-	private Boolean vanfoetalMonitorIDmapped;
+	private Boolean vanFoetalMonitorMappedId;
 
 	@Expose
 	@Column(name = "VanTypeID")

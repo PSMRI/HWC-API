@@ -288,8 +288,8 @@ public class FoetalMonitor {
 		return partnerId;
 	}
 
-	public void setFoetalMonitorPartnerID(String foetalMonitorPartnerID) {
-		this.partnerId = foetalMonitorPartnerID;
+	public void setFoetalMonitorPartnerID(String partnerId) {
+		this.partnerId = partnerId;
 	}
 
 	public String getTestId() {
