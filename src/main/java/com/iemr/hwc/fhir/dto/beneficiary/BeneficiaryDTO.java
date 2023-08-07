@@ -1,9 +1,9 @@
 package com.iemr.hwc.fhir.dto.beneficiary;
 
 import com.google.gson.annotations.SerializedName;
-import com.iemr.hwc.fhir.dto.benDemographics.DemographicsDTO;
-import com.iemr.hwc.fhir.dto.benIdentities.GovtIdentitiesDTO;
-import com.iemr.hwc.fhir.dto.benPhone.PhoneDetailsDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benDemographics.DemographicsDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benIdentities.GovtIdentitiesDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benPhone.PhoneDetailsDTO;
 import lombok.Data;
 
 import java.util.List;

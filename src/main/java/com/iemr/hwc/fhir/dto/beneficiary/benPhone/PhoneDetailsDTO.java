@@ -1,4 +1,4 @@
-package com.iemr.hwc.fhir.dto.benPhone;
+package com.iemr.hwc.fhir.dto.beneficiary.benPhone;
 
 import lombok.Data;
 

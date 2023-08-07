@@ -1,4 +1,4 @@
-package com.iemr.hwc.fhir.dto.benDemographics;
+package com.iemr.hwc.fhir.dto.beneficiary.benDemographics;
 
 import lombok.Data;
 
