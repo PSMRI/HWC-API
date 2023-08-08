@@ -67,6 +67,7 @@ public class HTTPRequestInterceptor extends HandlerInterceptorAdapter {
 				String requestAPI = requestURIParts[requestURIParts.length - 1];
 				switch (requestAPI) {
 				// case "doctorData":
+				case "wo":
 				case "startMasterDownload":
 				case "checkMastersDownloadProgress":
 				case "getVanDetailsForMasterDownload":
