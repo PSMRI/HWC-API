@@ -1,6 +1,7 @@
 package com.iemr.hwc.fhir.utils.mapper;
 
 import com.iemr.hwc.fhir.dto.beneficiary.benIdentities.GovtIdentitiesDTO;
+import com.iemr.hwc.fhir.model.encounter.EncounterExt;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,5 +80,14 @@ public class MapperMethods {
             govtIds.add(id2);
         }
         return govtIds;
+    }
+
+    public static String getSubVisitCategoryFromEncounter(EncounterExt encounterExt){
+        if(encounterExt.hasServiceType() && encounterExt.getServiceType().hasCoding() && encounterExt.getServiceType().getCodingFirstRep().hasDisplay()){
+            return encounterExt.getServiceType().getCodingFirstRep().getDisplay();
+        }
+        else {
+            return null;
+        }
     }
 }
