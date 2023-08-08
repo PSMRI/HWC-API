@@ -27,13 +27,11 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
-        languages: Java    
+        languages: Java
     - name: Build with Maven
       run: mvn clean install -DENV_VAR=${{ env.ENV_VAR }}
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
-      with:
-        languages: Java   
     
   Packaging:
     needs: codeql
@@ -46,6 +44,8 @@ jobs:
       with:
         java-version: 8
         distribution: 'adopt'
+    - name: Test with maven
+      run: mvn test
     - name: Create WAR file 
       run: mvn -B package --file pom.xml
     - name: Upload WAR file as artifact
