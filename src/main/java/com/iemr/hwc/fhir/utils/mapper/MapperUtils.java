@@ -3,12 +3,21 @@ package com.iemr.hwc.fhir.utils.mapper;
 import com.iemr.hwc.fhir.dto.beneficiary.benDemographics.DemographicsDTO;
 import com.iemr.hwc.fhir.dto.beneficiary.benPhone.PhoneDetailsDTO;
 import com.iemr.hwc.fhir.dto.beneficiary.BeneficiaryDTO;
+import com.iemr.hwc.fhir.dto.examinationDetails.ExaminationDetailsMainDTO;
+import com.iemr.hwc.fhir.dto.historyDetails.HistoryDetailsMainDTO;
+import com.iemr.hwc.fhir.dto.mandatoryFieldsDTO.MandatoryFieldsDTO;
+import com.iemr.hwc.fhir.dto.nurseForm.NurseFormDTO;
+import com.iemr.hwc.fhir.dto.visitDetailsMain.VisitDetailsMainDTO;
+import com.iemr.hwc.fhir.dto.visitDetailsMain.adherence.AdherenceDTO;
+import com.iemr.hwc.fhir.dto.visitDetailsMain.chiefComplaints.ChiefComplaintsDTO;
+import com.iemr.hwc.fhir.dto.visitDetailsMain.visitDetails.VisitDetailsDTO;
+import com.iemr.hwc.fhir.dto.vitalDetails.VitalDetailsDTO;
+import com.iemr.hwc.fhir.model.encounter.EncounterExt;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
-
 import java.util.Arrays;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,componentModel = "spring", imports = {Arrays.class})
@@ -60,6 +69,60 @@ public interface MapperUtils {
             @Mapping(target= "countryName", constant = "India")
     })
     DemographicsDTO patientResourceToBenDemographicsDTOMapping(PatientExt patientExt);
+
+    @Mappings({@Mapping(target = "providerServiceMapID", expression = "java(Integer.parseInt(encounterExt.getProviderServiceMapId().asStringValue()))"),
+            @Mapping(target = "parkingPlaceID", expression = "java(Integer.parseInt(encounterExt.getParkingPlaceID().asStringValue()))"),
+            @Mapping(target = "vanID", expression = "java(Integer.parseInt(encounterExt.getVanID().asStringValue()))"),
+            @Mapping(target = "sessionID", expression = "java(encounterExt.getSessionID().asStringValue())"),
+            @Mapping(target = "benFlowID", expression = "java(encounterExt.getBenFlowID().asStringValue())"),
+            @Mapping(target = "beneficiaryID", expression = "java(encounterExt.getBeneficiaryID().asStringValue())"),
+            @Mapping(target = "beneficiaryRegID", expression = "java(encounterExt.getBeneficiaryRegID().asStringValue())"),
+            @Mapping(target = "createdBy", expression = "java(encounterExt.getCreatedBy().asStringValue())")
+    })
+    MandatoryFieldsDTO encounterResourceToMandatoryFieldsDTO(EncounterExt encounterExt);
+
+    @Mappings({@Mapping(target = "providerServiceMapID",source = "mandatoryFieldsDTO.providerServiceMapID"),
+            @Mapping(target = "parkingPlaceID", source = "mandatoryFieldsDTO.parkingPlaceID"),
+            @Mapping(target = "vanID",source = "mandatoryFieldsDTO.vanID"),
+            @Mapping(target = "sessionID",source = "mandatoryFieldsDTO.sessionID"),
+            @Mapping(target = "benFlowID",source = "mandatoryFieldsDTO.benFlowID"),
+            @Mapping(target = "beneficiaryID", source = "mandatoryFieldsDTO.beneficiaryID"),
+            @Mapping(target = "beneficiaryRegID",source = "mandatoryFieldsDTO.beneficiaryRegID"),
+            @Mapping(target = "createdBy",source = "mandatoryFieldsDTO.createdBy"),
+            @Mapping(target = "visitDetails",expression = "java(encounterResourceToVisitDetailsMainDTO(encounterExt,mandatoryFieldsDTO))"),
+            @Mapping(target = "vitalDetails",expression = "java(mandatoryFieldsDTOToVitalDetailsDTO(mandatoryFieldsDTO))"),
+            @Mapping(target = "historyDetails", expression = "java(mandatoryFieldsDTOToHistoryDetailsDTO(mandatoryFieldsDTO))"),
+            @Mapping(target = "examinationDetails", expression = "java(mandatoryFieldsDTOToExaminationDetailsDTO(mandatoryFieldsDTO))")
+    })
+    NurseFormDTO encounterResourceToNurseFormDTO(EncounterExt encounterExt, MandatoryFieldsDTO mandatoryFieldsDTO);
+
+
+    @Mappings({@Mapping(target = "visitDetails",expression = "java(encounterResourceToVisitDetailsDTO(encounterExt,mandatoryFieldsDTO))"),
+            @Mapping(target = "chiefComplaints",expression = "java(Arrays.asList(mandatoryFieldsDTOToChiefComplaintsDTO(mandatoryFieldsDTO)))"),
+            @Mapping(target = "adherence",expression = "java(mandatoryFieldsDTOToAdherenceDTO(mandatoryFieldsDTO))"),
+    })
+    VisitDetailsMainDTO encounterResourceToVisitDetailsMainDTO(EncounterExt encounterExt, MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    @Mappings({@Mapping(target = "providerServiceMapID",source = "mandatoryFieldsDTO.providerServiceMapID"),
+            @Mapping(target = "beneficiaryRegID",source = "mandatoryFieldsDTO.beneficiaryRegID"),
+            @Mapping(target = "vanID",source = "mandatoryFieldsDTO.vanID"),
+            @Mapping(target = "parkingPlaceID", source = "mandatoryFieldsDTO.parkingPlaceID"),
+            @Mapping(target = "createdBy",source = "mandatoryFieldsDTO.createdBy"),
+            @Mapping(target = "visitCategory",expression = "java(encounterExt.getTypeFirstRep().getCodingFirstRep().getDisplay())"),
+            @Mapping(target = "visitReason",expression = "java(encounterExt.getReasonCodeFirstRep().getText())"),
+            @Mapping(target = "subVisitCategory", expression = "java(MapperMethods.getSubVisitCategoryFromEncounter(encounterExt))")
+    })
+    VisitDetailsDTO encounterResourceToVisitDetailsDTO(EncounterExt encounterExt,MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    ChiefComplaintsDTO mandatoryFieldsDTOToChiefComplaintsDTO( MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    AdherenceDTO mandatoryFieldsDTOToAdherenceDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    VitalDetailsDTO mandatoryFieldsDTOToVitalDetailsDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    HistoryDetailsMainDTO mandatoryFieldsDTOToHistoryDetailsDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    ExaminationDetailsMainDTO mandatoryFieldsDTOToExaminationDetailsDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
 
 
 
