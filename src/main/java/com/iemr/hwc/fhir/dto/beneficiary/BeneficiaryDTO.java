@@ -1,9 +1,9 @@
 package com.iemr.hwc.fhir.dto.beneficiary;
 
 import com.google.gson.annotations.SerializedName;
-import com.iemr.hwc.fhir.dto.benDemographics.DemographicsDTO;
-import com.iemr.hwc.fhir.dto.benIdentities.GovtIdentitiesDTO;
-import com.iemr.hwc.fhir.dto.benPhone.PhoneDetailsDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benDemographics.DemographicsDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benIdentities.GovtIdentitiesDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benPhone.PhoneDetailsDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class BeneficiaryDTO {
     private String firstName;
-    private String LastName;
+    private String lastName;
     private String fatherName;
     private String spouseName;
     private String genderName;
@@ -22,6 +22,8 @@ public class BeneficiaryDTO {
     private String maritalStatusName;
     private String ageAtMarriage;
     private Integer providerServiceMapId;
+    @SerializedName("providerServiceMapID")
+    private Integer providerServiceMapIdCopy;
     private DemographicsDTO i_bendemographics;
     private List<PhoneDetailsDTO> benPhoneMaps;
     private List<GovtIdentitiesDTO> beneficiaryIdentities;

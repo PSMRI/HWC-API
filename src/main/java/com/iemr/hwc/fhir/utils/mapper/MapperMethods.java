@@ -1,6 +1,6 @@
 package com.iemr.hwc.fhir.utils.mapper;
 
-import com.iemr.hwc.fhir.dto.benIdentities.GovtIdentitiesDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benIdentities.GovtIdentitiesDTO;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

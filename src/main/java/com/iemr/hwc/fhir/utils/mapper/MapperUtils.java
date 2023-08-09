@@ -1,7 +1,7 @@
 package com.iemr.hwc.fhir.utils.mapper;
 
-import com.iemr.hwc.fhir.dto.benDemographics.DemographicsDTO;
-import com.iemr.hwc.fhir.dto.benPhone.PhoneDetailsDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benDemographics.DemographicsDTO;
+import com.iemr.hwc.fhir.dto.beneficiary.benPhone.PhoneDetailsDTO;
 import com.iemr.hwc.fhir.dto.beneficiary.BeneficiaryDTO;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import org.mapstruct.Mapper;
@@ -20,6 +20,7 @@ public interface MapperUtils {
             @Mapping(target = "spouseName", expression = "java(patientExt.getSpouseName().asStringValue())"),
             @Mapping(target = "ageAtMarriage", expression = "java(patientExt.getAgeAtMarriage().toString())"),
             @Mapping(target = "providerServiceMapId", expression = "java(Integer.parseInt(patientExt.getProviderServiceMapId().asStringValue()))"),
+            @Mapping(target = "providerServiceMapIdCopy", expression = "java(Integer.parseInt(patientExt.getProviderServiceMapId().asStringValue()))"),
             @Mapping(target = "parkingPlaceID", expression = "java(Integer.parseInt(patientExt.getParkingPlaceID().asStringValue()))"),
             @Mapping(target = "vanID", expression = "java(Integer.parseInt(patientExt.getVanID().asStringValue()))"),
             @Mapping(target = "createdBy", expression = "java(patientExt.getCreatedBy().asStringValue())"),

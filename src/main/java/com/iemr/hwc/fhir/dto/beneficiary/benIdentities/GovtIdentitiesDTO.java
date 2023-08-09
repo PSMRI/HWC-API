@@ -1,4 +1,4 @@
-package com.iemr.hwc.fhir.dto.benIdentities;
+package com.iemr.hwc.fhir.dto.beneficiary.benIdentities;
 
 import lombok.Data;
 
