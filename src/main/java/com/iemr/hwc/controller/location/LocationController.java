@@ -58,10 +58,12 @@ public class LocationController {
 		logger.info("get country master ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getCountryList();
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting country");
+		}
 		return response.toString();
 	}
 
@@ -71,10 +73,12 @@ public class LocationController {
 		logger.info("get country citymaster ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getCountryCityList(countryID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting country city");
+		}
 		return response.toString();
 	}
 
@@ -84,10 +88,12 @@ public class LocationController {
 		logger.info("get state master ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getStateList();
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting states");
+		}
 		logger.info("stateMaster" + response.toString());
 		return response.toString();
 	}
@@ -98,10 +104,12 @@ public class LocationController {
 		logger.info("get District master ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getDistrictList(stateID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting districts");
+		}
 		logger.info("districtMaster" + response.toString());
 		return response.toString();
 	}
@@ -112,10 +120,12 @@ public class LocationController {
 		logger.info("get Location master ...");
 		response = new OutputResponse();
 		String s = locationServiceImpl.getLocationMasterData(villageID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting data");
+		}
 		logger.info("villageMaster" + response.toString());
 		return response.toString();
 	}
@@ -126,10 +136,12 @@ public class LocationController {
 		logger.info("get District Block master districtID ..." + districtID);
 		response = new OutputResponse();
 		String s = locationServiceImpl.getDistrictBlockList(districtID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting district blocks");
+		}
 		logger.info("districtBlockMaster" + response.toString());
 		return response.toString();
 	}
@@ -140,10 +152,28 @@ public class LocationController {
 		logger.info("get District Block master districtID ..." + blockID);
 		response = new OutputResponse();
 		String s = locationServiceImpl.getVillageMasterFromBlockID(blockID);
-		if (s != null)
+		if (s != null){
 			response.setResponse(s);
-		else
+		}
+		else{
 			response.setError(5000, "Error while getting villages");
+		}
+		logger.info("village master" + response.toString());
+		return response.toString();
+	}
+
+	@ApiOperation(value = "Get village from district id", consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/get/villageFromDistrictID/{districtID}", method = RequestMethod.GET)
+	public String getVillageByDistrictID(@PathVariable("districtID") Integer districtID) {
+		logger.info("get village by districtID ..." + districtID);
+		response = new OutputResponse();
+		String s = locationServiceImpl.getVillageListByDistrictID(districtID);
+		if (s != null){
+			response.setResponse(s);
+		}
+		else{
+			response.setError(5000, "Error while getting villages");
+		}
 		logger.info("village master" + response.toString());
 		return response.toString();
 	}
