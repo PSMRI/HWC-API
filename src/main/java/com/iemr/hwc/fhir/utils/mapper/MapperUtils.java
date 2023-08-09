@@ -12,6 +12,7 @@ import com.iemr.hwc.fhir.dto.visitDetailsMain.adherence.AdherenceDTO;
 import com.iemr.hwc.fhir.dto.visitDetailsMain.chiefComplaints.ChiefComplaintsDTO;
 import com.iemr.hwc.fhir.dto.visitDetailsMain.visitDetails.VisitDetailsDTO;
 import com.iemr.hwc.fhir.dto.vitalDetails.VitalDetailsDTO;
+import com.iemr.hwc.fhir.model.condition.ConditionExt;
 import com.iemr.hwc.fhir.model.encounter.EncounterExt;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import org.mapstruct.Mapper;
@@ -123,6 +124,33 @@ public interface MapperUtils {
     HistoryDetailsMainDTO mandatoryFieldsDTOToHistoryDetailsDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
 
     ExaminationDetailsMainDTO mandatoryFieldsDTOToExaminationDetailsDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
+
+    @Mappings({@Mapping(target = "providerServiceMapID", expression = "java(Integer.parseInt(conditionExt.getProviderServiceMapId().asStringValue()))"),
+            @Mapping(target = "parkingPlaceID", expression = "java(Integer.parseInt(conditionExt.getParkingPlaceID().asStringValue()))"),
+            @Mapping(target = "vanID", expression = "java(Integer.parseInt(conditionExt.getVanID().asStringValue()))"),
+            @Mapping(target = "benFlowID", expression = "java(conditionExt.getBenFlowID().asStringValue())"),
+            @Mapping(target = "beneficiaryID", expression = "java(conditionExt.getBeneficiaryID().asStringValue())"),
+            @Mapping(target = "beneficiaryRegID", expression = "java(conditionExt.getBeneficiaryRegID().asStringValue())"),
+            @Mapping(target = "createdBy", expression = "java(conditionExt.getCreatedBy().asStringValue())")
+    })
+    MandatoryFieldsDTO conditionResourceToMandatoryFieldsDTO(ConditionExt conditionExt);
+
+    @Mappings({@Mapping(target = "providerServiceMapID",source = "mandatoryFieldsDTO.providerServiceMapID"),
+            @Mapping(target = "parkingPlaceID", source = "mandatoryFieldsDTO.parkingPlaceID"),
+            @Mapping(target = "vanID",source = "mandatoryFieldsDTO.vanID"),
+            @Mapping(target = "benVisitID",source = "mandatoryFieldsDTO.benVisitID"),
+            @Mapping(target = "visitCode",source = "mandatoryFieldsDTO.visitCode"),
+            @Mapping(target = "beneficiaryRegID",source = "mandatoryFieldsDTO.beneficiaryRegID"),
+            @Mapping(target = "createdBy",source = "mandatoryFieldsDTO.createdBy"),
+            @Mapping(target = "conceptID",source = "conceptID"),
+            @Mapping(target = "chiefComplaint",expression = "java(conditionExt.getCode().getCodingFirstRep().getDisplay())"),
+            @Mapping(target = "chiefComplaintID", expression = "java(Integer.parseInt(conditionExt.getCode().getCodingFirstRep().getCode()))"),
+            @Mapping(target = "unitOfDuration", expression = "java(conditionExt.getDuration().getCode())"),
+            @Mapping(target = "duration", expression = "java(conditionExt.getDuration().getDisplay())"),
+            @Mapping(target = "description", expression = "java(conditionExt.getNoteFirstRep().getText())")
+    })
+    ChiefComplaintsDTO conditionResourceToChiefComplaintDTO(ConditionExt conditionExt, MandatoryFieldsDTO mandatoryFieldsDTO , String conceptID );
+
 
 
 
