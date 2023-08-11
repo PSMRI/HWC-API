@@ -193,6 +193,8 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(jsnOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			int i=commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),benVisitDetailsOBJ.getVisitReason(),benVisitDetailsOBJ.getVisitCategory());
+			if(i<1) {
 			Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
 			// 11-06-2018 visit code
@@ -261,6 +263,11 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				}
 			} else {
 				throw new RuntimeException("Error occurred while creating beneficiary visit");
+			}
+		} else {
+				Map<String, String> responseMap = new HashMap<String, String>();
+				responseMap.put("response", "Data already saved");
+				return new Gson().toJson(responseMap);
 			}
 		} else {
 			throw new Exception("Invalid input");
