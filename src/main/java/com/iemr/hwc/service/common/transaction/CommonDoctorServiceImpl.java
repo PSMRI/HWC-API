@@ -51,7 +51,7 @@ import com.iemr.hwc.data.anc.WrapperAncFindings;
 import com.iemr.hwc.data.anc.WrapperBenInvestigationANC;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.data.doctor.BenReferDetails;
-import com.iemr.hwc.data.fetosense.Fetosense;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitor;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.BenClinicalObservations;
@@ -65,7 +65,7 @@ import com.iemr.hwc.data.tele_consultation.TeleconsultationStats;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.doctor.BenReferDetailsRepo;
 import com.iemr.hwc.repo.doctor.DocWorkListRepo;
-import com.iemr.hwc.repo.fetosense.FetosenseRepo;
+import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorRepo;
 import com.iemr.hwc.repo.nurse.ncdcare.NCDCareDiagnosisRepo;
 import com.iemr.hwc.repo.nurse.pnc.PNCDiagnosisRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
@@ -82,11 +82,6 @@ import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.mapper.OutputMapper;
 
-/***
- * 
- * @author NE298657
- *
- */
 @Service
 @PropertySource("classpath:application.properties")
 public class CommonDoctorServiceImpl {
@@ -122,7 +117,7 @@ public class CommonDoctorServiceImpl {
 	@Autowired
 	private SMSGatewayServiceImpl sMSGatewayServiceImpl;
 	@Autowired
-	private FetosenseRepo fetosenseRepo;
+	private FoetalMonitorRepo foetalMonitorRepo;
 
 	@Autowired
 	public void setSnomedServiceImpl(SnomedServiceImpl snomedServiceImpl) {
@@ -318,8 +313,6 @@ public class CommonDoctorServiceImpl {
 				benClinicalObservations
 						.setClinicalObservationSctcode(clinicalConceptID.substring(0, clinicalConceptID.length() - 2));
 
-//			benClinicalObservations.setClinicalObservation(clinicalTerm.toString());
-//			benClinicalObservations.setClinicalObservationSctcode(clinicalConceptID.toString());
 		}
 
 		if (wrapperAncFindings != null && wrapperAncFindings.getSignificantFindingsList() != null
@@ -360,10 +353,7 @@ public class CommonDoctorServiceImpl {
 				benChiefComplaint.setCreatedBy(wrapperAncFindings.getCreatedBy());
 
 				if (null != complaintsDetails.getChiefComplaintID()) {
-					/*
-					 * Double d = (Double) complaintsDetails.getChiefComplaintID(); if (d == null)
-					 * continue;
-					 */
+					
 					benChiefComplaint.setChiefComplaintID(complaintsDetails.getChiefComplaintID());
 				}
 				if (null != complaintsDetails.getChiefComplaint())
@@ -416,9 +406,6 @@ public class CommonDoctorServiceImpl {
 	public String getDocWorkListNewFutureScheduledForTM(Integer providerServiceMapId, Integer serviceID,
 			Integer vanID) {
 
-		// Calendar cal = Calendar.getInstance();
-		// cal.add(Calendar.DAY_OF_YEAR, -7);
-		// long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> docWorkListFutureScheduled = new ArrayList<>();
 		if (serviceID != null && serviceID == 4) {
@@ -549,30 +536,14 @@ public class CommonDoctorServiceImpl {
 	}
 
 	public String getPrescribedDrugs(Long beneficiaryRegID, Long visitCode) {
-		// ArrayList<Object[]> prescriptions =
-		// prescriptionDetailRepo.getBenPrescription(beneficiaryRegID, visitCode);
-		//
-		// PrescriptionDetail prescriptionData =
-		// PrescriptionDetail.getPrescriptions(prescriptions);
-		// if (null != prescriptionData) {
 		ArrayList<Object[]> resList = prescribedDrugDetailRepo.getBenPrescribedDrugDetails(beneficiaryRegID, visitCode);
 
 		ArrayList<PrescribedDrugDetail> prescribedDrugs = PrescribedDrugDetail.getprescribedDrugs(resList);
-		// prescriptionData.setPrescribedDrugs(prescribedDrugs);
-		// }
 
 		return new Gson().toJson(prescribedDrugs);
 	}
 
-	/*
-	 * public PrescriptionDetail getLatestPrescription(Long beneficiaryRegID, Long
-	 * benVisitID) { ArrayList<Object[]> prescriptions =
-	 * prescriptionDetailRepo.getBenPrescription(beneficiaryRegID, benVisitID);
-	 * 
-	 * PrescriptionDetail prescriptionData =
-	 * PrescriptionDetail.getPrescriptions(prescriptions); return prescriptionData;
-	 * }
-	 */
+	
 
 	public String getReferralDetails(Long beneficiaryRegID, Long visitCode, Boolean rrList) {
 		ArrayList<BenReferDetails> resList = benReferDetailsRepo.findByBeneficiaryRegIDAndVisitCode(beneficiaryRegID,
@@ -735,7 +706,6 @@ public class CommonDoctorServiceImpl {
 		short docFlag = (short) 1;
 		short tcSpecialistFlag = (short) 0;
 
-		// for feto sense
 		short labTechnicianFlag = (short) 0;
 		int tcUserID = 0;
 		Timestamp tcDate = null;
@@ -747,21 +717,19 @@ public class CommonDoctorServiceImpl {
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 4) {
-			ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsByFlowId(tmpBenFlowID);
-			if (fetosenseData.size() > 0) {
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
+			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
-				for (Fetosense data : fetosenseData) {
+				for (FoetalMonitor data : foetalMonitorData) {
 					if (data != null && !data.getResultState()) {
 						labTechnicianFlag = 2;
 					}
 					if (data != null && data.getVisitCode() == null) {
-						fetosenseRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
+						foetalMonitorRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
 					}
 				}
 			}
 		}
-		// get lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
-		// Short labFlag= beneficiaryFlowStatusRepo.getLabTechnicianFlag(tmpBenFlowID);
 
 		// check if TC specialist or doctor
 		if (commonUtilityClass != null && commonUtilityClass.getIsSpecialist() != null
@@ -770,7 +738,6 @@ public class CommonDoctorServiceImpl {
 			if (isTestPrescribed) {
 				tcSpecialistFlag = (short) 2;
 			} else {
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 				tcSpecialistFlag = (short) 9;
@@ -782,7 +749,6 @@ public class CommonDoctorServiceImpl {
 				docFlag = (short) 2;
 			} else {
 				docFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -805,15 +771,9 @@ public class CommonDoctorServiceImpl {
 
 		int i = 0;
 
-//		if(labTechnicianFlag == 3) {
-//			docFlag = 9;
-//		}else {
-//			docFlag = 2;
-//		}
 
 		if (commonUtilityClass != null && commonUtilityClass.getIsSpecialist() != null
 				&& commonUtilityClass.getIsSpecialist() == true) {
-			// updating lab technician flag as well after feto sense
 			i = commonBenStatusFlowServiceImpl.updateBenFlowAfterDocDataFromSpecialist(tmpBenFlowID,
 					tmpbeneficiaryRegID, tmpBeneficiaryID, tmpBenVisitID, docFlag, pharmaFalg, (short) 0,
 					tcSpecialistFlag, labTechnicianFlag);
@@ -842,7 +802,6 @@ public class CommonDoctorServiceImpl {
 			i = commonBenStatusFlowServiceImpl.updateBenFlowAfterDocData(tmpBenFlowID, tmpbeneficiaryRegID,
 					tmpBeneficiaryID, tmpBenVisitID, docFlag, pharmaFalg, (short) 0, tcSpecialistFlag, tcUserID, tcDate,
 					labTechnicianFlag);
-		// Shubham Shekhar,15-10-2020,TM Prescription SMS
 		if (commonUtilityClass.getIsSpecialist() == true) {
 			if (tcSpecialistFlag == 9) {
 				if (commonUtilityClass.getPrescriptionID() != null) {
@@ -869,9 +828,6 @@ public class CommonDoctorServiceImpl {
 		return i;
 	}
 
-	/// ------End of beneficiary flow table after doctor data save-------------
-
-	/// ------Start of beneficiary flow table after doctor data update-------------
 	/**
 	 * 
 	 * 
@@ -891,7 +847,6 @@ public class CommonDoctorServiceImpl {
 		int tcUserID = 0;
 		Timestamp tcDate = null;
 
-		// for feto sense
 		short labTechnicianFlag = (short) 0;
 
 		Long tmpBenFlowID = commonUtilityClass.getBenFlowID();
@@ -899,27 +854,20 @@ public class CommonDoctorServiceImpl {
 		Long tmpBenVisitID = commonUtilityClass.getBenVisitID();
 		Long tmpbeneficiaryRegID = commonUtilityClass.getBeneficiaryRegID();
 
-		// fetosense related update in visitcode and lab flag
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 4) {
-			ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsByFlowId(tmpBenFlowID);
-			if (fetosenseData.size() > 0) {
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
+			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
-				for (Fetosense data : fetosenseData) {
+				for (FoetalMonitor data : foetalMonitorData) {
 					if (data != null && !data.getResultState()) {
 						labTechnicianFlag = 2;
 					}
 					if (data != null && data.getVisitCode() == null) {
-						fetosenseRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
+						foetalMonitorRepo.updateVisitCode(commonUtilityClass.getVisitCode(), tmpBenFlowID);
 					}
 				}
 			}
-//			commonUtilityClass.getVisitCategoryID()
-
-//			if(fetosenseData != null && fetosenseData.get(1).getResultState()) 
-//				labTechnicianFlag = 3;
-//			else if(fetosenseData != null && fetosenseData.get(1).getResultState())
-//				labTechnicianFlag = 2;
 		}
 
 		if (commonUtilityClass.getIsSpecialist() != null && commonUtilityClass.getIsSpecialist() == true) {
@@ -927,7 +875,6 @@ public class CommonDoctorServiceImpl {
 				tcSpecialistFlag = (short) 2;
 			else {
 				tcSpecialistFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -968,7 +915,6 @@ public class CommonDoctorServiceImpl {
 				docFlag = (short) 2;
 			else {
 				docFlag = (short) 9;
-				// update lab technician flag,SH20094090,19-7-2021(Fetosense flag changes)
 				if (labTechnicianFlag == 3)
 					labTechnicianFlag = 9;
 			}
@@ -991,7 +937,6 @@ public class CommonDoctorServiceImpl {
 
 		}
 
-		// Shubham Shekhar,15-10-2020,TM Prescription SMS
 		if (commonUtilityClass.getIsSpecialist() == true) {
 			if (tcSpecialistFlag == 9) {
 				if (commonUtilityClass.getPrescriptionID() != null)
@@ -1006,7 +951,6 @@ public class CommonDoctorServiceImpl {
 		return i;
 	}
 
-	/// ------End of beneficiary flow table after doctor data update-------------
 
 	public String deletePrescribedMedicine(JSONObject obj) {
 		int i = 0;
@@ -1024,7 +968,6 @@ public class CommonDoctorServiceImpl {
 	public int callTmForSpecialistSlotBook(TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ,
 			String Authorization) {
 		int successFlag = 0;
-		// OutputMapper outputMapper = new OutputMapper();
 		String requestOBJ = OutputMapper.gson().toJson(tcSpecialistSlotBookingRequestOBJ);
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -1034,7 +977,6 @@ public class CommonDoctorServiceImpl {
 		HttpEntity<Object> request = new HttpEntity<Object>(requestOBJ, headers);
 		ResponseEntity<String> response = restTemplate.exchange(tcSpecialistSlotBook, HttpMethod.POST, request,
 				String.class);
-		// System.out.println(response.getBody());
 
 		if (response.getStatusCodeValue() == 200 && response.hasBody()) {
 			JsonObject jsnOBJ = new JsonObject();
@@ -1047,7 +989,6 @@ public class CommonDoctorServiceImpl {
 		return successFlag;
 	}
 
-	// Shubham Shekhar,15-10-2020,TM Prescription SMS
 	public void createTMPrescriptionSms(CommonUtilityClass commonUtilityClass) throws IEMRException {
 		List<Object> diagnosis = null;
 		List<PrescribedDrugDetail> prescriptionDetails = null;
@@ -1086,12 +1027,12 @@ public class CommonDoctorServiceImpl {
 			logger.info("SMS not sent for TM Prescription");
 	}
 
-	public String getFetosenseData(Long beneFiciaryRegID, Long visitCode) {
+	public String getFoetalMonitorData(Long beneFiciaryRegID, Long visitCode) {
 
-		ArrayList<Fetosense> fetosenseData = fetosenseRepo.getFetosenseDetailsForCaseRecord(beneFiciaryRegID,
+		ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsForCaseRecord(beneFiciaryRegID,
 				visitCode);
 
-		return new Gson().toJson(fetosenseData);
+		return new Gson().toJson(foetalMonitorData);
 
 	}
 }

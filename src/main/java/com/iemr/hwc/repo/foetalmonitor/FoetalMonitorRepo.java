@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.repo.fetosense;
+package com.iemr.hwc.repo.foetalmonitor;
 
 import java.util.ArrayList;
 
@@ -32,32 +32,32 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
-import com.iemr.hwc.data.fetosense.Fetosense;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitor;
 
 @Repository
 @RestResource(exported = false)
-public interface FetosenseRepo extends CrudRepository<Fetosense, Long> {
+public interface FoetalMonitorRepo extends CrudRepository<FoetalMonitor, Long> {
 
 	/***
 	 * @author DU20091017
-	 * @param fetosenseID
+	 * @param foetalMonitorID
 	 * @return
 	 */
-	@Query("SELECT f FROM Fetosense f WHERE f.partnerFetosenseId = :fetosenseID")
-	public Fetosense getFetosenseDetails(@Param("fetosenseID") Long fetosenseID);
+	@Query("SELECT f FROM FoetalMonitor f WHERE f.partnerFoetalMonitorId = :foetalMonitorID")
+	public FoetalMonitor getFoetalMonitorDetails(@Param("foetalMonitorID") Long foetalMonitorID);
 
 	/***
 	 * @author DU20091017 get the feto sense details while lab flag update.
 	 */
-	@Query("SELECT f FROM Fetosense f WHERE f.benFlowID = :benFlowID AND f.deleted is false ")
-	public ArrayList<Fetosense> getFetosenseDetailsByFlowId(@Param("benFlowID") Long benFlowID);
+	@Query("SELECT f FROM FoetalMonitor f WHERE f.benFlowID = :benFlowID AND f.deleted is false ")
+	public ArrayList<FoetalMonitor> getFoetalMonitorDetailsByFlowId(@Param("benFlowID") Long benFlowID);
 
 	/***
 	 * @author DU20091017 update visitCode
 	 */
 	@Modifying
 	@Transactional
-	@Query("UPDATE Fetosense f SET f.visitCode = :visitCode WHERE f.benFlowID = :benFlowID")
+	@Query("UPDATE FoetalMonitor f SET f.visitCode = :visitCode WHERE f.benFlowID = :benFlowID")
 	public int updateVisitCode(@Param("visitCode") Long visitCode, @Param("benFlowID") Long benFlowID);
 
 	/***
@@ -67,9 +67,9 @@ public interface FetosenseRepo extends CrudRepository<Fetosense, Long> {
 	 * @return
 	 */
 
-	@Query("SELECT f FROM Fetosense f WHERE f.beneficiaryRegID = :beneficiaryRegID "
+	@Query("SELECT f FROM FoetalMonitor f WHERE f.beneficiaryRegID = :beneficiaryRegID "
 			+ " AND f.visitCode = :visitCode AND f.deleted is false ")
-	public ArrayList<Fetosense> getFetosenseDetailsForCaseRecord(@Param("beneficiaryRegID") Long beneficiaryRegID,
+	public ArrayList<FoetalMonitor> getFoetalMonitorDetailsForCaseRecord(@Param("beneficiaryRegID") Long beneficiaryRegID,
 			@Param("visitCode") Long visitCode);
 
 	@Query(value = "SELECT beneficiaryid FROM db_identity.m_beneficiaryregidmapping where BenRegId= :benRegId ", nativeQuery = true)

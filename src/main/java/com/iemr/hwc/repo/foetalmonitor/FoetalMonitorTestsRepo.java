@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.repo.fetosense;
+package com.iemr.hwc.repo.foetalmonitor;
 
 
 import java.util.ArrayList;
@@ -30,15 +30,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
-import com.iemr.hwc.data.fetosense.FetosenseTestMaster;
+import com.iemr.hwc.data.foetalmonitor.FoetalMonitorTestMaster;
 
 
 @Repository
 @RestResource(exported = false)
-public interface FetosenseTestsRepo extends CrudRepository<FetosenseTestMaster, Integer> {
+public interface FoetalMonitorTestsRepo extends CrudRepository<FoetalMonitorTestMaster, Integer> {
 	
-	@Query("SELECT f.fetosenseTestId, f.testName FROM FetosenseTestMaster f WHERE f.providerServiceMapID = :providerServiceMapID AND f.deleted = false")
-	public ArrayList<Object[]> getFetosenseTestsDetails(@Param("providerServiceMapID") Integer providerServiceMapID);
+	@Query("SELECT f.foetalMonitorTestId, f.testName FROM FoetalMonitorTestMaster f WHERE f.providerServiceMapID = :providerServiceMapID AND f.deleted = false")
+	public ArrayList<Object[]> getFoetalMonitorTestsDetails(@Param("providerServiceMapID") Integer providerServiceMapID);
 	
 
 

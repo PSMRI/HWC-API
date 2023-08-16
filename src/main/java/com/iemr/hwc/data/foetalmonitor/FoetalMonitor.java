@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.data.fetosense;
+package com.iemr.hwc.data.foetalmonitor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -38,13 +38,13 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "t_fetosensedata")
-public class Fetosense {
+public class FoetalMonitor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Expose
 	@Column(name = "fetosenseID")
-	private Long partnerFetosenseId;
+	private Long partnerFoetalMonitorId;
 
 	@Expose
 	@Column(name = "BeneficiaryRegID")
@@ -89,7 +89,7 @@ public class Fetosense {
 
 	@Expose
 	@Column(name = "fetosensetestid")
-	private Long fetosenseTestId;
+	private Long foetalMonitorTestId;
 
 	@Expose
 	@Column(name = "resultState", insertable = false, updatable = true)
@@ -205,27 +205,27 @@ public class Fetosense {
 	@Column(name = "AMRITFilePath")
 	private String aMRITFilePath;
 
-	public Fetosense() {
+	public FoetalMonitor() {
 
 	}
 
-	public Fetosense(Long fetosenseID, Long beneficiaryRegID, Long benFlowID, Long visitCode, Long fetosenseTestId,
+	public FoetalMonitor(Long foetalMonitorID, Long beneficiaryRegID, Long benFlowID, Long visitCode, Long foetalMonitorTestId,
 			Boolean resultState) {
-		this.partnerFetosenseId = fetosenseID;
+		this.partnerFoetalMonitorId = foetalMonitorID;
 		this.beneficiaryRegID = beneficiaryRegID;
 		this.benFlowID = benFlowID;
 		this.visitCode = visitCode;
-		this.fetosenseTestId = fetosenseTestId;
+		this.foetalMonitorTestId = foetalMonitorTestId;
 		this.resultState = resultState;
 
 	}
 
-	public Long getFetosenseID() {
-		return partnerFetosenseId;
+	public Long getFoetalMonitorID() {
+		return partnerFoetalMonitorId;
 	}
 
-	public void setFetosenseID(Long fetosenseID) {
-		this.partnerFetosenseId = fetosenseID;
+	public void setFoetalMonitorID(Long foetalMonitorID) {
+		this.partnerFoetalMonitorId = foetalMonitorID;
 	}
 
 	public Long getBeneficiaryRegID() {
@@ -276,20 +276,20 @@ public class Fetosense {
 		this.partnerName = partnerName;
 	}
 
-	public String getFetosenseMotherID() {
+	public String getFoetalMonitorMotherID() {
 		return cmMotherId;
 	}
 
-	public void setFetosenseMotherID(String fetosenseMotherID) {
-		this.cmMotherId = fetosenseMotherID;
+	public void setFoetalMonitorMotherID(String foetalMonitorMotherID) {
+		this.cmMotherId = foetalMonitorMotherID;
 	}
 
-	public String getFetosensePartnerID() {
+	public String getFoetalMonitorPartnerID() {
 		return partnerId;
 	}
 
-	public void setFetosensePartnerID(String fetosensePartnerID) {
-		this.partnerId = fetosensePartnerID;
+	public void setFoetalMonitorPartnerID(String partnerId) {
+		this.partnerId = partnerId;
 	}
 
 	public String getTestId() {
@@ -500,12 +500,12 @@ public class Fetosense {
 		ProviderServiceMapID = providerServiceMapID;
 	}
 
-	public Long getFetosenseTestId() {
-		return fetosenseTestId;
+	public Long getFoetalMonitorTestId() {
+		return foetalMonitorTestId;
 	}
 
-	public void setFetosenseTestId(Long fetosenseTestId) {
-		this.fetosenseTestId = fetosenseTestId;
+	public void setFoetalMonitorTestId(Long foetalMonitorTestId) {
+		this.foetalMonitorTestId = foetalMonitorTestId;
 	}
 
 	public Long getBenFlowID() {
@@ -548,12 +548,12 @@ public class Fetosense {
 		this.vanID = vanID;
 	}
 
-	public Long getPartnerFetosenseId() {
-		return partnerFetosenseId;
+	public Long getPartnerFoetalMonitorId() {
+		return partnerFoetalMonitorId;
 	}
 
-	public void setPartnerFetosenseId(Long partnerFetosenseId) {
-		this.partnerFetosenseId = partnerFetosenseId;
+	public void setPartnerFoetalMonitorId(Long partnerFoetalMonitorId) {
+		this.partnerFoetalMonitorId = partnerFoetalMonitorId;
 	}
 
 	public String getaMRITFilePath() {
