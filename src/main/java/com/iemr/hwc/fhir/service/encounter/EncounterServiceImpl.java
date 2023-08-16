@@ -9,7 +9,7 @@ import com.iemr.hwc.fhir.dto.mandatoryFieldsDTO.MandatoryFieldsDTO;
 import com.iemr.hwc.fhir.dto.nurseForm.NurseFormDTO;
 import com.iemr.hwc.fhir.model.encounter.EncounterExt;
 import com.iemr.hwc.fhir.utils.mapper.MapperUtils;
-import com.iemr.hwc.fhir.utils.validation.Validations;
+import com.iemr.hwc.fhir.utils.validation.EncounterValidation;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 import org.hl7.fhir.r4.model.StringType;
 import org.mapstruct.factory.Mappers;
@@ -32,7 +32,7 @@ public class EncounterServiceImpl implements EncounterService{
     private GeneralOPDServiceImpl generalOPDServiceImpl;
 
     @Autowired
-    private Validations validations;
+    private EncounterValidation validation;
 
     @Override
     public EncounterExt createNewEncounter(HttpServletRequest theRequest, EncounterExt encounterExt){
@@ -43,7 +43,7 @@ public class EncounterServiceImpl implements EncounterService{
         }
 
         //Validating the resource for mandatory fields
-        validations.encounterResourceValidator(encounterExt);
+        validation.encounterResourceValidator(encounterExt);
 
         //Todo - Currently implemented considering all relevant IDs(beneficiaryID, benRegID, benFlowID) are coming in payload.
         //Todo - If not, might need to write new APIs to fetch necessary IDs through some sort of logic. And then use those further.

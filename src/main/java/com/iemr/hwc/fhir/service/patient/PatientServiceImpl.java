@@ -7,7 +7,7 @@ import com.google.gson.JsonParser;
 import com.iemr.hwc.fhir.dto.beneficiary.BeneficiaryDTO;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import com.iemr.hwc.fhir.utils.mapper.MapperUtils;
-import com.iemr.hwc.fhir.utils.validation.Validations;
+import com.iemr.hwc.fhir.utils.validation.PatientValidation;
 import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -27,14 +27,14 @@ public class PatientServiceImpl implements PatientService{
     private RegistrarServiceImpl registrarServiceImpl;
 
     @Autowired
-    private Validations validations;
+    private PatientValidation validation;
 
 
     @Override
     public PatientExt createNewPatient(HttpServletRequest theRequest, PatientExt patientExt){
 
         //Validating the resource for mandatory fields
-        validations.patientResourceValidator(patientExt);
+        validation.patientResourceValidator(patientExt);
 
         BeneficiaryDTO benDTO = mapper.patientResourceToBeneficiaryDTOMapping(patientExt);
 
