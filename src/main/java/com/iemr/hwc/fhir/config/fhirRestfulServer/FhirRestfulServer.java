@@ -10,6 +10,7 @@ import ca.uhn.fhir.validation.ResultSeverityEnum;
 import com.iemr.hwc.fhir.config.authInterceptor.AuthInterceptor;
 import com.iemr.hwc.fhir.provider.condition.ConditionExtProvider;
 import com.iemr.hwc.fhir.provider.encounter.EncounterExtProvider;
+import com.iemr.hwc.fhir.provider.observation.ObservationExtProvider;
 import com.iemr.hwc.fhir.provider.patient.PatientExtProvider;
 import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +42,7 @@ public class FhirRestfulServer extends RestfulServer {
         resourceProviders.add(applicationContext.getBean(PatientExtProvider.class));
         resourceProviders.add(applicationContext.getBean(EncounterExtProvider.class));
         resourceProviders.add(applicationContext.getBean(ConditionExtProvider.class));
+        resourceProviders.add(applicationContext.getBean(ObservationExtProvider.class));
         setResourceProviders(resourceProviders);
 
         //Registering Interceptors

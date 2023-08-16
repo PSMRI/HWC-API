@@ -11,6 +11,7 @@ public class MandatoryFieldsDTO {
     private String benVisitID;
     private String visitCode;
     private String createdBy;
+    private String modifiedBy;
     private String sessionID;
     private Integer vanID;
     private Integer parkingPlaceID;

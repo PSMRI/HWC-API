@@ -5,6 +5,7 @@ import com.iemr.hwc.fhir.dto.beneficiary.benPhone.PhoneDetailsDTO;
 import com.iemr.hwc.fhir.dto.beneficiary.BeneficiaryDTO;
 import com.iemr.hwc.fhir.dto.examinationDetails.ExaminationDetailsMainDTO;
 import com.iemr.hwc.fhir.dto.historyDetails.HistoryDetailsMainDTO;
+import com.iemr.hwc.fhir.dto.historyDetails.pastHistory.PastHistoryDTO;
 import com.iemr.hwc.fhir.dto.mandatoryFieldsDTO.MandatoryFieldsDTO;
 import com.iemr.hwc.fhir.dto.nurseForm.NurseFormDTO;
 import com.iemr.hwc.fhir.dto.visitDetailsMain.VisitDetailsMainDTO;
@@ -14,6 +15,7 @@ import com.iemr.hwc.fhir.dto.visitDetailsMain.visitDetails.VisitDetailsDTO;
 import com.iemr.hwc.fhir.dto.vitalDetails.VitalDetailsDTO;
 import com.iemr.hwc.fhir.model.condition.ConditionExt;
 import com.iemr.hwc.fhir.model.encounter.EncounterExt;
+import com.iemr.hwc.fhir.model.observation.ObservationExt;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -150,6 +152,19 @@ public interface MapperUtils {
             @Mapping(target = "description", expression = "java(conditionExt.getNoteFirstRep().getText())")
     })
     ChiefComplaintsDTO conditionResourceToChiefComplaintDTO(ConditionExt conditionExt, MandatoryFieldsDTO mandatoryFieldsDTO , String conceptID );
+
+    @Mappings({@Mapping(target = "providerServiceMapID", expression = "java(null == observationExt.getProviderServiceMapId().asStringValue() ? null : Integer.parseInt(observationExt.getProviderServiceMapId().asStringValue()))"),
+            @Mapping(target = "parkingPlaceID", expression = "java(null == observationExt.getParkingPlaceID().asStringValue() ? null : Integer.parseInt(observationExt.getParkingPlaceID().asStringValue()))"),
+            @Mapping(target = "vanID", expression = "java(null == observationExt.getVanID().asStringValue() ? null : Integer.parseInt(observationExt.getVanID().asStringValue()))"),
+            @Mapping(target = "benFlowID", expression = "java(observationExt.getBenFlowID().asStringValue())"),
+            @Mapping(target = "beneficiaryID", expression = "java(observationExt.getBeneficiaryID().asStringValue())"),
+            @Mapping(target = "beneficiaryRegID", expression = "java(observationExt.getBeneficiaryRegID().asStringValue())"),
+            @Mapping(target = "createdBy", expression = "java(observationExt.getCreatedBy().asStringValue())"),
+            @Mapping(target = "modifiedBy", expression = "java(observationExt.getModifiedBy().asStringValue())")
+    })
+    MandatoryFieldsDTO observationResourceToMandatoryFieldsDTO(ObservationExt observationExt);
+
+    PastHistoryDTO mandatoryFieldsDTOToPastHistoryDTO(MandatoryFieldsDTO mandatoryFieldsDTO);
 
 
 
