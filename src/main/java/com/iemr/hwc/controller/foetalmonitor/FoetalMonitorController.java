@@ -62,7 +62,7 @@ public class FoetalMonitorController {
 
 	@CrossOrigin
 	@ApiOperation(value = "Send the mother data and prescribed test details to foetal monitor")
-	@RequestMapping(value = "/sendMotherTestDetailsTofoetalMonitor", method = RequestMethod.POST, headers = "Authorization")
+	@RequestMapping(value = "/sendMotherTestDetailsToFoetalMonitor", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<String> sendANCMotherTestDetailsToFoetalMonitor(
 			@ApiParam("{\"beneficiaryRegID\":\"Long\",\"benFlowID\":\"Long\",\"testTime\":\"Timestamp\",\"motherLMPDate\":\"Timestamp\",\"motherName\":\"String\",\"fetosenseTestId\":\"Long\",\"testName\":\"String\",\"ProviderServiceMapID\":\"Integer\",\"createdBy\":\"String\"}") @RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String authorization) {
