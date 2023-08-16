@@ -19,8 +19,9 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.fhir.dto.beneficiary;
+package com.iemr.hwc.fhir.dto.beneficiary.identityDTO;
 
+import com.google.gson.annotations.Expose;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,25 +29,17 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 
 @Data
-public class BenServiceDTO implements Serializable {
+public class AbhaAddressDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private BigInteger benServiceMapID;
-	private String createdBy;
-	private Timestamp createdDate;
-	private Timestamp firstAvailedOn;
-	private Timestamp lastModDate;
-	private String modifiedBy;
-	private String registeredByName;
-	private Integer registeredById;
-	private Timestamp registeredDate;
-	private Integer providerServiceMapId;
-	private Integer serviceId;
-	private String serviceName;
-	private Integer serviceProviderId;
-	private String serviceProviderName;
-	private Integer stateId;
-	private String stateName;
 
-	private Integer vanID;
-	private Integer parkingPlaceID;
+	private BigInteger BeneficiaryRegID;
+	@Expose
+	private String HealthID;
+	@Expose
+	private String HealthIDNumber;
+	@Expose
+	private String AuthenticationMode;
+	@Expose
+	private Timestamp CreatedDate;
+
 }

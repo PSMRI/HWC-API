@@ -753,12 +753,6 @@ public class RegistrarServiceImpl implements RegistrarService {
 			obj.put("blockID", Integer.parseInt(blockID));
 			obj.put("lastModifDate", lastModifDate.getTime());
 
-			if ((obj.has("blockID") && !obj.isNull("blockID"))){
-			}
-
-			if ((obj.has("lastModifDate") && !obj.isNull("lastModifDate"))){
-			}
-
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", "application/json");
 			HttpEntity<String> request = new HttpEntity<String>(obj.toString(), headers);

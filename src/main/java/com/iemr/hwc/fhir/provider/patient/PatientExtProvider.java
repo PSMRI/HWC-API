@@ -3,9 +3,11 @@ package com.iemr.hwc.fhir.provider.patient;
 import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import com.iemr.hwc.fhir.dto.beneficiary.identityDTO.*;
 import com.iemr.hwc.fhir.model.patient.PatientExt;
 import com.iemr.hwc.fhir.service.patient.PatientService;
 import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
+import io.swagger.models.Contact;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.json.JSONArray;
@@ -15,11 +17,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import com.iemr.hwc.fhir.dto.beneficiary.BeneficiariesDTOSearch;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
 
@@ -129,8 +129,8 @@ public class PatientExtProvider implements IResourceProvider {
 
                 List<ContactPoint> listContactPoint = new ArrayList<>();
                 ContactPoint contact = new ContactPoint();
-//                contact.setSystem(benef.getEmergencyContactTyp());
-                contact.setValue(benef.getEmergencyContactNum());
+                contact.setSystem(ContactPoint.ContactPointSystem.PHONE);
+                contact.setValue(benef.getPreferredPhoneNum());
                 listContactPoint.add(contact);
                 patient.setTelecom(listContactPoint);
 
