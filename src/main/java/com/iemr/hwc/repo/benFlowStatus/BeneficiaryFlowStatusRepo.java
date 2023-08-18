@@ -448,4 +448,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			+ " visit_category =:vc AND beneficiary_visit_code is not null  ORDER BY ben_flow_id DESC LIMIT 1 ", nativeQuery = true)
 	public Long getLatestVisitCode(@Param("benRegId") Long benRegId, @Param("vc") String vc);
 
+	// get visit by location and modify_date
+	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.villageID = :villageID AND t.modified_date > :lastModDate ORDER BY t.visitDate DESC ")
+	public ArrayList<BeneficiaryFlowStatus> getVisitByLocationAndLastModifDate(@Param("villageID") Integer villageID, @Param("lastModDate") Timestamp lastModDate);
 }
