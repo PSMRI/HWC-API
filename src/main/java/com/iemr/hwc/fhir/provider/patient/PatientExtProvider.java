@@ -83,16 +83,16 @@ public class PatientExtProvider implements IResourceProvider {
                 List<Coding> listCoding = new ArrayList<>();
                 Coding coding = new Coding();
                 coding.setSystem("http://snomed.info/sct");
-//            coding.setDisplay(benDetails.getVisitCategory());
+                coding.setDisplay("Management of Common Communicable Diseases and Outpatient Care for Acute Simple Illnesses & Minor Ailments");
                 listCoding.add(coding);
                 concept.setCoding(listCoding);
                 encounter.setServiceType(concept);
 
                 Coding coding3 = new Coding();
                 coding3.setSystem("http://terminology.hl7.org/CodeSystem/v3-ActCode");
-                coding3.setCode("");
-                coding3.setDisplay("");
-                encounter.setClass_(coding3); // Need clarifications
+                coding3.setCode("AMB");
+                coding3.setDisplay("ambulatory");
+                encounter.setClass_(coding3);
 
                 List<CodeableConcept> listConcept2 = new ArrayList<>();
                 CodeableConcept concept3 = new CodeableConcept();
