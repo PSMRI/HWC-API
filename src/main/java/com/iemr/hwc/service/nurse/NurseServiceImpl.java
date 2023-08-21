@@ -21,11 +21,15 @@
 */
 package com.iemr.hwc.service.nurse;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
+import com.iemr.hwc.fhir.dto.visitDetailsMain.visitDetails.BenVisitsDTO;
+import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,6 +45,9 @@ import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 public class NurseServiceImpl implements NurseService {
 
 	private BenVisitDetailRepo benVisitDetailRepo;
+
+	@Autowired
+	private BeneficiaryFlowStatusRepo benFlowStatusRepo;
 
 	@Autowired
 	public void setBenVisitDetailRepo(BenVisitDetailRepo benVisitDetailRepo) {
@@ -88,6 +95,21 @@ public class NurseServiceImpl implements NurseService {
 		resMap.put("benVisitDetails", benVisitDetailsList);
 
 		return new Gson().toJson(resMap);
+	}
+
+	public List<BenVisitsDTO> getVisitByLocationAndLastModifDate(Integer villageID, Timestamp lastModifDate) {
+		List<BeneficiaryFlowStatus> listBenVisitFlowsOBJs = benFlowStatusRepo.getVisitByLocationAndLastModifDate(villageID, lastModifDate);
+		List<BenVisitsDTO> benVisitDetailsList = new ArrayList<>();
+		for (BeneficiaryFlowStatus beneficiaryFlowStatus : listBenVisitFlowsOBJs) {
+			BeneficiaryVisitDetail benVisitDetailsOBJ1 = benVisitDetailRepo.getVisitDetailsByVisitIDAndLastModifDate(beneficiaryFlowStatus.getBenVisitID(), lastModifDate);
+			BenVisitsDTO benVisitsDTO = new BenVisitsDTO();
+			benVisitsDTO.setBenFlowID(beneficiaryFlowStatus.getBenFlowID());
+			benVisitsDTO.setSessionID(beneficiaryFlowStatus.getVisitSession());
+			benVisitsDTO.setBeneficiaryID(beneficiaryFlowStatus.getBeneficiaryID());
+			benVisitsDTO.setBenVisitDetails(benVisitDetailsOBJ1);
+			benVisitDetailsList.add(benVisitsDTO);
+		}
+		return benVisitDetailsList;
 	}
 
 }
