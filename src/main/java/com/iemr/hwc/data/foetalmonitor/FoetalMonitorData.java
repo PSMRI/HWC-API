@@ -19,56 +19,65 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.data.fetosense;
+package com.iemr.hwc.data.foetalmonitor;
 
 import java.sql.Timestamp;
 
-public class FetosenseData {
+public class FoetalMonitorData {
 
-	private Long partnerFetosenseId;
+	private Long partnerFoetalMonitorId;
 	private Long beneficiaryRegID;
 	private String motherLMPDate;
 	private String motherName;
 	private String testName;
 	private String deviceId;
-	
-	public Long getPartnerFetosenseID() {
-		return partnerFetosenseId;
+
+	public Long getPartnerFoetalMonitorId() {
+		return partnerFoetalMonitorId;
 	}
-	public void setPartnerFetosenseID(Long partnerFetosenseID) {
-		this.partnerFetosenseId = partnerFetosenseID;
+
+	public void setPartnerFoetalMonitorId(Long partnerFoetalMonitorId) {
+		this.partnerFoetalMonitorId = partnerFoetalMonitorId;
 	}
+
 	public String getMotherLMPDate() {
 		return motherLMPDate;
 	}
+
 	public void setMotherLMPDate(String motherLMPDate) {
 		this.motherLMPDate = motherLMPDate;
 	}
+
 	public String getMotherName() {
 		return motherName;
 	}
+
 	public void setMotherName(String motherName) {
-		this.motherName = motherName; 
+		this.motherName = motherName;
 	}
-	
+
 	public String getTestName() {
 		return testName;
 	}
+
 	public void setTestName(String testName) {
 		this.testName = testName;
 	}
+
 	public Long getBeneficiaryRegID() {
 		return beneficiaryRegID;
 	}
+
 	public void setBeneficiaryRegID(Long beneficiaryRegID) {
 		this.beneficiaryRegID = beneficiaryRegID;
 	}
+
 	public String getDeviceID() {
 		return deviceId;
 	}
+
 	public void setDeviceID(String deviceID) {
 		this.deviceId = deviceID;
 	}
-	
 
 }

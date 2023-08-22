@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.data.fetosense;
+package com.iemr.hwc.data.foetalmonitor;
 
 import java.sql.Timestamp;
 
@@ -36,7 +36,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "m_vanfetosensedeviceidmapping")
-public class FetosenseDeviceID {
+public class FoetalMonitorDeviceID {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

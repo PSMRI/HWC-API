@@ -99,7 +99,7 @@ public class HttpUtils {
 		if (header.containsKey(HttpHeaders.AUTHORIZATION)) {
 			headers.add(HttpHeaders.AUTHORIZATION, header.get(HttpHeaders.AUTHORIZATION).toString());
 		}
-		// for fetosense api
+		// for foetal monitor api
 		if (header.containsKey("apiKey")) {
 			headers.add("apiKey", header.get("apiKey").toString());
 		}

@@ -19,7 +19,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.hwc.data.fetosense;
+package com.iemr.hwc.data.foetalmonitor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -35,13 +35,13 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "m_fetosensetests")
-public class FetosenseTestMaster {
+public class FoetalMonitorTestMaster {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Expose
 	@Column(name = "fetosensetestid")
-	private Integer fetosenseTestId;
+	private Integer foetalMonitorTestId;
 	
 	@Expose
 	@Column(name = "TestName") 
@@ -84,18 +84,18 @@ public class FetosenseTestMaster {
 	
 
 	
-	public FetosenseTestMaster(Integer fetosenseTestId, String testName) {
+	public FoetalMonitorTestMaster(Integer foetalMonitorTestId, String testName) {
 		super();
-		this.fetosenseTestId = fetosenseTestId;
+		this.foetalMonitorTestId = foetalMonitorTestId;
 		this.testName = testName;
 	}
 
 	
-	public static ArrayList<FetosenseTestMaster> getFetosenseMasters(ArrayList<Object[]> resList) {
-		ArrayList<FetosenseTestMaster> resArray = new ArrayList<FetosenseTestMaster>();
+	public static ArrayList<FoetalMonitorTestMaster> getFoetalMonitorMasters(ArrayList<Object[]> resList) {
+		ArrayList<FoetalMonitorTestMaster> resArray = new ArrayList<FoetalMonitorTestMaster>();
 		for (Object[] obj : resList) {
-			FetosenseTestMaster fetosenseOBJ = new FetosenseTestMaster((Integer)obj[0], (String)obj[1]);
-			resArray.add(fetosenseOBJ);
+			FoetalMonitorTestMaster foetalMonitorOBJ = new FoetalMonitorTestMaster((Integer)obj[0], (String)obj[1]);
+			resArray.add(foetalMonitorOBJ);
 		}
 		return resArray;
 	}
