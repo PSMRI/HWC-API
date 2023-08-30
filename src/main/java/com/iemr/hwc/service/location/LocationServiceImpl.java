@@ -219,6 +219,20 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	@Override
+	public String getVillageListByDistrictID(Integer districtID){
+		ArrayList<Object[]> villageList = new ArrayList<>();
+		ArrayList<Object[]> districtBlockMasterList = districtBlockMasterRepo.getDistrictBlockMaster(districtID);
+		if (districtBlockMasterList != null && districtBlockMasterList.size() > 0) {
+			for (Object[] objArr : districtBlockMasterList) {
+				ArrayList<Object[]> tmpvillageList = new ArrayList<>();
+				tmpvillageList = districtBranchMasterRepo.findByBlockID((Integer) objArr[0]);
+				villageList.addAll(tmpvillageList);
+			}
+		}
+		return DistrictBranchMapping.getVillageList(villageList);
+	}
+
+	@Override
 	public String getParkingPlaceList(Integer providerServiceMapID) {
 		ArrayList<Object> parkingPlaceList = new ArrayList<>();
 		ArrayList<Object[]> parkingPlaceMasterList = parkingPlaceMasterRepo.getParkingPlaceMaster(providerServiceMapID);

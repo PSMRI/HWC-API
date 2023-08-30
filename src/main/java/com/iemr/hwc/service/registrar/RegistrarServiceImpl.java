@@ -24,12 +24,7 @@ package com.iemr.hwc.service.registrar;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javax.ws.rs.core.MediaType;
 
@@ -96,6 +91,9 @@ public class RegistrarServiceImpl implements RegistrarService {
 
 	@Value("${registrarAdvanceSearchUrl}")
 	private String registrarAdvanceSearchUrl;
+
+	@Value("${syncSearchByLocation}")
+	private String syncSearchByLocation;
 
 	private RegistrarRepoBenData registrarRepoBenData;
 	private RegistrarRepoBenDemoData registrarRepoBenDemoData;
@@ -744,6 +742,33 @@ public class RegistrarServiceImpl implements RegistrarService {
 			// log error that registration failed.
 		}
 		return response1.toString();
+	}
+
+	// beneficiary advance search new integrated with common and identity
+	public String getBeneficiaryByBlockIDAndLastModDate(String blockID, Date lastModifDate, String Authorization) {
+		String returnOBJ = null;
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			JSONObject obj = new JSONObject();
+			obj.put("blockID", Integer.parseInt(blockID));
+			obj.put("lastModifDate", lastModifDate.getTime());
+
+			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+			headers.add("Content-Type", "application/json");
+			HttpEntity<String> request = new HttpEntity<String>(obj.toString(), headers);
+			ResponseEntity<String> response = restTemplate.exchange(syncSearchByLocation, HttpMethod.POST, request,
+					String.class);
+
+			if (response.hasBody()){
+				returnOBJ = response.getBody();
+			}
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return returnOBJ;
+
 	}
 
 	// New beneficiary update api

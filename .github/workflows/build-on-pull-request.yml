@@ -2,7 +2,7 @@ name: Build On Pull Request
 on:
   pull_request:
     branches: [ "master","develop" ]
-    
+
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -18,5 +18,5 @@ jobs:
         with:
           java-version: 8
           distribution: 'adopt'
-      - name: Build with Maven  
+      - name: Build with Maven
         run: mvn clean install
