@@ -26,6 +26,10 @@ import java.util.List;
 public class FhirRestfulServer extends RestfulServer {
     private ApplicationContext applicationContext;
 
+    public FhirRestfulServer(){
+
+    }
+
     public FhirRestfulServer(ApplicationContext context) {
 
         this.applicationContext = context;
