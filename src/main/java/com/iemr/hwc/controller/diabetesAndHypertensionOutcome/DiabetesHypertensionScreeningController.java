@@ -39,7 +39,7 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/screeningOutcome", headers = "Authorization")
-public class DiabetesAndHypertensionScreeningController {
+public class DiabetesHypertensionScreeningController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	@Autowired
