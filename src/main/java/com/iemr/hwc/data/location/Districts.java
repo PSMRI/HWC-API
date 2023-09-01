@@ -39,6 +39,9 @@ import com.google.gson.annotations.Expose;
 import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
 import com.iemr.hwc.repo.location.ZoneDistrictMapping;
 
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "m_district")
 public class Districts {
@@ -51,6 +54,17 @@ public class Districts {
 	
 	@Expose
 	private Integer stateID;
+	
+	
+	@Column(name = "GovtStateID")
+	@Expose
+	private Integer govtLGDStateID;
+	
+	@Column(name = "GovtDistrictID")
+	@Expose
+	private Integer govtLGDDistrictID;
+
+
 	@Column(name = "DistrictName")
 	@Expose
 	private String districtName;
@@ -110,12 +124,50 @@ public class Districts {
 		this.districtID = districtID;
 	}
 
-	public Districts(Integer districtID, Integer stateID, String districtName, Boolean deleted, String createdBy,
-			Timestamp createdDate, String modifiedBy, Timestamp lastModDate, States states,
-			ZoneDistrictMapping zoneDistrictMapping) {
+	/*
+	 * public Districts(Integer districtID, Integer stateID, String districtName,
+	 * Boolean deleted, String createdBy, Timestamp createdDate, String modifiedBy,
+	 * Timestamp lastModDate, States states, ZoneDistrictMapping
+	 * zoneDistrictMapping) { super(); this.districtID = districtID; this.stateID =
+	 * stateID; this.districtName = districtName; this.deleted = deleted;
+	 * this.createdBy = createdBy; this.createdDate = createdDate; this.modifiedBy =
+	 * modifiedBy; this.lastModDate = lastModDate; this.states = states;
+	 * this.zoneDistrictMapping = zoneDistrictMapping; }
+	 */
+
+	
+	/*
+	 * public Districts(Integer DistrictID, String DistrictName) { this.districtID =
+	 * DistrictID; this.districtName = DistrictName; }
+	 */
+
+	public Districts(Integer DistrictID, String DistrictName, Integer stateId, String stateName,Integer govtLGDStateID,Integer govtLGDDistrictID) {
+		this.states = new States(stateId.intValue(), stateName, govtLGDStateID);
+		this.districtID = DistrictID;
+		this.districtName = DistrictName;
+		this.govtLGDStateID = govtLGDStateID;
+		this.govtLGDDistrictID = govtLGDDistrictID;
+	}
+	
+	public Districts(Integer districtID, String districtName, Integer govtLGDStateID, Integer govtLGDDistrictID) {
+		this.districtID = districtID;
+		this.districtName = districtName;
+		this.govtLGDStateID = govtLGDStateID;
+		this.govtLGDDistrictID = govtLGDDistrictID;
+		}
+	
+	
+	
+	
+
+	public Districts(Integer districtID, Integer stateID, Integer govtLGDStateID, Integer govtLGDDistrictID,
+			String districtName, Boolean deleted, String createdBy, Timestamp createdDate, String modifiedBy,
+			Timestamp lastModDate, States states, ZoneDistrictMapping zoneDistrictMapping) {
 		super();
 		this.districtID = districtID;
 		this.stateID = stateID;
+		this.govtLGDStateID = govtLGDStateID;
+		this.govtLGDDistrictID = govtLGDDistrictID;
 		this.districtName = districtName;
 		this.deleted = deleted;
 		this.createdBy = createdBy;
@@ -126,15 +178,20 @@ public class Districts {
 		this.zoneDistrictMapping = zoneDistrictMapping;
 	}
 
-	public Districts(Integer DistrictID, String DistrictName) {
-		this.districtID = DistrictID;
-		this.districtName = DistrictName;
+	public Integer getGovtLGDStateID() {
+		return govtLGDStateID;
 	}
 
-	public Districts(Integer DistrictID, String DistrictName, Integer stateId, String stateName) {
-		this.states = new States(stateId.intValue(), stateName);
-		this.districtID = DistrictID;
-		this.districtName = DistrictName;
+	public void setGovtLGDStateID(Integer govtLGDStateID) {
+		this.govtLGDStateID = govtLGDStateID;
+	}
+
+	public Integer getGovtLGDDistrictID() {
+		return govtLGDDistrictID;
+	}
+
+	public void setGovtLGDDistrictID(Integer govtLGDDistrictID) {
+		this.govtLGDDistrictID = govtLGDDistrictID;
 	}
 
 	public int getDistrictID() {
