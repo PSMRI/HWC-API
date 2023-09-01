@@ -416,7 +416,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 
 	/**
 	 * updating lab technician flag to 3 from 3 , as soon as receive response from
-	 * fetosense
+	 * foetal monitor
 	 * 
 	 * @author DU20091017
 	 * @param lab_technician_flag
@@ -437,7 +437,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	public Timestamp getBenAgeVal(@Param("benRegID") Long benRegID);
 
 //	/**
-//	 * get labtechnician flag and update for fetosense test
+//	 * get labtechnician flag and update for foetal monitor test
 //	 * @author SH20094090
 //	 * @param benFlowID
 //	 */
@@ -448,4 +448,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			+ " visit_category =:vc AND beneficiary_visit_code is not null  ORDER BY ben_flow_id DESC LIMIT 1 ", nativeQuery = true)
 	public Long getLatestVisitCode(@Param("benRegId") Long benRegId, @Param("vc") String vc);
 
+	// get visit by location and modify_date
+	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.villageID = :villageID AND t.modified_date > :lastModDate ORDER BY t.visitDate DESC ")
+	public ArrayList<BeneficiaryFlowStatus> getVisitByLocationAndLastModifDate(@Param("villageID") Integer villageID, @Param("lastModDate") Timestamp lastModDate);
 }

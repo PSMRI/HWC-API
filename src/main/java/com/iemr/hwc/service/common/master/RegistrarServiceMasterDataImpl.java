@@ -21,6 +21,8 @@
 */
 package com.iemr.hwc.service.common.master;
 
+import java.net.URLEncoder;
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
@@ -267,16 +271,41 @@ public class RegistrarServiceMasterDataImpl implements RegistrarServiceMasterDat
 
 	public String getBenImageFromIdentityAPI(String Authorization, String comingRequest) throws Exception {
 		String returnOBJ = null;
+		String tempResponse = null;
 		RestTemplate restTemplate = new RestTemplate();
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		headers.add("Content-Type", "application/json");
 		headers.add("AUTHORIZATION", Authorization);
-
-		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
+		String encodedRequest = URLEncoder.encode(comingRequest, "UTF-8");
+		HttpEntity<Object> request = new HttpEntity<Object>(encodedRequest, headers);
 		ResponseEntity<String> response = restTemplate.exchange(getBenImageFromIdentity, HttpMethod.POST, request,
 				String.class);
-		// if()
-		returnOBJ = response.getBody();
+		tempResponse = response.getBody();
+		// Desired key-value pairs and their types
+		String desiredKey1 = "benImage";
+		Class<?> desiredValueType1 = String.class;
+
+		String desiredKey2 = "createdDate";
+		Class<?> desiredValueType2 = Timestamp.class;
+		// Parse the JSON response
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonNode = objectMapper.readTree(tempResponse);
+
+		// Check if the desired key-value pairs exist
+		if (jsonNode.has(desiredKey1) && jsonNode.has(desiredKey2)) {
+			if (jsonNode.get(desiredKey1).getClass().equals(desiredValueType1)) {
+				if (jsonNode.get(desiredKey2).getClass().equals(desiredValueType2)) {
+					returnOBJ = objectMapper.writeValueAsString(jsonNode);
+				} else {
+					System.out.println("Value type for key2 does not match the desired type.");
+				}
+			} else {
+				System.out.println("Value type for key1 does not match the desired type.");
+			}
+		} else {
+			System.out.println("Desired key-value pairs not found in the JSON response.");
+		}
 		return returnOBJ;
+
 	}
 }
