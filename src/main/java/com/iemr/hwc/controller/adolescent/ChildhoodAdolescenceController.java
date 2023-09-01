@@ -49,7 +49,7 @@ import io.swagger.annotations.ApiParam;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/child-adolescent-care", headers = "Authorization")
-public class ChildhoodAndAdolescenceController {
+public class ChildhoodAdolescenceController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Autowired
