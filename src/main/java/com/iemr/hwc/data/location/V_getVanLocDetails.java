@@ -43,6 +43,16 @@ public class V_getVanLocDetails {
 	@Expose
 	@Column(name = "ParkingPlaceID")
 	private Integer parkingPlaceID;
+	
+	@Column(name = "State_LGDCode")
+	@Expose
+	private Integer govtLGDStateID;
+
+	@Column(name = "District_LGDCode")
+	@Expose
+	private Integer govtLGDDistrictID;
+
+	
 	@Expose
 	@Column(name = "StateID")
 	private Integer stateID;

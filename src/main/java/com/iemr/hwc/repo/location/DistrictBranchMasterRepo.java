@@ -35,7 +35,7 @@ import com.iemr.hwc.data.location.DistrictBranchMapping;
 @RestResource(exported = false)
 public interface DistrictBranchMasterRepo extends CrudRepository<DistrictBranchMapping, Integer> {
 
-	@Query(" SELECT districtBranchID, villageName FROM DistrictBranchMapping WHERE blockID = :blockID  AND deleted != 1 ")
+	@Query(" SELECT districtBranchID, villageName,govtLGDSubDistrictID,govtLGDVillageID FROM DistrictBranchMapping WHERE blockID = :blockID  AND deleted != 1 ")
 	public ArrayList<Object[]> findByBlockID(@Param("blockID") Integer blockID);
 	
 

@@ -34,7 +34,7 @@ import com.iemr.hwc.data.location.DistrictBlock;
 @Repository
 @RestResource(exported = false)
 public interface DistrictBlockMasterRepo extends CrudRepository<DistrictBlock, Integer> {
-	@Query(" SELECT blockID, blockName FROM DistrictBlock WHERE districtID = :districtID AND deleted != 1 ")
+	@Query(" SELECT blockID, blockName, govLGDSubDistrictID, govtLGDDistrictID FROM DistrictBlock WHERE districtID = :districtID AND deleted != 1 ")
 	public ArrayList<Object[]> getDistrictBlockMaster(@Param("districtID") Integer districtID);
 
 }

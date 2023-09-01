@@ -50,6 +50,16 @@ public class DistrictBranchMapping {
 	@Column(name = "BlockID")
 	@Expose
 	private Integer blockID;
+	
+	@Column(name = "GovSubDistrictID")
+	@Expose
+	private Integer govtLGDSubDistrictID;
+
+	@Column(name = "GovVillageID")
+	@Expose
+	private Integer govtLGDVillageID;
+	
+	
 	@Column(name = "PanchayatName")
 	@Expose
 	private String panchayatName;
@@ -81,16 +91,27 @@ public class DistrictBranchMapping {
 	public DistrictBranchMapping() {
 	}
 
-	public DistrictBranchMapping(Integer DistrictBranchID, String VillageName) {
-		this.districtBranchID = DistrictBranchID;
-		this.villageName = VillageName;
+	
+	public DistrictBranchMapping(Integer districtBranchID,String villageName, Integer govtLGDSubDistrictID, Integer govtLGDVillageID
+			) {
+		this.districtBranchID = districtBranchID;
+		this.villageName = villageName;
+		this.govtLGDSubDistrictID = govtLGDSubDistrictID;
+		this.govtLGDVillageID = govtLGDVillageID;
+		
 	}
+	
+	
+	/*
+	 * public DistrictBranchMapping(Integer DistrictBranchID, String VillageName) {
+	 * this.districtBranchID = DistrictBranchID; this.villageName = VillageName; }
+	 */
 
 	public static String getVillageList(ArrayList<Object[]> resList) {
 		DistrictBranchMapping villOBJ = null;
 		ArrayList<DistrictBranchMapping> villList = new ArrayList<>();
 		for (Object[] obj : resList) {
-			villOBJ = new DistrictBranchMapping((Integer) obj[0], (String) obj[1]);
+			villOBJ = new DistrictBranchMapping((Integer) obj[0], (String) obj[1],(Integer) obj[2],(Integer) obj[3]);
 			villList.add(villOBJ);
 		}
 		return new Gson().toJson(villList);
