@@ -23,7 +23,10 @@ package com.iemr.hwc.service.foetalmonitor;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +51,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -72,7 +76,6 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 
 	@Value("${foetalMonitorAPIKey}")
 	private String foetalMonitorAPIKey;
-
 
 	static HttpURLConnection con;
 
@@ -107,7 +110,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			foetalMonitorDataOutside.setPartnerName(foetalMonitorDataOutside.getMother().get("partnerName"));
 
 			// fetching data from the db
-			FoetalMonitor foetalMonitorFetchDataDB = foetalMonitorRepo.getFoetalMonitorDetails(foetalMonitorDataOutside.getFoetalMonitorID());
+			FoetalMonitor foetalMonitorFetchDataDB = foetalMonitorRepo
+					.getFoetalMonitorDetails(foetalMonitorDataOutside.getFoetalMonitorID());
 			if (foetalMonitorFetchDataDB == null || foetalMonitorFetchDataDB.getFoetalMonitorID() == null)
 				throw new IEMRException("Invalid partnerfoetalMonitorID");
 
@@ -175,33 +179,54 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 
 	// generate report file in file storage
 	private String generatePDF(String filePath) throws IEMRException {
-		String filePathLocal = "";
-		Long timeStamp = System.currentTimeMillis();
-		try {
 
-			URL url = new URL(filePath);
-			con = (HttpURLConnection) url.openConnection();
+		try {
+			URI tempFilePath1 = URI.create(filePath).normalize();
+			String tempFilePath2 = tempFilePath1.toString();
+			String sanitizedPath = Paths.get(UriComponentsBuilder.fromPath(tempFilePath2).build().getPath()).toString();
+
+			URL url = new URL(sanitizedPath);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
-			con.setDoInput(true);
-			filePathLocal = foetalMonitorFilePath + "/" + timeStamp.toString() + ".pdf";
-			Path path = Paths.get(filePathLocal);
-			Files.copy(con.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+			// "Best Practice": Set headers as needed for the specific API
+			/*
+			 * con.addRequestProperty("User-Agent", "Your-User-Agent");
+			 * con.addRequestProperty("Authorization", "Bearer Your-AccessToken");
+			 * con.setDoInput(true);
+			 */
+
+			String fileName = System.currentTimeMillis() + ".pdf";
+			Path filePathLocal = Paths.get(foetalMonitorFilePath, fileName);
+			try (InputStream inputStream = con.getInputStream()) {
+				Files.copy(inputStream, filePathLocal, StandardCopyOption.REPLACE_EXISTING);
+			}
+			return filePathLocal.toString();
 
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		} finally {
-			con.disconnect();
+			if (con != null) {
+				con.disconnect(); // Close the HTTP connection in the finally block
+			}
 		}
 
-		return filePathLocal;
 	}
 
 	// generate report file in file storage
 	@Override
 	public String readPDFANDGetBase64(String filePath) throws IEMRException, IOException, FileNotFoundException {
-		// FileInputStream file = new FileInputStream(filePath);
-		byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
-		return Base64.getEncoder().encodeToString(byteArray);
+
+		URI tempFilePath1 = URI.create(filePath).normalize();
+		String tempFilePath2 = tempFilePath1.toString();
+		Path sanitizedPath = Paths.get(UriComponentsBuilder.fromPath(tempFilePath2).build().getPath());
+		try {
+			byte[] byteArray = Files.readAllBytes(sanitizedPath);
+			return Base64.getEncoder().encodeToString(byteArray);
+		} catch (MalformedURLException e) {
+			return "This is a malformed URL";
+		}
+
 	}
 
 	/***
@@ -234,7 +259,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				foetalMonitorTestDetails.setTestName(request.getTestName());
 
 				// checking whether device ID is mapped or not
-				FoetalMonitorDeviceID deviceIDForVanID = foetalMonitorDeviceIDRepo.getDeviceIDForVanID(request.getVanID());
+				FoetalMonitorDeviceID deviceIDForVanID = foetalMonitorDeviceIDRepo
+						.getDeviceIDForVanID(request.getVanID());
 
 				if (deviceIDForVanID != null && deviceIDForVanID.getDeviceID() != null) {
 					foetalMonitorTestDetails.setDeviceID(deviceIDForVanID.getDeviceID());
@@ -250,7 +276,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 				String requestObj = new Gson().toJson(foetalMonitorTestDetails).toString();
 
 				logger.info("calling foetal monitor API with request OBJ : " + requestObj);
-				// Invoking Foetal monitor API - Sending mother data and test details to foetal monitor
+				// Invoking Foetal monitor API - Sending mother data and test details to foetal
+				// monitor
 				result = httpUtils.postWithResponseEntity(
 						ConfigProperties.getPropertyByName("foetalMonitor-api-url-ANCTestDetails"), requestObj, header);
 				logger.info("Foetal monitor register mother API response : " + result.toString());
@@ -284,7 +311,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(e.getResponseBodyAsString());
 			jsnOBJ = jsnElmnt.getAsJsonObject();
-			if (request != null && request.getPartnerFoetalMonitorId() != null && request.getPartnerFoetalMonitorId() > 0) {
+			if (request != null && request.getPartnerFoetalMonitorId() != null
+					&& request.getPartnerFoetalMonitorId() > 0) {
 				// String response = e.getres;
 				logger.info("Foetal monitor test request transaction roll-backed");
 				request.setDeleted(true);
@@ -298,7 +326,8 @@ public class FoetalMonitorServiceImpl implements FoetalMonitorService {
 
 		} catch (Exception e) {
 			// if record is created, and not raised in foetal monitor device, soft delete it
-			if (request != null && request.getPartnerFoetalMonitorId() != null && request.getPartnerFoetalMonitorId() > 0) {
+			if (request != null && request.getPartnerFoetalMonitorId() != null
+					&& request.getPartnerFoetalMonitorId() > 0) {
 				logger.info("Foetal monitor test request transaction roll-backed");
 				request.setDeleted(true);
 				foetalMonitorRepo.save(request);
