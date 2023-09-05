@@ -31,7 +31,7 @@ public class FhirRestfulServer extends RestfulServer {
         this.applicationContext = context;
     }
 
-	public FhirRestfulServer() {
+    public FhirRestfulServer() {
 
 	}
     @Override
