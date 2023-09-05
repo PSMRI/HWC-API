@@ -17,6 +17,8 @@ jobs:
       fail-fast: false
       
     steps:
+    - name: Checkout code
+      uses: actions/checkout@master
     - name: Update diagram
       id: make_diagram
       uses: githubocto/repo-visualizer@0.7.1
