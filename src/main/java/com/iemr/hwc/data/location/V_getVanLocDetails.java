@@ -48,10 +48,25 @@ public class V_getVanLocDetails {
 	@Expose
 	private Integer govtLGDStateID;
 
+	@Column(name = "blockid")
+	@Expose
+	private Integer blockid;
+	
+	@Column(name = "blockname")
+	@Expose
+	private String blockname;
+	
+	@Column(name = "villageid")
+	@Expose
+	private Integer villageid;
+	
+	@Column(name = "VillageName")
+	@Expose
+	private String VillageName;
+	
 	@Column(name = "District_LGDCode")
 	@Expose
 	private Integer govtLGDDistrictID;
-
 	
 	@Expose
 	@Column(name = "StateID")
