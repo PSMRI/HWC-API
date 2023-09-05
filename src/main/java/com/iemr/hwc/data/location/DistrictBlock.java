@@ -43,6 +43,14 @@ public class DistrictBlock {
 	@Expose
 	private Integer blockID;
 
+	@Column(name = "GovDistrictID")
+	@Expose
+	private Integer govtLGDDistrictID;
+
+	@Column(name = "GovSubDistrictID")
+	@Expose
+	private Integer govLGDSubDistrictID;
+	
 	@Column(name = "DistrictID")
 	@Expose
 	private Integer districtID;
@@ -68,14 +76,13 @@ public class DistrictBlock {
 	@Transient
 	private OutputMapper outputMapper = new OutputMapper();
 
-	public DistrictBlock() {
-	}
+	
 
-	public DistrictBlock(Integer BlockID, String BlockName) {
-		this.blockID = BlockID;
-		this.blockName = BlockName;
-	}
-
+	/*
+	 * public DistrictBlock(Integer BlockID, String BlockName) { this.blockID =
+	 * BlockID; this.blockName = BlockName; }
+	 */
+	
 	public Integer getBlockID() {
 		return this.blockID;
 	}
@@ -147,7 +154,19 @@ public class DistrictBlock {
 	public void setLastModDate(Timestamp lastModDate) {
 		this.lastModDate = lastModDate;
 	}
+	
+	
+	
 
+	public DistrictBlock(Integer blockID, String blockName, Integer govtLGDDistrictID, Integer govLGDSubDistrictID) {
+		this.blockID = blockID;
+		this.blockName = blockName;
+		this.govtLGDDistrictID = govtLGDDistrictID;
+		this.govLGDSubDistrictID = govLGDSubDistrictID;
+		
+	}
+
+	
 	@Override
 	public String toString() {
 		return outputMapper.gson().toJson(this);

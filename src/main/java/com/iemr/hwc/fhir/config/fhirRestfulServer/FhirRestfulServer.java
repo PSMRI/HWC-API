@@ -35,6 +35,9 @@ public class FhirRestfulServer extends RestfulServer {
         this.applicationContext = context;
     }
 
+	public FhirRestfulServer() {
+
+	}
     @Override
     protected void initialize() throws ServletException{
         super.initialize();

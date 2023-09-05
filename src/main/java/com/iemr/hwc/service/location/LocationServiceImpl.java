@@ -158,7 +158,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
 		if (stateMasterList != null && stateMasterList.size() > 0) {
 			for (Object[] objArr : stateMasterList) {
-				States states = new States((Integer) objArr[0], (String) objArr[1]);
+				States states = new States((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2]);
 				stateList.add(states);
 			}
 		}
@@ -184,7 +184,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> districtMasterList = districtMasterRepo.getDistrictMaster(stateID);
 		if (districtMasterList != null && districtMasterList.size() > 0) {
 			for (Object[] objArr : districtMasterList) {
-				Districts districtMaster = new Districts((Integer) objArr[0], (String) objArr[1]);
+				Districts districtMaster = new Districts((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2],(Integer) objArr[3]);
 				districtList.add(districtMaster);
 			}
 		}
@@ -211,7 +211,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> districtBlockMasterList = districtBlockMasterRepo.getDistrictBlockMaster(districtID);
 		if (districtBlockMasterList != null && districtBlockMasterList.size() > 0) {
 			for (Object[] objArr : districtBlockMasterList) {
-				DistrictBlock districtBLockMaster = new DistrictBlock((Integer) objArr[0], (String) objArr[1]);
+				DistrictBlock districtBLockMaster = new DistrictBlock((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2],(Integer) objArr[3]);
 				districtBlockList.add(districtBLockMaster);
 			}
 		}
@@ -278,7 +278,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
 		if (stateMasterList != null && stateMasterList.size() > 0) {
 			for (Object[] objArr : stateMasterList) {
-				States states = new States((Integer) objArr[0], (String) objArr[1]);
+				States states = new States((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2]);
 				stateList.add(states);
 			}
 		}
@@ -317,7 +317,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
 		if (stateMasterList != null && stateMasterList.size() > 0) {
 			for (Object[] objArr : stateMasterList) {
-				States states = new States((Integer) objArr[0], (String) objArr[1]);
+				States states = new States((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2]);
 				stateList.add(states);
 			}
 		}
