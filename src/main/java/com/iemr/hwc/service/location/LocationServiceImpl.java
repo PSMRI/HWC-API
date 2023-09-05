@@ -349,7 +349,7 @@ public class LocationServiceImpl implements LocationService {
 				distMap.put("blockName", objList.get(0)[5]);
 				for (Object[] objArr : objList) {
 					villageMap = new HashMap<>();
-					villageMap.put("villageid", objArr[4]);
+					villageMap.put("districtBranchID", objArr[4]);
 					villageMap.put("villageName", objArr[5]);
 					
 					villageList.add(villageMap);
