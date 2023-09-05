@@ -33,7 +33,7 @@ public class FhirRestfulServer extends RestfulServer {
 
     public FhirRestfulServer() {
 
-	}
+    }
     @Override
     protected void initialize() throws ServletException{
         super.initialize();
