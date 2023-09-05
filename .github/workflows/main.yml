@@ -1,6 +1,25 @@
-- name: Checkout code
-  uses: actions/checkout@master
-- name: Update diagram
-  uses: githubocto/repo-visualizer@0.7.1
-  with:
-    output_file: "/diagram.svg"
+name: Visualize
+on:
+  push:
+    branches: [ "master"]
+env:
+  ENV_VAR: prod
+
+jobs:
+  CodeQL:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@master
+    - name: Update diagram
+      uses: githubocto/repo-visualizer@0.7.1
+      with:
+          output_file: "/diagram.svg"
