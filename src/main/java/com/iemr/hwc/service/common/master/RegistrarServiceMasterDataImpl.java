@@ -276,35 +276,11 @@ public class RegistrarServiceMasterDataImpl implements RegistrarServiceMasterDat
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		headers.add("Content-Type", "application/json");
 		headers.add("AUTHORIZATION", Authorization);
-		String encodedRequest = URLEncoder.encode(comingRequest, "UTF-8");
-		HttpEntity<Object> request = new HttpEntity<Object>(encodedRequest, headers);
+		//String encodedRequest = URLEncoder.encode(comingRequest, "UTF-8");
+		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
 		ResponseEntity<String> response = restTemplate.exchange(getBenImageFromIdentity, HttpMethod.POST, request,
 				String.class);
-		tempResponse = response.getBody();
-		// Desired key-value pairs and their types
-		String desiredKey1 = "benImage";
-		Class<?> desiredValueType1 = String.class;
-
-		String desiredKey2 = "createdDate";
-		Class<?> desiredValueType2 = Timestamp.class;
-		// Parse the JSON response
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode jsonNode = objectMapper.readTree(tempResponse);
-
-		// Check if the desired key-value pairs exist
-		if (jsonNode.has(desiredKey1) && jsonNode.has(desiredKey2)) {
-			if (jsonNode.get(desiredKey1).getClass().equals(desiredValueType1)) {
-				if (jsonNode.get(desiredKey2).getClass().equals(desiredValueType2)) {
-					returnOBJ = objectMapper.writeValueAsString(jsonNode);
-				} else {
-					System.out.println("Value type for key2 does not match the desired type.");
-				}
-			} else {
-				System.out.println("Value type for key1 does not match the desired type.");
-			}
-		} else {
-			System.out.println("Desired key-value pairs not found in the JSON response.");
-		}
+		returnOBJ = response.getBody();
 		return returnOBJ;
 
 	}
