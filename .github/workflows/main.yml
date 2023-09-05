@@ -1,7 +1,7 @@
 name: Visualize
 on:
   push:
-    branches: [ "master"]
+    branches: [ "develop" ]
 env:
   ENV_VAR: prod
 
