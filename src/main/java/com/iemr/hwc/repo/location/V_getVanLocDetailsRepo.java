@@ -35,7 +35,7 @@ import com.iemr.hwc.data.location.V_getVanLocDetails;
 @RestResource(exported = false)
 public interface V_getVanLocDetailsRepo extends CrudRepository<V_getVanLocDetails, Integer> {
 	@Query(" SELECT distinct t.stateID, t.parkingPlaceID, t.districtID, t.districtName,"
-			+ "t.blockid, t.blockname, t.villageid, t.VillageName, t.govtLGDStateID,t.govtLGDDistrictID"
+			+ "t.blockid, t.blockname, t.villageId, t.villageName, t.govtLGDStateID,t.govtLGDDistrictID"
 			+ " FROM V_getVanLocDetails t WHERE t.vanID = :vanID ")
 	ArrayList<Object[]> getVanDetails(@Param("vanID") Integer vanID);
 

@@ -58,11 +58,11 @@ public class V_getVanLocDetails {
 	
 	@Column(name = "villageid")
 	@Expose
-	private Integer villageid;
+	private String villageId;
 	
 	@Column(name = "VillageName")
 	@Expose
-	private String VillageName;
+	private String villageName;
 	
 	@Column(name = "District_LGDCode")
 	@Expose
