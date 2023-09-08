@@ -331,21 +331,32 @@ public class LocationServiceImpl implements LocationService {
 	private Map<String, Object> getDefaultLocDetails(ArrayList<Object[]> objList) {
 		Map<String, Object> returnObj = new HashMap<>();
 		Map<String, Object> distMap = new HashMap<>();
+		Map<String, Object> villageMap = new HashMap<>();
 		ArrayList<Map<String, Object>> distLit = new ArrayList<>();
+		ArrayList<Map<String, Object>> villageList = new ArrayList<>();
 		if (objList != null && objList.size() > 0) {
 			returnObj.put("stateID", objList.get(0)[0]);
-			// returnObj.put("stateName", objList.get(0)[7]);
-			// returnObj.put("zoneID", objList.get(0)[4]);
-			// returnObj.put("zoneName", objList.get(0)[5]);
 			returnObj.put("parkingPlaceID", objList.get(0)[1]);
-			// returnObj.put("parkingPlaceName", objList.get(0)[1]);
-			for (Object[] objArr : objList) {
-				distMap = new HashMap<>();
-				distMap.put("districtID", objArr[2]);
-				distMap.put("districtName", objArr[3]);
 
-				distLit.add(distMap);
+			distMap = new HashMap<>();
+			distMap.put("districtID", objList.get(0)[2]);
+			distMap.put("districtName", objList.get(0)[3]);
+			distMap.put("blockId", objList.get(0)[4]);
+			distMap.put("blockName", objList.get(0)[5]);
+			
+			for(Object[] objArr : objList) {
+			String[] villageIds = objArr[6].toString().split(",");
+			String[] villageNames = objArr[7].toString().split(",");
+			int villageIdSize = villageIds.length;
+			for (int i = 0; i < villageIdSize; i++) {
+				villageMap = new HashMap<>();
+				villageMap.put("districtBranchID", villageIds[i]);
+				villageMap.put("villageName", villageNames[i]);
+				villageList.add(villageMap);
 			}
+			}
+			distMap.put("villageList", villageList);
+			distLit.add(distMap);
 
 			returnObj.put("districtList", distLit);
 		}
