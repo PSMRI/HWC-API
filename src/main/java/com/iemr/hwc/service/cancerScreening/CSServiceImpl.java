@@ -793,7 +793,7 @@ public class CSServiceImpl implements CSService {
 					CommonUtilityClass.class);
 
 			if (commonUtilityClass != null && commonUtilityClass.getServiceID() != null
-					&& commonUtilityClass.getServiceID() == 9 && requestOBJ != null && requestOBJ.has("tcRequest")
+					&& commonUtilityClass.getServiceID() == 4 && requestOBJ != null && requestOBJ.has("tcRequest")
 					&& requestOBJ.get("tcRequest") != null) {
 
 				tcRequestOBJ = InputMapper.gson().fromJson(requestOBJ.get("tcRequest"),
