@@ -21,6 +21,9 @@
  */
 package com.iemr.hwc.controller.wo;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.iemr.hwc.controller.common.master.CommonMasterController;
 import com.iemr.hwc.service.location.LocationServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -151,6 +154,42 @@ public class LocationControllerWo {
         } catch (Exception e) {
             logger.error(e.getMessage());
             response.setError(5000, "Error while getting location data");
+        }
+        return response.toString();
+    }
+
+    @CrossOrigin
+    @ApiOperation(value = "Update health and wellness center coordinates", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/update/villageCoordinates/wo" }, method = { RequestMethod.POST })
+    public String updateGeolocationVillage(@RequestBody String requestObj) {
+        OutputResponse response = new OutputResponse();
+        try {
+            logger.info("Request object for Geolocation update :" + requestObj);
+
+            JsonObject jsnOBJ = new JsonObject();
+            JsonParser jsnParser = new JsonParser();
+            JsonElement jsnElmnt = jsnParser.parse(requestObj);
+            jsnOBJ = jsnElmnt.getAsJsonObject();
+
+            JsonElement jElmtLatitude = jsnOBJ.get("latitude");
+            JsonElement jElmtLongitude = jsnOBJ.get("longitude");
+            JsonElement jElmtDistrictBranchID = jsnOBJ.get("districtBranchID");
+
+
+            if (jsnOBJ != null && jElmtLatitude!=null && jElmtLongitude!=null && jElmtDistrictBranchID!=null) {
+                int responseUpdate = locationServiceImpl.updateGeolocationByDistrictBranchID(jElmtLatitude.getAsDouble(), jElmtLongitude.getAsDouble(), jElmtDistrictBranchID.getAsInt());
+                if(responseUpdate==1){
+                    response.setResponse(responseUpdate+"");
+                }
+                else if(responseUpdate==101){
+                    response.setError(5000, "Unable to update the lat long for an active record");
+                }
+            } else {
+                response.setError(400, "Invalid request");
+            }
+        } catch (Exception e) {
+            logger.error("Error in updating geolocation :" + e);
+            response.setError(5000, "Unable to update data");
         }
         return response.toString();
     }

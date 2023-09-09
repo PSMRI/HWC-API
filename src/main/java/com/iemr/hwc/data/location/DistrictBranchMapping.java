@@ -35,6 +35,7 @@ import javax.persistence.Transient;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.iemr.hwc.utils.mapper.OutputMapper;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 @Entity
 @Table(name = "m_DistrictBranchMapping")
@@ -85,6 +86,16 @@ public class DistrictBranchMapping {
 	@Column(name = "LastModDate", insertable = false, updatable = false)
 	private Timestamp lastModDate;
 
+	@Column(name = "latitude")
+	@Expose
+	private Double latitude;
+	@Column(name = "longitude")
+	@Expose
+	private Double longitude;
+	@Column(name = "active")
+	@Expose
+	private Boolean active;
+
 	@Transient
 	private OutputMapper outputMapper = new OutputMapper();
 
@@ -98,7 +109,17 @@ public class DistrictBranchMapping {
 		this.villageName = villageName;
 		this.govtLGDSubDistrictID = govtLGDSubDistrictID;
 		this.govtLGDVillageID = govtLGDVillageID;
-		
+	}
+
+	public DistrictBranchMapping(Integer districtBranchID,String villageName, Integer govtLGDSubDistrictID, Integer govtLGDVillageID, Double latitude, Double longitude, Boolean active
+	) {
+		this.districtBranchID = districtBranchID;
+		this.villageName = villageName;
+		this.govtLGDSubDistrictID = govtLGDSubDistrictID;
+		this.govtLGDVillageID = govtLGDVillageID;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.active = active;
 	}
 	
 	
@@ -111,7 +132,7 @@ public class DistrictBranchMapping {
 		DistrictBranchMapping villOBJ = null;
 		ArrayList<DistrictBranchMapping> villList = new ArrayList<>();
 		for (Object[] obj : resList) {
-			villOBJ = new DistrictBranchMapping((Integer) obj[0], (String) obj[1],(Integer) obj[2],(Integer) obj[3]);
+			villOBJ = new DistrictBranchMapping((Integer) obj[0], (String) obj[1],(Integer) obj[2],(Integer) obj[3], (Double) obj[4], (Double) obj[5], (Boolean) obj[6]);
 			villList.add(villOBJ);
 		}
 		return new Gson().toJson(villList);
@@ -218,5 +239,29 @@ public class DistrictBranchMapping {
 	@Override
 	public String toString() {
 		return outputMapper.gson().toJson(this);
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }
