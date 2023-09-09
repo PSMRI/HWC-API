@@ -745,13 +745,13 @@ public class RegistrarServiceImpl implements RegistrarService {
 	}
 
 	// beneficiary advance search new integrated with common and identity
-	public String getBeneficiaryByBlockIDAndLastModDate(String blockID, Date lastModifDate, String Authorization) {
+	public String getBeneficiaryByBlockIDAndLastModDate(String villageID, Date lastModifDate, String Authorization) {
 		String returnOBJ = null;
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			JSONObject obj = new JSONObject();
-			obj.put("blockID", Integer.parseInt(blockID));
-			obj.put("lastModifDate", lastModifDate.getTime());
+			obj.put("villageID", Integer.parseInt(villageID));
+			obj.put("lastModifiedDate", lastModifDate.getTime());
 
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", "application/json");
