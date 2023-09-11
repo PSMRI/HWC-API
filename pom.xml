@@ -86,6 +86,7 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
+<<<<<<< HEAD
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-jdk8</artifactId>
@@ -98,6 +99,8 @@
 			<version>${org.mapstruct.version}</version>
 			<scope>provided</scope>
 		</dependency>
+=======
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
@@ -184,6 +187,7 @@
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session</artifactId>
 		</dependency>
+<<<<<<< HEAD
 
 
 		<!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-base -->
@@ -228,6 +232,8 @@
 		</dependency>
 
 
+=======
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
 	</dependencies>
 
 

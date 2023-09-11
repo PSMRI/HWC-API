@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Static Code Analysis and Packaging
 on:
   push:
@@ -6,6 +7,23 @@ on:
 env:
   ENV_VAR: test
     
+=======
+<<<<<<<< HEAD:.github/workflows/sast-and-package-prod.yml
+name: Static Code Analysis and Packaging Prod
+on:
+  push:
+    branches: [ "master"]
+env:
+  ENV_VAR: prod
+
+========
+name: Static Code Analysis and Packaging
+on:
+  push:
+    branches: [ "master","develop" ]
+    
+>>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:.github/workflows/sast-and-package.yml
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
 jobs:
   CodeQL:
     runs-on: ubuntu-latest
@@ -16,9 +34,23 @@ jobs:
 
     strategy:
       fail-fast: false
+<<<<<<< HEAD
     steps:
     - name: Checkout code 
       uses: actions/checkout@v2
+=======
+<<<<<<<< HEAD:.github/workflows/sast-and-package-prod.yml
+      
+    steps:
+    - name: Checkout code 
+      uses: actions/checkout@v2
+      
+========
+    steps:
+    - name: Checkout code 
+      uses: actions/checkout@v2
+>>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:.github/workflows/sast-and-package.yml
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
     - name: Setup JDK 8
       uses: actions/setup-java@v2
       with:
@@ -27,27 +59,68 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
+<<<<<<< HEAD
         languages: Java
     - name: Build with Maven
       run: mvn clean install -DENV_VAR=${{ env.ENV_VAR }}
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+=======
+        languages: Java    
+<<<<<<<< HEAD:.github/workflows/sast-and-package-prod.yml
+        
+    - name: Build with Maven
+      run: mvn clean install -DENV_VAR=${{ env.ENV_VAR }}
+      
+========
+    - name: Build with Maven
+      run: mvn clean install
+>>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:.github/workflows/sast-and-package.yml
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        languages: Java   
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
     
   Packaging:
     needs: codeql
     runs-on: ubuntu-latest
     steps:
+<<<<<<< HEAD
     - name: Checkout code
       uses: actions/checkout@v3
+=======
+<<<<<<<< HEAD:.github/workflows/sast-and-package-prod.yml
+    
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+========
+    - name: Checkout code
+      uses: actions/checkout@v3
+>>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:.github/workflows/sast-and-package.yml
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
     - name: Setup JDK 8
       uses: actions/setup-java@v2
       with:
         java-version: 8
         distribution: 'adopt'
+<<<<<<< HEAD
     - name: Test with maven
       run: mvn test
     - name: Create WAR file 
       run: mvn -B package --file pom.xml
+=======
+<<<<<<<< HEAD:.github/workflows/sast-and-package-prod.yml
+        
+    - name: Create WAR file 
+      run: mvn -B package --file pom.xml
+      
+========
+    - name: Create WAR file 
+      run: mvn -B package --file pom.xml
+>>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:.github/workflows/sast-and-package.yml
+>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
     - name: Upload WAR file as artifact
       uses: actions/upload-artifact@v2 
       with:
