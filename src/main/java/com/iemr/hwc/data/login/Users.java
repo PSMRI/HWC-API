@@ -31,7 +31,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.google.gson.annotations.Expose;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "m_user")
 public class Users {
