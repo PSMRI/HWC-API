@@ -33,7 +33,7 @@ public class CHOAppSyncController {
 
     // beneficiary registration sync from AMRIT server to CHO app with identity new
     @ApiOperation(value = "Sync beneficiaries from AMRIT server to CHO App", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/beneficiariesToApp" }, method = { RequestMethod.GET })
+    @RequestMapping(value = { "/beneficiariesToApp" }, method = { RequestMethod.POST })
     public ResponseEntity<String> beneficiarySyncToAppLocal(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
                                                                       @RequestHeader(value = "Authorization") String Authorization) {
 
@@ -43,7 +43,7 @@ public class CHOAppSyncController {
     // beneficiary flow status records sync from AMRIT server to CHO app
     @ApiOperation(value = "Sync beneficiaries flow status records ", consumes = "application/json", produces = "application/json")
     @RequestMapping(value = { "/benFlowStatusRecordsToApp" }, method = {
-            RequestMethod.GET })
+            RequestMethod.POST })
     public ResponseEntity<String> flowStatusesSyncToAppLocal(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
                                              @RequestHeader(value = "Authorization") String Authorization) {
 
