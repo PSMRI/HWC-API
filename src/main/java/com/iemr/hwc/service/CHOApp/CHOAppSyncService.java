@@ -7,4 +7,6 @@ public interface CHOAppSyncService {
     ResponseEntity<String> registerCHOAPPBeneficiary(String comingReq, String authorization);
 
     ResponseEntity<String> getBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
+
+    ResponseEntity<String> getFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 }
