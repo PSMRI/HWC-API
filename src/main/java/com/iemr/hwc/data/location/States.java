@@ -44,6 +44,11 @@ public class States {
 	@Expose
 	private Integer stateID;
 
+	@Column(name = "GovtStateID")
+	@Expose
+	private Integer govtLGDStateID;
+
+	
 	@Column(name = "StateName")
 	@Expose
 	private String stateName;
@@ -71,9 +76,10 @@ public class States {
 	public States() {
 	}
 
-	public States(int StateID, String StateName) {
+	public States(int StateID, String StateName, Integer govtLGDStateID) {
 		this.stateID = StateID;
 		this.stateName = StateName;
+		this.govtLGDStateID = govtLGDStateID;
 	}
 
 	public int getStateID() {
