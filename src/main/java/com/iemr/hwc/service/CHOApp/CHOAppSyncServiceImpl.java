@@ -136,7 +136,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         try {
 
-            if(villageIDAndLastSyncDate.getVillageID() !=null && villageIDAndLastSyncDate.getLastSyncDate() != null) {
+            if(villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+                    && villageIDAndLastSyncDate.getLastSyncDate() != null) {
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
                 DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
@@ -156,8 +157,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     outputResponse.setResponse(jsonArray.toString());
                 }
             }else{
-                logger.error("Unable to search beneficiaries to sync based on villageID and lastSyncDate. Incomplete request body - Either villageID or lastSyncDate missing.");
-                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageID or lastSyncDate missing.");
+                logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
         }
@@ -166,8 +167,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             outputResponse.setError(503, "Error establishing connection with Identity service. ");
             statusCode = HttpStatus.SERVICE_UNAVAILABLE;
         } catch(RestClientResponseException e){
-            logger.error("Error encountered in Identity service while searching beneficiary based on villageID and lastSyncDate " + e);
-            outputResponse.setError(e.getRawStatusCode(), "Error encountered in Identity service while searching beneficiary based on villageID and lastSyncDate " + e);
+            logger.error("Error encountered in Identity service while searching beneficiary based on villageIDs and lastSyncDate " + e);
+            outputResponse.setError(e.getRawStatusCode(), "Error encountered in Identity service while searching beneficiary based on villageIDs and lastSyncDate " + e);
             statusCode = HttpStatus.valueOf(e.getRawStatusCode());
         } catch (JSONException e){
             logger.error("Encountered JSON exception while parsing response from Identity service " + e);
@@ -195,7 +196,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("AUTHORIZATION", Authorization);
 
         try {
-            if (villageIDAndLastSyncDate.getVillageID() !=null && villageIDAndLastSyncDate.getLastSyncDate() != null) {
+            if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+                    && villageIDAndLastSyncDate.getLastSyncDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
                 DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
 
@@ -203,8 +205,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         new Timestamp(dt.toDate().getTime()));
                 response.setResponse(new Gson().toJson(benFlowList));
             }else{
-                logger.error("Unable to search beneficiaries to sync based on villageID and lastSyncDate. Incomplete request body - Either villageID or lastSyncDate missing.");
-                response.setError(400,"Bad request. Incomplete request body - Either villageID or lastSyncDate missing.");
+                logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                response.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
         } catch (IllegalArgumentException e){
