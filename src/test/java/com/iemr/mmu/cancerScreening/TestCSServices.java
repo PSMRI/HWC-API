@@ -1,3 +1,24 @@
+/*
+* AMRIT – Accessible Medical Records via Integrated Technology 
+* Integrated EHR (Electronic Health Records) Solution 
+*
+* Copyright (C) "Piramal Swasthya Management and Research Institute" 
+*
+* This file is part of AMRIT.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see https://www.gnu.org/licenses/.
+*/
 package com.iemr.mmu.cancerScreening;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,43 +39,43 @@ import org.mockito.Matchers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.iemr.mmu.data.doctor.CancerAbdominalExamination;
-import com.iemr.mmu.data.doctor.CancerBreastExamination;
-import com.iemr.mmu.data.doctor.CancerDiagnosis;
-import com.iemr.mmu.data.doctor.CancerExaminationImageAnnotation;
-import com.iemr.mmu.data.doctor.CancerGynecologicalExamination;
-import com.iemr.mmu.data.doctor.CancerLymphNodeDetails;
-import com.iemr.mmu.data.doctor.CancerOralExamination;
-import com.iemr.mmu.data.doctor.CancerSignAndSymptoms;
-import com.iemr.mmu.data.nurse.BenCancerVitalDetail;
-import com.iemr.mmu.data.nurse.BenFamilyCancerHistory;
-import com.iemr.mmu.data.nurse.BenObstetricCancerHistory;
-import com.iemr.mmu.data.nurse.BenPersonalCancerDietHistory;
-import com.iemr.mmu.data.nurse.BenPersonalCancerHistory;
-import com.iemr.mmu.data.nurse.BeneficiaryVisitDetail;
-import com.iemr.mmu.repo.doctor.CancerAbdominalExaminationRepo;
-import com.iemr.mmu.repo.doctor.CancerBreastExaminationRepo;
-import com.iemr.mmu.repo.doctor.CancerDiagnosisRepo;
-import com.iemr.mmu.repo.doctor.CancerExaminationImageAnnotationRepo;
-import com.iemr.mmu.repo.doctor.CancerGynecologicalExaminationRepo;
-import com.iemr.mmu.repo.doctor.CancerLymphNodeExaminationRepo;
-import com.iemr.mmu.repo.doctor.CancerOralExaminationRepo;
-import com.iemr.mmu.repo.doctor.CancerSignAndSymptomsRepo;
-import com.iemr.mmu.repo.nurse.BenCancerVitalDetailRepo;
-import com.iemr.mmu.repo.nurse.BenFamilyCancerHistoryRepo;
-import com.iemr.mmu.repo.nurse.BenObstetricCancerHistoryRepo;
-import com.iemr.mmu.repo.nurse.BenPersonalCancerDietHistoryRepo;
-import com.iemr.mmu.repo.nurse.BenPersonalCancerHistoryRepo;
-import com.iemr.mmu.repo.nurse.BenVisitDetailRepo;
-import com.iemr.mmu.repo.registrar.RegistrarRepoBenData;
-import com.iemr.mmu.repo.registrar.RegistrarRepoBenDemoData;
-import com.iemr.mmu.service.cancerScreening.CSDoctorServiceImpl;
-import com.iemr.mmu.service.cancerScreening.CSNurseServiceImpl;
-import com.iemr.mmu.service.cancerScreening.CSOncologistServiceImpl;
-import com.iemr.mmu.service.cancerScreening.CSServiceImpl;
-import com.iemr.mmu.service.common.transaction.CommonNurseServiceImpl;
-import com.iemr.mmu.service.registrar.RegistrarServiceImpl;
-import com.iemr.mmu.utils.mapper.InputMapper;
+import com.iemr.hwc.data.doctor.CancerAbdominalExamination;
+import com.iemr.hwc.data.doctor.CancerBreastExamination;
+import com.iemr.hwc.data.doctor.CancerDiagnosis;
+import com.iemr.hwc.data.doctor.CancerExaminationImageAnnotation;
+import com.iemr.hwc.data.doctor.CancerGynecologicalExamination;
+import com.iemr.hwc.data.doctor.CancerLymphNodeDetails;
+import com.iemr.hwc.data.doctor.CancerOralExamination;
+import com.iemr.hwc.data.doctor.CancerSignAndSymptoms;
+import com.iemr.hwc.data.nurse.BenCancerVitalDetail;
+import com.iemr.hwc.data.nurse.BenFamilyCancerHistory;
+import com.iemr.hwc.data.nurse.BenObstetricCancerHistory;
+import com.iemr.hwc.data.nurse.BenPersonalCancerDietHistory;
+import com.iemr.hwc.data.nurse.BenPersonalCancerHistory;
+import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.repo.doctor.CancerAbdominalExaminationRepo;
+import com.iemr.hwc.repo.doctor.CancerBreastExaminationRepo;
+import com.iemr.hwc.repo.doctor.CancerDiagnosisRepo;
+import com.iemr.hwc.repo.doctor.CancerExaminationImageAnnotationRepo;
+import com.iemr.hwc.repo.doctor.CancerGynecologicalExaminationRepo;
+import com.iemr.hwc.repo.doctor.CancerLymphNodeExaminationRepo;
+import com.iemr.hwc.repo.doctor.CancerOralExaminationRepo;
+import com.iemr.hwc.repo.doctor.CancerSignAndSymptomsRepo;
+import com.iemr.hwc.repo.nurse.BenCancerVitalDetailRepo;
+import com.iemr.hwc.repo.nurse.BenFamilyCancerHistoryRepo;
+import com.iemr.hwc.repo.nurse.BenObstetricCancerHistoryRepo;
+import com.iemr.hwc.repo.nurse.BenPersonalCancerDietHistoryRepo;
+import com.iemr.hwc.repo.nurse.BenPersonalCancerHistoryRepo;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.registrar.RegistrarRepoBenData;
+import com.iemr.hwc.repo.registrar.RegistrarRepoBenDemoData;
+import com.iemr.hwc.service.cancerScreening.CSDoctorServiceImpl;
+import com.iemr.hwc.service.cancerScreening.CSNurseServiceImpl;
+import com.iemr.hwc.service.cancerScreening.CSOncologistServiceImpl;
+import com.iemr.hwc.service.cancerScreening.CSServiceImpl;
+import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
+import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
+import com.iemr.hwc.utils.mapper.InputMapper;
 
 public class TestCSServices
 {

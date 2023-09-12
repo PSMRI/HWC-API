@@ -1,3 +1,24 @@
+/*
+* AMRIT – Accessible Medical Records via Integrated Technology 
+* Integrated EHR (Electronic Health Records) Solution 
+*
+* Copyright (C) "Piramal Swasthya Management and Research Institute" 
+*
+* This file is part of AMRIT.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see https://www.gnu.org/licenses/.
+*/
 package com.iemr.mmu.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,59 +38,59 @@ import org.mockito.Matchers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.iemr.mmu.data.anc.BenAllergyHistory;
-import com.iemr.mmu.data.anc.BenFamilyHistory;
-import com.iemr.mmu.data.anc.BenMedHistory;
-import com.iemr.mmu.data.anc.BenMedicationHistory;
-import com.iemr.mmu.data.anc.BenMenstrualDetails;
-import com.iemr.mmu.data.anc.BenPersonalHabit;
-import com.iemr.mmu.data.anc.BencomrbidityCondDetails;
-import com.iemr.mmu.data.anc.ChildOptionalVaccineDetail;
-import com.iemr.mmu.data.anc.ChildVaccineDetail1;
-import com.iemr.mmu.data.anc.FemaleObstetricHistory;
-import com.iemr.mmu.data.anc.PhyGeneralExamination;
-import com.iemr.mmu.data.anc.PhyHeadToToeExamination;
-import com.iemr.mmu.data.anc.SysCardiovascularExamination;
-import com.iemr.mmu.data.anc.SysCentralNervousExamination;
-import com.iemr.mmu.data.anc.SysGenitourinarySystemExamination;
-import com.iemr.mmu.data.anc.SysMusculoskeletalSystemExamination;
-import com.iemr.mmu.data.anc.SysRespiratoryExamination;
-import com.iemr.mmu.data.nurse.BenAnthropometryDetail;
-import com.iemr.mmu.data.nurse.BenPhysicalVitalDetail;
-import com.iemr.mmu.data.nurse.BeneficiaryVisitDetail;
-import com.iemr.mmu.data.quickConsultation.BenChiefComplaint;
-import com.iemr.mmu.data.quickConsultation.BenClinicalObservations;
-import com.iemr.mmu.data.quickConsultation.LabTestOrderDetail;
-import com.iemr.mmu.data.quickConsultation.PrescribedDrugDetail;
-import com.iemr.mmu.data.quickConsultation.PrescriptionDetail;
-import com.iemr.mmu.repo.nurse.BenAnthropometryRepo;
-import com.iemr.mmu.repo.nurse.BenPhysicalVitalRepo;
-import com.iemr.mmu.repo.nurse.BenVisitDetailRepo;
-import com.iemr.mmu.repo.nurse.anc.BenAllergyHistoryRepo;
-import com.iemr.mmu.repo.nurse.anc.BenFamilyHistoryRepo;
-import com.iemr.mmu.repo.nurse.anc.BenMedHistoryRepo;
-import com.iemr.mmu.repo.nurse.anc.BenMedicationHistoryRepo;
-import com.iemr.mmu.repo.nurse.anc.BenMenstrualDetailsRepo;
-import com.iemr.mmu.repo.nurse.anc.BenPersonalHabitRepo;
-import com.iemr.mmu.repo.nurse.anc.BencomrbidityCondRepo;
-import com.iemr.mmu.repo.nurse.anc.ChildOptionalVaccineDetailRepo;
-import com.iemr.mmu.repo.nurse.anc.ChildVaccineDetail1Repo;
-import com.iemr.mmu.repo.nurse.anc.FemaleObstetricHistoryRepo;
-import com.iemr.mmu.repo.nurse.anc.PhyGeneralExaminationRepo;
-import com.iemr.mmu.repo.nurse.anc.PhyHeadToToeExaminationRepo;
-import com.iemr.mmu.repo.nurse.anc.SysCardiovascularExaminationRepo;
-import com.iemr.mmu.repo.nurse.anc.SysCentralNervousExaminationRepo;
-import com.iemr.mmu.repo.nurse.anc.SysGenitourinarySystemExaminationRepo;
-import com.iemr.mmu.repo.nurse.anc.SysMusculoskeletalSystemExaminationRepo;
-import com.iemr.mmu.repo.nurse.anc.SysRespiratoryExaminationRepo;
-import com.iemr.mmu.repo.quickConsultation.BenChiefComplaintRepo;
-import com.iemr.mmu.repo.quickConsultation.BenClinicalObservationsRepo;
-import com.iemr.mmu.repo.quickConsultation.LabTestOrderDetailRepo;
-import com.iemr.mmu.repo.quickConsultation.PrescribedDrugDetailRepo;
-import com.iemr.mmu.repo.quickConsultation.PrescriptionDetailRepo;
-import com.iemr.mmu.repo.registrar.RegistrarRepoBenData;
-import com.iemr.mmu.service.common.transaction.CommonDoctorServiceImpl;
-import com.iemr.mmu.service.common.transaction.CommonNurseServiceImpl;
+import com.iemr.hwc.data.anc.BenAllergyHistory;
+import com.iemr.hwc.data.anc.BenFamilyHistory;
+import com.iemr.hwc.data.anc.BenMedHistory;
+import com.iemr.hwc.data.anc.BenMedicationHistory;
+import com.iemr.hwc.data.anc.BenMenstrualDetails;
+import com.iemr.hwc.data.anc.BenPersonalHabit;
+import com.iemr.hwc.data.anc.BencomrbidityCondDetails;
+import com.iemr.hwc.data.anc.ChildOptionalVaccineDetail;
+import com.iemr.hwc.data.anc.ChildVaccineDetail1;
+import com.iemr.hwc.data.anc.FemaleObstetricHistory;
+import com.iemr.hwc.data.anc.PhyGeneralExamination;
+import com.iemr.hwc.data.anc.PhyHeadToToeExamination;
+import com.iemr.hwc.data.anc.SysCardiovascularExamination;
+import com.iemr.hwc.data.anc.SysCentralNervousExamination;
+import com.iemr.hwc.data.anc.SysGenitourinarySystemExamination;
+import com.iemr.hwc.data.anc.SysMusculoskeletalSystemExamination;
+import com.iemr.hwc.data.anc.SysRespiratoryExamination;
+import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
+import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
+import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
+import com.iemr.hwc.data.quickConsultation.BenClinicalObservations;
+import com.iemr.hwc.data.quickConsultation.LabTestOrderDetail;
+import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
+import com.iemr.hwc.data.quickConsultation.PrescriptionDetail;
+import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
+import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAllergyHistoryRepo;
+import com.iemr.hwc.repo.nurse.anc.BenFamilyHistoryRepo;
+import com.iemr.hwc.repo.nurse.anc.BenMedHistoryRepo;
+import com.iemr.hwc.repo.nurse.anc.BenMedicationHistoryRepo;
+import com.iemr.hwc.repo.nurse.anc.BenMenstrualDetailsRepo;
+import com.iemr.hwc.repo.nurse.anc.BenPersonalHabitRepo;
+import com.iemr.hwc.repo.nurse.anc.BencomrbidityCondRepo;
+import com.iemr.hwc.repo.nurse.anc.ChildOptionalVaccineDetailRepo;
+import com.iemr.hwc.repo.nurse.anc.ChildVaccineDetail1Repo;
+import com.iemr.hwc.repo.nurse.anc.FemaleObstetricHistoryRepo;
+import com.iemr.hwc.repo.nurse.anc.PhyGeneralExaminationRepo;
+import com.iemr.hwc.repo.nurse.anc.PhyHeadToToeExaminationRepo;
+import com.iemr.hwc.repo.nurse.anc.SysCardiovascularExaminationRepo;
+import com.iemr.hwc.repo.nurse.anc.SysCentralNervousExaminationRepo;
+import com.iemr.hwc.repo.nurse.anc.SysGenitourinarySystemExaminationRepo;
+import com.iemr.hwc.repo.nurse.anc.SysMusculoskeletalSystemExaminationRepo;
+import com.iemr.hwc.repo.nurse.anc.SysRespiratoryExaminationRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
+import com.iemr.hwc.repo.quickConsultation.BenClinicalObservationsRepo;
+import com.iemr.hwc.repo.quickConsultation.LabTestOrderDetailRepo;
+import com.iemr.hwc.repo.quickConsultation.PrescribedDrugDetailRepo;
+import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
+import com.iemr.hwc.repo.registrar.RegistrarRepoBenData;
+import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
+import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 
 public class TestCommonServices {
 	@InjectMocks
