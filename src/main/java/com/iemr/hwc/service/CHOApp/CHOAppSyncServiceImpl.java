@@ -57,6 +57,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     public ResponseEntity<String> registerCHOAPPBeneficiary(String comingRequest, String Authorization){
 
+        OutputResponse outputResponse = new OutputResponse();
         JsonObject responseObj = new JsonObject();
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Long beneficiaryRegID = null;
@@ -87,40 +88,41 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         if (i == 1) {
                             responseObj.addProperty("beneficiaryID", beneficiaryID);
                             responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
+                            outputResponse.setResponse(responseObj.toString());
                             status = HttpStatus.OK;
                         }
                     } else {
                         logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
-                        responseObj.addProperty("error", "Beneficiary creation successful but couldn't create new flow status for it.");
+                        outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
                         status = HttpStatus.INTERNAL_SERVER_ERROR;
                     }
 
                 } else {
                     logger.error("Error encountered in Common-API service while registering beneficiary. "
                             + registrationResponseObj.getString("status"));
-                    responseObj.addProperty("error", "Error encountered in Common-API service while registering beneficiary. "
+                    outputResponse.setError(registrationResponseObj.getInt("statusCode"), "Error encountered in Common-API service while registering beneficiary. "
                             + registrationResponseObj.getString("status"));
                 }
 
         } catch(ResourceAccessException e){
             logger.error("Error establishing connection with Common-API service. " + e);
-            responseObj.addProperty("error", "Error establishing connection with Common-API service. ");
+            outputResponse.setError(503, "Error establishing connection with Common-API service. ");
             status = HttpStatus.SERVICE_UNAVAILABLE;
         } catch(RestClientResponseException e){
             logger.error("Error encountered in Common-API service while registering beneficiary. " + e);
-            responseObj.addProperty("error", "Error encountered in Common-API service while registering beneficiary. " + e);
+            outputResponse.setError(e.getRawStatusCode(), "Error encountered in Common-API service while registering beneficiary. " + e);
             status = HttpStatus.valueOf(e.getRawStatusCode());
         } catch (JSONException e){
             logger.error("Encountered JSON exception " + e);
-            responseObj.addProperty("error", "Error registering the beneficiary.Encountered JSON exception " + e);
+            outputResponse.setError(502, "Error registering the beneficiary.Encountered JSON exception " + e);
             status = HttpStatus.BAD_GATEWAY;
         } catch (Exception e){
             logger.error("Encountered exception " + e);
-            responseObj.addProperty("error", "Error registering the beneficiary.Encountered exception " + e);
+            outputResponse.setError(500, "Error registering the beneficiary.Encountered exception " + e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<> (responseObj.toString(),headers,status);
+        return new ResponseEntity<> (outputResponse.toString(),headers,status);
     }
 
     public ResponseEntity<String> getBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String Authorization) {
@@ -172,7 +174,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             statusCode = HttpStatus.valueOf(e.getRawStatusCode());
         } catch (JSONException e){
             logger.error("Encountered JSON exception while parsing response from Identity service " + e);
-            outputResponse.setError(400, "Encountered JSON exception while parsing response from Identity service " + e);
+            outputResponse.setError(502, "Encountered JSON exception while parsing response from Identity service " + e);
             statusCode = HttpStatus.BAD_GATEWAY;
         } catch (Exception e){
             logger.error("Encountered exception " + e);
@@ -180,7 +182,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+        return new ResponseEntity<>(new GsonBuilder().serializeNulls().create().toJson(outputResponse),headers,statusCode);
 
     }
 
@@ -188,7 +190,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     public ResponseEntity<String> getFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String Authorization) {
 
         HttpStatus statusCode = HttpStatus.OK;
-        OutputResponse response = new OutputResponse();
+        OutputResponse outputResponse = new OutputResponse();
         ArrayList<BeneficiaryFlowStatus> benFlowList;
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -203,22 +205,22 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 benFlowList = beneficiaryFlowStatusRepo.getFlowRecordsToSync(villageIDAndLastSyncDate.getVillageID(),
                         new Timestamp(dt.toDate().getTime()));
-                response.setResponse(new Gson().toJson(benFlowList));
+                outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList));
             }else{
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
-                response.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
         } catch (IllegalArgumentException e){
             logger.error("Encountered exception. " + e);
-            response.setError(400, "Encountered exception. Exception " + e);
+            outputResponse.setError(400, "Encountered exception. Exception " + e);
             statusCode = HttpStatus.BAD_REQUEST;
         } catch (Exception e){
             logger.error("Encountered exception while fetching ben flow status records to sync " + e);
-            response.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
+            outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(response.toString(),headers,statusCode);
+        return new ResponseEntity<>(new GsonBuilder().serializeNulls().create().toJson(outputResponse),headers,statusCode);
 
     }
 }
