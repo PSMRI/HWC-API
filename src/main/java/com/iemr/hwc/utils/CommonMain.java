@@ -24,13 +24,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 
-<<<<<<< HEAD:src/main/java/com/iemr/hwc/utils/CommonMain.java
 import com.iemr.hwc.utils.config.ConfigProperties;
 import com.iemr.hwc.utils.redis.RedisStorage;
-=======
-import com.iemr.mmu.utils.config.ConfigProperties;
-import com.iemr.mmu.utils.redis.RedisStorage;
->>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/utils/CommonMain.java
 
 @EnableAutoConfiguration
 public class CommonMain {

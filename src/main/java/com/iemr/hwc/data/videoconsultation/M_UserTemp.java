@@ -1,4 +1,3 @@
-<<<<<<<< HEAD:src/main/java/com/iemr/hwc/data/videoconsultation/M_UserTemp.java
 /*
 * AMRIT – Accessible Medical Records via Integrated Technology 
 * Integrated EHR (Electronic Health Records) Solution 
@@ -21,9 +20,6 @@
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
 package com.iemr.hwc.data.videoconsultation;
-========
-package com.iemr.mmu.data.videoConsultation;
->>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/data/videoConsultation/M_UserTemp.java
 
 import java.sql.Timestamp;
 

@@ -1,4 +1,3 @@
-<<<<<<<< HEAD:src/main/java/com/iemr/hwc/data/videoconsultation/VideoConsultationUser.java
 /*
 * AMRIT – Accessible Medical Records via Integrated Technology 
 * Integrated EHR (Electronic Health Records) Solution 
@@ -21,9 +20,6 @@
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
 package com.iemr.hwc.data.videoconsultation;
-========
-package com.iemr.mmu.data.videoConsultation;
->>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/data/videoConsultation/VideoConsultationUser.java
 
 import java.sql.Timestamp;
 
@@ -39,11 +35,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.google.gson.annotations.Expose;
-<<<<<<<< HEAD:src/main/java/com/iemr/hwc/data/videoconsultation/VideoConsultationUser.java
 import com.iemr.hwc.utils.mapper.OutputMapper;
-========
-import com.iemr.mmu.utils.mapper.OutputMapper;
->>>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/data/videoConsultation/VideoConsultationUser.java
 
 @Entity
 @Table(name = "m_userswymedmapping")

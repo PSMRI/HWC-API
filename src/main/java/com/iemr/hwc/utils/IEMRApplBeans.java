@@ -28,21 +28,12 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-<<<<<<< HEAD:src/main/java/com/iemr/hwc/utils/IEMRApplBeans.java
 import com.iemr.hwc.utils.config.ConfigProperties;
 import com.iemr.hwc.utils.gateway.email.EmailService;
 import com.iemr.hwc.utils.gateway.email.GenericEmailServiceImpl;
 import com.iemr.hwc.utils.redis.RedisStorage;
 import com.iemr.hwc.utils.sessionobject.SessionObject;
 import com.iemr.hwc.utils.validator.Validator;
-=======
-import com.iemr.mmu.utils.config.ConfigProperties;
-import com.iemr.mmu.utils.gateway.email.EmailService;
-import com.iemr.mmu.utils.gateway.email.GenericEmailServiceImpl;
-import com.iemr.mmu.utils.redis.RedisStorage;
-import com.iemr.mmu.utils.sessionobject.SessionObject;
-import com.iemr.mmu.utils.validator.Validator;
->>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/utils/IEMRApplBeans.java
 
 @Configuration
 public class IEMRApplBeans {
@@ -83,14 +74,6 @@ public class IEMRApplBeans {
 		return new RedisStorage();
 	}
 
-<<<<<<< HEAD:src/main/java/com/iemr/hwc/utils/IEMRApplBeans.java
-=======
-	@Bean
-	public CryptoUtil cryptoUtil() {
-		return new CryptoUtil();
-	}
-
->>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/utils/IEMRApplBeans.java
 	@Bean
 	public LettuceConnectionFactory connectionFactory() {
 		System.out.print("Connecting to Redis " + redisHost + ":" + redisPort);

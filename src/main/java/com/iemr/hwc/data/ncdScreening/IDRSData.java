@@ -35,13 +35,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.google.gson.annotations.Expose;
-<<<<<<< HEAD:src/main/java/com/iemr/hwc/data/ncdScreening/IDRSData.java
 
-=======
-import com.iemr.mmu.annotation.sqlInjectionSafe.SQLInjectionSafe;
-import com.iemr.mmu.data.benFlowStatus.BeneficiaryFlowStatus;
-import com.iemr.mmu.data.videoConsultation.VideoConsultationUser;
->>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17:src/main/java/com/iemr/mmu/data/ncdScreening/IDRSData.java
 @Entity
 @Table(name = "t_idrsDetails")
 public class IDRSData {
