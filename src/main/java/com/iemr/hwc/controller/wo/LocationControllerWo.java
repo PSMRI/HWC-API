@@ -174,10 +174,11 @@ public class LocationControllerWo {
             JsonElement jElmtLatitude = jsnOBJ.get("latitude");
             JsonElement jElmtLongitude = jsnOBJ.get("longitude");
             JsonElement jElmtDistrictBranchID = jsnOBJ.get("districtBranchID");
+            JsonElement jElmtAddress = jsnOBJ.get("address");
 
 
-            if (jsnOBJ != null && jElmtLatitude!=null && jElmtLongitude!=null && jElmtDistrictBranchID!=null) {
-                int responseUpdate = locationServiceImpl.updateGeolocationByDistrictBranchID(jElmtLatitude.getAsDouble(), jElmtLongitude.getAsDouble(), jElmtDistrictBranchID.getAsInt());
+            if (jsnOBJ != null && jElmtLatitude!=null && jElmtLongitude!=null && jElmtDistrictBranchID!=null && jElmtAddress!=null) {
+                int responseUpdate = locationServiceImpl.updateGeolocationByDistrictBranchID(jElmtLatitude.getAsDouble(), jElmtLongitude.getAsDouble(), jElmtDistrictBranchID.getAsInt(), jElmtAddress.getAsString());
                 if(responseUpdate==1){
                     response.setResponse(responseUpdate+"");
                 }

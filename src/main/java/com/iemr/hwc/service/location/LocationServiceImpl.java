@@ -364,11 +364,11 @@ public class LocationServiceImpl implements LocationService {
 
 	}
 
-	public int updateGeolocationByDistrictBranchID(Double latitude, Double longitude, Integer districtBranchID) {
+	public int updateGeolocationByDistrictBranchID(Double latitude, Double longitude, Integer districtBranchID, String address) {
 		int i = 0;
 		DistrictBranchMapping districtBranchMapping = districtBranchMasterRepo.findAllByDistrictBranchID(districtBranchID);
 		if(districtBranchMapping !=null && districtBranchMapping.getActive()==false){
-			i = districtBranchMasterRepo.updateGeolocationByDistrictBranchID(latitude, longitude, true, districtBranchID);
+			i = districtBranchMasterRepo.updateGeolocationByDistrictBranchID(latitude, longitude, true, address, districtBranchID);
 		}
 		else{
 			i =101;

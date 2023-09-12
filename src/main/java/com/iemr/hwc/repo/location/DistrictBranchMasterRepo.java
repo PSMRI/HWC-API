@@ -38,7 +38,7 @@ import javax.transaction.Transactional;
 @RestResource(exported = false)
 public interface DistrictBranchMasterRepo extends CrudRepository<DistrictBranchMapping, Integer> {
 
-	@Query(" SELECT districtBranchID, villageName,govtLGDSubDistrictID,govtLGDVillageID, latitude, longitude, active FROM DistrictBranchMapping WHERE blockID = :blockID  AND deleted != 1 ")
+	@Query(" SELECT districtBranchID, villageName,govtLGDSubDistrictID,govtLGDVillageID, latitude, longitude, active, address FROM DistrictBranchMapping WHERE blockID = :blockID  AND deleted != 1 ")
 	public ArrayList<Object[]> findByBlockID(@Param("blockID") Integer blockID);
 
 	@Query(" SELECT d FROM DistrictBranchMapping d WHERE d.districtBranchID = :districtBranchID  AND d.deleted = false ")
@@ -46,8 +46,9 @@ public interface DistrictBranchMasterRepo extends CrudRepository<DistrictBranchM
 
 	@Transactional
 	@Modifying
-	@Query("update DistrictBranchMapping u set u.latitude = :latitude, u.longitude = :longitude, u.active = :active where u.districtBranchID = :districtBranchID")
-	int updateGeolocationByDistrictBranchID(@Param("latitude") Double latitude, @Param("longitude") Double longitude, @Param("active") Boolean active, @Param("districtBranchID") Integer districtBranchID);
+	@Query("update DistrictBranchMapping u set u.latitude = :latitude, u.longitude = :longitude, u.active = :active, u.address = :address where u.districtBranchID = :districtBranchID")
+	int updateGeolocationByDistrictBranchID(@Param("latitude") Double latitude, @Param("longitude") Double longitude, @Param("active") Boolean active, @Param("address") String address,
+											@Param("districtBranchID") Integer districtBranchID);
 
 	@Transactional
 	@Modifying
