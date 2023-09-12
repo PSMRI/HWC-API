@@ -855,7 +855,7 @@ public class CommonDoctorServiceImpl {
 		Long tmpbeneficiaryRegID = commonUtilityClass.getBeneficiaryRegID();
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
-				&& commonUtilityClass.getVisitCategoryID() == 4) {
+				&& commonUtilityClass.getVisitCategoryID() == 9) {
 			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
 			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
