@@ -1,9 +1,13 @@
-package com.iemr.hwc.service.CHOApp;
+package com.iemr.hwc.service.choApp;
 
 import com.google.gson.*;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
+import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
+import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
+import com.iemr.hwc.utils.exception.IEMRException;
+import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import com.iemr.hwc.utils.response.OutputResponse;
 import org.joda.time.DateTime;
@@ -17,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,6 +33,8 @@ import org.springframework.web.client.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -45,6 +52,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
 
+    private UserActivityLogsRepo userActivityLogsRepo;
+
     @Autowired
     public void setCommonBenStatusFlowServiceImpl(CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl) {
         this.commonBenStatusFlowServiceImpl = commonBenStatusFlowServiceImpl;
@@ -53,6 +62,11 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Autowired
     public void setBeneficiaryFlowStatusRepo(BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo) {
         this.beneficiaryFlowStatusRepo = beneficiaryFlowStatusRepo;
+    }
+
+    @Autowired
+    public void setUserActivityLogsRepo(UserActivityLogsRepo userActivityLogsRepo){
+        this.userActivityLogsRepo = userActivityLogsRepo;
     }
 
     public ResponseEntity<String> registerCHOAPPBeneficiary(String comingRequest, String Authorization){
@@ -225,5 +239,42 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         }
         return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
 
+    }
+
+    @Override
+    public ResponseEntity<String> saveUserActivityLogs(String comingReq, String authorization) {
+
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try{
+        UserActivityLogs[] logs = InputMapper.gson().fromJson(comingReq,UserActivityLogs[].class);
+        List<UserActivityLogs> logsList = Arrays.asList(logs);
+
+        List<UserActivityLogs> savedList = (List<UserActivityLogs>) userActivityLogsRepo.save(logsList);
+
+        if (savedList.size() == logsList.size()){
+            outputResponse.setResponse("Data saved successfully");
+        }else {
+            throw new Exception();
+        }
+
+        } catch (IEMRException | DataIntegrityViolationException |
+                JsonSyntaxException | NumberFormatException e){
+            logger.error("Encountered exception EITHER due to incorrect payload syntax OR" +
+                    " because of missing userId. " + e);
+            outputResponse.setError(400,"Encountered exception EITHER due to incorrect payload syntax OR " +
+                    "because of missing userId. Please check the payload. " + e);
+            statusCode = HttpStatus.BAD_REQUEST;
+        } catch (Exception e){
+            logger.error("Encountered exception while saving UserActivityLogs. " + e);
+            outputResponse.setError(500,"Encountered exception while saving UserActivityLogs. " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
     }
 }
