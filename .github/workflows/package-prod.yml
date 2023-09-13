@@ -8,7 +8,7 @@ env:
   ENV_VAR: prod
 
 jobs:
-  Packaging:
+  Package-prod:
     runs-on: ubuntu-latest
     steps:
     
