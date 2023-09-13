@@ -2,7 +2,7 @@ name: Package-prod
 
 on:
   push:
-    branches: [ "develop"]
+    branches: [ "master"]
 
 env:
   ENV_VAR: prod
