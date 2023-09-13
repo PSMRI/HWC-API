@@ -1,8 +1,8 @@
-name: WAR File Generation
+name: Package-prod
 
 on:
   push:
-    branches: [ "master"]
+    branches: [ "develop"]
 
 env:
   ENV_VAR: prod
