@@ -1,4 +1,4 @@
-name: test-package 
+name: Package-test 
 
 on:
   push:
@@ -8,7 +8,7 @@ env:
   ENV_VAR: test
 
 jobs:
-  package-test:
+  Package-test:
     runs-on: ubuntu-latest
     steps:
     
