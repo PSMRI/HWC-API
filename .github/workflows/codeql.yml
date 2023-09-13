@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: CodeQL
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
       uses: github/codeql-action/init@v2
        
     - name: Build with Maven
-        run: mvn clean install
+      run: mvn clean install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
