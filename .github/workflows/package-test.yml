@@ -8,7 +8,7 @@ env:
   ENV_VAR: test
 
 jobs:
-  BuildWAR:
+  package-test:
     runs-on: ubuntu-latest
     steps:
     
