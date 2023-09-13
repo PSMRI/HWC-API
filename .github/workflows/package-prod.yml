@@ -2,12 +2,12 @@ name: Package-prod
 
 on:
   push:
-    branches: [ "develop"]
+    branches: [ "master"]
     paths-ignore:
      - target/**
      - dist/**
   pull_request:
-     branches: [ "develop" ]
+     branches: [ "master" ]
      paths-ignore:
      - target/**
      - dist/**
