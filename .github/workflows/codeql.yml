@@ -33,6 +33,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
           java-version: 8
+          distribution: 'adopt'
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
