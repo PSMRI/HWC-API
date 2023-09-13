@@ -21,9 +21,6 @@ jobs:
         java-version: 8
         distribution: 'adopt'
         
-    - name: Set up environment variable
-      run: echo "ENV_VAR=${{ env.ENV_VAR }}" >> $GITHUB_ENV
-      
     - name: Build with Maven
       run: mvn clean install -DENV_VAR=${{ env.ENV_VAR }}
       
