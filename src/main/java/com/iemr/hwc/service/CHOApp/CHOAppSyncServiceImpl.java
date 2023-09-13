@@ -122,6 +122,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
+        headers.remove("AUTHORIZATION");
+
         return new ResponseEntity<> (outputResponse.toString(),headers,status);
     }
 
@@ -182,7 +184,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<>(new GsonBuilder().serializeNulls().create().toJson(outputResponse),headers,statusCode);
+        headers.remove("AUTHORIZATION");
+
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
 
     }
 
@@ -195,7 +199,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
-        headers.add("AUTHORIZATION", Authorization);
 
         try {
             if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
@@ -220,7 +223,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(new GsonBuilder().serializeNulls().create().toJson(outputResponse),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
 
     }
 }
