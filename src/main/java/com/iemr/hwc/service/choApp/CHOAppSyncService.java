@@ -11,4 +11,6 @@ public interface CHOAppSyncService {
     ResponseEntity<String> getFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 
     ResponseEntity<String> saveUserActivityLogs(String comingReq, String authorization);
+
+    ResponseEntity<String> getBeneficiaryNurseFormDataGeneralOPD(String comingRequest, String authorization);
 }
