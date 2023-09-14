@@ -3,6 +3,7 @@ package com.iemr.hwc.controller.choApp;
 import com.iemr.hwc.service.choApp.CHOAppSyncService;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,16 @@ public class CHOAppSyncController {
                                                                       @RequestHeader(value = "Authorization") String Authorization) {
 
         return choappSyncService.saveUserActivityLogs(comingReq, Authorization);
+    }
+
+    // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) sync from AMRIT server to CHO app
+    @ApiOperation(value = "Sync beneficiaries nurse-form data from AMRIT server to CHO App", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/beneficiaryGeneralOPDNurseFormDataToApp" }, method = { RequestMethod.POST })
+    public ResponseEntity<String> beneficiaryNurseFormDataGeneralOPDSyncToAppLocal(
+            @ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest,
+            @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.getBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
     }
 
 }
