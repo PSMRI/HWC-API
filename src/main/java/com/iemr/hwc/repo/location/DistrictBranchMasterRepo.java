@@ -54,4 +54,7 @@ public interface DistrictBranchMasterRepo extends CrudRepository<DistrictBranchM
 	@Modifying
 	@Query("update DistrictBranchMapping u set u.active = :active where u.districtBranchID = :districtBranchID")
 	int updateActiceStatus(@Param("active") boolean active, @Param("districtBranchID") Integer districtBranchID);
+
+	@Query(" SELECT d FROM DistrictBranchMapping d WHERE d.districtBranchID = :districtBranchID  AND d.deleted != 1 ")
+	public DistrictBranchMapping findByDistrictBranchID(@Param("districtBranchID") Integer districtBranchID);
 }

@@ -34,4 +34,7 @@ public interface UserLoginRepo extends CrudRepository<Users, Long> {
 	@Query(" SELECT u FROM Users u WHERE u.userName = :UserName AND u.deleted = false ")
 	public Users getUserByUsername(@Param("UserName") String username);
 
+	@Query(" SELECT u FROM Users u WHERE u.userID = :userID AND u.deleted = false ")
+	public Users getUserByUserID(@Param("userID") Long userID);
+
 }
