@@ -32,6 +32,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -193,5 +197,26 @@ public class LocationControllerWo {
             response.setError(5000, "Unable to update data");
         }
         return response.toString();
+    }
+
+    @ApiOperation(value = "Get outreach programs based on state id", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = "/outreachMaster/{stateID}/wo", method = RequestMethod.GET)
+    public ResponseEntity<String> getOutreachMasterForState(@PathVariable("stateID") Integer stateID) {
+        logger.info("get Outreach programs for state with Id ..." + stateID);
+
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try{
+            String resList = locationServiceImpl.getOutreachProgramsList(stateID);
+            outputResponse.setResponse(resList);
+        } catch (Exception e){
+            logger.error("Error while fetching outreach list for stateId" + stateID);
+            response.setError(500, "Unable to fetch outreach list for stateId" + stateID + "Exception - " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
     }
 }

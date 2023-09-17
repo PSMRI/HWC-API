@@ -42,4 +42,6 @@ public interface LocationService {
 	public String getServicePointPlaceList(Integer parkingPlaceID);
 
 	public String getLocationMasterData(Integer villageid);
+
+	public String getOutreachProgramsList(Integer stateID);
 }
