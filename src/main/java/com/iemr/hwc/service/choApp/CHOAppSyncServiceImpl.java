@@ -3,14 +3,17 @@ package com.iemr.hwc.service.choApp;
 import com.google.gson.*;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.data.choApp.UserActivityLogs;
+import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
 import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
+import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
@@ -65,6 +68,10 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     private BenChiefComplaintRepo benChiefComplaintRepo;
 
+    private GeneralOPDServiceImpl generalOPDServiceImpl;
+
+    private BenVisitDetailRepo benVisitDetailRepo;
+
     @Autowired
     public void setCommonBenStatusFlowServiceImpl(CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl) {
         this.commonBenStatusFlowServiceImpl = commonBenStatusFlowServiceImpl;
@@ -98,6 +105,16 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Autowired
     public void setBenChiefComplaintRepo(BenChiefComplaintRepo benChiefComplaintRepo){
         this.benChiefComplaintRepo = benChiefComplaintRepo;
+    }
+
+    @Autowired
+    public void setGeneralOPDServiceImpl(GeneralOPDServiceImpl generalOPDServiceImpl){
+        this.generalOPDServiceImpl = generalOPDServiceImpl;
+    }
+
+    @Autowired
+    public void setBenVisitDetailRepo(BenVisitDetailRepo benVisitDetailRepo){
+        this.benVisitDetailRepo = benVisitDetailRepo;
     }
 
     public ResponseEntity<String> registerCHOAPPBeneficiary(String comingRequest, String Authorization){
@@ -385,5 +402,53 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         }
 
         return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+    }
+
+    @Override
+    public ResponseEntity<String> saveBeneficiaryNurseFormDataGeneralOPD(String requestObj, String authorization) {
+
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try {
+
+            JsonObject jsnOBJ;
+            JsonParser jsnParser = new JsonParser();
+            JsonElement jsonElement = jsnParser.parse(requestObj);
+            jsnOBJ = jsonElement.getAsJsonObject();
+
+            if (jsnOBJ != null) {
+                String genOPDRes = generalOPDServiceImpl.saveNurseData(jsnOBJ, authorization);
+
+                JsonObject responseObject;
+                JsonParser parser = new JsonParser();
+                JsonElement element = parser.parse(genOPDRes);
+                responseObject = element.getAsJsonObject();
+
+                Gson gson = new Gson();
+
+                if(responseObject.has("visitCode") && responseObject.get("visitCode")!=null){
+                    BeneficiaryVisitDetail visitDetail= benVisitDetailRepo.findByVisitCode(responseObject.get("visitCode").getAsLong());
+                    JsonElement ele = gson.toJsonTree(visitDetail.getBenVisitID());
+                    responseObject.add("visitID",ele);
+                    outputResponse.setResponse(gson.toJson(responseObject));
+                }
+                else {
+                    outputResponse.setResponse(genOPDRes);
+                }
+            } else {
+                logger.error("Invalid request object " + requestObj);
+                outputResponse.setError(400," Bad Request. Invalid request payload");
+                statusCode = HttpStatus.BAD_REQUEST;
+            }
+        } catch (Exception e) {
+            logger.error("Error in nurse data saving :" + e);
+            outputResponse.setError(500, "Unable to save data " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
     }
 }

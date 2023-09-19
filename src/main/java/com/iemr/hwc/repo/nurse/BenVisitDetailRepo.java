@@ -119,4 +119,6 @@ public interface BenVisitDetailRepo extends CrudRepository<BeneficiaryVisitDetai
 
 	@Query(" SELECT bvd from BeneficiaryVisitDetail bvd WHERE bvd.benVisitID = :benVisitID AND bvd.lastModDate > :lastModDate ORDER BY bvd.lastModDate DESC")
 	public BeneficiaryVisitDetail getVisitDetailsByVisitIDAndLastModifDate(@Param("benVisitID") Long benVisitID, @Param("lastModDate") Timestamp lastModDate);
+
+	BeneficiaryVisitDetail findByVisitCode(Long visitCode);
 }

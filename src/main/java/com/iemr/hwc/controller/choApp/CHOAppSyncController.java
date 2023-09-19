@@ -70,4 +70,13 @@ public class CHOAppSyncController {
         return choappSyncService.getBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
     }
 
+    // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) save from CHO app to server
+    @ApiOperation(value = "Save beneficiaries nurse-form data CHO App to AMRIT server", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/generalOPDNurseFormDataToServer" }, method = { RequestMethod.POST })
+    public ResponseEntity<String> beneficiaryNurseFormDataGeneralOPDSyncToServer(@RequestBody String comingRequest,
+                                                                                 @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.saveBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
+    }
+
 }

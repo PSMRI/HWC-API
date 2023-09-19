@@ -13,4 +13,6 @@ public interface CHOAppSyncService {
     ResponseEntity<String> saveUserActivityLogs(String comingReq, String authorization);
 
     ResponseEntity<String> getBeneficiaryNurseFormDataGeneralOPD(String comingRequest, String authorization);
+
+    ResponseEntity<String> saveBeneficiaryNurseFormDataGeneralOPD(String comingRequest, String authorization);
 }
