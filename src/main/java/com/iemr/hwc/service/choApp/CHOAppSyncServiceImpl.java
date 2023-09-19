@@ -329,7 +329,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
             //Fetching visitDetails, chief complaints
             response.put("GOPDNurseVisitDetail", commonNurseServiceImpl.getCSVisitDetails(benRegID, visitCode));
-            response.put("BenAdherence", commonNurseServiceImpl.getBenAdherence(benRegID, visitCode));
 
             ArrayList<Object[]> resList = benChiefComplaintRepo.getBenChiefComplaints(benRegID, visitCode);
             ArrayList<BenChiefComplaint> benChiefComplaints = BenChiefComplaint.getBenChiefComplaints(resList);
