@@ -1,8 +1,15 @@
 # Description
 
-Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.
+Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.  
 
-Fixes # (issue)
+# Type of change  
+
+- [ ] Bug fix  
+- [ ] New feature  
+- [ ] Enhancement  
+- [ ] Refactoring  
+- [ ] Documentation  
+- [ ] Other ( please specify )  
 
 # How Has This Been Tested?
 
@@ -19,3 +26,5 @@ Please describe the tests that you ran to verify your changes. Please also note 
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
 - [ ] Any dependent changes have been merged and published in downstream modules
+
+
