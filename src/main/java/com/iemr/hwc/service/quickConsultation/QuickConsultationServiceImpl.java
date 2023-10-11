@@ -39,6 +39,7 @@ import com.google.gson.JsonObject;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.nurse.CDSS;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.BenClinicalObservations;
@@ -47,6 +48,8 @@ import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
 import com.iemr.hwc.data.quickConsultation.PrescriptionDetail;
 import com.iemr.hwc.data.tele_consultation.TeleconsultationRequestOBJ;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.repo.quickConsultation.BenClinicalObservationsRepo;
 import com.iemr.hwc.repo.quickConsultation.ExternalTestOrderRepo;
@@ -89,6 +92,10 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 	private SMSGatewayServiceImpl sMSGatewayServiceImpl;
 	@Autowired
 	private BenPhysicalVitalRepo benPhysicalVitalRepo;
+	@Autowired
+	private BenVisitDetailRepo benVisitDetailRepo;
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Override
 	public Long saveBeneficiaryChiefComplaint(JsonObject caseSheet) {
@@ -195,12 +202,11 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 					BeneficiaryVisitDetail.class);
 			int i=commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),benVisitDetailsOBJ.getVisitReason(),benVisitDetailsOBJ.getVisitCategory());
 			if(i<1) {
-			Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
+			Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ, nurseUtilityClass.getSessionID());
 
 			// 11-06-2018 visit code
 			benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
 					nurseUtilityClass.getSessionID());
-
 			// Getting benflowID for ben status update
 			Long benFlowID = null;
 			// if (jsnOBJ.has("benFlowID")) {
@@ -436,10 +442,14 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 		BeneficiaryVisitDetail benVisitDetailsOBJ = commonNurseServiceImpl.getCSVisitDetails(benRegID, visitCode);
+		CDSS cdssObj = commonNurseServiceImpl.getCdssDetails(benRegID, visitCode);
 
 		if (null != benVisitDetailsOBJ) {
 
 			resMap.put("benVisitDetails", benVisitDetailsOBJ);
+		}
+		if(cdssObj != null) {
+			resMap.put("cdss", cdssObj);
 		}
 
 		return gson.toJson(resMap);
@@ -455,12 +465,23 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 		return resMap.toString();
 	}
+	
+	public String getBeneficiaryCdssDetails(Long beneficiaryRegID, Long benVisitID) {
+		Map<String, Object> resMap = new HashMap<>();
+
+		resMap.put("presentChiefComplaint", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
+		resMap.put("diseaseSummary", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
+
+		return resMap.toString();
+	}
 
 	public String getBenQuickConsultNurseData(Long benRegID, Long visitCode) {
 
 		Map<String, Object> resMap = new HashMap<>();
 
 		resMap.put("vitals", getBeneficiaryVitalDetails(benRegID, visitCode));
+		
+		resMap.put("cdss", getBeneficiaryCdssDetails(benRegID, visitCode));
 
 		return resMap.toString();
 	}
