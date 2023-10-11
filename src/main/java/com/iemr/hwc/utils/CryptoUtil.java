@@ -1,4 +1,4 @@
-package com.iemr.mmu.utils;
+package com.iemr.hwc.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

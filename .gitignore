@@ -5,12 +5,10 @@
 /tmp
 /out-tsc
 /target
+
 /logs
-<<<<<<< HEAD
 
 .factorypath
-=======
->>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
 
 # dependencies
 /node_modules

@@ -25,6 +25,8 @@ import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.utils.exception.IEMRException;
 
 public interface CommonNurseService {
+
+	public Long saveBeneficiaryVisitDetails(BeneficiaryVisitDetail beneficiaryVisitDetail, Integer sessionId);
 	public Long saveBeneficiaryVisitDetails(BeneficiaryVisitDetail beneficiaryVisitDetail);
 
 	public String getBenSymptomaticData(Long benRegID) throws Exception;
@@ -34,4 +36,11 @@ public interface CommonNurseService {
 	public String getBenPreviousReferralData(Long benRegID) throws Exception;
 
 	public String calculateBMIStatus(String request) throws IEMRException;
+
+	/**
+	 * Save beneficiary visit details data and return beneficiary visit ID.
+	 * 
+	 * @param beneficiaryVisitDetail
+	 * @return
+	 */
 }
