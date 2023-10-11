@@ -354,12 +354,12 @@ public class LocationServiceImpl implements LocationService {
 					int villageIdSize = villageIds.length;
 					int villageNameSize = villageNames.length;
 					for (int i = 0; i < villageIdSize; i++) {
-						for (int j = 0; j < villageNameSize; j++) {
-							villageMap = new HashMap<>();
-							villageMap.put("districtBranchID", villageIds[i]);
-							villageMap.put("villageName", villageNames[j]);
-							villageList.add(villageMap);
-						}
+						villageMap = new HashMap<>();
+						villageMap.put("districtBranchID", villageIds[i]);
+						if (villageNames.length > i)
+							villageMap.put("villageName", villageNames[i]);
+						villageList.add(villageMap);
+
 					}
 				}
 			}
