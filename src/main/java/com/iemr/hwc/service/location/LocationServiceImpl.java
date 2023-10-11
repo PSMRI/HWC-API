@@ -351,17 +351,26 @@ public class LocationServiceImpl implements LocationService {
 			distMap.put("districtName", objList.get(0)[3]);
 			distMap.put("blockId", objList.get(0)[4]);
 			distMap.put("blockName", objList.get(0)[5]);
-			
-			for(Object[] objArr : objList) {
-			String[] villageIds = objArr[6].toString().split(",");
-			String[] villageNames = objArr[7].toString().split(",");
-			int villageIdSize = villageIds.length;
-			for (int i = 0; i < villageIdSize; i++) {
-				villageMap = new HashMap<>();
-				villageMap.put("districtBranchID", villageIds[i]);
-				villageMap.put("villageName", villageNames[i]);
-				villageList.add(villageMap);
-			}
+
+			for (Object[] objArr : objList) {
+				String[] villageIds = null;
+				String[] villageNames = null;
+				if (null != objArr[6]) {
+					villageIds = objArr[6].toString().split(",");
+				}
+				if (null != objArr[7]) {
+					villageNames = objArr[7].toString().split(",");
+				}
+				if (null != villageIds) {
+					int villageIdSize = villageIds.length;
+					for (int i = 0; i < villageIdSize; i++) {
+						villageMap = new HashMap<>();
+						villageMap.put("districtBranchID", villageIds[i]);
+						if (villageNames.length > i)
+							villageMap.put("villageName", villageNames[i]);
+						villageList.add(villageMap);
+					}
+				}
 			}
 			distMap.put("villageList", villageList);
 			distLit.add(distMap);
