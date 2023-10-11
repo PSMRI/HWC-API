@@ -51,3 +51,5 @@ Thumbs.db
 mvnw.cmd
 .sts4-cache
 mvnw
+
+src/main/environment/common_local.properties
