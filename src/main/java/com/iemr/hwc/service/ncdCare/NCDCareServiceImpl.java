@@ -57,6 +57,7 @@ import com.iemr.hwc.data.ncdcare.NCDCareDiagnosis;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.nurse.CDSS;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
 import com.iemr.hwc.data.quickConsultation.PrescriptionDetail;
@@ -135,7 +136,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 				nurseUtilityClass.setVisitCode(benVisitCode);
 				nurseUtilityClass.setBenVisitID(benVisitID);
-			}else {
+			} else {
 				Map<String, String> responseMap = new HashMap<String, String>();
 				responseMap.put("response", "Data already saved");
 				return new Gson().toJson(responseMap);
@@ -266,47 +267,125 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
-			int i=commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),benVisitDetailsOBJ.getVisitReason(),benVisitDetailsOBJ.getVisitCategory());
-			if(i<1) {
-			benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
-			// 11-06-2018 visit code
-			Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-					nurseUtilityClass.getSessionID());
+			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
+					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
+			if (i < 1) {
+				benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
-			if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
-				if (visitDetailsOBJ.has("adherence") && !visitDetailsOBJ.get("adherence").isJsonNull()) {
-					// Save Ben Adherence
-					BenAdherence benAdherence = InputMapper.gson().fromJson(visitDetailsOBJ.get("adherence"),
-							BenAdherence.class);
-					benAdherence.setBenVisitID(benVisitID);
-					benAdherence.setVisitCode(benVisitCode);
-					adherenceSuccessFlag = commonNurseServiceImpl.saveBenAdherenceDetails(benAdherence);
-				}
-				if (visitDetailsOBJ.has("investigation") && !visitDetailsOBJ.get("investigation").isJsonNull()) {
-					// Save Ben Investigations
-					WrapperBenInvestigationANC wrapperBenInvestigationANC = InputMapper.gson()
-							.fromJson(visitDetailsOBJ.get("investigation"), WrapperBenInvestigationANC.class);
+				// 11-06-2018 visit code
+				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
+						nurseUtilityClass.getSessionID());
 
-					if (wrapperBenInvestigationANC != null) {
-						wrapperBenInvestigationANC.setBenVisitID(benVisitID);
-						wrapperBenInvestigationANC.setVisitCode(benVisitCode);
-						investigationSuccessFlag = commonNurseServiceImpl
-								.saveBenInvestigationDetails(wrapperBenInvestigationANC);
-
-					} else {
-						// Invalid Data..
+				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
+					if (visitDetailsOBJ.has("adherence") && !visitDetailsOBJ.get("adherence").isJsonNull()) {
+						// Save Ben Adherence
+						BenAdherence benAdherence = InputMapper.gson().fromJson(visitDetailsOBJ.get("adherence"),
+								BenAdherence.class);
+						benAdherence.setBenVisitID(benVisitID);
+						benAdherence.setVisitCode(benVisitCode);
+						adherenceSuccessFlag = commonNurseServiceImpl.saveBenAdherenceDetails(benAdherence);
 					}
+					if (visitDetailsOBJ.has("investigation") && !visitDetailsOBJ.get("investigation").isJsonNull()) {
+						// Save Ben Investigations
+						WrapperBenInvestigationANC wrapperBenInvestigationANC = InputMapper.gson()
+								.fromJson(visitDetailsOBJ.get("investigation"), WrapperBenInvestigationANC.class);
+
+						if (wrapperBenInvestigationANC != null) {
+							wrapperBenInvestigationANC.setBenVisitID(benVisitID);
+							wrapperBenInvestigationANC.setVisitCode(benVisitCode);
+							investigationSuccessFlag = commonNurseServiceImpl
+									.saveBenInvestigationDetails(wrapperBenInvestigationANC);
+
+						} else {
+							// Invalid Data..
+						}
+					}
+
+					if (adherenceSuccessFlag > 0 && investigationSuccessFlag > 0) {
+						// Adherence and Investigation Details stored successfully.
+					}
+
+					if (visitDetailsOBJ.has("cdss") && !visitDetailsOBJ.get("cdss").isJsonNull()) {
+						JsonObject cdssObj = visitDetailsOBJ.getAsJsonObject("cdss");
+						CDSS cdss = InputMapper.gson().fromJson(cdssObj, CDSS.class);
+						cdss.setBenVisitID(benVisitID);
+						cdss.setVisitCode(benVisitCode);
+
+						if (cdssObj.has("presentChiefComplaintDb")) {
+							JsonObject presentCheifComplaintObj = cdssObj.getAsJsonObject("presentChiefComplaintDb");
+
+							if (presentCheifComplaintObj.get("selectedDiagnosisID") != null
+									&& !presentCheifComplaintObj.get("selectedDiagnosisID").isJsonNull())
+								cdss.setSelectedDiagnosisID(
+										presentCheifComplaintObj.get("selectedDiagnosisID").getAsString());
+							if (presentCheifComplaintObj.get("selectedDiagnosis") != null
+									&& !presentCheifComplaintObj.get("selectedDiagnosis").isJsonNull())
+								cdss.setSelectedDiagnosis(
+										presentCheifComplaintObj.get("selectedDiagnosis").getAsString());
+							if (presentCheifComplaintObj.get("presentChiefComplaint") != null
+									&& !presentCheifComplaintObj.get("presentChiefComplaint").isJsonNull())
+								cdss.setPresentChiefComplaint(
+										presentCheifComplaintObj.get("presentChiefComplaint").getAsString());
+							if (presentCheifComplaintObj.get("presentChiefComplaintID") != null
+									&& !presentCheifComplaintObj.get("presentChiefComplaintID").isJsonNull())
+								cdss.setPresentChiefComplaintID(
+										presentCheifComplaintObj.get("presentChiefComplaintID").getAsString());
+							if (presentCheifComplaintObj.get("algorithmPc") != null
+									&& !presentCheifComplaintObj.get("algorithmPc").isJsonNull())
+								cdss.setAlgorithmPc(presentCheifComplaintObj.get("algorithmPc").getAsString());
+							if (presentCheifComplaintObj.get("recommendedActionPc") != null
+									&& !presentCheifComplaintObj.get("recommendedActionPc").isJsonNull())
+								cdss.setRecommendedActionPc(
+										presentCheifComplaintObj.get("recommendedActionPc").getAsString());
+							if (presentCheifComplaintObj.get("remarksPc") != null
+									&& !presentCheifComplaintObj.get("remarksPc").isJsonNull())
+								cdss.setRemarksPc(presentCheifComplaintObj.get("remarksPc").getAsString());
+							if (presentCheifComplaintObj.get("actionPc") != null
+									&& !presentCheifComplaintObj.get("actionPc").isJsonNull())
+								cdss.setActionPc(presentCheifComplaintObj.get("actionPc").getAsString());
+							if (presentCheifComplaintObj.get("actionIdPc") != null
+									&& !presentCheifComplaintObj.get("actionIdPc").isJsonNull())
+								cdss.setActionIdPc(presentCheifComplaintObj.get("actionIdPc").getAsInt());
+						}
+
+						if (cdssObj.has("diseaseSummaryDb")) {
+							JsonObject diseaseSummaryObj = cdssObj.getAsJsonObject("diseaseSummaryDb");
+							if (diseaseSummaryObj.get("diseaseSummary") != null
+									&& !diseaseSummaryObj.get("diseaseSummary").isJsonNull())
+								cdss.setDiseaseSummary(diseaseSummaryObj.get("diseaseSummary").getAsString());
+							if (diseaseSummaryObj.get("diseaseSummaryID") != null
+									&& !diseaseSummaryObj.get("diseaseSummaryID").isJsonNull())
+								cdss.setDiseaseSummaryID(diseaseSummaryObj.get("diseaseSummaryID").getAsInt());
+							if (diseaseSummaryObj.get("algorithm") != null
+									&& !diseaseSummaryObj.get("algorithm").isJsonNull())
+								cdss.setAlgorithm(diseaseSummaryObj.get("algorithm").getAsString());
+							if (diseaseSummaryObj.get("recommendedAction") != null
+									&& !diseaseSummaryObj.get("recommendedAction").isJsonNull())
+								cdss.setRecommendedAction(diseaseSummaryObj.get("recommendedAction").getAsString());
+							if (diseaseSummaryObj.get("remarks") != null
+									&& !diseaseSummaryObj.get("remarks").isJsonNull())
+								cdss.setRemarks(diseaseSummaryObj.get("remarks").getAsString());
+							if (diseaseSummaryObj.get("action") != null
+									&& !diseaseSummaryObj.get("action").isJsonNull())
+								cdss.setAction(diseaseSummaryObj.get("action").getAsString());
+							if (diseaseSummaryObj.get("actionId") != null
+									&& !diseaseSummaryObj.get("actionId").isJsonNull())
+								cdss.setActionId(diseaseSummaryObj.get("actionId").getAsInt());
+							if (diseaseSummaryObj.get("informationGiven") != null
+									&& !diseaseSummaryObj.get("informationGiven").isJsonNull())
+								cdss.setInformationGiven(diseaseSummaryObj.get("informationGiven").getAsString());
+
+						}
+
+						commonNurseServiceImpl.saveCdssDetails(cdss);
+					}
+
 				}
 
-				if (adherenceSuccessFlag > 0 && investigationSuccessFlag > 0) {
-					// Adherence and Investigation Details stored successfully.
-				}
+				visitIdAndCodeMap.put("visitID", benVisitID);
+				visitIdAndCodeMap.put("visitCode", benVisitCode);
 			}
-
-			visitIdAndCodeMap.put("visitID", benVisitID);
-			visitIdAndCodeMap.put("visitCode", benVisitCode);
-		}
 		}
 		return visitIdAndCodeMap;
 	}
@@ -610,6 +689,8 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 		resMap.put("Investigation", commonNurseServiceImpl.getLabTestOrders(benRegID, visitCode));
 
+		resMap.put("Cdss", commonNurseServiceImpl.getBenCdss(benRegID, visitCode));
+
 		return resMap.toString();
 	}
 
@@ -643,6 +724,15 @@ public class NCDCareServiceImpl implements NCDCareService {
 				commonNurseServiceImpl.getBeneficiaryPhysicalAnthropometryDetails(beneficiaryRegID, visitCode));
 		resMap.put("benPhysicalVitalDetail",
 				commonNurseServiceImpl.getBeneficiaryPhysicalVitalDetails(beneficiaryRegID, visitCode));
+
+		return resMap.toString();
+	}
+
+	public String getBeneficiaryCdssDetails(Long beneficiaryRegID, Long benVisitID) {
+		Map<String, Object> resMap = new HashMap<>();
+
+		resMap.put("presentChiefComplaint", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
+		resMap.put("diseaseSummary", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
 
 		return resMap.toString();
 	}
@@ -1143,6 +1233,8 @@ public class NCDCareServiceImpl implements NCDCareService {
 		resMap.put("vitals", getBeneficiaryVitalDetails(benRegID, visitCode));
 
 		resMap.put("history", getBenNCDCareHistoryDetails(benRegID, visitCode));
+
+		resMap.put("cdss", getBeneficiaryCdssDetails(benRegID, visitCode));
 
 		return resMap.toString();
 	}

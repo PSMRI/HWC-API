@@ -62,10 +62,14 @@ representative at an online or offline event.
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
 <<<<<<< HEAD
+<<<<<<< HEAD
 amrit@piramalswasthya.org.
 =======
 [INSERT CONTACT METHOD].
 >>>>>>> 56c3672c3b5cf6333dad25fcfa2e0a87b696bc17
+=======
+amrit@piramalswasthya.org.
+>>>>>>> 1269f0adf77d7844409b2da064b60c17e744b152
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the

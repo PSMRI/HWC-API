@@ -37,6 +37,8 @@ import com.google.gson.annotations.Expose;
 import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
 import com.iemr.hwc.data.provider.ProviderServiceMapping;
 
+import lombok.Data;
+@Data
 @Entity
 @Table(name = "t_benvisitdetail")
 public class BeneficiaryVisitDetail {
@@ -194,6 +196,55 @@ public class BeneficiaryVisitDetail {
 	@Expose
 	@Transient
 	private String[] sideEffects;
+	
+	@Transient
+	private String selectedDiagnosisID;
+	
+	@Transient
+	private String selectedDiagnosis;
+	
+	@Transient
+    private String presentChiefComplaint;
+	
+	@Transient
+	private String presentChiefComplaintID;
+	
+	@Transient
+	private String recommendedAction;
+	
+	@Transient
+	private String remarks;
+	@Transient
+	private String algorithm;
+	
+	@Transient
+	private String recommendedActionPc;
+	
+	@Transient
+	private String remarksPc;
+	
+	@Transient
+	private String algorithmPc;
+	
+	@Transient
+	private Integer diseaseSummaryID;
+	
+	@Transient
+	private String diseaseSummary;
+	
+	@Transient
+	private String actionPc;
+	
+	@Transient
+	private Integer actionIdPc;
+	@Transient
+	private String action;
+	
+	@Transient
+	private Integer actionId;
+	
+	@Transient
+	private String informationGiven;
 	
 
 	public BeneficiaryVisitDetail() {
