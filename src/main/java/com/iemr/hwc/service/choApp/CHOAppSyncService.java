@@ -1,7 +1,9 @@
 package com.iemr.hwc.service.choApp;
 
+import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import org.springframework.http.ResponseEntity;
+import java.util.List;
 
 public interface CHOAppSyncService {
     ResponseEntity<String> registerCHOAPPBeneficiary(String comingReq, String authorization);
@@ -10,7 +12,7 @@ public interface CHOAppSyncService {
 
     ResponseEntity<String> getFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 
-    ResponseEntity<String> saveUserActivityLogs(String comingReq, String authorization);
+    ResponseEntity<String> saveUserActivityLogs(List<UserActivityLogs> logsList, String authorization);
 
     ResponseEntity<String> getBeneficiaryNurseFormDataGeneralOPD(String comingRequest, String authorization);
 

@@ -15,7 +15,6 @@ import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 import com.iemr.hwc.utils.exception.IEMRException;
-import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import com.iemr.hwc.utils.response.OutputResponse;
 import org.joda.time.DateTime;
@@ -290,7 +289,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     }
 
     @Override
-    public ResponseEntity<String> saveUserActivityLogs(String comingReq, String authorization) {
+    public ResponseEntity<String> saveUserActivityLogs(List<UserActivityLogs> logsList, String authorization) {
 
         OutputResponse outputResponse = new OutputResponse();
         HttpStatus statusCode = HttpStatus.OK;
@@ -299,9 +298,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", "application/json");
 
         try{
-        UserActivityLogs[] logs = InputMapper.gson().fromJson(comingReq,UserActivityLogs[].class);
-        List<UserActivityLogs> logsList = Arrays.asList(logs);
-
+            for (UserActivityLogs log : logsList){
+                if(log.getUserImage() != null) {
+                    byte[] imageByte = Base64.getDecoder().decode(log.getUserImage());
+                    log.setImageData(imageByte);
+                }
+            }
         List<UserActivityLogs> savedList = (List<UserActivityLogs>) userActivityLogsRepo.save(logsList);
 
         if (savedList.size() == logsList.size()){
