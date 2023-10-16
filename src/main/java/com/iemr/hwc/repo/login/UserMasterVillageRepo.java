@@ -13,7 +13,7 @@ public interface UserMasterVillageRepo extends CrudRepository<UsersMasterVillage
     @Query(" SELECT u FROM UsersMasterVillage u WHERE u.user.userID = :userID AND u.masterVillage.districtBranchID = :districtBranchID AND u.user.deleted = false AND u.masterVillage.deleted = false ")
     public UsersMasterVillage getByUserIDAndVillageID(@Param("userID") Long userID, @Param("districtBranchID") Integer districtBranchID);
 
-    @Query(" SELECT u FROM UsersMasterVillage u WHERE u.user.userID = :userID AND u.user.deleted = false ")
+    @Query(" SELECT u FROM UsersMasterVillage u WHERE u.user.userID = :userID AND u.user.deleted = false AND u.active = true ")
     public UsersMasterVillage getByUserID(@Param("userID") Long userID);
 
 }

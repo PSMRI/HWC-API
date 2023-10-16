@@ -164,8 +164,8 @@ public class LocationControllerWo {
 
     @CrossOrigin
     @ApiOperation(value = "Update health and wellness center coordinates", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/update/villageCoordinates/wo" }, method = { RequestMethod.POST })
-    public String updateGeolocationVillage(@RequestBody String requestObj) {
+    @RequestMapping(value = { "/update/villageCoordinates" }, method = { RequestMethod.POST })
+    public String updateGeolocationVillage(@RequestBody String requestObj, @RequestHeader(value = "Authorization") String Authorization) {
         OutputResponse response = new OutputResponse();
         try {
             logger.info("Request object for Geolocation update :" + requestObj);
@@ -184,10 +184,10 @@ public class LocationControllerWo {
             if (jsnOBJ != null && jElmtLatitude!=null && jElmtLongitude!=null && jElmtDistrictBranchID!=null && jElmtAddress!=null) {
                 int responseUpdate = locationServiceImpl.updateGeolocationByDistrictBranchID(jElmtLatitude.getAsDouble(), jElmtLongitude.getAsDouble(), jElmtDistrictBranchID.getAsInt(), jElmtAddress.getAsString());
                 if(responseUpdate==1){
-                    response.setResponse(responseUpdate+"");
+                    response.setResponse("Successfully updated");
                 }
                 else if(responseUpdate==101){
-                    response.setError(5000, "Unable to update the lat long for an active record");
+                    response.setResponse("Geolocation for this village already set");
                 }
             } else {
                 response.setError(400, "Invalid request");

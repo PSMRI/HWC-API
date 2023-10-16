@@ -100,6 +100,10 @@ public class DistrictBranchMapping {
 	@Expose
 	private String address;
 
+	@Column(name = "loginDistance")
+	@Expose
+	private Integer loginDistance;
+
 	@Transient
 	private OutputMapper outputMapper = new OutputMapper();
 
@@ -277,4 +281,8 @@ public class DistrictBranchMapping {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	public Integer getLoginDistance() { return loginDistance;}
+
+	public void setLoginDistance(Integer loginDistance) { this.loginDistance = loginDistance;}
 }
