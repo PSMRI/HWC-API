@@ -45,6 +45,14 @@ public class UserActivityLogs {
     private Timestamp logoutTimeStamp;
 
     @Expose
+    @Lob
+    @Column(name = "UserImage", columnDefinition = "MEDIUMBLOB")
+    private byte[] imageData;
+
+    @Transient
+    private String userImage;
+
+    @Expose
     @Column(name = "Latitude")
     private Double latitude ;
 

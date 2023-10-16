@@ -1,5 +1,6 @@
 package com.iemr.hwc.controller.choApp;
 
+import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.service.choApp.CHOAppSyncService;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import io.swagger.annotations.ApiOperation;
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -54,10 +56,10 @@ public class CHOAppSyncController {
     // Login logout logs sync from CHO app to AMRIT server
     @ApiOperation(value = "Sync user activity logs to AMRIT server", consumes = "application/json", produces = "application/json")
     @RequestMapping(value = { "/userActivityLogsToServer" }, method = { RequestMethod.POST })
-    public ResponseEntity<String> userActivityLogsSyncToServer(@RequestBody String comingReq,
+    public ResponseEntity<String> userActivityLogsSyncToServer(@RequestBody List<UserActivityLogs> logsList,
                                                                       @RequestHeader(value = "Authorization") String Authorization) {
 
-        return choappSyncService.saveUserActivityLogs(comingReq, Authorization);
+        return choappSyncService.saveUserActivityLogs(logsList, Authorization);
     }
 
     // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) sync from AMRIT server to CHO app
