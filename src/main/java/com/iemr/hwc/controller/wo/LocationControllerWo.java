@@ -184,10 +184,10 @@ public class LocationControllerWo {
             if (jsnOBJ != null && jElmtLatitude!=null && jElmtLongitude!=null && jElmtDistrictBranchID!=null && jElmtAddress!=null) {
                 int responseUpdate = locationServiceImpl.updateGeolocationByDistrictBranchID(jElmtLatitude.getAsDouble(), jElmtLongitude.getAsDouble(), jElmtDistrictBranchID.getAsInt(), jElmtAddress.getAsString());
                 if(responseUpdate==1){
-                    response.setResponse(responseUpdate+"");
+                    response.setResponse("Successfully updated");
                 }
                 else if(responseUpdate==101){
-                    response.setError(5000, "Geolocation for this village already set");
+                    response.setResponse("Geolocation for this village already set");
                 }
             } else {
                 response.setError(400, "Invalid request");
