@@ -19,12 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see https://www.gnu.org/licenses/.
  */
-package com.iemr.hwc.service.user;
+package com.iemr.hwc.service.masterVillage;
 
-import com.iemr.hwc.data.login.Users;
 import com.iemr.hwc.data.login.UsersMasterVillage;
 
-public interface UserService {
-    public String setMasterVillage(Long userID, Integer villageID);
-    public UsersMasterVillage getMasterVillage(Long userID);
+public interface MasterVillageService {
+    String setMasterVillage(Long userID, Integer villageID);
+    UsersMasterVillage getMasterVillage(Long userID);
 } 

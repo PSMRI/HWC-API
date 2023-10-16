@@ -1,5 +1,6 @@
-package com.iemr.hwc.service.user;
+package com.iemr.hwc.service.masterVillage;
 
+import com.google.gson.Gson;
 import com.iemr.hwc.data.location.*;
 import com.iemr.hwc.data.login.Users;
 import com.iemr.hwc.data.login.UsersMasterVillage;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class MasterVillageServiceImpl implements MasterVillageService {
 
     @Autowired
     private UserLoginRepo userLoginRepo;
@@ -25,21 +26,21 @@ public class UserServiceImpl implements UserService {
 
     public String setMasterVillage(Long userID, Integer villageID){
         String response = "";
-        UsersMasterVillage usersMasterVillage = userMasterVillageRepo.getByUserIDAndVillageID(userID, villageID);
-        if(usersMasterVillage==null || (usersMasterVillage!=null && usersMasterVillage.getActive()==false)){
+        UsersMasterVillage usersMasterVillage = userMasterVillageRepo.getByUserID(userID);
+        if(usersMasterVillage==null){
             DistrictBranchMapping districtBranchMapping = districtBranchMasterRepo.findByDistrictBranchID(villageID);
             Users userBD = userLoginRepo.getUserByUserID(userID);
             if(userBD!=null) {
                 if(districtBranchMapping!=null){
-                    UsersMasterVillage user = new UsersMasterVillage();
-                    user.setUser(userBD);
-                    user.setMasterVillage(districtBranchMapping);
-                    user.setActive(true);
-                    user.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-                    user.setLastModDate(new Timestamp(System.currentTimeMillis()));
-                    user = userMasterVillageRepo.save(user);
-                    if(user!=null){
-                        response = "ok";
+                    UsersMasterVillage usersMasterVillage1 = new UsersMasterVillage();
+                    usersMasterVillage1.setUser(userBD);
+                    usersMasterVillage1.setMasterVillage(districtBranchMapping);
+                    usersMasterVillage1.setActive(true);
+                    usersMasterVillage1.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+                    usersMasterVillage1.setLastModDate(new Timestamp(System.currentTimeMillis()));
+                    usersMasterVillage1 = userMasterVillageRepo.save(usersMasterVillage1);
+                    if(usersMasterVillage1!=null){
+                        response = new Gson().toJson(usersMasterVillage1.getMasterVillage());
                     }
                     else{
                         response = "not_ok";
@@ -54,7 +55,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         else{
-            response = "already_have_master_village";
+            response =  new Gson().toJson(usersMasterVillage.getMasterVillage());
 
         }
 
