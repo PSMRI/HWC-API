@@ -310,7 +310,7 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	// new, 11-10-2018
-	public String getLocDetailsNew(Integer vanID, Integer spPSMID) {
+	public String getLocDetailsNew(Integer vanID, Integer spPSMID, Integer userID) {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		// other location details
 		// ArrayList<Object[]> objList =
@@ -318,7 +318,7 @@ public class LocationServiceImpl implements LocationService {
 		// spPSMID);
 
 		// other location details, changed for TM
-		ArrayList<Object[]> resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
+		ArrayList<Object[]> resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID, userID);
 
 		// state master
 		ArrayList<States> stateList = new ArrayList<>();
