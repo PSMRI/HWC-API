@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -304,7 +305,11 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	// new, 11-10-2018
-	public String getLocDetailsNew(Integer vanID, Integer spPSMID) {
+	public String getLocDetailsNew(Integer vanID, Integer spPSMID,JSONObject obj) {
+		Integer userID = null;
+		if(obj.has("userID")) {
+			userID = obj.getInt("userID");
+		}
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		// other location details
 		// ArrayList<Object[]> objList =
@@ -312,7 +317,13 @@ public class LocationServiceImpl implements LocationService {
 		// spPSMID);
 
 		// other location details, changed for TM
-		ArrayList<Object[]> resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
+		ArrayList<Object[]> resultSet = null;
+		if(null != userID) {
+			resultSet = v_getVanLocDetailsRepo.getVanDetailsWithUserID(vanID,userID);
+		}else{
+			resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
+		}
+		
 
 		// state master
 		ArrayList<States> stateList = new ArrayList<>();
