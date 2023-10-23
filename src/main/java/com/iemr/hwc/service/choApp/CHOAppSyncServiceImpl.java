@@ -3,10 +3,12 @@ package com.iemr.hwc.service.choApp;
 import com.google.gson.*;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.data.choApp.UserActivityLogs;
+import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
+import com.iemr.hwc.repo.doctor.PrescriptionTemplatesRepo;
 import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
@@ -70,6 +72,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private GeneralOPDServiceImpl generalOPDServiceImpl;
 
     private BenVisitDetailRepo benVisitDetailRepo;
+
+    private PrescriptionTemplatesRepo prescriptionTemplatesRepo;
+
+    @Autowired
+    public void setPrescriptionTemplatesRepo(PrescriptionTemplatesRepo prescriptionTemplatesRepo){
+        this.prescriptionTemplatesRepo = prescriptionTemplatesRepo;
+    }
 
     @Autowired
     public void setCommonBenStatusFlowServiceImpl(CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl) {
@@ -453,4 +462,54 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         }
         return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
     }
+
+    @Override
+    public ResponseEntity<String> savePrescriptionTemplatesToServer(List<PrescriptionTemplates> templateList, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try{
+            List<PrescriptionTemplates> savedList = (List<PrescriptionTemplates>) prescriptionTemplatesRepo.save(templateList);
+
+            if (savedList.size() == templateList.size()){
+                outputResponse.setResponse("Data saved successfully");
+            }else {
+                throw new Exception();
+            }
+
+        } catch (IEMRException | DataIntegrityViolationException |
+                 JsonSyntaxException | NumberFormatException e){
+            logger.error("Encountered exception EITHER due to incorrect payload syntax OR" +
+                    " because of missing userId. " + e);
+            outputResponse.setError(400,"Encountered exception EITHER due to incorrect payload syntax OR " +
+                    "because of missing userId. Please check the payload. " + e);
+            statusCode = HttpStatus.BAD_REQUEST;
+        } catch (Exception e){
+            logger.error("Encountered exception while saving Prescription templates. " + e);
+            outputResponse.setError(500,"Encountered exception while saving Prescription templates. " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+    }
+
+    @Override
+    public ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        List<PrescriptionTemplates> templateList =  prescriptionTemplatesRepo.getPrescriptionTemplatesByUserID(userID);
+
+        outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(templateList));
+
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+    }
+
+
 }
