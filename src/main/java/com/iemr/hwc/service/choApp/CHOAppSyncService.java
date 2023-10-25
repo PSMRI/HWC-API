@@ -1,6 +1,7 @@
 package com.iemr.hwc.service.choApp;
 
 import com.iemr.hwc.data.choApp.UserActivityLogs;
+import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -17,4 +18,8 @@ public interface CHOAppSyncService {
     ResponseEntity<String> getBeneficiaryNurseFormDataGeneralOPD(String comingRequest, String authorization);
 
     ResponseEntity<String> saveBeneficiaryNurseFormDataGeneralOPD(String comingRequest, String authorization);
+
+    ResponseEntity<String> savePrescriptionTemplatesToServer(List<PrescriptionTemplates> templateList, String authorization);
+
+    ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization);
 }

@@ -1,6 +1,7 @@
 package com.iemr.hwc.controller.choApp;
 
 import com.iemr.hwc.data.choApp.UserActivityLogs;
+import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.service.choApp.CHOAppSyncService;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import io.swagger.annotations.ApiOperation;
@@ -79,6 +80,24 @@ public class CHOAppSyncController {
                                                                                  @RequestHeader(value = "Authorization") String Authorization) {
 
         return choappSyncService.saveBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
+    }
+
+    // Upload Prescription templates from CHO app to AMRIT server
+    @ApiOperation(value = "Save prescription templates to AMRIT server", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/prescriptionTemplatesToServer" }, method = { RequestMethod.POST })
+    public ResponseEntity<String> prescriptionTemplatesToServer(@RequestBody List<PrescriptionTemplates> templateList,
+                                                               @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.savePrescriptionTemplatesToServer(templateList, Authorization);
+    }
+
+    // Fetch Prescription templates for a doctor from AMRIT server
+    @ApiOperation(value = "Fetch prescription templates for doctor to AMRIT server", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/{userID}/prescriptionTemplatesDataToApp" }, method = { RequestMethod.GET })
+    public ResponseEntity<String> prescriptionTemplatesToApp(@PathVariable Integer userID,
+                                                                @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.savePrescriptionTemplatesToApp(userID, Authorization);
     }
 
 }

@@ -45,6 +45,9 @@ public class UserActivityLogs {
     private Timestamp logoutTimeStamp;
 
     @Expose
+    @Column(name = "IsOutOfReach")
+    private Boolean isOutOfReach;
+
     @Lob
     @Column(name = "UserImage", columnDefinition = "MEDIUMBLOB")
     private byte[] imageData;
