@@ -22,4 +22,6 @@ public interface CHOAppSyncService {
     ResponseEntity<String> savePrescriptionTemplatesToServer(List<PrescriptionTemplates> templateList, String authorization);
 
     ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization);
+
+    ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID);
 }

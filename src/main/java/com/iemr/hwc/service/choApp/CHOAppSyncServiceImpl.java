@@ -511,5 +511,20 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
     }
 
+    @Override
+    public ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        prescriptionTemplatesRepo.deletePrescriptionTemplatesByUserIDAndTempID(userID, tempID);
+
+        outputResponse.setResponse("Successfully deleted");
+
+        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+    }
+
 
 }
