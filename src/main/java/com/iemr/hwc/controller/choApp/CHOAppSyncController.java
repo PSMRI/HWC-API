@@ -100,4 +100,14 @@ public class CHOAppSyncController {
         return choappSyncService.savePrescriptionTemplatesToApp(userID, Authorization);
     }
 
+    // Delete Prescription templates for a doctor from AMRIT server
+    @ApiOperation(value = "Delete prescription templates for doctor to AMRIT server", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/{userID}/prescriptionTemplates/{tempID}/delete" }, method = { RequestMethod.DELETE })
+    public ResponseEntity<String> deleteTemplate(@PathVariable Integer userID,
+                                                             @PathVariable Integer tempID,
+                                                             @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.deletePrescriptionTemplates(userID, tempID);
+    }
+
 }

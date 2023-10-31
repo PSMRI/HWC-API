@@ -7,19 +7,21 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "t_prescription_templates", uniqueConstraints = {
-@UniqueConstraint(name = "uniqueUserIDAndTemplateName",columnNames = {"UserID","TemplateName"})
-})
+@Table(name = "t_prescription_templates")
 public class PrescriptionTemplates {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TemplateID")
+    @Column(name = "id")
     private Long id;
 
     @Expose
     @Column(name = "UserID")
     private Integer userID;
+
+    @Expose
+    @Column(name = "TemplateID")
+    private Integer tempID;
 
     @Expose
     @Column(name = "TemplateName")
