@@ -3972,7 +3972,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	public Map<String, Object> getGraphicalTrendData(Long benRegID, String visitCategory) {
 		Map<String, Object> returnOBJ = new HashMap<>();
 
-		ArrayList<Object[]> benLastSixVisitDetails = benVisitDetailRepo.getLastSixVisitDetailsForBeneficiary(benRegID);
+		ArrayList<Object[]> benLastSixVisitDetails = benVisitDetailRepo.getLastSixVisitDetailsForBeneficiary(benRegID, visitCategory);
 
 		ArrayList<Long> benVisitCodeListCancer = new ArrayList<>();
 		ArrayList<Long> benVisitCodeListOther = new ArrayList<>();

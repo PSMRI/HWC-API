@@ -81,9 +81,9 @@ public interface BenVisitDetailRepo extends CrudRepository<BeneficiaryVisitDetai
 	public Short getVisitCountForBeneficiary(@Param("benRegID") Long benRegID);
 
 	@Query(nativeQuery = true, value = " SELECT v.benVisitID, v.visitCategory, v.visitCode FROM t_benvisitdetail v "
-			+ " WHERE v.beneficiaryRegID = :benRegID "
+			+ " WHERE v.beneficiaryRegID = :benRegID AND v.visitCategory = :visitCategory"
 			+ " AND v.visitCategory IS NOT NULL ORDER BY v.createdDate DESC limit 6 ")
-	public ArrayList<Object[]> getLastSixVisitDetailsForBeneficiary(@Param("benRegID") Long benRegID);
+	public ArrayList<Object[]> getLastSixVisitDetailsForBeneficiary(@Param("benRegID") Long benRegID, @Param("visitCategory") String visitCategory);
 
 	// updating record with visitcode.
 	@Transactional
