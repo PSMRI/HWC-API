@@ -29,6 +29,8 @@ import com.iemr.hwc.utils.exception.IEMRException;
 public interface ANCService {
 
 	public String saveANCNurseData(JsonObject requestOBJ, String Authorization) throws Exception;
+	
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	// int UpdateANCVisitDetails(JsonObject jsnOBJ) throws Exception;
 

@@ -81,13 +81,17 @@ import com.iemr.hwc.data.tele_consultation.TeleconsultationRequestOBJ;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorRepo;
 import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
 import com.iemr.hwc.repo.nurse.anc.ANCCareRepo;
 import com.iemr.hwc.repo.nurse.anc.ANCDiagnosisRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.hwc.repo.nurse.anc.BenMedHistoryRepo;
 import com.iemr.hwc.repo.nurse.anc.BenMenstrualDetailsRepo;
 import com.iemr.hwc.repo.nurse.anc.BencomrbidityCondRepo;
 import com.iemr.hwc.repo.nurse.anc.FemaleObstetricHistoryRepo;
 import com.iemr.hwc.repo.nurse.anc.SysObstetricExaminationRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
@@ -125,6 +129,16 @@ public class ANCServiceImpl implements ANCService {
 
 	@Autowired
 	private SysObstetricExaminationRepo sysObstetricExaminationRepo;
+	
+	@Autowired
+	private BenVisitDetailRepo benVisitDetailRepo;
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Autowired
 	public void setLabTechnicianServiceImpl(LabTechnicianServiceImpl labTechnicianServiceImpl) {
@@ -160,7 +174,6 @@ public class ANCServiceImpl implements ANCService {
 	private SMSGatewayServiceImpl sMSGatewayServiceImpl;
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public String saveANCNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
 		// String vr = "";
 		// String vc = "";
@@ -263,6 +276,26 @@ public class ANCServiceImpl implements ANCService {
 			responseMap.put("response", "Unable to save data");
 		}
 		return new Gson().toJson(responseMap);
+	}
+	
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
+
 	}
 
 	private int updateBenFlowNurseAfterNurseActivityANC(JsonObject investigationDataCheck, JsonObject tmpOBJ,

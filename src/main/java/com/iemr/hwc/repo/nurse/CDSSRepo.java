@@ -1,5 +1,8 @@
 package com.iemr.hwc.repo.nurse;
 
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +14,11 @@ import com.iemr.hwc.data.nurse.CDSS;
 public interface CDSSRepo extends CrudRepository<CDSS, Long> {
 	
 	CDSS findByBeneficiaryRegIDAndVisitCode(Long beneficiaryRegID, Long visitCode);
+	
+	@Modifying
+	@Transactional
+	@Query("DELETE FROM CDSS WHERE visitCode=:visitCode ")
+	public int deleteVisitDetails(@Param("visitCode") Long visitCode);
 	
 
 }

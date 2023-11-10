@@ -63,13 +63,14 @@ public class PostnatalCareController {
 	 * @Objective Saving PNC nurse data
 	 * @param requestObj
 	 * @return success or failure response
+	 * @throws Exception 
 	 */
 
 	@CrossOrigin
 	@ApiOperation(value = "Save PNC nurse data", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
 	public String saveBenPNCNurseData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		try {
 			logger.info("Request object for PNC nurse data saving :" + requestObj);
@@ -88,7 +89,16 @@ public class PostnatalCareController {
 
 		} catch (Exception e) {
 			logger.error("Error while saving nurse data :" + e);
-			response.setError(5000, "Unable to save data");
+			if (e.getMessage().equalsIgnoreCase("Error while booking slot.")) {
+				JsonObject jsnOBJ = new JsonObject();
+				JsonParser jsnParser = new JsonParser();
+				JsonElement jsnElmnt = jsnParser.parse(requestObj);
+				jsnOBJ = jsnElmnt.getAsJsonObject();
+				pncServiceImpl.deleteVisitDetails(jsnOBJ);
+				response.setError(5000, "Already booked slot, Please choose another slot");
+			} else {
+				response.setError(5000, "Unable to save data");
+			}
 		}
 		return response.toString();
 	}
@@ -125,7 +135,10 @@ public class PostnatalCareController {
 
 		} catch (Exception e) {
 			logger.error("Error while saving doctor data :" + e);
-			response.setError(5000, "Unable to save data. " + e.getMessage());
+			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
+				response.setError(5000, "Already booked slot, Please choose another slot");
+			else
+				response.setError(5000, "Unable to save data. " + e.getMessage());
 		}
 		return response.toString();
 	}
@@ -506,7 +519,10 @@ public class PostnatalCareController {
 			logger.info("Doctor data update response:" + response);
 		} catch (Exception e) {
 			response.setError(5000, "Unable to modify data. " + e.getMessage());
-			logger.error("Error while updating doctor data :" + e);
+			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
+				response.setError(5000, "Already booked slot, Please choose another slot");
+			else
+				logger.error("Error while updating doctor data :" + e);
 		}
 
 		return response.toString();

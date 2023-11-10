@@ -35,6 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,8 +157,9 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	private Integer oncoWL;
 	@Value("${TMReferredWL}")
 	private Integer TMReferredWL;
-
+	
 	private BenVisitDetailRepo benVisitDetailRepo;
+	
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	private BenMedHistoryRepo benMedHistoryRepo;
 	private BencomrbidityCondRepo bencomrbidityCondRepo;
@@ -176,7 +181,6 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	private SysCentralNervousExaminationRepo sysCentralNervousExaminationRepo;
 	private SysMusculoskeletalSystemExaminationRepo sysMusculoskeletalSystemExaminationRepo;
 	private SysGenitourinarySystemExaminationRepo sysGenitourinarySystemExaminationRepo;
-	@Autowired
 	private OralExaminationRepo oralExaminationRepo;
 	private RegistrarRepoBenData registrarRepoBenData;
 	private PrescriptionDetailRepo prescriptionDetailRepo;
@@ -191,9 +195,8 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	private PhysicalActivityTypeRepo physicalActivityTypeRepo;
 	private IDRSDataRepo iDRSDataRepo;
 	private BenCancerVitalDetailRepo benCancerVitalDetailRepo;
-
+	
 	private CommonDoctorServiceImpl commonDoctorServiceImpl;
-	@Autowired
 	private BenReferDetailsRepo benReferDetailsRepo;
 	@Autowired
 	private CDSSRepo cdssRepo;

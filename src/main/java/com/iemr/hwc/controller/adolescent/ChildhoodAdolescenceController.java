@@ -59,12 +59,13 @@ public class ChildhoodAdolescenceController {
 	 * @Objective Save child-adolescent-care data for nurse.
 	 * @param requestObj
 	 * @return success or failure response with visit code
+	 * @throws Exception 
 	 */
 	@CrossOrigin
 	@ApiOperation(value = "Save child adolescent care (CAC) nurse data", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
 	public String saveBenNurseDataCAC(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		try {
 			logger.info("Request object for child-adolescent-care nurse data saving :" + requestObj);
@@ -85,7 +86,16 @@ public class ChildhoodAdolescenceController {
 			response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
 		} catch (Exception e) {
 			logger.error("Error in nurse data saving :" + e);
-			response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
+			if (e.getMessage().equalsIgnoreCase("Error while booking slot.")) {
+				JsonObject jsnOBJ = new JsonObject();
+				JsonParser jsnParser = new JsonParser();
+				JsonElement jsnElmnt = jsnParser.parse(requestObj);
+				jsnOBJ = jsnElmnt.getAsJsonObject();
+				adolescentAndChildCareService.deleteVisitDetails(jsnOBJ);
+				response.setError(5000, "Already booked slot, Please choose another slot");
+			} else {
+				response.setError(5000, "Unable to save data");
+			}
 		}
 		return response.toString();
 	}
@@ -114,7 +124,10 @@ public class ChildhoodAdolescenceController {
 
 		} catch (Exception e) {
 			logger.error("Error while saving doctor data:" + e);
-			response.setError(5000, "Unable to save data. " + e.getMessage());
+			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
+				response.setError(5000, "Already booked slot, Please choose another slot");
+			else
+				response.setError(5000, "Unable to save data");
 		}
 		return response.toString();
 	}
@@ -425,7 +438,10 @@ public class ChildhoodAdolescenceController {
 			logger.info("Doctor data update response:" + response);
 		} catch (Exception e) {
 			response.setError(5000, "Unable to modify data. " + e.getLocalizedMessage());
-			logger.error("Error while updating CAC  doctor data:" + e);
+			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
+				response.setError(5000, "Already booked slot, Please choose another slot");
+			else
+				logger.error("Error while updating CAC  doctor data:" + e);
 		}
 
 		return response.toString();
