@@ -89,5 +89,10 @@ public interface PrescriptionDetailRepo extends CrudRepository<PrescriptionDetai
 
 	public List<Object> getProvisionalDiagnosis(@Param("visitCode") Long visitCode,
 			@Param("prescriptionID") Long prescriptionID);
+	
+	@Modifying
+	@Transactional
+	@Query(" DELETE FROM PrescriptionDetail WHERE visitCode=:visitCode ")
+	public int deleteVisitDetails(@Param("visitCode") Long visitCode);
 
 }

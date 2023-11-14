@@ -67,6 +67,8 @@ import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.nurse.CDSSRepo;
 import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
+import com.iemr.hwc.repo.quickConsultation.LabTestOrderDetailRepo;
+import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
@@ -98,6 +100,10 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 	@Autowired
 	private CDSSRepo cdssRepo;
+	@Autowired
+	private PrescriptionDetailRepo prescriptionDetailRepo;
+	@Autowired
+	private LabTestOrderDetailRepo labTestOrderDetailRepo;
 
 	@Autowired
 	public void setLabTechnicianServiceImpl(LabTechnicianServiceImpl labTechnicianServiceImpl) {
@@ -236,6 +242,8 @@ public class NCDCareServiceImpl implements NCDCareService {
 				benChiefComplaintRepo.deleteVisitDetails(visitCode);
 				benAdherenceRepo.deleteVisitDetails(visitCode);
 				cdssRepo.deleteVisitDetails(visitCode);
+				labTestOrderDetailRepo.deleteVisitDetails(visitCode);
+				prescriptionDetailRepo.deleteVisitDetails(visitCode);
 				benVisitDetailRepo.deleteVisitDetails(visitCode);
 			}
 

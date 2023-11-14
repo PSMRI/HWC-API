@@ -60,7 +60,7 @@ public class NeonatalController {
 	 * @Objective Save neonatal infant data for nurse.
 	 * @param requestObj
 	 * @return success or failure response with visit code
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@CrossOrigin
 	@ApiOperation(value = "Save neonatal infant nurse data", consumes = "application/json", produces = "application/json")
@@ -68,35 +68,30 @@ public class NeonatalController {
 	public String saveBenNeoNatalAndInfantNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for neonatal infant nurse data saving :" + requestObj);
 
+		if (null != requestObj) {
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestObj);
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null) {
-				String genOPDRes = neonatalService.saveNurseData(jsnOBJ, Authorization);
-				response.setResponse(genOPDRes);
+			try {
+				logger.info("Request object for neonatal infant nurse data saving :" + requestObj);
 
-			} else {
-				response.setResponse("Invalid request");
-			}
-		} catch (SQLException e) {
-			logger.error("Error in nurse data saving :" + e);
-			response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
-		} catch (Exception e) {
-			logger.error("Error in nurse data saving :" + e);
-			if (e.getMessage().equalsIgnoreCase("Error while booking slot.")) {
-				JsonObject jsnOBJ = new JsonObject();
-				JsonParser jsnParser = new JsonParser();
-				JsonElement jsnElmnt = jsnParser.parse(requestObj);
-				jsnOBJ = jsnElmnt.getAsJsonObject();
+				if (jsnOBJ != null) {
+					String genOPDRes = neonatalService.saveNurseData(jsnOBJ, Authorization);
+					response.setResponse(genOPDRes);
+
+				} else {
+					response.setResponse("Invalid request");
+				}
+			} catch (SQLException e) {
+				logger.error("Error in nurse data saving :" + e);
+				response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
+			} catch (Exception e) {
+				logger.error("Error in nurse data saving :" + e.getMessage());
 				neonatalService.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, "Already booked slot, Please choose another slot");
-			} else {
-				response.setError(5000, "Unable to save data");
+				response.setError(5000, e.getMessage());
 			}
 		}
 		return response.toString();
@@ -125,11 +120,8 @@ public class NeonatalController {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while saving doctor data:" + e);
-			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
-				response.setError(5000, "Already booked slot, Please choose another slot");
-			else
-				response.setError(5000, "Unable to save data. " + e.getMessage());
+			logger.error("Error while saving doctor data:" + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}
@@ -411,11 +403,8 @@ public class NeonatalController {
 
 			logger.info("Doctor data update response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data. " + e.getLocalizedMessage());
-			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
-				response.setError(5000, "Already booked slot, Please choose another slot");
-			else
-				logger.error("Error while updating neonatal infant  doctor data:" + e);
+			logger.error("Unable to modify data. " + e.getLocalizedMessage());
+			response.setError(5000, e.getMessage());
 		}
 
 		return response.toString();

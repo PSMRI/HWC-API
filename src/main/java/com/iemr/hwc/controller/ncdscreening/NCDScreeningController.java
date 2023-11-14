@@ -67,7 +67,7 @@ public class NCDScreeningController {
 	 * @Objective Save NCD Screening data for nurse.
 	 * @param JSON requestObj
 	 * @return success or failure response
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@CrossOrigin
 	@ApiOperation(value = "Save NCD screening beneficiary data collected by nurse", consumes = "application/json", produces = "application/json")
@@ -79,30 +79,23 @@ public class NCDScreeningController {
 		logger.info("Request object for NCD Screening nurse data saving :" + requestObj);
 		OutputResponse response = new OutputResponse();
 
-		JsonObject jsonObject = new JsonObject();
-		JsonParser jsonParser = new JsonParser();
+		if (null != requestObj) {
+			JsonObject jsonObject = new JsonObject();
+			JsonParser jsnParser = new JsonParser();
+			JsonElement jsnElmnt = jsnParser.parse(requestObj);
+			jsonObject = jsnElmnt.getAsJsonObject();
 
-		try {
-			JsonElement jsonElement = jsonParser.parse(requestObj);
-			jsonObject = jsonElement.getAsJsonObject();
-
-			if (jsonObject != null) {
-				String r = ncdScreeningService.saveNCDScreeningNurseData(jsonObject, Authorization);
-				response.setResponse(r);
-			} else {
-				response.setError(5000, "Invalid request");
-			}
-		} catch (Exception e) {
-			response.setError(5000, "Unable to save data");
-			if (e.getMessage().equalsIgnoreCase("Error while booking slot.")) {
-				JsonObject jsnOBJ = new JsonObject();
-				JsonParser jsnParser = new JsonParser();
-				JsonElement jsnElmnt = jsnParser.parse(requestObj);
-				jsnOBJ = jsnElmnt.getAsJsonObject();
-				ncdScreeningService.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, "Already booked slot, Please choose another slot");
-			} else {
-				response.setError(5000, "Unable to save data");
+			try {
+				if (jsonObject != null) {
+					String r = ncdScreeningService.saveNCDScreeningNurseData(jsonObject, Authorization);
+					response.setResponse(r);
+				} else {
+					response.setError(5000, "Invalid request");
+				}
+			} catch (Exception e) {
+				logger.error("Error in nurse data saving :" + e.getMessage());
+				ncdScreeningService.deleteVisitDetails(jsonObject);
+				response.setError(5000, e.getMessage());
 			}
 		}
 		return response.toString();
@@ -134,11 +127,8 @@ public class NCDScreeningController {
 				response.setResponse("Invalid request");
 			}
 		} catch (Exception e) {
-			logger.error("Error while saving NCD Screening doctor data :" + e);
-			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
-				response.setError(5000, "Already booked slot, Please choose another slot");
-			else
-				response.setError(5000, "Unable to save data. " + e.getMessage());
+			logger.error("Error while saving NCD Screening doctor data :" + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}
@@ -558,11 +548,8 @@ public class NCDScreeningController {
 			else
 				response.setError(5000, "Error in data update");
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data : " + e.getLocalizedMessage());
-			if (e.getMessage().equalsIgnoreCase("Error while booking slot."))
-				response.setError(5000, "Already booked slot, Please choose another slot");
-			else
-				logger.error("Error while updating doctor data : " + e);
+			logger.error("Unable to modify data : " + e.getLocalizedMessage());
+			response.setError(5000, e.getMessage());
 		}
 
 		return response.toString();

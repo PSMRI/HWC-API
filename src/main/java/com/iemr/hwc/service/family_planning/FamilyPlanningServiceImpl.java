@@ -99,7 +99,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 	@Autowired
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
-	
+	@Autowired
 	private BenVisitDetailRepo benVisitDetailRepo;
 	@Autowired
 	private BenChiefComplaintRepo benChiefComplaintRepo;
