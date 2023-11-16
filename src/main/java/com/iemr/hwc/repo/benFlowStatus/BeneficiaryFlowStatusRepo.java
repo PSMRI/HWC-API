@@ -456,4 +456,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.villageID IN :villageIDs AND t.modified_date > :lastModDate ")
     ArrayList<BeneficiaryFlowStatus> getFlowRecordsToSync(@Param("villageIDs") List<Integer> villageID, @Param("lastModDate") Timestamp lastModDate);
 
+	@Query("SELECT COUNT(t) from BeneficiaryFlowStatus t WHERE t.villageID IN :villageIDs AND t.modified_date > :lastModDate ")
+	Long getFlowRecordsCount(@Param("villageIDs") List<Integer> villageID, @Param("lastModDate") Timestamp lastModDate);
+
 }

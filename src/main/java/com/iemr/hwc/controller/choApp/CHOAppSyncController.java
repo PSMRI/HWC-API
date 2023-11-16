@@ -44,6 +44,25 @@ public class CHOAppSyncController {
         return choappSyncService.getBeneficiaryByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
     }
 
+    // Get count of beneficiary to sync from AMRIT server to CHO app with identity new
+    @ApiOperation(value = "Returns count of beneficiaries to be synced from AMRIT server to CHO App", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/beneficiariesToAppCount" }, method = { RequestMethod.POST })
+    public ResponseEntity<String> beneficiarySyncToAppLocalCount(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
+                                                            @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.countBeneficiaryByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+    }
+
+    //Count of beneficiary flow status records to sync from AMRIT server to CHO app
+    @ApiOperation(value = "Returns count of beneficiaries flow status records to be synced", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/benFlowStatusRecordsCount" }, method = {
+            RequestMethod.POST })
+    public ResponseEntity<String> flowStatusesSyncToAppLocalCount(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
+                                                             @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.countFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+    }
+
     // beneficiary flow status records sync from AMRIT server to CHO app
     @ApiOperation(value = "Sync beneficiaries flow status records ", consumes = "application/json", produces = "application/json")
     @RequestMapping(value = { "/benFlowStatusRecordsToApp" }, method = {
