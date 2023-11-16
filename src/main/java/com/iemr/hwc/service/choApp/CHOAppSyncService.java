@@ -24,4 +24,8 @@ public interface CHOAppSyncService {
     ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization);
 
     ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID);
+
+    ResponseEntity<String> countFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
+
+    ResponseEntity<String> countBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 }

@@ -25,6 +25,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     @Value("${syncSearchByLocation}")
     private String syncSearchByLocation;
+
+    @Value("${getBenCountToSync}")
+    private String getBenCountToSync;
 
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
@@ -256,6 +260,106 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         headers.remove("AUTHORIZATION");
 
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+
+    }
+
+    public ResponseEntity<String> countBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String Authorization) {
+
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        headers.add("AUTHORIZATION", Authorization);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+
+            if(villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+                    && villageIDAndLastSyncDate.getLastSyncDate() != null) {
+
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+                DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
+
+                villageIDAndLastSyncDate.setLastModifiedDate(dt.toDate().getTime());
+
+                String identityRequestString = new GsonBuilder().create().toJson(villageIDAndLastSyncDate);
+                HttpEntity<String> request = new HttpEntity<>(identityRequestString, headers);
+                ResponseEntity<String> response = restTemplate.exchange(getBenCountToSync, HttpMethod.POST, request,
+                        String.class);
+
+                if (response.hasBody()) {
+
+                    JSONObject responseJSON = new JSONObject(response.getBody());
+                    String count = responseJSON.getJSONObject("response").getString("data");
+
+                    outputResponse.setResponse(count);
+                }
+            }else{
+                logger.error("Unable to get count of beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                statusCode = HttpStatus.BAD_REQUEST;
+            }
+        }
+        catch(ResourceAccessException e){
+            logger.error("Error establishing connection with Identity service. " + e);
+            outputResponse.setError(503, "Error establishing connection with Identity service. ");
+            statusCode = HttpStatus.SERVICE_UNAVAILABLE;
+        } catch(RestClientResponseException e){
+            logger.error("Error encountered in Identity service while getting count of beneficiary based on villageIDs and lastSyncDate " + e);
+            outputResponse.setError(e.getRawStatusCode(), "Error encountered in Identity service while getting count of beneficiary based on villageIDs and lastSyncDate " + e);
+            statusCode = HttpStatus.valueOf(e.getRawStatusCode());
+        } catch (JSONException e){
+            logger.error("Encountered JSON exception while parsing response from Identity service " + e);
+            outputResponse.setError(502, "Encountered JSON exception while parsing response from Identity service " + e);
+            statusCode = HttpStatus.BAD_GATEWAY;
+        } catch (Exception e){
+            logger.error("Encountered exception " + e);
+            outputResponse.setError(500, "Error getting count of beneficiaries to sync. Exception " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        headers.remove("AUTHORIZATION");
+
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+
+    }
+
+    @Override
+    public ResponseEntity<String> countFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String Authorization) {
+
+        HttpStatus statusCode = HttpStatus.OK;
+        OutputResponse outputResponse = new OutputResponse();
+        Long benFlowCount;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try {
+            if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+                    && villageIDAndLastSyncDate.getLastSyncDate() != null) {
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+                DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
+
+                benFlowCount = beneficiaryFlowStatusRepo.getFlowRecordsCount(villageIDAndLastSyncDate.getVillageID(),
+                        new Timestamp(dt.toDate().getTime()));
+                outputResponse.setResponse(String.valueOf(benFlowCount));
+            }else{
+                logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                statusCode = HttpStatus.BAD_REQUEST;
+            }
+        } catch (IllegalArgumentException e){
+            logger.error("Encountered exception. " + e);
+            outputResponse.setError(400, "Encountered exception. Exception " + e);
+            statusCode = HttpStatus.BAD_REQUEST;
+        } catch (Exception e){
+            logger.error("Encountered exception while fetching ben flow status records to sync " + e);
+            outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
         return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
 
     }
