@@ -44,6 +44,7 @@ import com.iemr.hwc.data.family_planning.FamilyPlanningReproductive;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.nurse.CDSS;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
@@ -329,6 +330,78 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 					commonNurseServiceImpl.saveBenAdherenceDetails(benAdherence);
 				}
 
+				if (visitDetailsOBJ.has("cdss") && !visitDetailsOBJ.get("cdss").isJsonNull()) {
+					JsonObject cdssObj = visitDetailsOBJ.getAsJsonObject("cdss");
+					CDSS cdss = InputMapper.gson().fromJson(cdssObj, CDSS.class);
+					cdss.setBenVisitID(benVisitID);
+					cdss.setVisitCode(benVisitCode);
+
+					if (cdssObj.has("presentChiefComplaintDb")) {
+						JsonObject presentCheifComplaintObj = cdssObj.getAsJsonObject("presentChiefComplaintDb");
+
+						if (presentCheifComplaintObj.get("selectedDiagnosisID") != null
+								&& !presentCheifComplaintObj.get("selectedDiagnosisID").isJsonNull())
+							cdss.setSelectedDiagnosisID(
+									presentCheifComplaintObj.get("selectedDiagnosisID").getAsString());
+						if (presentCheifComplaintObj.get("selectedDiagnosis") != null
+								&& !presentCheifComplaintObj.get("selectedDiagnosis").isJsonNull())
+							cdss.setSelectedDiagnosis(presentCheifComplaintObj.get("selectedDiagnosis").getAsString());
+						if (presentCheifComplaintObj.get("presentChiefComplaint") != null
+								&& !presentCheifComplaintObj.get("presentChiefComplaint").isJsonNull())
+							cdss.setPresentChiefComplaint(
+									presentCheifComplaintObj.get("presentChiefComplaint").getAsString());
+						if (presentCheifComplaintObj.get("presentChiefComplaintID") != null
+								&& !presentCheifComplaintObj.get("presentChiefComplaintID").isJsonNull())
+							cdss.setPresentChiefComplaintID(
+									presentCheifComplaintObj.get("presentChiefComplaintID").getAsString());
+						if (presentCheifComplaintObj.get("algorithmPc") != null
+								&& !presentCheifComplaintObj.get("algorithmPc").isJsonNull())
+							cdss.setAlgorithmPc(presentCheifComplaintObj.get("algorithmPc").getAsString());
+						if (presentCheifComplaintObj.get("recommendedActionPc") != null
+								&& !presentCheifComplaintObj.get("recommendedActionPc").isJsonNull())
+							cdss.setRecommendedActionPc(
+									presentCheifComplaintObj.get("recommendedActionPc").getAsString());
+						if (presentCheifComplaintObj.get("remarksPc") != null
+								&& !presentCheifComplaintObj.get("remarksPc").isJsonNull())
+							cdss.setRemarksPc(presentCheifComplaintObj.get("remarksPc").getAsString());
+						if (presentCheifComplaintObj.get("actionPc") != null
+								&& !presentCheifComplaintObj.get("actionPc").isJsonNull())
+							cdss.setActionPc(presentCheifComplaintObj.get("actionPc").getAsString());
+						if (presentCheifComplaintObj.get("actionIdPc") != null
+								&& !presentCheifComplaintObj.get("actionIdPc").isJsonNull())
+							cdss.setActionIdPc(presentCheifComplaintObj.get("actionIdPc").getAsInt());
+					}
+
+					if (cdssObj.has("diseaseSummaryDb")) {
+						JsonObject diseaseSummaryObj = cdssObj.getAsJsonObject("diseaseSummaryDb");
+						if (diseaseSummaryObj.get("diseaseSummary") != null
+								&& !diseaseSummaryObj.get("diseaseSummary").isJsonNull())
+							cdss.setDiseaseSummary(diseaseSummaryObj.get("diseaseSummary").getAsString());
+						if (diseaseSummaryObj.get("diseaseSummaryID") != null
+								&& !diseaseSummaryObj.get("diseaseSummaryID").isJsonNull())
+							cdss.setDiseaseSummaryID(diseaseSummaryObj.get("diseaseSummaryID").getAsInt());
+						if (diseaseSummaryObj.get("algorithm") != null
+								&& !diseaseSummaryObj.get("algorithm").isJsonNull())
+							cdss.setAlgorithm(diseaseSummaryObj.get("algorithm").getAsString());
+						if (diseaseSummaryObj.get("recommendedAction") != null
+								&& !diseaseSummaryObj.get("recommendedAction").isJsonNull())
+							cdss.setRecommendedAction(diseaseSummaryObj.get("recommendedAction").getAsString());
+						if (diseaseSummaryObj.get("remarks") != null && !diseaseSummaryObj.get("remarks").isJsonNull())
+							cdss.setRemarks(diseaseSummaryObj.get("remarks").getAsString());
+						if (diseaseSummaryObj.get("action") != null && !diseaseSummaryObj.get("action").isJsonNull())
+							cdss.setAction(diseaseSummaryObj.get("action").getAsString());
+						if (diseaseSummaryObj.get("actionId") != null
+								&& !diseaseSummaryObj.get("actionId").isJsonNull())
+							cdss.setActionId(diseaseSummaryObj.get("actionId").getAsInt());
+						if (diseaseSummaryObj.get("informationGiven") != null
+								&& !diseaseSummaryObj.get("informationGiven").isJsonNull())
+							cdss.setInformationGiven(diseaseSummaryObj.get("informationGiven").getAsString());
+
+					}
+
+					commonNurseServiceImpl.saveCdssDetails(cdss);
+				}
+
 			}
 
 			visitIdAndCodeMap.put("visitID", benVisitID);
@@ -389,6 +462,8 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 		resMap.put("BenChiefComplaints", commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode));
 
+		resMap.put("Cdss", commonNurseServiceImpl.getBenCdss(benRegID, visitCode));
+
 		return resMap.toString();
 	}
 
@@ -400,6 +475,15 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 				commonNurseServiceImpl.getBeneficiaryPhysicalAnthropometryDetails(beneficiaryRegID, visitCode));
 		resMap.put("benPhysicalVitalDetail",
 				commonNurseServiceImpl.getBeneficiaryPhysicalVitalDetails(beneficiaryRegID, visitCode));
+
+		return resMap.toString();
+	}
+
+	public String getBeneficiaryCdssDetails(Long beneficiaryRegID, Long benVisitID) {
+		Map<String, Object> resMap = new HashMap<>();
+
+		resMap.put("presentChiefComplaint", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
+		resMap.put("diseaseSummary", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
 
 		return resMap.toString();
 	}
@@ -621,12 +705,13 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 				commonUtilityClass.setPrescriptionID(prescriptionDetail.getPrescriptionID());
 			}
-			
+
 			if (requestOBJ.has("counsellingProvidedList") && !requestOBJ.get("counsellingProvidedList").isJsonNull()
 					&& requestOBJ.get("counsellingProvidedList") != null) {
-				prescriptionDetail.setCounsellingProvided(requestOBJ.getAsJsonObject().get("counsellingProvidedList").getAsString());
-				} else
-					prescriptionDetail.setCounsellingProvided("");
+				prescriptionDetail.setCounsellingProvided(
+						requestOBJ.getAsJsonObject().get("counsellingProvidedList").getAsString());
+			} else
+				prescriptionDetail.setCounsellingProvided("");
 
 			// update prescription
 			int p = commonNurseServiceImpl.updatePrescription(prescriptionDetail);
@@ -710,7 +795,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 		// Integer tcRequestStatusFlag = null;
 
 		if (requestOBJ != null) {
-			
+
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
 
@@ -765,12 +850,13 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 			prescriptionDetail.setExternalInvestigation(wrapperBenInvestigationANC.getExternalInvestigations());
 			if (commonUtilityClass.getTreatmentsOnSideEffects() != null)
 				prescriptionDetail.setTreatmentsOnSideEffects(commonUtilityClass.getTreatmentsOnSideEffects());
-			
+
 			if (requestOBJ.has("counsellingProvidedList") && !requestOBJ.get("counsellingProvidedList").isJsonNull()
 					&& requestOBJ.get("counsellingProvidedList") != null) {
-				prescriptionDetail.setCounsellingProvided(requestOBJ.getAsJsonObject().get("counsellingProvidedList").getAsString());
+				prescriptionDetail.setCounsellingProvided(
+						requestOBJ.getAsJsonObject().get("counsellingProvidedList").getAsString());
 			}
-			
+
 			prescriptionID = commonNurseServiceImpl.saveBenPrescription(prescriptionDetail);
 
 			// save prescribed lab test
@@ -873,7 +959,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 			PrescriptionDetail pd = new Gson().fromJson(diagnosis_prescription, PrescriptionDetail.class);
 			if (pd != null && pd.getTreatmentsOnSideEffects() != null)
 				resMap.put("treatmentsOnSideEffects", new Gson().toJson(pd.getTreatmentsOnSideEffects()));
-			if (pd != null && pd.getCounsellingProvided() != null) 
+			if (pd != null && pd.getCounsellingProvided() != null)
 				resMap.put("counsellingProvidedList", new Gson().toJson(pd.getCounsellingProvided()));
 		}
 
@@ -905,6 +991,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 		resMap.put("fpData", getBeneficiaryFPDetailsFP(benRegID, visitCode));
 		resMap.put("vitals", getBeneficiaryVitalDetailsFP(benRegID, visitCode));
+		resMap.put("cdss", getBeneficiaryCdssDetails(benRegID, visitCode));
 
 		return resMap.toString();
 	}
