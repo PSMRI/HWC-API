@@ -25,9 +25,12 @@ import java.util.ArrayList;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.masterdata.registrar.RelationshipMaster;
-
+@Repository
+@RestResource(exported = false)
 public interface RelationshipMasterRepo extends CrudRepository<RelationshipMaster, Integer> {
 	
 	@Query("select r from RelationshipMaster r where r.deleted is false")

@@ -121,26 +121,31 @@ public class FamilyPlanningController {
 			+ "  \"parkingPlaceID\": 246,\r\n" + "  \"vanID\": 220,\r\n" + "  \"serviceID\": \"4\",\r\n"
 			+ "  \"createdBy\": \"testtm\",\r\n" + "  \"tcRequest\": null,\r\n"
 			+ "  \"beneficiaryRegID\": \"274661\",\r\n" + "  \"providerServiceMapID\": \"1261\"\r\n" + "}\r\n"
-			+ "") @RequestBody String requestOBJ, @RequestHeader(value = "Authorization") String Authorization) {
+			+ "") @RequestBody String requestOBJ, @RequestHeader(value = "Authorization") String Authorization)
+			throws Exception {
 
 		OutputResponse response = new OutputResponse();
-		try {
 
+		if (null != requestOBJ) {
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null) {
+			try {
 
-				String outcome = familyPlanningService.saveNurseDataFP(jsnOBJ, Authorization);
-				// set response once data save successfully
-				response.setResponse(outcome);
-			} else
-				throw new IEMRException("Invalid request object / NULL");
-		} catch (Exception e) {
-			logger.error("error in saving family-planning nurse data : " + e.getLocalizedMessage());
-			response.setError(5000, "error in saving family-planning nurse data : " + e.getLocalizedMessage());
+				if (jsnOBJ != null) {
+
+					String outcome = familyPlanningService.saveNurseDataFP(jsnOBJ, Authorization);
+					// set response once data save successfully
+					response.setResponse(outcome);
+				} else
+					throw new IEMRException("Invalid request object / NULL");
+			} catch (Exception e) {
+				logger.error("error in saving family-planning nurse data : " + e.getLocalizedMessage());
+				familyPlanningService.deleteVisitDetails(jsnOBJ);
+				response.setError(5000, e.getMessage());
+			}
 		}
 
 		return response.toString();
@@ -169,8 +174,8 @@ public class FamilyPlanningController {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while saving doctor data:" + e);
-			response.setError(5000, "Unable to save data. " + e.getMessage());
+			logger.error("Error while saving doctor data:" + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}
@@ -388,8 +393,8 @@ public class FamilyPlanningController {
 
 			logger.info("Doctor data update response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data. " + e.getLocalizedMessage());
-			logger.error("Error while updating FamilyPlanning  doctor data:" + e);
+			logger.error("Unable to modify data. " + e.getLocalizedMessage());
+			response.setError(5000, e.getMessage());
 		}
 
 		return response.toString();

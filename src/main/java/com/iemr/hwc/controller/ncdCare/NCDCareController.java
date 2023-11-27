@@ -55,42 +55,42 @@ import io.swagger.annotations.ApiParam;
 public class NCDCareController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private NCDCareServiceImpl ncdCareServiceImpl;
-
 	@Autowired
-	public void setNcdCareServiceImpl(NCDCareServiceImpl ncdCareServiceImpl) {
-		this.ncdCareServiceImpl = ncdCareServiceImpl;
-	}
+	private NCDCareServiceImpl ncdCareServiceImpl;
 
 	/**
 	 * @Objective Save NCD Care data for nurse.
 	 * @param JSON requestObj
 	 * @return success or failure response
+	 * @throws Exception
 	 */
 	@CrossOrigin
 	@ApiOperation(value = "Save NCD care data collected by nurse", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
 	public String saveBenNCDCareNurseData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for NCD Care nurse data saving :" + requestObj);
-
+		if (null != requestObj) {
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestObj);
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null) {
-				String ncdCareRes = ncdCareServiceImpl.saveNCDCareNurseData(jsnOBJ, Authorization);
-				response.setResponse(ncdCareRes);
-			} else {
-				response.setError(5000, "Invalid Request !!!");
-			}
+			try {
+				logger.info("Request object for NCD Care nurse data saving :" + requestObj);
 
-		} catch (Exception e) {
-			logger.error("Error while saving NCD Care nurse data :" + e);
-			response.setError(5000, "Unable to save data");
+				if (jsnOBJ != null) {
+					String ncdCareRes = ncdCareServiceImpl.saveNCDCareNurseData(jsnOBJ, Authorization);
+					response.setResponse(ncdCareRes);
+				} else {
+					response.setError(5000, "Invalid Request !!!");
+				}
+
+			} catch (Exception e) {
+				logger.error("Error while saving NCD Care nurse data :" + e.getMessage());
+				ncdCareServiceImpl.deleteVisitDetails(jsnOBJ);
+				response.setError(5000, e.getMessage());
+			}
 		}
 		return response.toString();
 	}
@@ -126,8 +126,8 @@ public class NCDCareController {
 				response.setResponse("Invalid request");
 			}
 		} catch (Exception e) {
-			logger.error("Error while saving NCD Care doctor data :" + e);
-			response.setError(5000, "Unable to save data. " + e.getMessage());
+			logger.error("Error while saving NCD Care doctor data :" + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}
@@ -373,8 +373,8 @@ public class NCDCareController {
 			}
 			logger.info("Doctor data update Response:" + response);
 		} catch (Exception e) {
-			response.setError(500, "Unable to modify data. " + e.getMessage());
-			logger.error("Error while updating doctor data :" + e);
+			logger.error("Unable to modify data. " + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 
 		return response.toString();

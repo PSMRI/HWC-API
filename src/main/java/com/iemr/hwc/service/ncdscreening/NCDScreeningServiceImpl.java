@@ -75,6 +75,8 @@ import com.iemr.hwc.data.quickConsultation.PrescriptionDetail;
 import com.iemr.hwc.data.tele_consultation.TeleconsultationRequestOBJ;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.BreastCancerScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.CbacDetailsRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.CervicalCancerScreeningRepo;
@@ -82,6 +84,7 @@ import com.iemr.hwc.repo.nurse.ncdscreening.DiabetesScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.HypertensionScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.IDRSDataRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.OralCancerScreeningRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
@@ -141,6 +144,14 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 	@Autowired
 	private CommonNcdScreeningService commonNcdScreeningService;
+	
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Autowired
 	public void setLabTechnicianServiceImpl(LabTechnicianServiceImpl labTechnicianServiceImpl) {
@@ -175,7 +186,6 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public String saveNCDScreeningNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
 		// Shubham Shekhar,8-12-2020,WDF
 		Long saveSuccessFlag = null;
@@ -406,6 +416,26 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			responseMap.put("response", "Unable to save data");
 		}
 		return new Gson().toJson(responseMap);
+
+	}
+	
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
 
 	}
 

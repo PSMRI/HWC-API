@@ -25,9 +25,12 @@ import java.util.ArrayList;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.masterdata.ncdscreening.PalpationOfBreasts;
-
+@Repository
+@RestResource(exported = false)
 public interface PalpationBreastsRepo extends CrudRepository<PalpationOfBreasts, Integer> {
 	@Query("SELECT obj FROM PalpationOfBreasts obj WHERE obj.deleted is false")
 	ArrayList<PalpationOfBreasts> getPalpationBreastsMasters();

@@ -47,4 +47,6 @@ public interface QuickConsultationService {
 			throws Exception;
 
 	Integer updateBeneficiaryClinicalObservations(JsonObject caseSheet) throws Exception;
+	
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 }

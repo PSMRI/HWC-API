@@ -53,6 +53,10 @@ import com.iemr.hwc.data.tele_consultation.TeleconsultationRequestOBJ;
 import com.iemr.hwc.repo.family_planning.FPDispenseDetailsRepo;
 import com.iemr.hwc.repo.family_planning.FPIecCounsellingDetailsRepo;
 import com.iemr.hwc.repo.family_planning.FamilyPlanningReproductiveRepo;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
@@ -95,9 +99,17 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 	@Autowired
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
+	@Autowired
+	private BenVisitDetailRepo benVisitDetailRepo;
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public String saveNurseDataFP(JsonObject requestOBJ, String Authorization) throws Exception {
 
 		// logic to parse and save data in DB
@@ -252,6 +264,26 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 			throw new IEMRException("Invalid request object - Visit details is not valid - NULL");
 
 		return new Gson().toJson(responseMap);
+	}
+	
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
+
 	}
 
 	// method for updating ben flow status flag for nurse

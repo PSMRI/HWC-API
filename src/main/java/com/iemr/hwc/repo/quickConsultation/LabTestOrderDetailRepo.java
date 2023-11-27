@@ -52,4 +52,9 @@ public interface LabTestOrderDetailRepo extends CrudRepository<LabTestOrderDetai
 	@Query(" Delete from LabTestOrderDetail WHERE beneficiaryRegID = :benRegID AND benVisitID = :benVisitID ")
 	public int deleteExistingLabTestOrderDetail(@Param("benRegID") Long benRegID, @Param("benVisitID") Long benVisitID);
 	
+	@Modifying
+	@Transactional
+	@Query(" DELETE FROM LabTestOrderDetail WHERE visitCode=:visitCode ")
+	public int deleteVisitDetails(@Param("visitCode") Long visitCode);
+	
 }
