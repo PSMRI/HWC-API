@@ -26,5 +26,7 @@ import com.google.gson.JsonObject;
 public interface NCDCareService {
 
 	String saveNCDCareNurseData(JsonObject requestOBJ, String Authorization) throws Exception;
+	
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 }

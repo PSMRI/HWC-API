@@ -25,9 +25,12 @@ import java.util.ArrayList;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.masterdata.ncdscreening.OralCavityFinding;
-
+@Repository
+@RestResource(exported = false)
 public interface OralCavityFindingRepo extends CrudRepository<OralCavityFinding, Integer> {
 	@Query("SELECT obj FROM OralCavityFinding obj WHERE obj.deleted is false")
 	ArrayList<OralCavityFinding> getOralCavityMasters();

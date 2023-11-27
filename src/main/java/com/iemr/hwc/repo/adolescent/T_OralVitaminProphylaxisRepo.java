@@ -24,11 +24,13 @@ package com.iemr.hwc.repo.adolescent;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.adolescent.T_OralVitaminProphylaxis;
 
 @Repository
+@RestResource(exported = false)
 public interface T_OralVitaminProphylaxisRepo extends CrudRepository<T_OralVitaminProphylaxis, Long> {
 
 	List<T_OralVitaminProphylaxis> findByBeneficiaryRegIDAndVisitCodeAndDeleted(Long regId, Long visitCode,

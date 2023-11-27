@@ -616,7 +616,7 @@ public class CommonServiceImpl implements CommonService {
 						throw new RuntimeException("Error while creating TC request.");
 					}
 				} else
-					throw new RuntimeException("Error while booking slot.");
+					throw new RuntimeException("Already Booked Slot, Please choose another slot");
 
 			}
 		}

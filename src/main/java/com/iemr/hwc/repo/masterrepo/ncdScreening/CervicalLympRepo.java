@@ -25,9 +25,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.masterdata.ncdscreening.CervicalLymph;
-
+@Repository
+@RestResource(exported = false)
 public interface CervicalLympRepo extends CrudRepository<CervicalLymph, Integer> {
 
 	@Query("SELECT obj FROM CervicalLymph obj WHERE obj.deleted is false")
