@@ -22,11 +22,13 @@
 package com.iemr.hwc.repo.neonatal;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.neonatal.FollowUpForImmunization;
 
 @Repository
+@RestResource(exported = false)
 public interface FollowUpForImmunizationRepo extends CrudRepository<FollowUpForImmunization, Long> {
 
 	FollowUpForImmunization findByBeneficiaryRegIDAndVisitCode(long benRegId, long visitCode);
