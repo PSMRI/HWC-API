@@ -1,5 +1,6 @@
 package com.iemr.hwc.controller.choApp;
 
+import com.iemr.hwc.data.choApp.OutreachActivity;
 import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.service.choApp.CHOAppSyncService;
@@ -129,4 +130,30 @@ public class CHOAppSyncController {
         return choappSyncService.deletePrescriptionTemplates(userID, tempID);
     }
 
+    // save new Outreach activity event
+    @ApiOperation(value = "Create new event for outreach activity", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/activity/create" }, method = { RequestMethod.POST })
+    public ResponseEntity<String> createNewOutreachActivity(@RequestBody OutreachActivity activity,
+                                                               @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.createNewOutreachActivity(activity, Authorization);
+    }
+
+    // Get all outreach activities by user
+    @ApiOperation(value = "Get list of all outreach activities by user", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/activity/{userId}/getAllByUser" }, method = { RequestMethod.GET })
+    public ResponseEntity<String> getActivitiesByUser(@PathVariable Integer userId,
+                                                               @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.getActivitiesByUser(userId, Authorization);
+    }
+
+    // Get an outreach activity by activityId
+    @ApiOperation(value = "Get an outreach activities by activityId", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/activity/{activityId}/getById" }, method = { RequestMethod.GET })
+    public ResponseEntity<String> getActivityByIdr(@PathVariable Integer activityId,
+                                                      @RequestHeader(value = "Authorization") String Authorization) {
+
+        return choappSyncService.getActivityById(activityId, Authorization);
+    }
 }

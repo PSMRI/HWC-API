@@ -1,5 +1,6 @@
 package com.iemr.hwc.service.choApp;
 
+import com.iemr.hwc.data.choApp.OutreachActivity;
 import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
@@ -28,4 +29,10 @@ public interface CHOAppSyncService {
     ResponseEntity<String> countFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 
     ResponseEntity<String> countBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
+
+    ResponseEntity<String> createNewOutreachActivity(OutreachActivity activity, String authorization);
+
+    ResponseEntity<String> getActivitiesByUser(Integer userId, String authorization);
+
+    ResponseEntity<String> getActivityById(Integer activityId, String authorization);
 }
