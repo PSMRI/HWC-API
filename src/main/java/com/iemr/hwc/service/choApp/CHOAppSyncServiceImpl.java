@@ -2,11 +2,13 @@ package com.iemr.hwc.service.choApp;
 
 import com.google.gson.*;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
+import com.iemr.hwc.data.choApp.OutreachActivity;
 import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
+import com.iemr.hwc.repo.choApp.OutreachActivityRepo;
 import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
 import com.iemr.hwc.repo.doctor.PrescriptionTemplatesRepo;
 import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
@@ -78,6 +80,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private BenVisitDetailRepo benVisitDetailRepo;
 
     private PrescriptionTemplatesRepo prescriptionTemplatesRepo;
+
+    private OutreachActivityRepo outreachActivityRepo;
+
+    @Autowired
+    public void setOutreachActivityRepo(OutreachActivityRepo outreachActivityRepo){
+        this.outreachActivityRepo = outreachActivityRepo;
+    }
 
     @Autowired
     public void setPrescriptionTemplatesRepo(PrescriptionTemplatesRepo prescriptionTemplatesRepo){
@@ -631,4 +640,84 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     }
 
 
+    @Override
+    public ResponseEntity<String> createNewOutreachActivity(OutreachActivity activity, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try{
+            if(activity.getImg1() != null) {
+                byte[] imageByte1 = Base64.getDecoder().decode(activity.getImg1());
+                activity.setImg1Data(imageByte1);
+            }
+
+            if(activity.getImg2() != null) {
+                byte[] imageByte2 = Base64.getDecoder().decode(activity.getImg2());
+                activity.setImg2Data(imageByte2);
+            }
+
+            outreachActivityRepo.save(activity);
+
+            outputResponse.setResponse("Data saved successfully");
+
+        } catch (DataIntegrityViolationException |
+                 JsonSyntaxException | NumberFormatException e){
+            logger.error("Encountered exception EITHER due to incorrect payload syntax OR" +
+                    " because of missing userId. " + e);
+            outputResponse.setError(400,"Encountered exception EITHER due to incorrect payload syntax OR " +
+                    "because of missing userId. Please check the payload. " + e);
+            statusCode = HttpStatus.BAD_REQUEST;
+        } catch (Exception e){
+            logger.error("Encountered exception while saving outreach activity. " + e);
+            outputResponse.setError(500,"Encountered exception while saving outreach activity. " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+    }
+
+    @Override
+    public ResponseEntity<String> getActivitiesByUser(Integer userId, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        ArrayList<Object[]> activitiesObj =  outreachActivityRepo.getActivitiesByUserID(userId);
+
+        ArrayList<OutreachActivity> activities = OutreachActivity.getActivitiesForUser(activitiesObj);
+
+        outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(activities));
+
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+    }
+
+    @Override
+    public ResponseEntity<String> getActivityById(Integer activityId, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        OutreachActivity activity =  outreachActivityRepo.findOne(activityId);
+
+        if (activity != null && activity.getImg1Data() != null){
+            String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());
+            activity.setImg1(img1);
+        }
+
+        if (activity != null && activity.getImg2Data() != null){
+            String img2 = Base64.getEncoder().encodeToString(activity.getImg2Data());
+            activity.setImg2(img2);
+        }
+
+        outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(activity));
+
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+    }
 }
