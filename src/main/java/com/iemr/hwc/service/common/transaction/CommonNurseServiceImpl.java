@@ -181,6 +181,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	private SysCentralNervousExaminationRepo sysCentralNervousExaminationRepo;
 	private SysMusculoskeletalSystemExaminationRepo sysMusculoskeletalSystemExaminationRepo;
 	private SysGenitourinarySystemExaminationRepo sysGenitourinarySystemExaminationRepo;
+	@Autowired
 	private OralExaminationRepo oralExaminationRepo;
 	private RegistrarRepoBenData registrarRepoBenData;
 	private PrescriptionDetailRepo prescriptionDetailRepo;
