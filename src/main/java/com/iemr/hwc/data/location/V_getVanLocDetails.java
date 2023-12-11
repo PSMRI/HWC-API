@@ -54,11 +54,6 @@ public class V_getVanLocDetails {
 	@Column(name = "blockid")
 	@Expose
 	private Integer blockid;
-
-	@Column(name = "userid")
-	@Expose
-	private Integer userID;
-	
 	@Column(name = "blockname")
 	@Expose
 	private String blockname;
