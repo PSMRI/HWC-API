@@ -24,11 +24,13 @@ package com.iemr.hwc.repo.family_planning;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.family_planning.FPDispenseDetails;
 
 @Repository
+@RestResource(exported = false)
 public interface FPDispenseDetailsRepo extends CrudRepository<FPDispenseDetails, Long> {
 	public FPDispenseDetails findOneByBeneficiaryRegIDAndVisitCode(Long regId, Long visitCode);
 

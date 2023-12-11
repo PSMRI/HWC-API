@@ -41,6 +41,9 @@ public class V_getVanLocDetails {
 	@Column(name = "VanID")
 	private Integer vanID;
 	@Expose
+	@Column(name = "userid")
+	private Integer userID;
+	@Expose
 	@Column(name = "ParkingPlaceID")
 	private Integer parkingPlaceID;
 	

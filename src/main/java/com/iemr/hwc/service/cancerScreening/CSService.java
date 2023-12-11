@@ -34,6 +34,8 @@ import com.iemr.hwc.data.nurse.BenPersonalCancerHistory;
 public interface CSService {
 
 	public int UpdateCSHistoryNurseData(JsonObject jsnOBJ) throws Exception;
+	
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	public int updateBenVitalDetail(BenCancerVitalDetail benCancerVitalDetail);
 

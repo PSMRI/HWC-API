@@ -67,6 +67,7 @@ import com.iemr.hwc.data.ncdScreening.PhysicalActivityType;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.nurse.CDSS;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
@@ -74,6 +75,8 @@ import com.iemr.hwc.data.quickConsultation.PrescriptionDetail;
 import com.iemr.hwc.data.tele_consultation.TeleconsultationRequestOBJ;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.BreastCancerScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.CbacDetailsRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.CervicalCancerScreeningRepo;
@@ -81,6 +84,7 @@ import com.iemr.hwc.repo.nurse.ncdscreening.DiabetesScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.HypertensionScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.IDRSDataRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.OralCancerScreeningRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
@@ -140,6 +144,14 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 	@Autowired
 	private CommonNcdScreeningService commonNcdScreeningService;
+	
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Autowired
 	public void setLabTechnicianServiceImpl(LabTechnicianServiceImpl labTechnicianServiceImpl) {
@@ -174,7 +186,6 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public String saveNCDScreeningNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
 		// Shubham Shekhar,8-12-2020,WDF
 		Long saveSuccessFlag = null;
@@ -199,7 +210,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 				nurseUtilityClass.setVisitCode(benVisitCode);
 				nurseUtilityClass.setBenVisitID(benVisitID);
-			}else {
+			} else {
 				Map<String, String> responseMap = new HashMap<String, String>();
 				responseMap.put("response", "Data already saved");
 				return new Gson().toJson(responseMap);
@@ -407,6 +418,26 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		return new Gson().toJson(responseMap);
 
 	}
+	
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
+
+	}
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenFlowNurseAfterNurseActivityANC(JsonObject tmpOBJ, Long benVisitID, Long benFlowID,
@@ -457,33 +488,111 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
-			int i=commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),benVisitDetailsOBJ.getVisitReason(),benVisitDetailsOBJ.getVisitCategory());
-			if(i<1) {
-			benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
+			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
+					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
+			if (i < 1) {
+				benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
-			// 11-06-2018 visit code
-			Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-					nurseUtilityClass.getSessionID());
+				// 11-06-2018 visit code
+				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
+						nurseUtilityClass.getSessionID());
 
-			if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
-				if (visitDetailsOBJ.has("chiefComplaints") && !visitDetailsOBJ.get("chiefComplaints").isJsonNull()) {
-					BenChiefComplaint[] benChiefComplaintArray = InputMapper.gson()
-							.fromJson(visitDetailsOBJ.get("chiefComplaints"), BenChiefComplaint[].class);
+				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
+					if (visitDetailsOBJ.has("chiefComplaints")
+							&& !visitDetailsOBJ.get("chiefComplaints").isJsonNull()) {
+						BenChiefComplaint[] benChiefComplaintArray = InputMapper.gson()
+								.fromJson(visitDetailsOBJ.get("chiefComplaints"), BenChiefComplaint[].class);
 
-					List<BenChiefComplaint> benChiefComplaintList = Arrays.asList(benChiefComplaintArray);
-					if (null != benChiefComplaintList && benChiefComplaintList.size() > 0) {
-						for (BenChiefComplaint benChiefComplaint : benChiefComplaintList) {
-							benChiefComplaint.setBenVisitID(benVisitID);
-							benChiefComplaint.setVisitCode(benVisitCode);
+						List<BenChiefComplaint> benChiefComplaintList = Arrays.asList(benChiefComplaintArray);
+						if (null != benChiefComplaintList && benChiefComplaintList.size() > 0) {
+							for (BenChiefComplaint benChiefComplaint : benChiefComplaintList) {
+								benChiefComplaint.setBenVisitID(benVisitID);
+								benChiefComplaint.setVisitCode(benVisitCode);
+							}
 						}
+						// Save Beneficiary Chief Complaints
+						commonNurseServiceImpl.saveBenChiefComplaints(benChiefComplaintList);
 					}
-					// Save Beneficiary Chief Complaints
-					commonNurseServiceImpl.saveBenChiefComplaints(benChiefComplaintList);
+
+					if (visitDetailsOBJ.has("cdss") && !visitDetailsOBJ.get("cdss").isJsonNull()) {
+						JsonObject cdssObj = visitDetailsOBJ.getAsJsonObject("cdss");
+						CDSS cdss = InputMapper.gson().fromJson(cdssObj, CDSS.class);
+						cdss.setBenVisitID(benVisitID);
+						cdss.setVisitCode(benVisitCode);
+
+						if (cdssObj.has("presentChiefComplaintDb")) {
+							JsonObject presentCheifComplaintObj = cdssObj.getAsJsonObject("presentChiefComplaintDb");
+
+							if (presentCheifComplaintObj.get("selectedDiagnosisID") != null
+									&& !presentCheifComplaintObj.get("selectedDiagnosisID").isJsonNull())
+								cdss.setSelectedDiagnosisID(
+										presentCheifComplaintObj.get("selectedDiagnosisID").getAsString());
+							if (presentCheifComplaintObj.get("selectedDiagnosis") != null
+									&& !presentCheifComplaintObj.get("selectedDiagnosis").isJsonNull())
+								cdss.setSelectedDiagnosis(
+										presentCheifComplaintObj.get("selectedDiagnosis").getAsString());
+							if (presentCheifComplaintObj.get("presentChiefComplaint") != null
+									&& !presentCheifComplaintObj.get("presentChiefComplaint").isJsonNull())
+								cdss.setPresentChiefComplaint(
+										presentCheifComplaintObj.get("presentChiefComplaint").getAsString());
+							if (presentCheifComplaintObj.get("presentChiefComplaintID") != null
+									&& !presentCheifComplaintObj.get("presentChiefComplaintID").isJsonNull())
+								cdss.setPresentChiefComplaintID(
+										presentCheifComplaintObj.get("presentChiefComplaintID").getAsString());
+							if (presentCheifComplaintObj.get("algorithmPc") != null
+									&& !presentCheifComplaintObj.get("algorithmPc").isJsonNull())
+								cdss.setAlgorithmPc(presentCheifComplaintObj.get("algorithmPc").getAsString());
+							if (presentCheifComplaintObj.get("recommendedActionPc") != null
+									&& !presentCheifComplaintObj.get("recommendedActionPc").isJsonNull())
+								cdss.setRecommendedActionPc(
+										presentCheifComplaintObj.get("recommendedActionPc").getAsString());
+							if (presentCheifComplaintObj.get("remarksPc") != null
+									&& !presentCheifComplaintObj.get("remarksPc").isJsonNull())
+								cdss.setRemarksPc(presentCheifComplaintObj.get("remarksPc").getAsString());
+							if (presentCheifComplaintObj.get("actionPc") != null
+									&& !presentCheifComplaintObj.get("actionPc").isJsonNull())
+								cdss.setActionPc(presentCheifComplaintObj.get("actionPc").getAsString());
+							if (presentCheifComplaintObj.get("actionIdPc") != null
+									&& !presentCheifComplaintObj.get("actionIdPc").isJsonNull())
+								cdss.setActionIdPc(presentCheifComplaintObj.get("actionIdPc").getAsInt());
+						}
+
+						if (cdssObj.has("diseaseSummaryDb")) {
+							JsonObject diseaseSummaryObj = cdssObj.getAsJsonObject("diseaseSummaryDb");
+							if (diseaseSummaryObj.get("diseaseSummary") != null
+									&& !diseaseSummaryObj.get("diseaseSummary").isJsonNull())
+								cdss.setDiseaseSummary(diseaseSummaryObj.get("diseaseSummary").getAsString());
+							if (diseaseSummaryObj.get("diseaseSummaryID") != null
+									&& !diseaseSummaryObj.get("diseaseSummaryID").isJsonNull())
+								cdss.setDiseaseSummaryID(diseaseSummaryObj.get("diseaseSummaryID").getAsInt());
+							if (diseaseSummaryObj.get("algorithm") != null
+									&& !diseaseSummaryObj.get("algorithm").isJsonNull())
+								cdss.setAlgorithm(diseaseSummaryObj.get("algorithm").getAsString());
+							if (diseaseSummaryObj.get("recommendedAction") != null
+									&& !diseaseSummaryObj.get("recommendedAction").isJsonNull())
+								cdss.setRecommendedAction(diseaseSummaryObj.get("recommendedAction").getAsString());
+							if (diseaseSummaryObj.get("remarks") != null
+									&& !diseaseSummaryObj.get("remarks").isJsonNull())
+								cdss.setRemarks(diseaseSummaryObj.get("remarks").getAsString());
+							if (diseaseSummaryObj.get("action") != null
+									&& !diseaseSummaryObj.get("action").isJsonNull())
+								cdss.setAction(diseaseSummaryObj.get("action").getAsString());
+							if (diseaseSummaryObj.get("actionId") != null
+									&& !diseaseSummaryObj.get("actionId").isJsonNull())
+								cdss.setActionId(diseaseSummaryObj.get("actionId").getAsInt());
+							if (diseaseSummaryObj.get("informationGiven") != null
+									&& !diseaseSummaryObj.get("informationGiven").isJsonNull())
+								cdss.setInformationGiven(diseaseSummaryObj.get("informationGiven").getAsString());
+
+						}
+
+						commonNurseServiceImpl.saveCdssDetails(cdss);
+					}
+
 				}
+				visitIdAndCodeMap.put("visitID", benVisitID);
+				visitIdAndCodeMap.put("visitCode", benVisitCode);
 			}
-			visitIdAndCodeMap.put("visitID", benVisitID);
-			visitIdAndCodeMap.put("visitCode", benVisitCode);
-		}
 		}
 		return visitIdAndCodeMap;
 	}
@@ -1243,7 +1352,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 			// Save Prescription
 			prescriptionDetail.setExternalInvestigation(wrapperBenInvestigationANC.getExternalInvestigations());
-			
+
 			if (requestOBJ.has("counsellingProvidedList") && !requestOBJ.get("counsellingProvidedList").isJsonNull()
 					&& requestOBJ.get("counsellingProvidedList") != null) {
 				PrescriptionDetail tempPrescription = InputMapper.gson().fromJson(requestOBJ, PrescriptionDetail.class);
@@ -1259,7 +1368,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				}
 
 			}
-			
+
 			prescriptionID = commonNurseServiceImpl.saveBenPrescription(prescriptionDetail);
 
 			// save prescribed lab test
@@ -1385,6 +1494,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 		resMap.put("BenChiefComplaints", commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode));
 
+		resMap.put("Cdss", commonNurseServiceImpl.getBenCdss(benRegID, visitCode));
+
 		return resMap.toString();
 	}
 
@@ -1396,7 +1507,6 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		HistoryDetailsMap.put("PhysicalActivityHistory",
 				commonNurseServiceImpl.getPhysicalActivityType(benRegID, visitCode));
 		HistoryDetailsMap.put("PersonalHistory", commonNurseServiceImpl.getPersonalHistory(benRegID, visitCode));
-
 
 		return new Gson().toJson(HistoryDetailsMap);
 	}
@@ -1416,6 +1526,15 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				commonNurseServiceImpl.getBeneficiaryPhysicalAnthropometryDetails(beneficiaryRegID, benVisitID));
 		resMap.put("benPhysicalVitalDetail",
 				commonNurseServiceImpl.getBeneficiaryPhysicalVitalDetails(beneficiaryRegID, benVisitID));
+
+		return resMap.toString();
+	}
+
+	public String getBeneficiaryCdssDetails(Long beneficiaryRegID, Long benVisitID) {
+		Map<String, Object> resMap = new HashMap<>();
+
+		resMap.put("presentChiefComplaint", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
+		resMap.put("diseaseSummary", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
 
 		return resMap.toString();
 	}
@@ -1452,7 +1571,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		if (familyHistorySuccessFlag > 0 && physicalActivitySuccessFlag > 0) {
 			historyUpdatedSuccessfully = 1;
 		}
-		
+
 		// Update Personal History
 		if (historyOBJ != null && historyOBJ.has("personalHistory")
 				&& !historyOBJ.get("personalHistory").isJsonNull()) {
@@ -1468,7 +1587,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			commonNurseServiceImpl.updateBenAllergicHistory(benAllergyHistory);
 
 		}
-		
+
 		return historyUpdatedSuccessfully;
 	}
 
@@ -1480,9 +1599,11 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		resMap.put("history", getBenHistoryDetails(benRegID, visitCode));
 
 		resMap.put("idrs", getBenIdrsDetailsFrmNurse(benRegID, visitCode));
-		
+
 		resMap.put("cbac", getCbacData(benRegID, visitCode));
-		
+
+		resMap.put("cdss", getBeneficiaryCdssDetails(benRegID, visitCode));
+
 		DiabetesScreening diabetesScreening = diabetesScreeningRepo.findByBeneficiaryRegIdAndVisitcode(benRegID,
 				visitCode);
 		HypertensionScreening hypertensionScreening = hypertensionScreeningRepo

@@ -21,9 +21,13 @@
 */
 package com.iemr.hwc.repo.nurse.covid19;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.iemr.hwc.data.covid19.Covid19BenFeedback;
 
@@ -31,4 +35,9 @@ import com.iemr.hwc.data.covid19.Covid19BenFeedback;
 @RestResource(exported = false)
 public interface Covid19BenFeedbackRepo extends CrudRepository<Covid19BenFeedback, Long> {
 	Covid19BenFeedback findByBeneficiaryRegIDAndVisitCode(Long benRegID, Long visitCode);
+	
+	@Modifying
+	@Transactional
+	@Query(" DELETE FROM Covid19BenFeedback WHERE visitCode=:visitCode ")
+	public int deleteVisitDetails(@Param("visitCode") Long visitCode);
 }

@@ -31,6 +31,8 @@ public interface FamilyPlanningService {
 
 	// save
 	public String saveNurseDataFP(JsonObject requestOBJ, String Authorization) throws Exception;
+	
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	public int saveDoctorDataFP(JsonObject requestOBJ, String Authorization) throws Exception;
 

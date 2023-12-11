@@ -30,6 +30,7 @@ import java.util.Objects;
 import com.google.gson.GsonBuilder;
 import com.iemr.hwc.data.choApp.Outreach;
 import com.iemr.hwc.repo.choApp.OutreachRepo;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +69,7 @@ public class LocationServiceImpl implements LocationService {
 	private CountryMasterRepo countryMasterRepo;
 	@Autowired
 	private CountryCityMasterRepo countryCityMasterRepo;
-	
+
 	@Autowired
 	private LocationMasterRepo locationMasterRepo;
 
@@ -166,7 +167,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
 		if (stateMasterList != null && stateMasterList.size() > 0) {
 			for (Object[] objArr : stateMasterList) {
-				States states = new States((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2]);
+				States states = new States((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2]);
 				stateList.add(states);
 			}
 		}
@@ -192,26 +193,28 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> districtMasterList = districtMasterRepo.getDistrictMaster(stateID);
 		if (districtMasterList != null && districtMasterList.size() > 0) {
 			for (Object[] objArr : districtMasterList) {
-				Districts districtMaster = new Districts((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2],(Integer) objArr[3]);
+				Districts districtMaster = new Districts((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2],
+						(Integer) objArr[3]);
 				districtList.add(districtMaster);
 			}
 		}
 		return new Gson().toJson(districtList);
 	}
-	
+
 	@Override
 	public String getLocationMasterData(Integer villageID) {
 		LocationDetails locDetail = new LocationDetails();
 		List<Objects[]> locationMasterList = locationMasterRepo.getLocationMaster(villageID);
 		if (locationMasterList != null && locationMasterList.size() > 0) {
 			Object[] objArr = locationMasterList.get(0);
-			locDetail = new LocationDetails((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2], (String) objArr[3], (Integer) objArr[4], (String) objArr[5], (Integer) objArr[6], (String) objArr[7], (Integer) objArr[8], (String) objArr[9]);
-			
+			locDetail = new LocationDetails((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2],
+					(String) objArr[3], (Integer) objArr[4], (String) objArr[5], (Integer) objArr[6],
+					(String) objArr[7], (Integer) objArr[8], (String) objArr[9]);
+
 		}
 		return new Gson().toJson(locDetail);
-		
-	}
 
+	}
 
 	@Override
 	public String getDistrictBlockList(Integer districtID) {
@@ -219,7 +222,8 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> districtBlockMasterList = districtBlockMasterRepo.getDistrictBlockMaster(districtID);
 		if (districtBlockMasterList != null && districtBlockMasterList.size() > 0) {
 			for (Object[] objArr : districtBlockMasterList) {
-				DistrictBlock districtBLockMaster = new DistrictBlock((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2],(Integer) objArr[3]);
+				DistrictBlock districtBLockMaster = new DistrictBlock((Integer) objArr[0], (String) objArr[1],
+						(Integer) objArr[2], (Integer) objArr[3]);
 				districtBlockList.add(districtBLockMaster);
 			}
 		}
@@ -227,7 +231,7 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	@Override
-	public String getVillageListByDistrictID(Integer districtID){
+	public String getVillageListByDistrictID(Integer districtID) {
 		ArrayList<Object[]> villageList = new ArrayList<>();
 		ArrayList<Object[]> districtBlockMasterList = districtBlockMasterRepo.getDistrictBlockMaster(districtID);
 		if (districtBlockMasterList != null && districtBlockMasterList.size() > 0) {
@@ -286,7 +290,7 @@ public class LocationServiceImpl implements LocationService {
 		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
 		if (stateMasterList != null && stateMasterList.size() > 0) {
 			for (Object[] objArr : stateMasterList) {
-				States states = new States((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2]);
+				States states = new States((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2]);
 				stateList.add(states);
 			}
 		}
@@ -310,7 +314,11 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	// new, 11-10-2018
-	public String getLocDetailsNew(Integer vanID, Integer spPSMID, Integer userID) {
+	public String getLocDetailsNew(Integer vanID, Integer spPSMID,JSONObject obj) {
+		Integer userID = null;
+		if(obj.has("userID")) {
+			userID = obj.getInt("userID");
+		}
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		// other location details
 		// ArrayList<Object[]> objList =
@@ -318,14 +326,20 @@ public class LocationServiceImpl implements LocationService {
 		// spPSMID);
 
 		// other location details, changed for TM
-		ArrayList<Object[]> resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID, userID);
+		ArrayList<Object[]> resultSet = null;
+		if(null != userID) {
+			resultSet = v_getVanLocDetailsRepo.getVanDetailsWithUserID(vanID,userID);
+		}else{
+			resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
+		}
+
 
 		// state master
 		ArrayList<States> stateList = new ArrayList<>();
 		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
 		if (stateMasterList != null && stateMasterList.size() > 0) {
 			for (Object[] objArr : stateMasterList) {
-				States states = new States((Integer) objArr[0], (String) objArr[1],(Integer) objArr[2]);
+				States states = new States((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2]);
 				stateList.add(states);
 			}
 		}
@@ -353,22 +367,19 @@ public class LocationServiceImpl implements LocationService {
 			distMap.put("blockName", objList.get(0)[5]);
 
 			for (Object[] objArr : objList) {
-				String[] villageIds = null;
-				String[] villageNames = null;
-				if (null != objArr[6]) {
-					villageIds = objArr[6].toString().split(",");
-				}
-				if (null != objArr[7]) {
-					villageNames = objArr[7].toString().split(",");
-				}
-				if (null != villageIds) {
+
+				if (objArr[6] != null && objArr[7] != null) {
+					String[] villageIds = objArr[6].toString().split(",");
+					String[] villageNames = objArr[7].toString().split(",");
 					int villageIdSize = villageIds.length;
+					int villageNameSize = villageNames.length;
 					for (int i = 0; i < villageIdSize; i++) {
 						villageMap = new HashMap<>();
 						villageMap.put("districtBranchID", villageIds[i]);
 						if (villageNames.length > i)
 							villageMap.put("villageName", villageNames[i]);
 						villageList.add(villageMap);
+
 					}
 				}
 			}

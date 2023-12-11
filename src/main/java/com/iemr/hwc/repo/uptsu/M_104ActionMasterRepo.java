@@ -24,11 +24,13 @@ package com.iemr.hwc.repo.uptsu;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.uptsu.M_104ActionMaster;
 
 @Repository
+@RestResource(exported = false)
 public interface M_104ActionMasterRepo extends CrudRepository<M_104ActionMaster, Integer> {
 	
 	List<M_104ActionMaster> findByDeleted(Boolean deleted);
