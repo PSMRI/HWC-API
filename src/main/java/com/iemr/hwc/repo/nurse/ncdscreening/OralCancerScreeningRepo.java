@@ -27,11 +27,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.ncdScreening.OralCancerScreening;
 
 @Repository
+@RestResource(exported = false)
 public interface OralCancerScreeningRepo extends CrudRepository<OralCancerScreening, Long> {
 
 //	@Query("SELECT db FROM OralCancerScreening db WHERE db.beneficiaryRegID = :beneficiaryRegID AND db.beneficiaryVisitId = :beneficiaryVisitId ")

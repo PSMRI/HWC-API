@@ -48,6 +48,7 @@ import com.iemr.hwc.data.neonatal.Vaccines;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.nurse.CDSS;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
@@ -57,6 +58,9 @@ import com.iemr.hwc.repo.neonatal.FollowUpForImmunizationRepo;
 import com.iemr.hwc.repo.neonatal.ImmunizationServicesRepo;
 import com.iemr.hwc.repo.neonatal.InfantBirthDetailsRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
@@ -92,9 +96,16 @@ public class NeonatalServiceImpl implements NeonatalService {
 	private GeneralOPDDoctorServiceImpl generalOPDDoctorServiceImpl;
 	@Autowired
 	private LabTechnicianServiceImpl labTechnicianServiceImpl;
+	
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws SQLException, Exception {
 
 		Map<String, String> responseMap = new HashMap<String, String>();
@@ -224,6 +235,26 @@ public class NeonatalServiceImpl implements NeonatalService {
 		}
 
 		return new Gson().toJson(responseMap);
+	}
+	
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
+
 	}
 
 	/// --------------- start of saving doctor data ------------------------
@@ -435,6 +466,79 @@ public class NeonatalServiceImpl implements NeonatalService {
 					// Save Beneficiary Chief Complaints
 					commonNurseServiceImpl.saveBenChiefComplaints(benChiefComplaintList);
 				}
+
+				if (visitDetailsOBJ.has("cdss") && !visitDetailsOBJ.get("cdss").isJsonNull()) {
+					JsonObject cdssObj = visitDetailsOBJ.getAsJsonObject("cdss");
+					CDSS cdss = InputMapper.gson().fromJson(cdssObj, CDSS.class);
+					cdss.setBenVisitID(benVisitID);
+					cdss.setVisitCode(benVisitCode);
+
+					if (cdssObj.has("presentChiefComplaintDb")) {
+						JsonObject presentCheifComplaintObj = cdssObj.getAsJsonObject("presentChiefComplaintDb");
+
+						if (presentCheifComplaintObj.get("selectedDiagnosisID") != null
+								&& !presentCheifComplaintObj.get("selectedDiagnosisID").isJsonNull())
+							cdss.setSelectedDiagnosisID(
+									presentCheifComplaintObj.get("selectedDiagnosisID").getAsString());
+						if (presentCheifComplaintObj.get("selectedDiagnosis") != null
+								&& !presentCheifComplaintObj.get("selectedDiagnosis").isJsonNull())
+							cdss.setSelectedDiagnosis(presentCheifComplaintObj.get("selectedDiagnosis").getAsString());
+						if (presentCheifComplaintObj.get("presentChiefComplaint") != null
+								&& !presentCheifComplaintObj.get("presentChiefComplaint").isJsonNull())
+							cdss.setPresentChiefComplaint(
+									presentCheifComplaintObj.get("presentChiefComplaint").getAsString());
+						if (presentCheifComplaintObj.get("presentChiefComplaintID") != null
+								&& !presentCheifComplaintObj.get("presentChiefComplaintID").isJsonNull())
+							cdss.setPresentChiefComplaintID(
+									presentCheifComplaintObj.get("presentChiefComplaintID").getAsString());
+						if (presentCheifComplaintObj.get("algorithmPc") != null
+								&& !presentCheifComplaintObj.get("algorithmPc").isJsonNull())
+							cdss.setAlgorithmPc(presentCheifComplaintObj.get("algorithmPc").getAsString());
+						if (presentCheifComplaintObj.get("recommendedActionPc") != null
+								&& !presentCheifComplaintObj.get("recommendedActionPc").isJsonNull())
+							cdss.setRecommendedActionPc(
+									presentCheifComplaintObj.get("recommendedActionPc").getAsString());
+						if (presentCheifComplaintObj.get("remarksPc") != null
+								&& !presentCheifComplaintObj.get("remarksPc").isJsonNull())
+							cdss.setRemarksPc(presentCheifComplaintObj.get("remarksPc").getAsString());
+						if (presentCheifComplaintObj.get("actionPc") != null
+								&& !presentCheifComplaintObj.get("actionPc").isJsonNull())
+							cdss.setActionPc(presentCheifComplaintObj.get("actionPc").getAsString());
+						if (presentCheifComplaintObj.get("actionIdPc") != null
+								&& !presentCheifComplaintObj.get("actionIdPc").isJsonNull())
+							cdss.setActionIdPc(presentCheifComplaintObj.get("actionIdPc").getAsInt());
+					}
+
+					if (cdssObj.has("diseaseSummaryDb")) {
+						JsonObject diseaseSummaryObj = cdssObj.getAsJsonObject("diseaseSummaryDb");
+						if (diseaseSummaryObj.get("diseaseSummary") != null
+								&& !diseaseSummaryObj.get("diseaseSummary").isJsonNull())
+							cdss.setDiseaseSummary(diseaseSummaryObj.get("diseaseSummary").getAsString());
+						if (diseaseSummaryObj.get("diseaseSummaryID") != null
+								&& !diseaseSummaryObj.get("diseaseSummaryID").isJsonNull())
+							cdss.setDiseaseSummaryID(diseaseSummaryObj.get("diseaseSummaryID").getAsInt());
+						if (diseaseSummaryObj.get("algorithm") != null
+								&& !diseaseSummaryObj.get("algorithm").isJsonNull())
+							cdss.setAlgorithm(diseaseSummaryObj.get("algorithm").getAsString());
+						if (diseaseSummaryObj.get("recommendedAction") != null
+								&& !diseaseSummaryObj.get("recommendedAction").isJsonNull())
+							cdss.setRecommendedAction(diseaseSummaryObj.get("recommendedAction").getAsString());
+						if (diseaseSummaryObj.get("remarks") != null && !diseaseSummaryObj.get("remarks").isJsonNull())
+							cdss.setRemarks(diseaseSummaryObj.get("remarks").getAsString());
+						if (diseaseSummaryObj.get("action") != null && !diseaseSummaryObj.get("action").isJsonNull())
+							cdss.setAction(diseaseSummaryObj.get("action").getAsString());
+						if (diseaseSummaryObj.get("actionId") != null
+								&& !diseaseSummaryObj.get("actionId").isJsonNull())
+							cdss.setActionId(diseaseSummaryObj.get("actionId").getAsInt());
+						if (diseaseSummaryObj.get("informationGiven") != null
+								&& !diseaseSummaryObj.get("informationGiven").isJsonNull())
+							cdss.setInformationGiven(diseaseSummaryObj.get("informationGiven").getAsString());
+
+					}
+
+					commonNurseServiceImpl.saveCdssDetails(cdss);
+				}
+
 			}
 			visitIdAndCodeMap.put("visitID", benVisitID);
 			visitIdAndCodeMap.put("visitCode", benVisitCode);
@@ -508,6 +612,8 @@ public class NeonatalServiceImpl implements NeonatalService {
 
 		resMap.put("BenChiefComplaints", commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode));
 
+		resMap.put("Cdss", commonNurseServiceImpl.getBenCdss(benRegID, visitCode));
+
 		return resMap.toString();
 	}
 
@@ -519,6 +625,15 @@ public class NeonatalServiceImpl implements NeonatalService {
 				commonNurseServiceImpl.getBeneficiaryPhysicalAnthropometryDetails(beneficiaryRegID, visitCode));
 		resMap.put("benPhysicalVitalDetail",
 				commonNurseServiceImpl.getBeneficiaryPhysicalVitalDetails(beneficiaryRegID, visitCode));
+
+		return resMap.toString();
+	}
+
+	public String getBeneficiaryCdssDetails(Long beneficiaryRegID, Long benVisitID) {
+		Map<String, Object> resMap = new HashMap<>();
+
+		resMap.put("presentChiefComplaint", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
+		resMap.put("diseaseSummary", commonNurseServiceImpl.getBenCdssDetails(beneficiaryRegID, benVisitID));
 
 		return resMap.toString();
 	}
@@ -535,7 +650,8 @@ public class NeonatalServiceImpl implements NeonatalService {
 				throw new IEMRException("no previous information found. please capture latest information");
 		}
 
-		HistoryDetailsMap.put("immunizationHistory", commonNurseServiceImpl.getImmunizationHistory(benRegID, visitCode));
+		HistoryDetailsMap.put("immunizationHistory",
+				commonNurseServiceImpl.getImmunizationHistory(benRegID, visitCode));
 
 		InfantBirthDetails ibObj = infantBirthDetailsRepo.findByBeneficiaryRegIDAndVisitCode(benRegID, visitCode);
 		if (ibObj != null && ibObj.getId() != null && ibObj.getId() > 0) {
@@ -645,6 +761,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 		resMap.put("history", getBirthAndImmuniHistory(benRegID, visitCode));
 		resMap.put("vitals", getBeneficiaryVitalDetails(benRegID, visitCode));
 		resMap.put("immunizationServices", getBeneficiaryImmunizationServiceDetails(benRegID, visitCode));
+		resMap.put("cdss", getBeneficiaryCdssDetails(benRegID, visitCode));
 
 		return resMap.toString();
 	}

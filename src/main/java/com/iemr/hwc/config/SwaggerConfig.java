@@ -39,6 +39,7 @@ public class SwaggerConfig {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("com.iemr.hwc.controller")).build().apiInfo(metaData());
 	}
+	
 
 	private ApiInfo metaData() {
 		ApiInfo apiInfo = new ApiInfo("HWC API", "Health and Wellness centre (HWC) is one of the comprehensive applications of AMRIT designed to capture details of 7 Service packages as per guidelines which should be available at Health and Wellness centre.",

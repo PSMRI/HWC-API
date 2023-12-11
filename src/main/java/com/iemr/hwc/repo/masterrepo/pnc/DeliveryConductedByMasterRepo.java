@@ -24,11 +24,13 @@ package com.iemr.hwc.repo.masterrepo.pnc;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.masterdata.pnc.DeliveryConductedByMaster;
 
 @Repository
+@RestResource(exported = false)
 public interface DeliveryConductedByMasterRepo extends CrudRepository<DeliveryConductedByMaster, Integer> {
 
 	List<DeliveryConductedByMaster> findByDeleted(Boolean deleted);

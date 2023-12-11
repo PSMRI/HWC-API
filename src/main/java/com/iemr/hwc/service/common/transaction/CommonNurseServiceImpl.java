@@ -35,6 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.iemr.hwc.data.anc.BenAdherence;
 import com.iemr.hwc.data.anc.BenAllergyHistory;
@@ -83,6 +88,8 @@ import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenCancerVitalDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.nurse.CDSS;
+import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
 import com.iemr.hwc.data.quickConsultation.LabTestOrderDetail;
 import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
@@ -96,6 +103,7 @@ import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 import com.iemr.hwc.repo.nurse.BenCancerVitalDetailRepo;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
 import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.hwc.repo.nurse.anc.BenAllergyHistoryRepo;
 import com.iemr.hwc.repo.nurse.anc.BenChildDevelopmentHistoryRepo;
@@ -149,8 +157,9 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	private Integer oncoWL;
 	@Value("${TMReferredWL}")
 	private Integer TMReferredWL;
-
+	
 	private BenVisitDetailRepo benVisitDetailRepo;
+	
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	private BenMedHistoryRepo benMedHistoryRepo;
 	private BencomrbidityCondRepo bencomrbidityCondRepo;
@@ -187,10 +196,11 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	private PhysicalActivityTypeRepo physicalActivityTypeRepo;
 	private IDRSDataRepo iDRSDataRepo;
 	private BenCancerVitalDetailRepo benCancerVitalDetailRepo;
-
+	
 	private CommonDoctorServiceImpl commonDoctorServiceImpl;
-	@Autowired
 	private BenReferDetailsRepo benReferDetailsRepo;
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Autowired
 	public void setCommonDoctorServiceImpl(CommonDoctorServiceImpl commonDoctorServiceImpl) {
@@ -443,6 +453,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		response = benVisitDetailRepo.save(beneficiaryVisitDetail);
 
 		if (response != null) {
+
 			// Long visitCode = updateVisitCode(response, 10);
 			return response.getBenVisitID();
 		} else
@@ -450,27 +461,137 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	}
 
-	public int getMaxCurrentdate(Long beneficiaryRegID,String visitreason,String visitcategory) throws IEMRException{
-		String maxDate=benVisitDetailRepo.getMaxCreatedDate(beneficiaryRegID,visitreason,visitcategory);
-		
-	    int i=0;
-		if(maxDate!=null) {
-		try {
-			DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String maxdateTrim=maxDate.substring(0, maxDate.indexOf("."));
-			java.util.Date  d = timeFormat.parse(maxdateTrim);
-			Calendar cal = Calendar.getInstance();
-			Calendar cal1 = Calendar.getInstance();
-			cal.setTime(d);
-			cal.add(Calendar.MINUTE, 10);
-			 i= cal.compareTo(cal1);
-			 
-		} catch (ParseException e) {
-			throw new IEMRException("Error while parseing created date :" + e.getMessage());
+	@Override
+	public Long saveBeneficiaryVisitDetails(BeneficiaryVisitDetail beneficiaryVisitDetail, Integer sessionId) {
+		BeneficiaryVisitDetail response = null;
+
+		// get the total no of visit for the beneficiary (visit count)
+		Short benVisitCount = benVisitDetailRepo
+				.getVisitCountForBeneficiary(beneficiaryVisitDetail.getBeneficiaryRegID());
+
+		if (benVisitCount != null && benVisitCount >= 0) {
+			benVisitCount = (short) (benVisitCount + 1);
+		} else {
+			benVisitCount = 1;
 		}
+		beneficiaryVisitDetail.setVisitNo(benVisitCount);
+
+		// file id, comma seperated
+		Integer[] docIdArr = beneficiaryVisitDetail.getFileIDs();
+		StringBuilder sb = new StringBuilder();
+		if (docIdArr != null && docIdArr.length > 0) {
+			for (Integer i : docIdArr) {
+				sb.append(i + ",");
+			}
+		}
+		beneficiaryVisitDetail.setReportFilePath(sb.toString());
+
+		if (beneficiaryVisitDetail.getFollowUpForFpMethod() != null
+				&& beneficiaryVisitDetail.getFollowUpForFpMethod().length > 0) {
+			StringBuffer sb1 = new StringBuffer();
+			for (String s : beneficiaryVisitDetail.getFollowUpForFpMethod()) {
+				sb1.append(s).append("||");
+			}
+			if (sb1.length() >= 2)
+				beneficiaryVisitDetail.setFpMethodFollowup(sb1.substring(0, sb1.length() - 2));
+
+		}
+
+		if (beneficiaryVisitDetail.getSideEffects() != null && beneficiaryVisitDetail.getSideEffects().length > 0) {
+			StringBuffer sb1 = new StringBuffer();
+			for (String s : beneficiaryVisitDetail.getSideEffects()) {
+				sb1.append(s).append("||");
+			}
+			if (sb1.length() >= 2)
+				beneficiaryVisitDetail.setFpSideeffects(sb1.substring(0, sb1.length() - 2));
+
+		}
+
+		response = benVisitDetailRepo.save(beneficiaryVisitDetail);
+
+		if (response != null) {
+			Long benVisitId = response.getBenVisitID();
+			Integer vanId = response.getVanID();
+			Integer sessionIdObj = sessionId;
+			Long visitCode = generateVisitCode(benVisitId, vanId, sessionIdObj);
+			CDSS cdss = new CDSS();
+			cdss.setVisitCode(visitCode);
+			cdss.setBenVisitID(benVisitId);
+			if (beneficiaryVisitDetail.getBeneficiaryRegID() != null)
+				cdss.setBeneficiaryRegID(beneficiaryVisitDetail.getBeneficiaryRegID());
+			if (beneficiaryVisitDetail.getProviderServiceMapID() != null)
+				cdss.setProviderServiceMapID(beneficiaryVisitDetail.getProviderServiceMapID());
+			if (beneficiaryVisitDetail.getCreatedBy() != null)
+				cdss.setCreatedBy(beneficiaryVisitDetail.getCreatedBy());
+			if (beneficiaryVisitDetail.getVanID() != null)
+				cdss.setVanID(beneficiaryVisitDetail.getVanID());
+			if (beneficiaryVisitDetail.getParkingPlaceID() != null)
+				cdss.setParkingPlaceID(beneficiaryVisitDetail.getParkingPlaceID());
+			if (beneficiaryVisitDetail.getPresentChiefComplaint() != null)
+				cdss.setPresentChiefComplaint(beneficiaryVisitDetail.getPresentChiefComplaint());
+			if (beneficiaryVisitDetail.getPresentChiefComplaintID() != null)
+				cdss.setPresentChiefComplaintID(beneficiaryVisitDetail.getPresentChiefComplaintID());
+			if (beneficiaryVisitDetail.getSelectedDiagnosis() != null)
+				cdss.setSelectedDiagnosis(beneficiaryVisitDetail.getSelectedDiagnosis());
+			if (beneficiaryVisitDetail.getSelectedDiagnosisID() != null)
+				cdss.setSelectedDiagnosisID(beneficiaryVisitDetail.getSelectedDiagnosisID());
+			if (beneficiaryVisitDetail.getRecommendedAction() != null)
+				cdss.setRecommendedAction(beneficiaryVisitDetail.getRecommendedAction());
+			if (beneficiaryVisitDetail.getRecommendedActionPc() != null)
+				cdss.setRecommendedActionPc(beneficiaryVisitDetail.getRecommendedActionPc());
+			if (beneficiaryVisitDetail.getRemarks() != null)
+				cdss.setRemarks(beneficiaryVisitDetail.getRemarks());
+			if (beneficiaryVisitDetail.getRemarksPc() != null)
+				cdss.setRemarksPc(beneficiaryVisitDetail.getRemarksPc());
+			if (beneficiaryVisitDetail.getAlgorithm() != null)
+				cdss.setAlgorithm(beneficiaryVisitDetail.getAlgorithm());
+			if (beneficiaryVisitDetail.getAlgorithmPc() != null)
+				cdss.setAlgorithmPc(beneficiaryVisitDetail.getAlgorithmPc());
+			if (beneficiaryVisitDetail.getDiseaseSummary() != null)
+				cdss.setDiseaseSummary(beneficiaryVisitDetail.getDiseaseSummary());
+			if (beneficiaryVisitDetail.getDiseaseSummaryID() != null)
+				cdss.setDiseaseSummaryID(beneficiaryVisitDetail.getDiseaseSummaryID());
+			if (beneficiaryVisitDetail.getAction() != null)
+				cdss.setAction(beneficiaryVisitDetail.getAction());
+			if (beneficiaryVisitDetail.getActionPc() != null)
+				cdss.setActionPc(beneficiaryVisitDetail.getActionPc());
+			if (beneficiaryVisitDetail.getActionId() != null)
+				cdss.setActionId(beneficiaryVisitDetail.getActionId());
+			if (beneficiaryVisitDetail.getActionIdPc() != null)
+				cdss.setActionIdPc(beneficiaryVisitDetail.getActionIdPc());
+			if (beneficiaryVisitDetail.getInformationGiven() != null)
+				cdss.setInformationGiven(beneficiaryVisitDetail.getInformationGiven());
+
+			cdssRepo.save(cdss);
+			// Long visitCode = updateVisitCode(response, 10);
+			return response.getBenVisitID();
+		} else
+			return null;
+
+	}
+
+	public int getMaxCurrentdate(Long beneficiaryRegID, String visitreason, String visitcategory) throws IEMRException {
+		String maxDate = benVisitDetailRepo.getMaxCreatedDate(beneficiaryRegID, visitreason, visitcategory);
+
+		int i = 0;
+		if (maxDate != null) {
+			try {
+				DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String maxdateTrim = maxDate.substring(0, maxDate.indexOf("."));
+				java.util.Date d = timeFormat.parse(maxdateTrim);
+				Calendar cal = Calendar.getInstance();
+				Calendar cal1 = Calendar.getInstance();
+				cal.setTime(d);
+				cal.add(Calendar.MINUTE, 10);
+				i = cal.compareTo(cal1);
+
+			} catch (ParseException e) {
+				throw new IEMRException("Error while parseing created date :" + e.getMessage());
+			}
 		}
 		return i;
 	}
+
 	public Long generateVisitCode(Long visitID, Integer vanID, Integer sessionID) {
 		String visitCode = "";
 
@@ -580,6 +701,12 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		}
 
 		return benVisitDetailsOBJ;
+	}
+
+	public CDSS getCdssDetails(Long benRegID, Long visitCode) {
+		CDSS cdssObj = new CDSS();
+		cdssObj = cdssRepo.findByBeneficiaryRegIDAndVisitCode(benRegID, visitCode);
+		return cdssObj;
 	}
 
 	public int saveBenChiefComplaints(List<BenChiefComplaint> benChiefComplaintList) {
@@ -1011,6 +1138,11 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		BenAnthropometryDetail benAnthropometryDetail = benAnthropometryRepo.getBenAnthropometryDetail(beneficiaryRegID,
 				visitCode);
 		return new Gson().toJson(benAnthropometryDetail);
+	}
+
+	public String getBenCdssDetails(Long beneficiaryRegID, Long visitCode) {
+		CDSS cdss = cdssRepo.findByBeneficiaryRegIDAndVisitCode(beneficiaryRegID, visitCode);
+		return new Gson().toJson(cdss);
 	}
 
 	public String getBeneficiaryPhysicalVitalDetails(Long beneficiaryRegID, Long visitCode) {
@@ -1932,6 +2064,44 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		ArrayList<Object[]> resList = benChiefComplaintRepo.getBenChiefComplaints(beneficiaryRegID, visitCode);
 		ArrayList<BenChiefComplaint> benChiefComplaints = BenChiefComplaint.getBenChiefComplaints(resList);
 		return new Gson().toJson(benChiefComplaints);
+	}
+
+	public String getBenCdss(Long beneficiaryRegID, Long visitCode) {
+		Map<String, Object> cdssData = new HashMap<>();
+		CDSS cdss = cdssRepo.findByBeneficiaryRegIDAndVisitCode(beneficiaryRegID, visitCode);
+
+		if (cdss != null) {
+			Map<String, Object> presentChiefComplaint = new HashMap<>();
+			Map<String, Object> diseaseSummary = new HashMap<>();
+
+			presentChiefComplaint.put("selectedDiagnosisID", cdss.getSelectedDiagnosisID());
+			presentChiefComplaint.put("selectedDiagnosis", cdss.getSelectedDiagnosis());
+			presentChiefComplaint.put("presentChiefComplaint", cdss.getPresentChiefComplaint());
+			presentChiefComplaint.put("presentChiefComplaintID", cdss.getPresentChiefComplaintID());
+			presentChiefComplaint.put("algorithmPc", cdss.getAlgorithmPc());
+			presentChiefComplaint.put("recommendedActionPc", cdss.getRecommendedActionPc());
+			presentChiefComplaint.put("remarksPc", cdss.getRemarksPc());
+			presentChiefComplaint.put("actionPc", cdss.getActionPc());
+			presentChiefComplaint.put("actionIdPc", cdss.getActionIdPc());
+			diseaseSummary.put("diseaseSummaryID", cdss.getDiseaseSummaryID());
+			diseaseSummary.put("diseaseSummary", cdss.getDiseaseSummary());
+			diseaseSummary.put("algorithm", cdss.getAlgorithm());
+			diseaseSummary.put("recommendedAction", cdss.getRecommendedAction());
+			diseaseSummary.put("remarks", cdss.getRemarks());
+			diseaseSummary.put("action", cdss.getAction());
+			diseaseSummary.put("actionId", cdss.getActionId());
+			diseaseSummary.put("informationGiven", cdss.getInformationGiven());
+
+			cdssData.put("presentChiefComplaint", presentChiefComplaint);
+			cdssData.put("diseaseSummary", diseaseSummary);
+			cdssData.put("vanID", cdss.getVanID());
+			cdssData.put("parkingPlaceID", cdss.getParkingPlaceID());
+			cdssData.put("providerServiceMapID", cdss.getProviderServiceMapID());
+			cdssData.put("beneficiaryRegID", cdss.getBeneficiaryRegID());
+			cdssData.put("benVisitID", cdss.getBenVisitID());
+			cdssData.put("createdBy", cdss.getCreatedBy());
+		}
+		return new Gson().toJson(cdssData);
 	}
 
 	public BenFamilyHistory getFamilyHistoryDetail(Long beneficiaryRegID, Long visitCode) {
@@ -2861,7 +3031,8 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	public Long savePrescriptionDetailsAndGetPrescriptionID(Long benRegID, Long benVisitID, Integer psmID,
 			String createdBy, String externalInvestigation, Long benVisitCode, Integer vanID, Integer parkingPlaceID,
-			String instruction, String prescription_counsellingProvided, ArrayList<SCTDescription> provisionalDiagnosisList) {
+			String instruction, String prescription_counsellingProvided,
+			ArrayList<SCTDescription> provisionalDiagnosisList) {
 		PrescriptionDetail prescriptionDetail = new PrescriptionDetail();
 		prescriptionDetail.setBeneficiaryRegID(benRegID);
 		prescriptionDetail.setBenVisitID(benVisitID);
@@ -2877,7 +3048,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		if (prescription_counsellingProvided != null)
 			prescriptionDetail.setCounsellingProvided(prescription_counsellingProvided);
-		if(provisionalDiagnosisList != null)
+		if (provisionalDiagnosisList != null)
 			prescriptionDetail.setProvisionalDiagnosisList(provisionalDiagnosisList);
 
 		Long prescriptionID = saveBenPrescription(prescriptionDetail);
@@ -2903,7 +3074,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		if (doctorDiagnosis != null)
 			prescriptionDetail.setDiagnosisProvided(doctorDiagnosis);
-		
+
 		prescriptionDetail.setCounsellingProvided(counsellingProvided);
 
 		Long prescriptionID = saveBenPrescription(prescriptionDetail);
@@ -3291,7 +3462,8 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					wrapperBenInvestigationANC.getBeneficiaryRegID(), wrapperBenInvestigationANC.getBenVisitID(),
 					wrapperBenInvestigationANC.getProviderServiceMapID(), wrapperBenInvestigationANC.getCreatedBy(),
 					wrapperBenInvestigationANC.getExternalInvestigations(), wrapperBenInvestigationANC.getVisitCode(),
-					wrapperBenInvestigationANC.getVanID(), wrapperBenInvestigationANC.getParkingPlaceID(), null, null, null);
+					wrapperBenInvestigationANC.getVanID(), wrapperBenInvestigationANC.getParkingPlaceID(), null, null,
+					null);
 
 			wrapperBenInvestigationANC.setPrescriptionID(prescriptionID);
 			investigationSuccessFlag = saveBenInvestigation(wrapperBenInvestigationANC);
@@ -3468,6 +3640,16 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 			r = 1;
 		}
 		return r;
+	}
+
+	public Long saveCdssDetails(CDSS cdss) throws IEMRException {
+		cdss = cdssRepo.save(cdss);
+
+		if (cdss != null && cdss.getId() > 0)
+			return cdss.getId();
+		else
+			throw new IEMRException("DB-Error in saving cdss details");
+
 	}
 
 	public Long saveChildDevelopmentHistory(BenChildDevelopmentHistory benChildDevelopmentHistory)

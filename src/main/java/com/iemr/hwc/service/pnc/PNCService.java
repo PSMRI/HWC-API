@@ -26,6 +26,8 @@ import com.google.gson.JsonObject;
 public interface PNCService {
 
 	String savePNCNurseData(JsonObject requestOBJ, String Authorization) throws Exception;
+	
+	void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	String getBenVisitDetailsFrmNursePNC(Long benRegID, Long benVisitID);
 
