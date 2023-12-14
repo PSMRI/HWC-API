@@ -67,31 +67,36 @@ public class CancerScreeningController {
 	 * @Objective Save Cancer Screening data for nurse.
 	 * @param JSON requestObj
 	 * @return success or failure response
+	 * @throws Exception
 	 */
 
 	@CrossOrigin
 	@ApiOperation(value = "Save cancer screening data collected by nurse", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
 	public String saveBenCancerScreeningNurseData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for CS nurse data saving :" + requestObj);
 
+		if (null != requestObj) {
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestObj);
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null) {
-				String nurseDataSaveSuccessFlag = cSServiceImpl.saveCancerScreeningNurseData(jsnOBJ, Authorization);
-				response.setResponse(nurseDataSaveSuccessFlag);
-			} else {
-				response.setError(5000, "Invalid request");
+			try {
+				logger.info("Request object for CS nurse data saving :" + requestObj);
+
+				if (jsnOBJ != null) {
+					String nurseDataSaveSuccessFlag = cSServiceImpl.saveCancerScreeningNurseData(jsnOBJ, Authorization);
+					response.setResponse(nurseDataSaveSuccessFlag);
+				} else {
+					response.setError(5000, "Invalid request");
+				}
+			} catch (Exception e) {
+				logger.error("Error while saving beneficiary nurse data :" + e.getMessage());
+				cSServiceImpl.deleteVisitDetails(jsnOBJ);
+				response.setError(5000, e.getMessage());
 			}
-		} catch (Exception e) {
-			logger.error("Error while saving beneficiary nurse data :" + e);
-			response.setError(5000, "Unable to save data");
 		}
 		return response.toString();
 	}
@@ -128,8 +133,8 @@ public class CancerScreeningController {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while saving beneficiary doctor data :" + e);
-			response.setError(5000, "Unable to save data");
+			logger.error("Error while saving beneficiary doctor data :" + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}
@@ -608,8 +613,8 @@ public class CancerScreeningController {
 			}
 			logger.info("CS doctor data update Response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Error while updating beneficiary data. " + e);
-			logger.error("Error while updating beneficiary doctor data :" + e);
+			logger.error("Error while updating beneficiary data. " + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}

@@ -30,6 +30,8 @@ import com.iemr.hwc.utils.exception.IEMRException;
 public interface NeonatalService {
 
 	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws SQLException, Exception;
+	
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	public String getBenVisitDetailsFrmNurseNNI(Long benRegID, Long visitCode) throws Exception;
 

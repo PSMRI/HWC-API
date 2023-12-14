@@ -60,6 +60,9 @@ import com.iemr.hwc.repo.neonatal.FollowUpForImmunizationRepo;
 import com.iemr.hwc.repo.neonatal.ImmunizationServicesRepo;
 import com.iemr.hwc.repo.neonatal.InfantBirthDetailsRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
@@ -96,9 +99,15 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 	private LabTechnicianServiceImpl labTechnicianServiceImpl;
 	@Autowired
 	private T_OralVitaminProphylaxisRepo oralVitaminProphylaxisRepo;
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws SQLException, Exception {
 
 		Map<String, String> responseMap = new HashMap<String, String>();
@@ -232,6 +241,26 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 		}
 
 		return new Gson().toJson(responseMap);
+	}
+	
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
+
 	}
 
 	private Map<String, Long> saveBenVisitDetails(JsonObject visitDetailsOBJ, CommonUtilityClass nurseUtilityClass)

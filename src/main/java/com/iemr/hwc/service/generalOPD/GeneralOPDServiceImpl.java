@@ -72,6 +72,9 @@ import com.iemr.hwc.data.quickConsultation.PrescriptionDetail;
 import com.iemr.hwc.data.tele_consultation.TeleconsultationRequestOBJ;
 
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.nurse.CDSSRepo;
+import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
@@ -108,10 +111,17 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 	private FamilyPlanningService familyPlanningService;
 	@Autowired
 	private BenVisitDetailRepo benVisitDetailRepo;
+	@Autowired
+	private BenChiefComplaintRepo benChiefComplaintRepo;
+	@Autowired
+	private BenAdherenceRepo benAdherenceRepo;
+
+	@Autowired
+	private CDSSRepo cdssRepo;
 
 	/// --------------- start of saving nurse data ------------------------
 	@Override
-	@Transactional(rollbackFor = Exception.class)
+//	@Transactional(rollbackFor = Exception.class)
 	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
 		Long historySaveSuccessFlag = null;
 		Long vitalSaveSuccessFlag = null;
@@ -209,6 +219,26 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 			responseMap.put("response", "Unable to save data");
 		}
 		return new Gson().toJson(responseMap);
+	}
+
+	@Override
+	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
+		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
+
+			CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
+
+			Long visitCode = benVisitDetailRepo.getVisitCode(nurseUtilityClass.getBeneficiaryRegID(),
+					nurseUtilityClass.getProviderServiceMapID());
+
+			if (visitCode != null) {
+				benChiefComplaintRepo.deleteVisitDetails(visitCode);
+				benAdherenceRepo.deleteVisitDetails(visitCode);
+				cdssRepo.deleteVisitDetails(visitCode);
+				benVisitDetailRepo.deleteVisitDetails(visitCode);
+			}
+
+		}
+
 	}
 
 	// method for updating ben flow status flag for nurse

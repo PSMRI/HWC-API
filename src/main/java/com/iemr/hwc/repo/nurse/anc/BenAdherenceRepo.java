@@ -63,4 +63,9 @@ public interface BenAdherenceRepo extends CrudRepository<BenAdherence, Long> {
 			@Param("benVisitID") Long benVisitID,
 			@Param("ID") Long ID);
 	
+	@Modifying
+	@Transactional
+	@Query("DELETE FROM BenAdherence WHERE visitCode=:visitCode ")
+	public int deleteVisitDetails(@Param("visitCode") Long visitCode);
+	
 }

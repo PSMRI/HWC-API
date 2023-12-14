@@ -29,6 +29,8 @@ import com.iemr.hwc.data.nurse.CommonUtilityClass;
 public interface GeneralOPDService {
 
 	String saveNurseData(JsonObject requestOBJ, String Authorization) throws Exception;
+	
+	void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	Map<String, Long> saveBenVisitDetails(JsonObject visitDetailsOBJ, CommonUtilityClass nurseUtilityClass)
 			throws Exception;

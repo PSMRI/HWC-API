@@ -59,33 +59,37 @@ public class ChildhoodAdolescenceController {
 	 * @Objective Save child-adolescent-care data for nurse.
 	 * @param requestObj
 	 * @return success or failure response with visit code
+	 * @throws Exception
 	 */
 	@CrossOrigin
 	@ApiOperation(value = "Save child adolescent care (CAC) nurse data", consumes = "application/json", produces = "application/json")
 	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
 	public String saveBenNurseDataCAC(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for child-adolescent-care nurse data saving :" + requestObj);
-
+		if (null != requestObj) {
+			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
 			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			JsonObject jsnOBJ = jsnElmnt.getAsJsonObject();
+			jsnOBJ = jsnElmnt.getAsJsonObject();
+			try {
+				logger.info("Request object for child-adolescent-care nurse data saving :" + requestObj);
 
-			if (jsnOBJ != null) {
-				String genOPDRes = adolescentAndChildCareService.saveNurseData(jsnOBJ, Authorization);
-				response.setResponse(genOPDRes);
+				if (jsnOBJ != null) {
+					String genOPDRes = adolescentAndChildCareService.saveNurseData(jsnOBJ, Authorization);
+					response.setResponse(genOPDRes);
 
-			} else {
-				response.setResponse("Invalid request");
+				} else {
+					response.setResponse("Invalid request");
+				}
+			} catch (SQLException e) {
+				logger.error("Error in nurse data saving :" + e);
+				response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
+			} catch (Exception e) {
+				logger.error("Error in nurse data saving :" + e.getMessage());
+				adolescentAndChildCareService.deleteVisitDetails(jsnOBJ);
+				response.setError(5000, e.getMessage());
 			}
-		} catch (SQLException e) {
-			logger.error("Error in nurse data saving :" + e);
-			response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
-		} catch (Exception e) {
-			logger.error("Error in nurse data saving :" + e);
-			response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
 		}
 		return response.toString();
 	}
@@ -113,8 +117,8 @@ public class ChildhoodAdolescenceController {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while saving doctor data:" + e);
-			response.setError(5000, "Unable to save data. " + e.getMessage());
+			logger.error("Error while saving doctor data:" + e.getMessage());
+			response.setError(5000, e.getMessage());
 		}
 		return response.toString();
 	}
@@ -424,8 +428,8 @@ public class ChildhoodAdolescenceController {
 
 			logger.info("Doctor data update response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data. " + e.getLocalizedMessage());
-			logger.error("Error while updating CAC  doctor data:" + e);
+			logger.error("Unable to modify data. " + e.getLocalizedMessage());
+			response.setError(5000, e.getMessage());
 		}
 
 		return response.toString();

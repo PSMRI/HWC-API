@@ -394,7 +394,7 @@ public class CommonDoctorServiceImpl {
 			docWorkList = beneficiaryFlowStatusRepo.getDocWorkListNew(providerServiceMapId);
 		}
 		// TC doc work-list
-		else if (serviceID != null && serviceID == 4) {
+		else if (serviceID != null && serviceID == 9) {
 			docWorkList = beneficiaryFlowStatusRepo.getDocWorkListNewTC(providerServiceMapId,
 					new Timestamp(sevenDaysAgo), vanID);
 		}
@@ -408,7 +408,7 @@ public class CommonDoctorServiceImpl {
 
 
 		ArrayList<BeneficiaryFlowStatus> docWorkListFutureScheduled = new ArrayList<>();
-		if (serviceID != null && serviceID == 4) {
+		if (serviceID != null && serviceID == 9) {
 			docWorkListFutureScheduled = beneficiaryFlowStatusRepo
 					.getDocWorkListNewFutureScheduledTC(providerServiceMapId, vanID);
 		}
@@ -426,7 +426,7 @@ public class CommonDoctorServiceImpl {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> tcSpecialistWorkList = new ArrayList<>();
-		if (serviceID != null && serviceID == 4) {
+		if (serviceID != null && serviceID == 9) {
 			tcSpecialistWorkList = beneficiaryFlowStatusRepo.getTCSpecialistWorkListNewPatientApp(providerServiceMapId,
 					userID, new Timestamp(sevenDaysAgo), vanID);
 		}
@@ -443,7 +443,7 @@ public class CommonDoctorServiceImpl {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> tcSpecialistWorkList = new ArrayList<>();
-		if (serviceID != null && serviceID == 4) {
+		if (serviceID != null && serviceID == 9) {
 			tcSpecialistWorkList = beneficiaryFlowStatusRepo.getTCSpecialistWorkListNew(providerServiceMapId, userID,
 					new Timestamp(sevenDaysAgo));
 		}
@@ -455,7 +455,7 @@ public class CommonDoctorServiceImpl {
 			Integer serviceID) {
 
 		ArrayList<BeneficiaryFlowStatus> tcSpecialistWorkListFutureScheduled = new ArrayList<>();
-		if (serviceID != null && serviceID == 4) {
+		if (serviceID != null && serviceID == 9) {
 			tcSpecialistWorkListFutureScheduled = beneficiaryFlowStatusRepo
 					.getTCSpecialistWorkListNewFutureScheduled(providerServiceMapId, userID);
 		}
@@ -716,7 +716,7 @@ public class CommonDoctorServiceImpl {
 		Long tmpbeneficiaryRegID = commonUtilityClass.getBeneficiaryRegID();
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
-				&& commonUtilityClass.getVisitCategoryID() == 4) {
+				&& commonUtilityClass.getVisitCategoryID() == 9) {
 			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
 			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
