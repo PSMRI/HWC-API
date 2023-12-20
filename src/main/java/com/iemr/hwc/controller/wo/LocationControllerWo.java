@@ -165,7 +165,7 @@ public class LocationControllerWo {
     @CrossOrigin
     @ApiOperation(value = "Update health and wellness center coordinates", consumes = "application/json", produces = "application/json")
     @RequestMapping(value = { "/update/villageCoordinates" }, method = { RequestMethod.POST })
-    public String updateGeolocationVillage(@RequestBody String requestObj, @RequestHeader(value = "Authorization") String Authorization) {
+    public String updateGeolocationVillage(@RequestBody String requestObj) {
         OutputResponse response = new OutputResponse();
         try {
             logger.info("Request object for Geolocation update :" + requestObj);
