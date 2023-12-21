@@ -1,3 +1,24 @@
+/*
+ * AMRIT – Accessible Medical Records via Integrated Technology
+ * Integrated EHR (Electronic Health Records) Solution
+ *
+ * Copyright (C) "Piramal Swasthya Management and Research Institute"
+ *
+ * This file is part of AMRIT.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see https://www.gnu.org/licenses/.
+ */
 package com.iemr.hwc.service.choApp;
 
 import com.google.gson.*;
@@ -478,32 +499,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             //Fetching vitals
             response.put("benAnthropometryDetail", benAnthropometryRepo.getBenAnthropometryDetail(benRegID, visitCode));
             response.put("benPhysicalVitalDetail", benPhysicalVitalRepo.getBenPhysicalVitalDetail(benRegID, visitCode));
-
-            //Fetching History
-//            response.put("PastHistory", commonNurseServiceImpl.getPastHistoryData(benRegID, visitCode));
-//            response.put("ComorbidityConditions",
-//                    commonNurseServiceImpl.getComorbidityConditionsHistory(benRegID, visitCode));
-//            response.put("MedicationHistory", commonNurseServiceImpl.getMedicationHistory(benRegID, visitCode));
-//            response.put("PersonalHistory", commonNurseServiceImpl.getPersonalHistory(benRegID, visitCode));
-//            response.put("FamilyHistory", commonNurseServiceImpl.getFamilyHistory(benRegID, visitCode));
-
-//            Fetching Examinations
-//            response.put("generalExamination",
-//                    commonNurseServiceImpl.getGeneralExaminationData(benRegID, visitCode));
-//            response.put("headToToeExamination",
-//                    commonNurseServiceImpl.getHeadToToeExaminationData(benRegID, visitCode));
-//            response.put("gastrointestinalExamination",
-//                    commonNurseServiceImpl.getSysGastrointestinalExamination(benRegID, visitCode));
-//            response.put("cardiovascularExamination",
-//                    commonNurseServiceImpl.getCardiovascularExamination(benRegID, visitCode));
-//            response.put("respiratoryExamination",
-//                    commonNurseServiceImpl.getRespiratoryExamination(benRegID, visitCode));
-//            response.put("centralNervousExamination",
-//                    commonNurseServiceImpl.getSysCentralNervousExamination(benRegID, visitCode));
-//            response.put("musculoskeletalExamination",
-//                    commonNurseServiceImpl.getMusculoskeletalExamination(benRegID, visitCode));
-//            response.put("genitourinaryExamination",
-//                    commonNurseServiceImpl.getGenitourinaryExamination(benRegID, visitCode));
 
             outputResponse.setResponse(gson.toJson(response));
 
