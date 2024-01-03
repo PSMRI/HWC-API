@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 import com.iemr.hwc.utils.config.ConfigProperties;
 import com.iemr.hwc.utils.gateway.email.EmailService;
 import com.iemr.hwc.utils.gateway.email.GenericEmailServiceImpl;
