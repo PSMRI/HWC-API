@@ -28,6 +28,10 @@ import java.util.*;
 
 import javax.ws.rs.core.MediaType;
 
+import com.iemr.hwc.data.login.Users;
+import com.iemr.hwc.data.registrar.*;
+import com.iemr.hwc.repo.login.UserLoginRepo;
+import com.iemr.hwc.repo.registrar.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,23 +50,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
-import com.iemr.hwc.data.registrar.BenGovIdMapping;
-import com.iemr.hwc.data.registrar.BeneficiaryData;
-import com.iemr.hwc.data.registrar.BeneficiaryDemographicAdditional;
-import com.iemr.hwc.data.registrar.BeneficiaryDemographicData;
-import com.iemr.hwc.data.registrar.BeneficiaryImage;
-import com.iemr.hwc.data.registrar.BeneficiaryPhoneMapping;
-import com.iemr.hwc.data.registrar.FetchBeneficiaryDetails;
-import com.iemr.hwc.data.registrar.V_BenAdvanceSearch;
-import com.iemr.hwc.data.registrar.WrapperRegWorklist;
-import com.iemr.hwc.repo.registrar.BeneficiaryDemographicAdditionalRepo;
-import com.iemr.hwc.repo.registrar.BeneficiaryImageRepo;
-import com.iemr.hwc.repo.registrar.RegistrarRepoBenData;
-import com.iemr.hwc.repo.registrar.RegistrarRepoBenDemoData;
-import com.iemr.hwc.repo.registrar.RegistrarRepoBenGovIdMapping;
-import com.iemr.hwc.repo.registrar.RegistrarRepoBenPhoneMapData;
-import com.iemr.hwc.repo.registrar.RegistrarRepoBeneficiaryDetails;
-import com.iemr.hwc.repo.registrar.ReistrarRepoBenSearch;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -104,6 +91,12 @@ public class RegistrarServiceImpl implements RegistrarService {
 	private RegistrarRepoBeneficiaryDetails registrarRepoBeneficiaryDetails;
 	private BeneficiaryImageRepo beneficiaryImageRepo;
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
+
+	@Autowired
+	private UserLoginRepo userRepo;
+
+	@Autowired
+	private UserBiometricsRepo userBiometricsRepo;
 
 	@Autowired
 	public void setCommonBenStatusFlowServiceImpl(CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl) {
@@ -745,13 +738,13 @@ public class RegistrarServiceImpl implements RegistrarService {
 	}
 
 	// beneficiary advance search new integrated with common and identity
-	public String getBeneficiaryByBlockIDAndLastModDate(String blockID, Date lastModifDate, String Authorization) {
+	public String getBeneficiaryByBlockIDAndLastModDate(String villageID, Date lastModifDate, String Authorization) {
 		String returnOBJ = null;
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			JSONObject obj = new JSONObject();
-			obj.put("blockID", Integer.parseInt(blockID));
-			obj.put("lastModifDate", lastModifDate.getTime());
+			obj.put("villageID", Integer.parseInt(villageID));
+			obj.put("lastModifiedDate", lastModifDate.getTime());
 
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", "application/json");
@@ -847,5 +840,40 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public int searchAndSubmitBeneficiaryToNurse(String requestOBJ) throws Exception {
 		int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(requestOBJ, null, null);
 		return i;
+	}
+
+	public String saveFingerprints(FingerPrintDTO comingRequest) {
+		String response = "";
+		Users user = userRepo.getUserByUsername(comingRequest.getUserName());
+		if(user !=null){
+			UserBiometricsMapping userBiometricsMapping = new UserBiometricsMapping();
+			userBiometricsMapping.setUserID(user.getUserID());
+			userBiometricsMapping.setFirstName(user.getFirstName());
+			userBiometricsMapping.setLastName(user.getLastName());
+			userBiometricsMapping.setUserName(user.getUserName());
+			userBiometricsMapping.setCreatedBy(user.getUserName());
+			userBiometricsMapping.setRightThumb(comingRequest.getRightThumb());
+			userBiometricsMapping.setRightIndexFinger(comingRequest.getRightIndexFinger());
+			userBiometricsMapping.setLeftThumb(comingRequest.getLeftThumb());
+			userBiometricsMapping.setLeftIndexFinger(comingRequest.getLeftIndexFinger());
+
+			UserBiometricsMapping resp = userBiometricsRepo.save(userBiometricsMapping);
+			if(resp !=null){
+				response = "ok";
+			}
+			else{
+				response = "ko";
+			}
+		}
+		else{
+			response = "wrong username";
+		}
+
+		return response;
+	}
+
+	public UserBiometricsMapping getFingerprintsByUserID(Long userID) {
+		UserBiometricsMapping user = userBiometricsRepo.getFingerprintsByUserID(userID);
+		return user;
 	}
 }

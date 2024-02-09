@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.gson.GsonBuilder;
+import com.iemr.hwc.data.choApp.Outreach;
+import com.iemr.hwc.repo.choApp.OutreachRepo;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,6 +83,7 @@ public class LocationServiceImpl implements LocationService {
 	private ServicePointVillageMappingRepo servicePointVillageMappingRepo;
 	private DistrictBranchMasterRepo districtBranchMasterRepo;
 	private V_get_prkngplc_dist_zone_state_from_spidRepo v_get_prkngplc_dist_zone_state_from_spidRepo;
+	private OutreachRepo outreachRepo;
 	@Autowired
 	private V_getVanLocDetailsRepo v_getVanLocDetailsRepo;
 
@@ -133,6 +137,11 @@ public class LocationServiceImpl implements LocationService {
 	@Autowired
 	public void setStateMasterRepo(StateMasterRepo stateMasterRepo) {
 		this.stateMasterRepo = stateMasterRepo;
+	}
+
+	@Autowired
+	public void setOutreachRepo(OutreachRepo outreachRepo) {
+		this.outreachRepo = outreachRepo;
 	}
 
 	@Override
@@ -323,7 +332,7 @@ public class LocationServiceImpl implements LocationService {
 		}else{
 			resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
 		}
-		
+
 
 		// state master
 		ArrayList<States> stateList = new ArrayList<>();
@@ -382,6 +391,27 @@ public class LocationServiceImpl implements LocationService {
 		return returnObj;
 
 	}
+
+	public int updateGeolocationByDistrictBranchID(Double latitude, Double longitude, Integer districtBranchID, String address) {
+		int i = 0;
+		DistrictBranchMapping districtBranchMapping = districtBranchMasterRepo.findAllByDistrictBranchID(districtBranchID);
+		if(districtBranchMapping !=null && districtBranchMapping.getActive()==false){
+			i = districtBranchMasterRepo.updateGeolocationByDistrictBranchID(latitude, longitude, true, address, districtBranchID);
+		}
+		else{
+			i =101;
+		}
+
+		return i;
+	}
+
+	@Override
+	public String getOutreachProgramsList(Integer stateID) {
+
+		List<Outreach> outreaches = outreachRepo.getOutreachListByStateID(stateID);
+		return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(outreaches);
+	}
+
 	// private Map<String, Object> getDefaultLocDetails(ArrayList<Object[]> objList)
 	// {
 	// Map<String, Object> returnObj = new HashMap<>();

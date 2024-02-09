@@ -21,6 +21,9 @@
  */
 package com.iemr.hwc.controller.wo;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.iemr.hwc.controller.common.master.CommonMasterController;
 import com.iemr.hwc.service.location.LocationServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -29,6 +32,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -153,5 +160,63 @@ public class LocationControllerWo {
             response.setError(5000, "Error while getting location data");
         }
         return response.toString();
+    }
+
+    @CrossOrigin
+    @ApiOperation(value = "Update health and wellness center coordinates", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = { "/update/villageCoordinates" }, method = { RequestMethod.POST })
+    public String updateGeolocationVillage(@RequestBody String requestObj) {
+        OutputResponse response = new OutputResponse();
+        try {
+            logger.info("Request object for Geolocation update :" + requestObj);
+
+            JsonObject jsnOBJ = new JsonObject();
+            JsonParser jsnParser = new JsonParser();
+            JsonElement jsnElmnt = jsnParser.parse(requestObj);
+            jsnOBJ = jsnElmnt.getAsJsonObject();
+
+            JsonElement jElmtLatitude = jsnOBJ.get("latitude");
+            JsonElement jElmtLongitude = jsnOBJ.get("longitude");
+            JsonElement jElmtDistrictBranchID = jsnOBJ.get("districtBranchID");
+            JsonElement jElmtAddress = jsnOBJ.get("address");
+
+
+            if (jsnOBJ != null && jElmtLatitude!=null && jElmtLongitude!=null && jElmtDistrictBranchID!=null && jElmtAddress!=null) {
+                int responseUpdate = locationServiceImpl.updateGeolocationByDistrictBranchID(jElmtLatitude.getAsDouble(), jElmtLongitude.getAsDouble(), jElmtDistrictBranchID.getAsInt(), jElmtAddress.getAsString());
+                if(responseUpdate==1){
+                    response.setResponse("Successfully updated");
+                }
+                else if(responseUpdate==101){
+                    response.setResponse("Geolocation for this village already set");
+                }
+            } else {
+                response.setError(400, "Invalid request");
+            }
+        } catch (Exception e) {
+            logger.error("Error in updating geolocation :" + e);
+            response.setError(5000, "Unable to update data");
+        }
+        return response.toString();
+    }
+
+    @ApiOperation(value = "Get outreach programs based on state id", consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = "/outreachMaster/{stateID}/wo", method = RequestMethod.GET)
+    public ResponseEntity<String> getOutreachMasterForState(@PathVariable("stateID") Integer stateID) {
+        logger.info("get Outreach programs for state with Id ..." + stateID);
+
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try{
+            String resList = locationServiceImpl.getOutreachProgramsList(stateID);
+            outputResponse.setResponse(resList);
+        } catch (Exception e){
+            logger.error("Error while fetching outreach list for stateId" + stateID);
+            response.setError(500, "Unable to fetch outreach list for stateId" + stateID + "Exception - " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
     }
 }
