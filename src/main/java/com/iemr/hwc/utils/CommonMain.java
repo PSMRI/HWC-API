@@ -23,6 +23,7 @@ package com.iemr.hwc.utils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
+
 import com.iemr.hwc.utils.config.ConfigProperties;
 import com.iemr.hwc.utils.redis.RedisStorage;
 
