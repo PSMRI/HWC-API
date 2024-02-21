@@ -23,7 +23,7 @@ package com.iemr.hwc.data.report;
 
 import java.util.List;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 import com.google.gson.annotations.Expose;
 import com.iemr.hwc.utils.mapper.OutputMapper;

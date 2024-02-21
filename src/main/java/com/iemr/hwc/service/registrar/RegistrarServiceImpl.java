@@ -26,7 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import com.iemr.hwc.data.login.Users;
 import com.iemr.hwc.data.registrar.*;
@@ -272,7 +272,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 		// Persistence Class = BenGovIdMapping
 		// System.out.println("hello");
 		ArrayList<BenGovIdMapping> benGovIDMap = (ArrayList<BenGovIdMapping>) registrarRepoBenGovIdMapping
-				.save(BenGovIdMapping.getBenGovIdMappingOBJList(benD, benRegID));
+				.saveAll(BenGovIdMapping.getBenGovIdMappingOBJList(benD, benRegID));
 		// System.out.println("hello");
 		return benGovIDMap.size();
 	}
@@ -592,7 +592,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 
 		int x = registrarRepoBenGovIdMapping.deletePreviousGovMapID(benRegID);
 		ArrayList<BenGovIdMapping> benGovIDMaps = (ArrayList<BenGovIdMapping>) registrarRepoBenGovIdMapping
-				.save(benGovIDMap);
+				.saveAll(benGovIDMap);
 
 		return benGovIDMaps.size();
 	}

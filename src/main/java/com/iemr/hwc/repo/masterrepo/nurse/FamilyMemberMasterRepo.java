@@ -31,7 +31,7 @@ import org.springframework.stereotype.Repository;
 import com.iemr.hwc.data.masterdata.nurse.FamilyMemberType;
 @Repository
 @RestResource(exported = false)
-public interface FamilyMemberMasterRepo extends CrudRepository<FamilyMemberType, Long>{
+public interface FamilyMemberMasterRepo extends CrudRepository<FamilyMemberType, Short>{
 
 	@Query("select benRelationshipID, benRelationshipType, gender  from FamilyMemberType where deleted = false and benRelationshipID>3 order by benRelationshipType ")
 	public ArrayList<Object[]> getFamilyMemberTypeMaster();

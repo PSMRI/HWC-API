@@ -32,7 +32,7 @@ import org.springframework.stereotype.Repository;
 import com.iemr.hwc.data.masterdata.doctor.PreMalignantLesion;
 @Repository
 @RestResource(exported = false)
-public interface PreMalignantLesionMasterRepo extends CrudRepository<PreMalignantLesion, Long>{
+public interface PreMalignantLesionMasterRepo extends CrudRepository<PreMalignantLesion, Integer>{
 
 	@Query("select preMalignantLesionID, preMalignantLesionType from PreMalignantLesion where deleted = false "
 			+ "order by preMalignantLesionType")

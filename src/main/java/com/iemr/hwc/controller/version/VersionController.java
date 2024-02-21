@@ -29,13 +29,16 @@ import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+
+
 
 @RestController
 public class VersionController {
@@ -43,8 +46,8 @@ public class VersionController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	@CrossOrigin()
-	@ApiOperation(value = "Get version information", produces = "application/json")
-	@RequestMapping(value = "/version", method = { RequestMethod.GET })
+	@Operation(summary = "Get version information")
+	@GetMapping(value = "/version")
 	public String versionInformation() {
 		OutputResponse output = new OutputResponse();
 		try {

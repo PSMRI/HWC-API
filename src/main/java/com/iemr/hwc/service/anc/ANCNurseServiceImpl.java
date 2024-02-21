@@ -95,7 +95,7 @@ public class ANCNurseServiceImpl implements ANCNurseService {
 	@Override
 	public Long saveANCWomenVaccineDetails(List<ANCWomenVaccineDetail> ancWomenVaccineDetails) {
 		List<ANCWomenVaccineDetail> ancWomenVaccineDetail = (List<ANCWomenVaccineDetail>) ancWomenVaccineRepo
-				.save(ancWomenVaccineDetails);
+				.saveAll(ancWomenVaccineDetails);
 
 		Long ancWomenVaccineID = null;
 		if (null != ancWomenVaccineDetail && ancWomenVaccineDetail.size() > 0) {
@@ -123,7 +123,7 @@ public class ANCNurseServiceImpl implements ANCNurseService {
 				LabTestOrderDetailList.add(testData);
 			}
 			ArrayList<LabTestOrderDetail> LabTestOrderDetailListRS = (ArrayList<LabTestOrderDetail>) labTestOrderDetailRepo
-					.save(LabTestOrderDetailList);
+					.saveAll(LabTestOrderDetailList);
 
 			if (LabTestOrderDetailListRS != null && LabTestOrderDetailListRS.size() > 0) {
 				r = 1;
@@ -161,7 +161,7 @@ public class ANCNurseServiceImpl implements ANCNurseService {
 		Long successFlag = null;
 		List<ANCWomenVaccineDetail> ancWomenVaccineDetailList = getANCWomenVaccineDetail(wrapperAncImmunizationOBJ);
 		List<ANCWomenVaccineDetail> ancWomenVaccineDetailRSList = (List<ANCWomenVaccineDetail>) ancWomenVaccineRepo
-				.save(ancWomenVaccineDetailList);
+				.saveAll(ancWomenVaccineDetailList);
 		if (ancWomenVaccineDetailRSList != null && ancWomenVaccineDetailRSList.size() > 0) {
 			successFlag = ancWomenVaccineDetailRSList.get(0).getID();
 		}

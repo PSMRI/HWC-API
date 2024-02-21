@@ -26,9 +26,11 @@ import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.service.choApp.CHOAppSyncService;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +38,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/sync", headers = "Authorization")
+@RequestMapping(value = "/sync", headers = "Authorization", consumes = "application/json", produces = "application/json")
 /**
  * Objective: Performs beneficiaries and ben flow status sync to AMRIT server from CHO app and vice-versa.
  * Details
@@ -50,8 +52,8 @@ public class CHOAppSyncController {
     }
 
     // beneficiary registration sync from CHO app to AMRIT server with common and identity new
-    @ApiOperation(value = "Sync new beneficiaries to AMRIT server", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/beneficiariesToServer" }, method = { RequestMethod.POST })
+    @Operation(summary = "Sync new beneficiaries to AMRIT server")
+    @PostMapping(value = { "/beneficiariesToServer" })
     public ResponseEntity<String> beneficiaryRegistrationSyncToServer(@RequestBody String comingReq,
                                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -59,8 +61,8 @@ public class CHOAppSyncController {
     }
 
     // beneficiary registration sync from AMRIT server to CHO app with identity new
-    @ApiOperation(value = "Sync beneficiaries from AMRIT server to CHO App", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/beneficiariesToApp" }, method = { RequestMethod.POST })
+    @Operation(summary = "Sync beneficiaries from AMRIT server to CHO App")
+    @PostMapping(value = { "/beneficiariesToApp" })
     public ResponseEntity<String> beneficiarySyncToAppLocal(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -68,8 +70,8 @@ public class CHOAppSyncController {
     }
 
     // Get count of beneficiary to sync from AMRIT server to CHO app with identity new
-    @ApiOperation(value = "Returns count of beneficiaries to be synced from AMRIT server to CHO App", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/beneficiariesToAppCount" }, method = { RequestMethod.POST })
+    @Operation(summary = "Returns count of beneficiaries to be synced from AMRIT server to CHO App")
+    @PostMapping(value = { "/beneficiariesToAppCount" })
     public ResponseEntity<String> beneficiarySyncToAppLocalCount(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -77,9 +79,8 @@ public class CHOAppSyncController {
     }
 
     //Count of beneficiary flow status records to sync from AMRIT server to CHO app
-    @ApiOperation(value = "Returns count of beneficiaries flow status records to be synced", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/benFlowStatusRecordsCount" }, method = {
-            RequestMethod.POST })
+    @Operation(summary = "Returns count of beneficiaries flow status records to be synced")
+    @PostMapping(value = { "/benFlowStatusRecordsCount" })
     public ResponseEntity<String> flowStatusesSyncToAppLocalCount(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
                                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -87,9 +88,8 @@ public class CHOAppSyncController {
     }
 
     // beneficiary flow status records sync from AMRIT server to CHO app
-    @ApiOperation(value = "Sync beneficiaries flow status records ", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/benFlowStatusRecordsToApp" }, method = {
-            RequestMethod.POST })
+    @Operation(summary = "Sync beneficiaries flow status records ")
+    @PostMapping(value = { "/benFlowStatusRecordsToApp" })
     public ResponseEntity<String> flowStatusesSyncToAppLocal(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -97,8 +97,8 @@ public class CHOAppSyncController {
     }
 
     // Login logout logs sync from CHO app to AMRIT server
-    @ApiOperation(value = "Sync user activity logs to AMRIT server", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/userActivityLogsToServer" }, method = { RequestMethod.POST })
+    @Operation(summary = "Sync user activity logs to AMRIT server")
+    @PostMapping(value = { "/userActivityLogsToServer" })
     public ResponseEntity<String> userActivityLogsSyncToServer(@RequestBody List<UserActivityLogs> logsList,
                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -106,18 +106,18 @@ public class CHOAppSyncController {
     }
 
     // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) sync from AMRIT server to CHO app
-    @ApiOperation(value = "Sync beneficiaries nurse-form data from AMRIT server to CHO App", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/beneficiaryGeneralOPDNurseFormDataToApp" }, method = { RequestMethod.POST })
+    @Operation(summary = "Sync beneficiaries nurse-form data from AMRIT server to CHO App")
+    @PostMapping(value = { "/beneficiaryGeneralOPDNurseFormDataToApp" })
     public ResponseEntity<String> beneficiaryNurseFormDataGeneralOPDSyncToAppLocal(
-            @ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest,
+            @Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.getBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
     }
 
     // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) save from CHO app to server
-    @ApiOperation(value = "Save beneficiaries nurse-form data CHO App to AMRIT server", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/generalOPDNurseFormDataToServer" }, method = { RequestMethod.POST })
+    @Operation(summary = "Save beneficiaries nurse-form data CHO App to AMRIT server")
+    @PostMapping(value = { "/generalOPDNurseFormDataToServer" })
     public ResponseEntity<String> beneficiaryNurseFormDataGeneralOPDSyncToServer(@RequestBody String comingRequest,
                                                                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -125,8 +125,8 @@ public class CHOAppSyncController {
     }
 
     // Upload Prescription templates from CHO app to AMRIT server
-    @ApiOperation(value = "Save prescription templates to AMRIT server", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/prescriptionTemplatesToServer" }, method = { RequestMethod.POST })
+    @Operation(summary = "Save prescription templates to AMRIT server")
+    @PostMapping(value = { "/prescriptionTemplatesToServer" })
     public ResponseEntity<String> prescriptionTemplatesToServer(@RequestBody List<PrescriptionTemplates> templateList,
                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -134,8 +134,8 @@ public class CHOAppSyncController {
     }
 
     // Fetch Prescription templates for a doctor from AMRIT server
-    @ApiOperation(value = "Fetch prescription templates for doctor to AMRIT server", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/{userID}/prescriptionTemplatesDataToApp" }, method = { RequestMethod.GET })
+    @Operation(summary = "Fetch prescription templates for doctor to AMRIT server")
+    @GetMapping(value = { "/{userID}/prescriptionTemplatesDataToApp" })
     public ResponseEntity<String> prescriptionTemplatesToApp(@PathVariable Integer userID,
                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -143,8 +143,8 @@ public class CHOAppSyncController {
     }
 
     // Delete Prescription templates for a doctor from AMRIT server
-    @ApiOperation(value = "Delete prescription templates for doctor to AMRIT server", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/{userID}/prescriptionTemplates/{tempID}/delete" }, method = { RequestMethod.DELETE })
+    @Operation(summary = "Delete prescription templates for doctor to AMRIT server")
+    @DeleteMapping(value = { "/{userID}/prescriptionTemplates/{tempID}/delete" })
     public ResponseEntity<String> deleteTemplate(@PathVariable Integer userID,
                                                              @PathVariable Integer tempID,
                                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
@@ -153,8 +153,8 @@ public class CHOAppSyncController {
     }
 
     // save new Outreach activity event
-    @ApiOperation(value = "Create new event for outreach activity", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/activity/create" }, method = { RequestMethod.POST })
+    @Operation(summary = "Create new event for outreach activity")
+    @PostMapping(value = { "/activity/create" })
     public ResponseEntity<String> createNewOutreachActivity(@RequestBody OutreachActivity activity,
                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -162,8 +162,8 @@ public class CHOAppSyncController {
     }
 
     // Get all outreach activities by user
-    @ApiOperation(value = "Get list of all outreach activities by user", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/activity/{userId}/getAllByUser" }, method = { RequestMethod.GET })
+    @Operation(summary = "Get list of all outreach activities by user")
+    @GetMapping(value = { "/activity/{userId}/getAllByUser" })
     public ResponseEntity<String> getActivitiesByUser(@PathVariable Integer userId,
                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
@@ -171,8 +171,8 @@ public class CHOAppSyncController {
     }
 
     // Get an outreach activity by activityId
-    @ApiOperation(value = "Get an outreach activities by activityId", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = { "/activity/{activityId}/getById" }, method = { RequestMethod.GET })
+    @Operation(summary = "Get an outreach activities by activityId")
+    @GetMapping(value = { "/activity/{activityId}/getById" })
     public ResponseEntity<String> getActivityByIdr(@PathVariable Integer activityId,
                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 

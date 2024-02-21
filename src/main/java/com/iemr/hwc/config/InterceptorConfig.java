@@ -24,12 +24,12 @@ package com.iemr.hwc.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.iemr.hwc.utils.http.HTTPRequestInterceptor;
 
 @Configuration
-public class InterceptorConfig extends WebMvcConfigurerAdapter {
+public class InterceptorConfig implements WebMvcConfigurer{
 
 	@Autowired
 	HTTPRequestInterceptor requestInterceptor;

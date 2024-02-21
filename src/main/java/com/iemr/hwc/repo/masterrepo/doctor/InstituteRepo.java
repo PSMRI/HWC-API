@@ -33,7 +33,7 @@ import com.iemr.hwc.data.institution.Institute;
 
 @Repository
 @RestResource(exported = false)
-public interface InstituteRepo extends CrudRepository<Institute, Long> {
+public interface InstituteRepo extends CrudRepository<Institute, Integer> {
 	@Query("SELECT institutionID, institutionName FROM Institute WHERE providerServiceMapID = :psmID AND deleted != 1 order by institutionName")
 	public ArrayList<Object[]> getInstituteDetails(@Param("psmID") Integer psmID);
 

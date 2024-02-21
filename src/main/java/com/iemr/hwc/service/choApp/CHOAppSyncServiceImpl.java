@@ -63,7 +63,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -447,7 +447,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     log.setImageData(imageByte);
                 }
             }
-        List<UserActivityLogs> savedList = (List<UserActivityLogs>) userActivityLogsRepo.save(logsList);
+        List<UserActivityLogs> savedList = (List<UserActivityLogs>) userActivityLogsRepo.saveAll(logsList);
 
         if (savedList.size() == logsList.size()){
             outputResponse.setResponse("Data saved successfully");
@@ -580,7 +580,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", "application/json");
 
         try{
-            List<PrescriptionTemplates> savedList = (List<PrescriptionTemplates>) prescriptionTemplatesRepo.save(templateList);
+            List<PrescriptionTemplates> savedList = (List<PrescriptionTemplates>) prescriptionTemplatesRepo.saveAll(templateList);
 
             if (savedList.size() == templateList.size()){
                 outputResponse.setResponse("Data saved successfully");
@@ -699,7 +699,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
 
-        OutreachActivity activity =  outreachActivityRepo.findOne(activityId);
+        OutreachActivity activity =  outreachActivityRepo.findById(activityId).get();
 
         if (activity != null && activity.getImg1Data() != null){
             String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());

@@ -176,7 +176,7 @@ public class CSNurseServiceImpl implements CSNurseService {
 
 		int responseData = 0;
 		List<BenFamilyCancerHistory> response = (List<BenFamilyCancerHistory>) benFamilyCancerHistoryRepo
-				.save(benFamilyCancerHistoryListFinal);
+				.saveAll(benFamilyCancerHistoryListFinal);
 		if (benFamilyCancerHistoryListFinal.size() == response.size())
 			responseData = 1;
 		return responseData;
@@ -289,7 +289,7 @@ public class CSNurseServiceImpl implements CSNurseService {
 				}
 				if (newbenFamilyCancerHistoryList.size() > 0) {
 					ArrayList<BenFamilyCancerHistory> benFamilyCancerHistories = (ArrayList<BenFamilyCancerHistory>) benFamilyCancerHistoryRepo
-							.save(newbenFamilyCancerHistoryList);
+							.saveAll(newbenFamilyCancerHistoryList);
 					if (benFamilyCancerHistories.size() > 0) {
 						response = benFamilyCancerHistories.size();
 					}
@@ -1081,7 +1081,7 @@ public class CSNurseServiceImpl implements CSNurseService {
 		}
 
 		List<CancerLymphNodeDetails> response = (List<CancerLymphNodeDetails>) cancerLymphNodeExaminationRepo
-				.save(cancerLymphNodeDetails);
+				.saveAll(cancerLymphNodeDetails);
 		if (null != response && response.size() > 0) {
 			responseData = response.get(response.size() - 1).getID();
 		}
@@ -1177,7 +1177,7 @@ public class CSNurseServiceImpl implements CSNurseService {
 			wrapperCancerExamImgAnotasn.setVisitID(benVisitID);
 		}
 		List<CancerExaminationImageAnnotation> objList = (List<CancerExaminationImageAnnotation>) cancerExaminationImageAnnotationRepo
-				.save(getCancerExaminationImageAnnotationList(wrapperCancerExamImgAnotasnList, benVisitCode));
+				.saveAll(getCancerExaminationImageAnnotationList(wrapperCancerExamImgAnotasnList, benVisitCode));
 		if (objList != null && objList.size() > 0) {
 			x = (long) objList.size();
 		}
@@ -1326,7 +1326,7 @@ public class CSNurseServiceImpl implements CSNurseService {
 
 				if (cancerLymphNodeDetailsFinal.size() > 0) {
 					ArrayList<CancerLymphNodeDetails> cancerLymphNodes = (ArrayList<CancerLymphNodeDetails>) cancerLymphNodeExaminationRepo
-							.save(cancerLymphNodeDetailsFinal);
+							.saveAll(cancerLymphNodeDetailsFinal);
 					if (cancerLymphNodes.size() > 0) {
 						response = cancerLymphNodes.size();
 					}
@@ -1638,7 +1638,7 @@ public class CSNurseServiceImpl implements CSNurseService {
 						}
 					}
 					ArrayList<CancerExaminationImageAnnotation> cancerImageAnnotations = (ArrayList<CancerExaminationImageAnnotation>) cancerExaminationImageAnnotationRepo
-							.save(cancerImageAnnotationsFinal);
+							.saveAll(cancerImageAnnotationsFinal);
 					if (cancerImageAnnotations.size() == cancerImageAnnotationsFinal.size()) {
 						response = 1;
 					}

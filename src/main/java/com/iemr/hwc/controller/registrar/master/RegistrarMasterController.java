@@ -25,7 +25,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,12 +36,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iemr.hwc.service.common.master.RegistrarServiceMasterDataImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+
+
+
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/registrar", headers = "Authorization")
+@RequestMapping(value = "/registrar", headers = "Authorization", consumes = "application/json", produces = "application/json")
 /** Objective: Get Registration related master Data */
 public class RegistrarMasterController {
 
@@ -52,10 +56,10 @@ public class RegistrarMasterController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get master data for registrar", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/registrarMasterData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get master data for registrar")
+	@PostMapping(value = { "/registrarMasterData" })
 	public String masterDataForRegistration(
-			@ApiParam(value = "{\"spID\": \"Integer\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"spID\": \"Integer\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 		logger.info("masterDataForRegistration request :" + comingRequest);
 		try {

@@ -206,7 +206,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 						}
 
 						if (isList.size() > 0)
-							immunizationServicesRepo.save(isList);
+							immunizationServicesRepo.saveAll(isList);
 					}
 				}
 
@@ -904,7 +904,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 				}
 
 				if (isList.size() > 0)
-					immunizationServicesRepo.save(isList);
+					immunizationServicesRepo.saveAll(isList);
 			}
 		}
 

@@ -23,7 +23,7 @@ package com.iemr.hwc.repo.foetalmonitor;
 
 import java.util.ArrayList;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,7 +36,7 @@ import com.iemr.hwc.data.foetalmonitor.FoetalMonitorDeviceID;
 
 @Repository
 @RestResource(exported = false)
-public interface FoetalMonitorDeviceIDRepo extends CrudRepository<FoetalMonitorDeviceID, Integer>  {
+public interface FoetalMonitorDeviceIDRepo extends CrudRepository<FoetalMonitorDeviceID, Long>  {
 	
 	@Query("SELECT f FROM FoetalMonitorDeviceID f WHERE f.vanID = :vanID AND f.deactivated = false ")
 	public FoetalMonitorDeviceID getDeviceIDForVanID(@Param("vanID") Integer vanID);

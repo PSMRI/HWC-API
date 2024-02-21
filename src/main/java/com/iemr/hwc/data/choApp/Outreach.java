@@ -23,7 +23,7 @@ package com.iemr.hwc.data.choApp;
 
 import com.google.gson.annotations.Expose;
 import lombok.Data;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Data

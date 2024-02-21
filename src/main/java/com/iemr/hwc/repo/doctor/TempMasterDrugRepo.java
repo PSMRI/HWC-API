@@ -31,7 +31,7 @@ import com.iemr.hwc.data.doctor.TempMasterDrug;
 
 @Repository
 @RestResource(exported = false)
-public interface TempMasterDrugRepo extends CrudRepository<TempMasterDrug, Long> {
+public interface TempMasterDrugRepo extends CrudRepository<TempMasterDrug, Integer> {
 	ArrayList<TempMasterDrug> findByDeletedFalseOrderByDrugDisplayNameAsc();
 
 }

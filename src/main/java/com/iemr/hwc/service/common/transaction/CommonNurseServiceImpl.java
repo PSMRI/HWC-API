@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Objects;
 
 
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -718,7 +718,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		}
 		if (benChiefComplaintListNew.size() > 0) {
 			List<BenChiefComplaint> benChiefComplaintResultList = (List<BenChiefComplaint>) benChiefComplaintRepo
-					.save(benChiefComplaintListNew);
+					.saveAll(benChiefComplaintListNew);
 			if (benChiefComplaintListNew.size() == benChiefComplaintResultList.size())
 				r = 1;
 		} else {
@@ -731,7 +731,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		Long pastHistorySuccessFlag = null;
 		ArrayList<BenMedHistory> benMedHistoryList = benMedHistory.getBenPastHistory();
 		if (null != benMedHistoryList && benMedHistoryList.size() > 0) {
-			ArrayList<BenMedHistory> res = (ArrayList<BenMedHistory>) benMedHistoryRepo.save(benMedHistoryList);
+			ArrayList<BenMedHistory> res = (ArrayList<BenMedHistory>) benMedHistoryRepo.saveAll(benMedHistoryList);
 			if (benMedHistoryList.size() == res.size()) {
 				pastHistorySuccessFlag = new Long(1);
 			}
@@ -747,7 +747,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 				.getComrbidityConds();
 		if (bencomrbidityCondDetailsList.size() > 0) {
 			ArrayList<BencomrbidityCondDetails> res = (ArrayList<BencomrbidityCondDetails>) bencomrbidityCondRepo
-					.save(bencomrbidityCondDetailsList);
+					.saveAll(bencomrbidityCondDetailsList);
 			if (bencomrbidityCondDetailsList.size() == res.size()) {
 				comrbidSuccessFlag = res.get(0).getID();
 			}
@@ -763,7 +763,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 				.getBenMedicationHistoryDetails();
 		if (benMedicationHistoryList.size() > 0) {
 			ArrayList<BenMedicationHistory> res = (ArrayList<BenMedicationHistory>) benMedicationHistoryRepo
-					.save(benMedicationHistoryList);
+					.saveAll(benMedicationHistoryList);
 			if (benMedicationHistoryList.size() == res.size()) {
 				medicationSuccessFlag = res.get(0).getID();
 			}
@@ -782,7 +782,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		if (femaleObstetricHistorylist != null && femaleObstetricHistorylist.size() > 0) {
 
 			ArrayList<FemaleObstetricHistory> res = (ArrayList<FemaleObstetricHistory>) femaleObstetricHistoryRepo
-					.save(femaleObstetricHistorylist);
+					.saveAll(femaleObstetricHistorylist);
 			if (femaleObstetricHistorylist.size() == res.size()) {
 				obstetricSuccessFlag = new Long(1);
 			}
@@ -955,7 +955,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		ArrayList<BenFamilyHistory> familyHistoryList = benFamilyHistory.getBenFamilyHistory();
 		if (familyHistoryList.size() > 0) {
 			ArrayList<BenFamilyHistory> res = (ArrayList<BenFamilyHistory>) benFamilyHistoryRepo
-					.save(familyHistoryList);
+					.saveAll(familyHistoryList);
 			if (familyHistoryList.size() == res.size()) {
 				familyHistorySuccessFlag = new Long(1);
 			}
@@ -970,7 +970,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		ArrayList<BenPersonalHabit> personalHabits = benPersonalHabit.getPersonalHistory();
 		if (personalHabits.size() > 0) {
-			ArrayList<BenPersonalHabit> res = (ArrayList<BenPersonalHabit>) benPersonalHabitRepo.save(personalHabits);
+			ArrayList<BenPersonalHabit> res = (ArrayList<BenPersonalHabit>) benPersonalHabitRepo.saveAll(personalHabits);
 			if (personalHabits.size() == res.size()) {
 				personalHistorySuccessFlag = 1;
 			}
@@ -985,7 +985,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		ArrayList<BenAllergyHistory> allergyList = benAllergyHistory.getBenAllergicHistory();
 		if (allergyList.size() > 0) {
-			ArrayList<BenAllergyHistory> res = (ArrayList<BenAllergyHistory>) benAllergyHistoryRepo.save(allergyList);
+			ArrayList<BenAllergyHistory> res = (ArrayList<BenAllergyHistory>) benAllergyHistoryRepo.saveAll(allergyList);
 			if (allergyList.size() == res.size()) {
 				allergyHistorySuccessFlag = new Long(1);
 			}
@@ -1001,7 +1001,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 				.getChildOptionalVaccineDetails();
 		if (childOptionalVaccineDetails.size() > 0) {
 			ArrayList<ChildOptionalVaccineDetail> res = (ArrayList<ChildOptionalVaccineDetail>) childOptionalVaccineDetailRepo
-					.save(childOptionalVaccineDetails);
+					.saveAll(childOptionalVaccineDetails);
 			if (childOptionalVaccineDetails.size() == res.size()) {
 				childVaccineSuccessFlag = new Long(1);
 			}
@@ -1017,7 +1017,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		ArrayList<ChildVaccineDetail1> childVaccineDetails = wrapperImmunizationHistory.getBenChildVaccineDetails();
 
 		if (childVaccineDetails != null && childVaccineDetails.size() > 0)
-			childVaccineDetails = (ArrayList<ChildVaccineDetail1>) childVaccineDetail1Repo.save(childVaccineDetails);
+			childVaccineDetails = (ArrayList<ChildVaccineDetail1>) childVaccineDetail1Repo.saveAll(childVaccineDetails);
 
 		return immunizationSuccessFlag;
 	}
@@ -1052,7 +1052,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		ArrayList<BenFamilyHistory> familyHistoryList = benFamilyHistory.getBenFamilyHist();
 		if (familyHistoryList.size() > 0) {
 			ArrayList<BenFamilyHistory> res = (ArrayList<BenFamilyHistory>) benFamilyHistoryRepo
-					.save(familyHistoryList);
+					.saveAll(familyHistoryList);
 			if (familyHistoryList.size() == res.size()) {
 				familyHistorySuccessFlag = new Long(1);
 			}
@@ -2468,7 +2468,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					benChiefComplaintList.get(0).getVisitCode());
 
 			List<BenChiefComplaint> benChiefComplaintResultList = (List<BenChiefComplaint>) benChiefComplaintRepo
-					.save(benChiefComplaintList);
+					.saveAll(benChiefComplaintList);
 
 			if (benChiefComplaintResultList != null && benChiefComplaintResultList.size() > 0) {
 				r = benChiefComplaintResultList.size();
@@ -2499,7 +2499,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 			ArrayList<BenMedHistory> benMedHistoryList = benMedHistory.getBenPastHistory();
 			if (null != benMedHistoryList && benMedHistoryList.size() > 0) {
-				ArrayList<BenMedHistory> res = (ArrayList<BenMedHistory>) benMedHistoryRepo.save(benMedHistoryList);
+				ArrayList<BenMedHistory> res = (ArrayList<BenMedHistory>) benMedHistoryRepo.saveAll(benMedHistoryList);
 				if (benMedHistoryList.size() == res.size()) {
 					r = 1;
 				}
@@ -2534,7 +2534,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					.getComrbidityConds();
 			if (null != bencomrbidityCondDetailsList && bencomrbidityCondDetailsList.size() > 0) {
 				ArrayList<BencomrbidityCondDetails> res = (ArrayList<BencomrbidityCondDetails>) bencomrbidityCondRepo
-						.save(bencomrbidityCondDetailsList);
+						.saveAll(bencomrbidityCondDetailsList);
 				if (bencomrbidityCondDetailsList.size() == res.size()) {
 					r = 1;
 				}
@@ -2568,7 +2568,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					.getBenMedicationHistoryDetails();
 			if (null != benMedicationHistoryList && benMedicationHistoryList.size() > 0) {
 				ArrayList<BenMedicationHistory> res = (ArrayList<BenMedicationHistory>) benMedicationHistoryRepo
-						.save(benMedicationHistoryList);
+						.saveAll(benMedicationHistoryList);
 				if (benMedicationHistoryList.size() == res.size()) {
 					r = 1;
 				}
@@ -2601,7 +2601,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 			ArrayList<BenPersonalHabit> personalHabits = benPersonalHabit.getPersonalHistory();
 			if (null != personalHabits && personalHabits.size() > 0) {
 				ArrayList<BenPersonalHabit> res = (ArrayList<BenPersonalHabit>) benPersonalHabitRepo
-						.save(personalHabits);
+						.saveAll(personalHabits);
 				if (personalHabits.size() > 0) {
 					r = 1;
 				}
@@ -2634,7 +2634,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 			ArrayList<BenAllergyHistory> allergyList = benAllergyHistory.getBenAllergicHistory();
 			if (null != allergyList && allergyList.size() > 0) {
 				ArrayList<BenAllergyHistory> res = (ArrayList<BenAllergyHistory>) benAllergyHistoryRepo
-						.save(allergyList);
+						.saveAll(allergyList);
 				if (allergyList.size() == res.size()) {
 					r = 1;
 				}
@@ -2666,7 +2666,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 			ArrayList<BenFamilyHistory> familyHistoryList = benFamilyHistory.getBenFamilyHistory();
 			if (null != familyHistoryList && familyHistoryList.size() > 0) {
 				ArrayList<BenFamilyHistory> res = (ArrayList<BenFamilyHistory>) benFamilyHistoryRepo
-						.save(familyHistoryList);
+						.saveAll(familyHistoryList);
 				if (familyHistoryList.size() == res.size()) {
 					r = 1;
 				}
@@ -2752,7 +2752,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					wrapperFemaleObstetricHistory.getFemaleObstetricHistoryDetails());
 
 			ArrayList<FemaleObstetricHistory> res = (ArrayList<FemaleObstetricHistory>) femaleObstetricHistoryRepo
-					.save(femaleObstetricHistorylist);
+					.saveAll(femaleObstetricHistorylist);
 
 			if (femaleObstetricHistorylist.size() == res.size()) {
 				r = 1;
@@ -2786,7 +2786,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 					.getChildOptionalVaccineDetails();
 			if (null != childOptionalVaccineDetails && childOptionalVaccineDetails.size() > 0) {
 				ArrayList<ChildOptionalVaccineDetail> res = (ArrayList<ChildOptionalVaccineDetail>) childOptionalVaccineDetailRepo
-						.save(childOptionalVaccineDetails);
+						.saveAll(childOptionalVaccineDetails);
 				if (childOptionalVaccineDetails.size() == res.size()) {
 					r = 1;
 				}
@@ -3216,7 +3216,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		if (labTestOrderDetails != null && labTestOrderDetails.size() > 0) {
 			List<LabTestOrderDetail> labTestOrders = (List<LabTestOrderDetail>) labTestOrderDetailRepo
-					.save(labTestOrderDetails);
+					.saveAll(labTestOrderDetails);
 			if (labTestOrderDetails.size() == labTestOrders.size()) {
 				returnOBJ = new Long(1);
 			}
@@ -3240,7 +3240,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 				}
 			}
 			List<PrescribedDrugDetail> prescribedDrugDetailListRS = (List<PrescribedDrugDetail>) prescribedDrugDetailRepo
-					.save(prescribedDrugDetailList);
+					.saveAll(prescribedDrugDetailList);
 			if (prescribedDrugDetailList.size() == prescribedDrugDetailListRS.size()) {
 				r = prescribedDrugDetailListRS.size();
 			}
@@ -3500,7 +3500,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 				LabTestOrderDetailList.add(testData);
 			}
 			ArrayList<LabTestOrderDetail> LabTestOrderDetailListRS = (ArrayList<LabTestOrderDetail>) labTestOrderDetailRepo
-					.save(LabTestOrderDetailList);
+					.saveAll(LabTestOrderDetailList);
 
 			if (LabTestOrderDetailListRS.size() == investigationList.size()) {
 				r = new Long(1);
@@ -4300,7 +4300,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		ArrayList<BenFamilyHistory> familyHistoryList = benFamilyHistory.getBenFamilyHist();
 		if (familyHistoryList.size() > 0) {
 			ArrayList<BenFamilyHistory> res = (ArrayList<BenFamilyHistory>) benFamilyHistoryRepo
-					.save(familyHistoryList);
+					.saveAll(familyHistoryList);
 			if (familyHistoryList.size() == res.size()) {
 				familyHistorySuccessFlag = 1;
 			}

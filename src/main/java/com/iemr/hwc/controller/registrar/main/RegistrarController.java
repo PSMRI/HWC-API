@@ -29,7 +29,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,12 +50,14 @@ import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+
+
+
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/registrar", headers = "Authorization")
+@RequestMapping(value = "/registrar", headers = "Authorization", consumes = "application/json", produces = "application/json")
 /**
  * Objective: Performs QuickSearch, AdvancedSearch and fetching Beneficiary
  * Details
@@ -83,9 +87,9 @@ public class RegistrarController {
 
 	// Registrar Work List API .....
 	@CrossOrigin()
-	@ApiOperation(value = "Get registrar worklist data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/registrarWorkListData" }, method = { RequestMethod.POST })
-	public String getRegistrarWorkList(@ApiParam(value = "{\"spID\": \"Integer\"}") @RequestBody String comingRequest)
+	@Operation(summary = "Get registrar worklist data")
+	@PostMapping(value = { "/registrarWorkListData" })
+	public String getRegistrarWorkList(@Param(value = "{\"spID\": \"Integer\"}") @RequestBody String comingRequest)
 			throws JSONException {
 		OutputResponse response = new OutputResponse();
 		logger.info("getRegistrarWorkList request:" + comingRequest);
@@ -103,10 +107,10 @@ public class RegistrarController {
 
 	// Registrar Quick search .....
 	@CrossOrigin()
-	@ApiOperation(value = "Search for beneficiary based on beneficiary id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/quickSearch" }, method = { RequestMethod.POST })
+	@Operation(summary = "Search for beneficiary based on beneficiary id")
+	@PostMapping(value = { "/quickSearch" })
 	public String quickSearchBeneficiary(
-			@ApiParam(value = "{\"benID\": \"String\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benID\": \"String\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 		logger.info("quickSearchBeneficiary request:" + comingRequest);
 		try {
@@ -123,10 +127,10 @@ public class RegistrarController {
 
 	// Registrar Advance search .....
 	@CrossOrigin()
-	@ApiOperation(value = "Search for beneficiary based on provided data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/advanceSearch" }, method = { RequestMethod.POST })
+	@Operation(summary = "Search for beneficiary based on provided data")
+	@PostMapping(value = { "/advanceSearch" })
 	public String advanceSearch(
-			@ApiParam(value = "{\"firstName\": \"String\", \"lastName\": \"String\", \"phoneNo\": \"String\","
+			@Param(value = "{\"firstName\": \"String\", \"lastName\": \"String\", \"phoneNo\": \"String\","
 					+ "\"beneficiaryID\": \"String\", \"stateID\": \"Integer\", \"districtID\": \"Integer\", \"aadharNo\": \"String\"},"
 					+ " \"govtIdentityNo\": \"String\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
@@ -146,10 +150,10 @@ public class RegistrarController {
 
 	// API for left side ben data
 	@CrossOrigin()
-	@ApiOperation(value = "Get beneficiary details based on beneficiary register id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/get/benDetailsByRegID" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get beneficiary details based on beneficiary register id")
+	@PostMapping(value = { "/get/benDetailsByRegID" })
 	public String getBenDetailsByRegID(
-			@ApiParam(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 		logger.info("getBenDetailsByRegID request :" + comingRequest);
 		try {
@@ -177,10 +181,10 @@ public class RegistrarController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get beneficiary details", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/get/beneficiaryDetails" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get beneficiary details")
+	@PostMapping(value = { "/get/beneficiaryDetails" })
 	public String getBeneficiaryDetails(
-			@ApiParam(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String requestObj) {
+			@Param(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String requestObj) {
 		OutputResponse response = new OutputResponse();
 		logger.info("getBeneficiaryDetails request :" + requestObj);
 		try {
@@ -213,10 +217,10 @@ public class RegistrarController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get beneficiary image", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/get/beneficiaryImage" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get beneficiary image")
+	@PostMapping(value = { "/get/beneficiaryImage" })
 	public String getBeneficiaryImage(
-			@ApiParam(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String requestObj) {
+			@Param(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String requestObj) {
 		OutputResponse response = new OutputResponse();
 		logger.info("getBeneficiaryImage request :" + requestObj);
 		try {
@@ -241,8 +245,8 @@ public class RegistrarController {
 
 	// beneficiary quick search new integrated with common and identity
 	@CrossOrigin()
-	@ApiOperation(value = "Search beneficiary based on beneficiary id or beneficiary phone number", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/quickSearchNew" }, method = { RequestMethod.POST })
+	@Operation(summary = "Search beneficiary based on beneficiary id or beneficiary phone number")
+	@PostMapping(value = { "/quickSearchNew" })
 	public String quickSearchNew(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		String searchList = null;
@@ -265,8 +269,8 @@ public class RegistrarController {
 
 	// beneficiary Advance search new integrated with common and identity
 	@CrossOrigin()
-	@ApiOperation(value = "Beneficiary advance search integrated with common and identity API", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/advanceSearchNew" }, method = { RequestMethod.POST })
+	@Operation(summary = "Beneficiary advance search integrated with common and identity API")
+	@PostMapping(value = { "/advanceSearchNew" })
 	public String advanceSearchNew(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		String searchList = null;
@@ -288,8 +292,8 @@ public class RegistrarController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Beneficiary advance search", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/benAdvanceSearchNew" }, method = { RequestMethod.POST })
+	@Operation(summary = "Beneficiary advance search")
+	@PostMapping(value = { "/benAdvanceSearchNew" })
 	public String benAdvanceSearchNew(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		String searchList = null;
@@ -312,10 +316,10 @@ public class RegistrarController {
 
 	// Get Beneficiary Details for left side panel of given beneficiaryRegID new
 	@CrossOrigin()
-	@ApiOperation(value = "Get beneficiary details for side panel", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/get/benDetailsByRegIDForLeftPanelNew" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get beneficiary details for side panel")
+	@PostMapping(value = { "/get/benDetailsByRegIDForLeftPanelNew" })
 	public String getBenDetailsForLeftSidePanelByRegID(
-			@ApiParam(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String comingRequest,
+			@Param(value = "{\"beneficiaryRegID\": \"Long\"}") @RequestBody String comingRequest,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();
 		logger.info("getBenDetailsByRegID request :" + comingRequest);
@@ -345,8 +349,8 @@ public class RegistrarController {
 
 	// new api for ben image
 	@CrossOrigin()
-	@ApiOperation(value = "Get beneficiary image", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenImage" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get beneficiary image")
+	@PostMapping(value = { "/getBenImage" })
 	public String getBenImage(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();
@@ -363,10 +367,10 @@ public class RegistrarController {
 
 	// Registrar Beneficiary Registration API .....
 	@CrossOrigin()
-	@ApiOperation(value = "Register a new beneficiary", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/registrarBeneficaryRegistration" }, method = { RequestMethod.POST })
+	@Operation(summary = "Register a new beneficiary")
+	@PostMapping(value = { "/registrarBeneficaryRegistration" })
 	public String createBeneficiary(
-			@ApiParam(value = "{\"benD\":{\"firstName\": \"String\", \"lastName\": \"String\", \"gender\": \"Short\","
+			@Param(value = "{\"benD\":{\"firstName\": \"String\", \"lastName\": \"String\", \"gender\": \"Short\","
 					+ "\"dob\": \"Timestamp\", \"maritalStatus\": \"Short\", \"fatherName\": \"String\", \"motherName\": \"String\","
 					+ "\"husbandName\": \"String\", \"image\": \"String\", \"aadharNo\": \"String\", \"income\": \"Short\", "
 					+ "\"literacyStatus\": \"String\", \"educationQualification\": \"Short\", \"occupation\": \"Short\", \"phoneNo\": \"String\","
@@ -426,8 +430,8 @@ public class RegistrarController {
 
 	// beneficiary registration with common and identity new
 	@CrossOrigin()
-	@ApiOperation(value = "Register a new beneficiary new API", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/registrarBeneficaryRegistrationNew" }, method = { RequestMethod.POST })
+	@Operation(summary = "Register a new beneficiary new API")
+	@PostMapping(value = { "/registrarBeneficaryRegistrationNew" })
 	public String registrarBeneficaryRegistrationNew(@RequestBody String comingReq,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		String s;
@@ -445,10 +449,10 @@ public class RegistrarController {
 
 	// Registrar Beneficiary Registration API .....
 	@CrossOrigin()
-	@ApiOperation(value = "Update registered beneficiary data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/BeneficiaryDetails" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update registered beneficiary data")
+	@PostMapping(value = { "/update/BeneficiaryDetails" })
 	public String updateBeneficiary(
-			@ApiParam(value = "{\"benD\": {\"beneficiaryRegID\": \"Long\", \"firstName\": \"String\", \"lastName\": \"String\", \"gender\": \"Short\","
+			@Param(value = "{\"benD\": {\"beneficiaryRegID\": \"Long\", \"firstName\": \"String\", \"lastName\": \"String\", \"gender\": \"Short\","
 					+ "\"dob\": \"Timestamp\", \"maritalStatus\": \"Short\", \"fatherName\": \"String\", \"motherName\": \"String\","
 					+ "\"husbandName\": \"String\", \"image\": \"String\", \"aadharNo\": \"String\", \"income\": \"Short\", "
 					+ "\"literacyStatus\": \"String\", \"educationQualification\": \"Short\", \"occupation\": \"Short\", \"phoneNo\": \"String\","
@@ -503,8 +507,8 @@ public class RegistrarController {
 	}
 
 	// revisit to nurse by searching and submitting new
-	@ApiOperation(value = "Search and submit beneficiary to nurse for revisit", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/create/BenReVisitToNurse" }, method = { RequestMethod.POST })
+	@Operation(summary = "Search and submit beneficiary to nurse for revisit")
+	@PostMapping(value = { "/create/BenReVisitToNurse" })
 	public String createReVisitForBenToNurse(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
 		try {
@@ -524,8 +528,8 @@ public class RegistrarController {
 		return response.toString();
 	}
 
-	@ApiOperation(value = "Update registered beneficiary details", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/BeneficiaryUpdate" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update registered beneficiary details")
+	@PostMapping(value = { "/update/BeneficiaryUpdate" })
 	public String beneficiaryUpdate(@RequestBody String requestOBJ,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();

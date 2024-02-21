@@ -21,8 +21,6 @@
 */
 package com.iemr.hwc.data.foetalmonitor;
 
-import java.sql.Timestamp;
-
 public class FoetalMonitorData {
 
 	private Long partnerFoetalMonitorId;

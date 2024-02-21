@@ -215,7 +215,7 @@ public class CommonDoctorServiceImpl {
 		// if valid chief complaints is present than save to DB
 		if (tmpBenCHiefComplaintsTMP.size() > 0) {
 			ArrayList<BenChiefComplaint> benChiefComplaintListRS = (ArrayList<BenChiefComplaint>) benChiefComplaintRepo
-					.save(tmpBenCHiefComplaintsTMP);
+					.saveAll(tmpBenCHiefComplaintsTMP);
 			if (tmpBenCHiefComplaintsTMP.size() == benChiefComplaintListRS.size()) {
 				chiefComFlag = 1;
 			}
@@ -606,7 +606,7 @@ public class CommonDoctorServiceImpl {
 		if (null != benChiefComplaintList && benChiefComplaintList.size() > 0) {
 
 			List<BenChiefComplaint> benChiefComplaintResultList = (List<BenChiefComplaint>) benChiefComplaintRepo
-					.save(benChiefComplaintList);
+					.saveAll(benChiefComplaintList);
 
 			if (benChiefComplaintResultList != null && benChiefComplaintResultList.size() > 0) {
 				r = benChiefComplaintResultList.size();

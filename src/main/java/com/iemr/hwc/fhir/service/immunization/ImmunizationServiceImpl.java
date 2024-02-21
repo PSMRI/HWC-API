@@ -22,8 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.MediaType;
 
 @Service
 public class ImmunizationServiceImpl implements ImmunizationService{

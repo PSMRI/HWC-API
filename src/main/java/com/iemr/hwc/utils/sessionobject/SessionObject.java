@@ -110,7 +110,6 @@ public class SessionObject {
 	}
 	public void deleteSessionObject(String key) throws RedisSessionException {
 		// RedisStorage objectStore = new RedisStorage();
-		System.out.println(objectStore.deleteObject(key));
 	}
 
 	// public static void test(String[] args)

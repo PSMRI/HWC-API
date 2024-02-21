@@ -23,7 +23,7 @@ package com.iemr.hwc.data.anc;
 
 import java.util.ArrayList;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 import com.google.gson.annotations.Expose;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;

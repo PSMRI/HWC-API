@@ -476,7 +476,7 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 			}
 			if (null != labResultsListNew && labResultsListNew.size() > 0) {
 				List<LabResultEntry> labResultEntryRes = (List<LabResultEntry>) labResultEntryRepo
-						.save(labResultsListNew);
+						.saveAll(labResultsListNew);
 				if (null != labResultEntryRes && labResultsListNew.size() == labResultEntryRes.size()) {
 					labResultSaveFlag = 1;
 				}

@@ -24,9 +24,10 @@ package com.iemr.hwc.service.dataSyncActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.sql.Timestamp;
 
 import javax.sql.DataSource;
+
+import java.sql.Timestamp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import com.iemr.hwc.data.syncActivity_syncLayer.SyncUtilityClass;
 import com.iemr.hwc.repo.syncActivity_syncLayer.SyncUtilityClassRepo;
+
 
 /***
  * 
@@ -52,7 +54,7 @@ public class DataSyncRepository {
 	private SyncUtilityClassRepo syncutilityClassRepo;
 
 	private JdbcTemplate getJdbcTemplate() {
-		return new JdbcTemplate(dataSource);
+		return new JdbcTemplate();
 
 	}
 
@@ -82,26 +84,7 @@ public class DataSyncRepository {
 		return syncUtilityClassList;
 	}
 
-	/*
-	 * public int updateProcessedFlagInVan(String schemaName, String tableName,
-	 * StringBuilder vanSerialNos,
-	 * String autoIncreamentColumn, String user) throws Exception {
-	 * jdbcTemplate = getJdbcTemplate();
-	 * String query = " UPDATE " + schemaName + "." + tableName
-	 * + " SET processed = 'P' , SyncedDate = now(), Syncedby = '" + user +
-	 * "' WHERE " + autoIncreamentColumn
-	 * + " IN (" + vanSerialNos + ")";
-	 * System.out.println("hello");
-	 * 
-	 * int i = jdbcTemplate.update(query);
-	 * 
-	 * return i;
-	 * 
-	 * }
-	 */
-
-	// refactored code below
-
+	
 	public int updateProcessedFlagInVan(String schemaName, String tableName, StringBuilder vanSerialNos,
 			String autoIncreamentColumn, String user) throws Exception {
 		jdbcTemplate = getJdbcTemplate();
@@ -114,11 +97,6 @@ public class DataSyncRepository {
 		return updatedRows;
 
 	}
-
-	// ---------------------------------- End of Upload repository
-
-	//
-	//
 
 	// ---------------------------------- Download Repository
 	public int[] updateLatestMasterInLocal(String query, List<Object[]> syncDataList) {

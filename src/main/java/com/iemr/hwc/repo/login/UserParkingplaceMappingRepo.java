@@ -33,7 +33,7 @@ import com.iemr.hwc.data.login.UserParkingplaceMapping;
 
 @Repository
 @RestResource(exported = false)
-public interface UserParkingplaceMappingRepo extends CrudRepository<UserParkingplaceMapping, Long> {
+public interface UserParkingplaceMappingRepo extends CrudRepository<UserParkingplaceMapping, Integer> {
 	@Query("SELECT x.parkingPlaceID,p.stateID,s.stateName,p.districtID,d.districtName,p.districtBlockID,b.blockName from UserParkingplaceMapping x "
 			+ " INNER JOIN x.m_parkingplace p" + " INNER JOIN p.state s" + " INNER JOIN p.m_district d"
 			+ " INNER JOIN p.districtBlock b" + " WHERE x.userID = :userID and x.deleted != 1 ")
