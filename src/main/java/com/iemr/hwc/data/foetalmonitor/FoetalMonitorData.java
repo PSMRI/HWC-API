@@ -25,19 +25,19 @@ import java.sql.Timestamp;
 
 public class FoetalMonitorData {
 
-	private Long partnerFoetalMonitorId;
+	private Long partnerFetosenseId;
 	private Long beneficiaryRegID;
 	private String motherLMPDate;
 	private String motherName;
 	private String testName;
 	private String deviceId;
 
-	public Long getPartnerFoetalMonitorId() {
-		return partnerFoetalMonitorId;
+	public Long getPartnerFetosenseID() {
+		return partnerFetosenseId;
 	}
 
-	public void setPartnerFoetalMonitorId(Long partnerFoetalMonitorId) {
-		this.partnerFoetalMonitorId = partnerFoetalMonitorId;
+	public void setPartnerFetosenseID(Long partnerFetosenseID) {
+		this.partnerFetosenseId = partnerFetosenseID;
 	}
 
 	public String getMotherLMPDate() {
