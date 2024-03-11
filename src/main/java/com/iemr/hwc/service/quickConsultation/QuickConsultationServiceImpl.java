@@ -107,7 +107,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Long returnOBJ = null;
 		if (benChiefComplaints != null && benChiefComplaints.size() > 0) {
 			List<BenChiefComplaint> chiefComplaints = (List<BenChiefComplaint>) benChiefComplaintRepo
-					.save(benChiefComplaints);
+					.saveAll(benChiefComplaints);
 
 			if (benChiefComplaints.size() == chiefComplaints.size()) {
 				returnOBJ = new Long(1);

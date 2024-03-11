@@ -31,7 +31,7 @@ import org.springframework.stereotype.Repository;
 import com.iemr.hwc.data.masterdata.nurse.CancerDiseaseType;
 @Repository
 @RestResource(exported = false)
-public interface CancerDiseaseMasterRepo extends CrudRepository<CancerDiseaseType, Long>{
+public interface CancerDiseaseMasterRepo extends CrudRepository<CancerDiseaseType, Short>{
 	
 	@Query("SELECT cancerDiseaseTypeID, cancerDiseaseType, gender, snomedCode, snomedTerm FROM CancerDiseaseType "
 			+ "WHERE deleted = false ORDER BY cancerDiseaseType")

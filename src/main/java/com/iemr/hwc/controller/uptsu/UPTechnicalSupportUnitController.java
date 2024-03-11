@@ -21,7 +21,7 @@
 */
 package com.iemr.hwc.controller.uptsu;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +41,11 @@ import com.iemr.hwc.data.uptsu.Referred104Details;
 import com.iemr.hwc.service.uptsu.UptsuService;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
-@RequestMapping(value = "/uptsu", headers = "Authorization")
+
+
+@RequestMapping(value = "/uptsu", headers = "Authorization", consumes = "application/json", produces = "application/json")
 @RestController
 @CrossOrigin
 public class UPTechnicalSupportUnitController {
@@ -53,8 +55,8 @@ public class UPTechnicalSupportUnitController {
 	private UptsuService uptsuService;
 
 	@CrossOrigin
-	@ApiOperation(value = "Fetch 104 action master data", produces = "application/json")
-	@RequestMapping(value = "/get/action-master", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
+	@Operation(summary = "Fetch 104 action master data")
+	@GetMapping(value = "/get/action-master", produces = MediaType.APPLICATION_JSON)
 	public String getActionMaster() {
 
 		OutputResponse response = new OutputResponse();
@@ -68,7 +70,7 @@ public class UPTechnicalSupportUnitController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Fetch 104 work list data", consumes = "application/json", produces = "application/json")
+	@Operation(summary = "Fetch 104 work list data")
 	@GetMapping("/getWorklistByVanID/{vanId}")
 	public String getWolklist104Data(@PathVariable Integer vanId) {
 		OutputResponse response = new OutputResponse();
@@ -87,7 +89,7 @@ public class UPTechnicalSupportUnitController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Save 104 referred details", consumes = "application/json", produces = "application/json")
+	@Operation(summary = "Save 104 referred details")
 	@PostMapping("/submit/closevisit")
 	public String saveReferred104Details(@RequestBody String request) {
 		ObjectMapper mapper = new ObjectMapper();

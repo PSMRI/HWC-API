@@ -34,7 +34,7 @@ import com.iemr.hwc.data.masterdata.doctor.V_DrugPrescription;
 
 @Repository
 @RestResource(exported = false)
-public interface ItemMasterRepo extends CrudRepository<ItemMaster, Long> {
+public interface ItemMasterRepo extends CrudRepository<ItemMaster, Integer> {
 	@Query("SELECT t FROM ItemMaster t WHERE t.providerServiceMapID= :psmID and t.isEDL = false and ( isEaushadi = null or isEaushadi = false ) and t.deleted = false ")
 	public ArrayList<ItemMaster> searchEdl(@Param("psmID") Integer psmID);
 }

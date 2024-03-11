@@ -199,7 +199,7 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 						}
 
 						if (isList.size() > 0)
-							immunizationServicesRepo.save(isList);
+							immunizationServicesRepo.saveAll(isList);
 					}
 				}
 
@@ -890,7 +890,7 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 				}
 
 				if (isList.size() > 0)
-					immunizationServicesRepo.save(isList);
+					immunizationServicesRepo.saveAll(isList);
 			}
 		}
 

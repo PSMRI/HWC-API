@@ -25,12 +25,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -44,8 +45,7 @@ import com.iemr.hwc.service.anc.ANCService;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * 
@@ -55,7 +55,7 @@ import io.swagger.annotations.ApiParam;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/ANC", headers = "Authorization")
+@RequestMapping(value = "/ANC", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class AntenatalCareController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -70,8 +70,8 @@ public class AntenatalCareController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Save ANC nurse data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Save ANC nurse data")
+	@PostMapping(value = { "/save/nurseData" })
 	public String saveBenANCNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
@@ -108,8 +108,8 @@ public class AntenatalCareController {
 	 * @return success or failure response
 	 */
 	@CrossOrigin
-	@ApiOperation(value = "Save ANC doctor data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/save/doctorData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Save ANC doctor data")
+	@PostMapping(value = { "/save/doctorData" })
 	public String saveBenANCDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();
@@ -145,11 +145,11 @@ public class AntenatalCareController {
 	 */
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get ANC beneficiary visit details from nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenVisitDetailsFrmNurseANC" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get ANC beneficiary visit details from nurse")
+	@PostMapping(value = { "/getBenVisitDetailsFrmNurseANC" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenVisitDetailsFrmNurseANC(
-			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for ANC visit data fetching :" + comingRequest);
@@ -178,11 +178,11 @@ public class AntenatalCareController {
 	 * @return anc care details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get ANC beneficiary details from nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenANCDetailsFrmNurseANC" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get ANC beneficiary details from nurse")
+	@PostMapping(value = { "/getBenANCDetailsFrmNurseANC" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenANCDetailsFrmNurseANC(
-			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for ANC Care data fetching :" + comingRequest);
@@ -215,11 +215,11 @@ public class AntenatalCareController {
 	 * @return history details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get ANC beneficiary history from nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenANCHistoryDetails" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get ANC beneficiary history from nurse")
+	@PostMapping(value = { "/getBenANCHistoryDetails" })
 
 	public String getBenANCHistoryDetails(
-			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for ANC history data fetching :" + comingRequest);
@@ -248,10 +248,10 @@ public class AntenatalCareController {
 	 * @return vital details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get ANC beneficiary vitals from nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenANCVitalDetailsFrmNurseANC" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get ANC beneficiary vitals from nurse")
+	@PostMapping(value = { "/getBenANCVitalDetailsFrmNurseANC" })
 	public String getBenANCVitalDetailsFrmNurseANC(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for ANC vital data fetching :" + comingRequest);
@@ -281,11 +281,11 @@ public class AntenatalCareController {
 	 * @return examination details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get ANC beneficiary examination details from nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenExaminationDetailsANC" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get ANC beneficiary examination details from nurse")
+	@PostMapping(value = { "/getBenExaminationDetailsANC" })
 
 	public String getBenExaminationDetailsANC(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for ANC examination data fetching :" + comingRequest);
@@ -314,11 +314,11 @@ public class AntenatalCareController {
 	 * @return doctor entered details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get ANC beneficiary case record", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenCaseRecordFromDoctorANC" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get ANC beneficiary case record")
+	@PostMapping(value = { "/getBenCaseRecordFromDoctorANC" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenCaseRecordFromDoctorANC(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for doctor data fetching :" + comingRequest);
@@ -343,8 +343,8 @@ public class AntenatalCareController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Check high risk pregnancy status for ANC beneficiary", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getHRPStatus" }, method = { RequestMethod.POST })
+	@Operation(summary = "Check high risk pregnancy status for ANC beneficiary")
+	@PostMapping(value = { "/getHRPStatus" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getHRPStatus(@RequestBody HrpStatusAndReasonsRequestModel hrpStatusAndReasonsRequestModel) {
 		OutputResponse response = new OutputResponse();
@@ -367,12 +367,12 @@ public class AntenatalCareController {
 	private ANCService aNCService;
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get high risk pregnancy information (status and reason) from obstetric history "
-			+ "as per the latest visit", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getHrpInformation" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get high risk pregnancy information (status and reason) from obstetric history "
+			+ "as per the latest visit")
+	@PostMapping(value = { "/getHrpInformation" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getHrpInformation(
-			@ApiParam(value = "{\"beneficiaryRegId\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+			@Param(value = "{\"beneficiaryRegId\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for getHrpInformation :" + commonUtilityClass.toString());
@@ -400,8 +400,8 @@ public class AntenatalCareController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update ANC beneficiary data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/ANCScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update ANC beneficiary data")
+	@PostMapping(value = { "/update/ANCScreen" })
 	public String updateANCCareNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -437,8 +437,8 @@ public class AntenatalCareController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update ANC beneficiary history", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/historyScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update ANC beneficiary history")
+	@PostMapping(value = { "/update/historyScreen" })
 	public String updateANCHistoryNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -474,8 +474,8 @@ public class AntenatalCareController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update ANC beneficiary vitals", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/vitalScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update ANC beneficiary vitals")
+	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateANCVitalNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -511,8 +511,8 @@ public class AntenatalCareController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update ANC examination data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/examinationScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update ANC examination data")
+	@PostMapping(value = { "/update/examinationScreen" })
 	public String updateANCExaminationNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -547,8 +547,8 @@ public class AntenatalCareController {
 	 * 
 	 */
 	@CrossOrigin
-	@ApiOperation(value = "Update ANC doctor data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/doctorData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update ANC doctor data")
+	@PostMapping(value = { "/update/doctorData" })
 	public String updateANCDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 

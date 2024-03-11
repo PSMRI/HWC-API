@@ -46,7 +46,7 @@ public class DataSyncRepositoryCentral {
 	private JdbcTemplate jdbcTemplate;
 
 	private JdbcTemplate getJdbcTemplate() {
-		return new JdbcTemplate(dataSource);
+		return new JdbcTemplate();
 
 	}
 

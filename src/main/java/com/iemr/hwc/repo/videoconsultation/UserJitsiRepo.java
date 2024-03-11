@@ -33,7 +33,7 @@ import com.iemr.hwc.data.videoconsultation.UserJitsi;
 
 @Repository
 @RestResource(exported = false)
-public interface UserJitsiRepo extends CrudRepository<UserJitsi, Integer> {
+public interface UserJitsiRepo extends CrudRepository<UserJitsi, Long> {
 	
 	
 

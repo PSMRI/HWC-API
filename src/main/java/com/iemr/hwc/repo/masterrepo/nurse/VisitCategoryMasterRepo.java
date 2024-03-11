@@ -31,7 +31,7 @@ import org.springframework.stereotype.Repository;
 import com.iemr.hwc.data.masterdata.nurse.VisitCategory;
 @Repository
 @RestResource(exported = false)
-public interface VisitCategoryMasterRepo extends CrudRepository<VisitCategory, Long>{
+public interface VisitCategoryMasterRepo extends CrudRepository<VisitCategory, Short>{
 
 	@Query("select visitCategoryID, visitCategory from VisitCategory where deleted = false order by visitCategory ")
 	public ArrayList<Object[]> getVisitCategoryMaster();

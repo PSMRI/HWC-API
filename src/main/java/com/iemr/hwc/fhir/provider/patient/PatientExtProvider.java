@@ -1,31 +1,43 @@
 package com.iemr.hwc.fhir.provider.patient;
 
-import ca.uhn.fhir.rest.annotation.*;
-import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.server.IResourceProvider;
-import com.iemr.hwc.fhir.dto.beneficiary.identityDTO.*;
-import com.iemr.hwc.fhir.model.patient.PatientExt;
-import com.iemr.hwc.fhir.service.patient.PatientService;
-import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
-import io.swagger.models.Contact;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Encounter;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.common.reflect.TypeToken;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.iemr.hwc.fhir.dto.beneficiary.identityDTO.BeneficiariesDTOSearch;
+import com.iemr.hwc.fhir.dto.visitDetailsMain.visitDetails.BenVisitsDTO;
+import com.iemr.hwc.fhir.model.encounter.EncounterExt;
+import com.iemr.hwc.fhir.model.patient.PatientExt;
+import com.iemr.hwc.fhir.service.patient.PatientService;
+import com.iemr.hwc.service.nurse.NurseServiceImpl;
+import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
+
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
-import com.iemr.hwc.fhir.model.encounter.EncounterExt;
-import com.iemr.hwc.fhir.dto.visitDetailsMain.visitDetails.BenVisitsDTO;
-import com.iemr.hwc.service.nurse.NurseServiceImpl;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class PatientExtProvider implements IResourceProvider {

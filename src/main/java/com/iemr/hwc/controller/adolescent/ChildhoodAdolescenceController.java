@@ -27,12 +27,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -43,8 +44,7 @@ import com.iemr.hwc.service.adolescent.AdolescentAndChildCareService;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 
 @CrossOrigin
 @RestController
@@ -62,8 +62,8 @@ public class ChildhoodAdolescenceController {
 	 * @throws Exception
 	 */
 	@CrossOrigin
-	@ApiOperation(value = "Save child adolescent care (CAC) nurse data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/save/nurseData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Save child adolescent care (CAC) nurse data")
+	@PostMapping(value = { "/save/nurseData" })
 	public String saveBenNurseDataCAC(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
@@ -95,8 +95,8 @@ public class ChildhoodAdolescenceController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Save child adolescent care doctor data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "save/doctorData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Save child adolescent care doctor data")
+	@PostMapping(value = { "save/doctorData" })
 	public String saveDoctorDataCAC(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();
@@ -129,11 +129,11 @@ public class ChildhoodAdolescenceController {
 	 * @return visit details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get beneficiary visit details from nurse for child adolescent care", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenVisitDetailsFrmNurseCAC" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get beneficiary visit details from nurse for child adolescent care")
+	@PostMapping(value = { "/getBenVisitDetailsFrmNurseCAC" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenVisitDetailsFrmNurseCAC(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request obj to fetch CAC visit details :" + comingRequest);
@@ -164,11 +164,11 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get child adolescent care beneficiary history", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenHistoryDetails" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get child adolescent care beneficiary history")
+	@PostMapping(value = { "/getBenHistoryDetails" })
 
 	public String getBenHistoryDetails(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("getBenHistoryDetails request:" + commonUtilityClass.toString());
@@ -197,10 +197,10 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get child adolescent care beneficiary vitals from nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenVitalDetailsFrmNurse" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get child adolescent care beneficiary vitals from nurse")
+	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
 	public String getBenVitalDetailsFrmNurse(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("getBenVitalDetailsFrmNurse request:" + comingRequest);
@@ -232,11 +232,11 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get child adolescent care beneficiary immunization details", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenImmunizationServiceDetails" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get child adolescent care beneficiary immunization details")
+	@PostMapping(value = { "/getBenImmunizationServiceDetails" })
 
 	public String getBenImmunizationServiceDetails(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("getBenImmunizationServiceDetails request:" + commonUtilityClass.toString());
@@ -266,11 +266,11 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get child adolescent care beneficiary details entered by doctor", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenCaseRecordFromDoctor" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get child adolescent care beneficiary details entered by doctor")
+	@PostMapping(value = { "/getBenCaseRecordFromDoctor" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenCaseRecordFromDoctor(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("getBenCaseRecordFromDoctor CAC request:" + comingRequest);
@@ -300,8 +300,8 @@ public class ChildhoodAdolescenceController {
 	 * @return vital details in JSON format
 	 */
 	@CrossOrigin
-	@ApiOperation(value = "Update child adolescent care beneficiary vitals", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/vitalScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update child adolescent care beneficiary vitals")
+	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurseCAC(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -335,8 +335,8 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update birth and immunization history", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/BirthAndImmunizationHistoryScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update birth and immunization history")
+	@PostMapping(value = { "/update/BirthAndImmunizationHistoryScreen" })
 	public String updateBirthAndImmunizationHistoryNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -371,8 +371,8 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update immunization service data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/ImmunizationServicesScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update immunization service data")
+	@PostMapping(value = { "/update/ImmunizationServicesScreen" })
 	public String updateImmunizationServicesNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -406,8 +406,8 @@ public class ChildhoodAdolescenceController {
 	 */
 
 	@CrossOrigin
-	@ApiOperation(value = "Update child adolescent care doctor data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/doctorData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update child adolescent care doctor data")
+	@PostMapping(value = { "/update/doctorData" })
 	public String updateCACDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 

@@ -25,10 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -37,10 +37,10 @@ import com.google.gson.JsonParser;
 import com.iemr.hwc.service.tele_consultation.TeleConsultationServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping(value = "/tc", headers = "Authorization")
+@RequestMapping(value = "/tc", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class TeleConsultationController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -48,8 +48,8 @@ public class TeleConsultationController {
 	private TeleConsultationServiceImpl teleConsultationServiceImpl;
 
 	@CrossOrigin
-	@ApiOperation(value = "Update beneficiary arrival status based on request", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/benArrivalStatus" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update beneficiary arrival status based on request")
+	@PostMapping(value = { "/update/benArrivalStatus" })
 	public String benArrivalStatusUpdater(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
 		try {
@@ -69,8 +69,8 @@ public class TeleConsultationController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Update beneficiary status based on request", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/cancel/benTCRequest" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update beneficiary status based on request")
+	@PostMapping(value = { "/cancel/benTCRequest" })
 	public String updateBeneficiaryStatusToCancelTCRequest(@RequestBody String requestOBJ,
 			@RequestHeader String Authorization) {
 		OutputResponse response = new OutputResponse();
@@ -92,8 +92,8 @@ public class TeleConsultationController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Check if specialist can proceed with beneficiary", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/check/benTCRequestStatus" }, method = { RequestMethod.POST })
+	@Operation(summary = "Check if specialist can proceed with beneficiary")
+	@PostMapping(value = { "/check/benTCRequestStatus" })
 	public String checkBeneficiaryStatusToProceedWithSpecialist(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
 		try {
@@ -113,8 +113,8 @@ public class TeleConsultationController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Create teleconsultation request from worklist", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/create/benTCRequestWithVisitCode" }, method = { RequestMethod.POST })
+	@Operation(summary = "Create teleconsultation request from worklist")
+	@PostMapping(value = { "/create/benTCRequestWithVisitCode" })
 	public String createTCRequestForBeneficiary(@RequestBody String requestOBJ, @RequestHeader String Authorization) {
 		OutputResponse response = new OutputResponse();
 		try {
@@ -140,8 +140,8 @@ public class TeleConsultationController {
 
 	// TC request List
 	@CrossOrigin
-	@ApiOperation(value = "Get teleconsultation request list for a specialist", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getTCRequestList" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get teleconsultation request list for a specialist")
+	@PostMapping(value = { "/getTCRequestList" })
 	public String getTCSpecialistWorkListNew(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
 		try {
@@ -170,8 +170,8 @@ public class TeleConsultationController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Update first consultation start time", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/startconsultation" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update first consultation start time")
+	@PostMapping(value = { "/startconsultation" })
 	public String startconsultation(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
 		try {

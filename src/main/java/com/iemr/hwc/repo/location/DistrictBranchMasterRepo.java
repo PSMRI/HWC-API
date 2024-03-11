@@ -32,7 +32,7 @@ import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.location.DistrictBranchMapping;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 @Repository
 @RestResource(exported = false)

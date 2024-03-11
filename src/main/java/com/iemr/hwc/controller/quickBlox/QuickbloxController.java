@@ -25,20 +25,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iemr.hwc.service.quickBlox.QuickbloxService;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/quickblox", headers = "Authorization")
+@RequestMapping(value = "/quickblox", headers = "Authorization", consumes = "application/json", produces = "application/json")
 
 public class QuickbloxController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -46,8 +46,8 @@ public class QuickbloxController {
 	private QuickbloxService quickbloxService;
 
 	@CrossOrigin
-	@ApiOperation(value = "Get quickblox id", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getquickbloxIds" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get quickblox id")
+	@PostMapping(value = { "/getquickbloxIds" })
 	public String getquickbloxIds(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();

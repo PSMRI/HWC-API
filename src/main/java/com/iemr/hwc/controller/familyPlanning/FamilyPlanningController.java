@@ -25,8 +25,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +43,10 @@ import com.iemr.hwc.service.family_planning.FamilyPlanningService;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+
+
+
 
 @CrossOrigin
 @RestController
@@ -54,9 +58,9 @@ public class FamilyPlanningController {
 	@Autowired
 	private FamilyPlanningService familyPlanningService;
 
-	@ApiOperation(value = "Save family planning data collected by nurse", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = "/save-family-planning-nurse-data", method = RequestMethod.POST)
-	public String saveFamilyPlanningNuseData(@ApiParam(value = "{\r\n" + "  \"visitDetails\": {\r\n"
+	@Operation(summary = "Save family planning data collected by nurse")
+	@PostMapping(value = "/save-family-planning-nurse-data")
+	public String saveFamilyPlanningNuseData(@Param(value = "{\r\n" + "  \"visitDetails\": {\r\n"
 			+ "    \"visitDetails\": {\r\n" + "      \"beneficiaryRegID\": \"274661\",\r\n"
 			+ "      \"providerServiceMapID\": \"1261\",\r\n" + "      \"visitNo\": null,\r\n"
 			+ "      \"visitReason\": \"Follow Up\",\r\n"
@@ -152,8 +156,8 @@ public class FamilyPlanningController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Save family planning data collected by doctor", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "save-family-planning-doctor-data" }, method = { RequestMethod.POST })
+	@Operation(summary = "Save family planning data collected by doctor")
+	@PostMapping(value = { "save-family-planning-doctor-data" })
 	public String saveFamilyPlanningDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();
@@ -187,11 +191,11 @@ public class FamilyPlanningController {
 	 */
 
 	@CrossOrigin()
-	@ApiOperation(value = "Get family planning beneficiary visit details", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenVisitDetails-Nurse-FamilyPlanning" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get family planning beneficiary visit details")
+	@PostMapping(value = { "/getBenVisitDetails-Nurse-FamilyPlanning" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenVisitDetailsFrmNurseFamilyPlanning(
-			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for FamilyPlanning visit data fetching :" + commonUtilityClass.toString());
@@ -220,10 +224,10 @@ public class FamilyPlanningController {
 	 * @return vital details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get family planning beneficiary vitals", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenVitalDetailsFrmNurseFamilyPlanning" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get family planning beneficiary vitals")
+	@RequestMapping(value = { "/getBenVitalDetailsFrmNurseFamilyPlanning" })
 	public String getBenVitalDetailsFrmNurseFamilyPlanning(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for FamilyPlanning vital data fetching :" + commonUtilityClass.toString());
@@ -250,11 +254,11 @@ public class FamilyPlanningController {
 	 * @return FamilyPlanning details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get family planning beneficiary details", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenFPDetailsFrmNurseFamilyPlanning" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get family planning beneficiary details")
+	@PostMapping(value = { "/getBenFPDetailsFrmNurseFamilyPlanning" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenFPDetailsFrmNurseFamilyPlanning(
-			@ApiParam(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for FamilyPlanning details data fetching :" + commonUtilityClass.toString());
@@ -278,11 +282,11 @@ public class FamilyPlanningController {
 	 * @return doctor details in JSON format
 	 */
 	@CrossOrigin()
-	@ApiOperation(value = "Get family planning beneficiary case record", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/getBenCaseRecordFromDoctor" }, method = { RequestMethod.POST })
+	@Operation(summary = "Get family planning beneficiary case record")
+	@PostMapping(value = { "/getBenCaseRecordFromDoctor" })
 	@Transactional(rollbackFor = Exception.class)
 	public String getBenCaseRecordFromDoctor(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("getBenCaseRecordFromDoctor FP request:" + comingRequest);
@@ -307,8 +311,8 @@ public class FamilyPlanningController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Update family planning data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/FamilyPlanningScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update family planning data")
+	@PostMapping(value = { "/update/FamilyPlanningScreen" })
 	public String updateFamilyPlanningNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -336,8 +340,8 @@ public class FamilyPlanningController {
 	}
 
 	@CrossOrigin
-	@ApiOperation(value = "Update family planning beneficiary vitals", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/vitalScreen" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update family planning beneficiary vitals")
+	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurseFamilyPlanning(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
@@ -371,8 +375,8 @@ public class FamilyPlanningController {
 	 * @objective Update FamilyPlanning doctor data for the doctor next visit
 	 */
 	@CrossOrigin
-	@ApiOperation(value = "Update family planning data", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/update/doctorData" }, method = { RequestMethod.POST })
+	@Operation(summary = "Update family planning data")
+	@PostMapping(value = { "/update/doctorData" })
 	public String updateFamilyPlanningDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 

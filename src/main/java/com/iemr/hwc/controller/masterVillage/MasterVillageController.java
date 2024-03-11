@@ -26,7 +26,9 @@ import com.iemr.hwc.data.login.UserMasterVillageDTO;
 import com.iemr.hwc.data.login.UsersMasterVillage;
 import com.iemr.hwc.service.masterVillage.MasterVillageService;
 import com.iemr.hwc.utils.response.OutputResponse;
-import io.swagger.annotations.ApiOperation;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/masterVillage", headers = "Authorization")
+@RequestMapping(value = "/masterVillage", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class MasterVillageController {
     private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -45,8 +47,8 @@ public class MasterVillageController {
         this.masterVillageService = masterVillageService;
     }
 
-    @ApiOperation(value = "set master village to a user", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = "/set", method = { RequestMethod.POST }, produces = {
+    @Operation(summary = "set master village to a user")
+    @PostMapping(value = "/set", produces = {
             "application/json" })
     public String setMasterVillage(@RequestBody UserMasterVillageDTO userMasterVillageDTO) {
         OutputResponse response = new OutputResponse();
@@ -76,8 +78,8 @@ public class MasterVillageController {
         return response.toString();
     }
 
-    @ApiOperation(value = "Get master village for a user", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = "/{userID}/get", method = RequestMethod.GET)
+    @Operation(summary = "Get master village for a user")
+    @GetMapping(value = "/{userID}/get")
     public String getMasterVillage(@PathVariable("userID") Long userID) {
         logger.info("Get master village by userID ..." + userID);
         OutputResponse response = new OutputResponse();

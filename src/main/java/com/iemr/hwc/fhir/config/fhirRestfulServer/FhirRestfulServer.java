@@ -1,26 +1,32 @@
 package com.iemr.hwc.fhir.config.fhirRestfulServer;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
-import ca.uhn.fhir.narrative.INarrativeGenerator;
-import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.RestfulServer;
-import ca.uhn.fhir.rest.server.interceptor.*;
-import ca.uhn.fhir.validation.ResultSeverityEnum;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.cors.CorsConfiguration;
+
 import com.iemr.hwc.fhir.config.authInterceptor.AuthInterceptor;
 import com.iemr.hwc.fhir.provider.condition.ConditionExtProvider;
 import com.iemr.hwc.fhir.provider.encounter.EncounterExtProvider;
 import com.iemr.hwc.fhir.provider.immunization.ImmunizationExtProvider;
 import com.iemr.hwc.fhir.provider.observation.ObservationExtProvider;
 import com.iemr.hwc.fhir.provider.patient.PatientExtProvider;
-import org.hl7.fhir.r4.hapi.validation.FhirInstanceValidator;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.cors.CorsConfiguration;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
+import ca.uhn.fhir.narrative.INarrativeGenerator;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.interceptor.CorsInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.RequestValidatingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
+import ca.uhn.fhir.validation.ResultSeverityEnum;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet("/fhir/*")
 public class FhirRestfulServer extends RestfulServer {
@@ -86,7 +92,7 @@ public class FhirRestfulServer extends RestfulServer {
         RequestValidatingInterceptor requestInterceptor = new RequestValidatingInterceptor();
 
         // Registering a validator module(Instance validator in this case)
-        requestInterceptor.addValidatorModule(new FhirInstanceValidator());
+        requestInterceptor.addValidatorModule(new FhirInstanceValidator(ctx));
 
         requestInterceptor.setFailOnSeverity(ResultSeverityEnum.ERROR);
         requestInterceptor.setAddResponseHeaderOnSeverity(ResultSeverityEnum.INFORMATION);

@@ -24,21 +24,24 @@ package com.iemr.hwc.controller.diabetesAndHypertensionOutcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iemr.hwc.service.ncdscreening.DiabetesAndHypertensionOutcomeService;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+
+
+
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/screeningOutcome", headers = "Authorization")
+@RequestMapping(value = "/screeningOutcome", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class DiabetesHypertensionScreeningController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -46,10 +49,10 @@ public class DiabetesHypertensionScreeningController {
 	private DiabetesAndHypertensionOutcomeService diabetesAndHypertensionOutcomeService;
 
 	@CrossOrigin()
-	@ApiOperation(value = "Evaluate hypertension screening outcome", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/hypertension" }, method = { RequestMethod.POST })
+	@Operation(summary = "Evaluate hypertension screening outcome")
+	@PostMapping(value = { "/hypertension" })
 	public String getHypertensionOutcome(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object getting hypertension screening outcome :" + comingRequest);
@@ -64,10 +67,10 @@ public class DiabetesHypertensionScreeningController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Evaluate diabetes screening outcome", consumes = "application/json", produces = "application/json")
-	@RequestMapping(value = { "/diabetes" }, method = { RequestMethod.POST })
+	@Operation(summary = "Evaluate diabetes screening outcome")
+	@PostMapping(value = { "/diabetes" })
 	public String getDiabetesOutcome(
-			@ApiParam(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object getting diabetes screening outcome :" + comingRequest);

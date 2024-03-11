@@ -25,7 +25,7 @@ import com.google.gson.annotations.Expose;
 import com.iemr.hwc.data.location.DistrictBranchMapping;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Data

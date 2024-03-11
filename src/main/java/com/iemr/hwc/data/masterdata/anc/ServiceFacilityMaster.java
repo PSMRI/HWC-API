@@ -21,11 +21,11 @@
 */
 package com.iemr.hwc.data.masterdata.anc;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 import com.google.gson.annotations.Expose;
 import com.iemr.hwc.data.anc.FemaleObstetricHistory;

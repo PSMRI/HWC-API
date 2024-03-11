@@ -33,7 +33,7 @@ import com.iemr.hwc.data.masterdata.doctor.V_DrugPrescription;
 
 @Repository
 @RestResource(exported = false)
-public interface V_DrugPrescriptionRepo extends CrudRepository<V_DrugPrescription, Long> {
+public interface V_DrugPrescriptionRepo extends CrudRepository<V_DrugPrescription, Integer> {
 	@Query("SELECT t FROM V_DrugPrescription t WHERE t.facilityID =:facilityID ")
 	public ArrayList<V_DrugPrescription> getItemListForFacility(@Param("facilityID") Integer facilityID);
 }

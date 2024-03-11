@@ -35,7 +35,7 @@ import com.iemr.hwc.data.quickBlox.Quickblox;
 
 @Repository
 @RestResource(exported = false)
-public interface QuickBloxRepo extends CrudRepository<Quickblox, Long> {
+public interface QuickBloxRepo extends CrudRepository<Quickblox, Integer> {
 	
 	//public List<Quickblox> findAll(Long specialistUserID);
 	@Query("SELECT t FROM Quickblox t WHERE t.specialistUserID = :specialistUserID")

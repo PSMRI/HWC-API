@@ -23,7 +23,7 @@ package com.iemr.hwc.data.login;
 
 import java.sql.Timestamp;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import com.google.gson.annotations.Expose;
 import com.iemr.hwc.data.location.DistrictBranchMapping;

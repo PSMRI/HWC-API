@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface PrescriptionTemplatesRepo extends CrudRepository<PrescriptionTemplates,Integer> {
+public interface PrescriptionTemplatesRepo extends CrudRepository<PrescriptionTemplates,Long> {
 
     @Query(" SELECT t FROM PrescriptionTemplates t WHERE t.userID = :userId")
     List<PrescriptionTemplates> getPrescriptionTemplatesByUserID(@Param("userId") Integer userId);

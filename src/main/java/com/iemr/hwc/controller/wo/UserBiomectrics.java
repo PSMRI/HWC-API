@@ -27,7 +27,9 @@ import com.iemr.hwc.data.registrar.FingerPrintDTO;
 import com.iemr.hwc.data.registrar.UserBiometricsMapping;
 import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
-import io.swagger.annotations.ApiOperation;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +47,8 @@ public class UserBiomectrics {
     @Autowired
     private RegistrarServiceImpl registrarService;
     @CrossOrigin()
-    @ApiOperation(value = "add fingerprint for a given username", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = "add/fingerprint/wo", method = { RequestMethod.POST }, produces = {
+    @Operation(summary = "add fingerprint for a given username")
+    @PostMapping(value = "add/fingerprint/wo", produces = {
             "application/json" })
     public String addFingerPrints(@RequestBody FingerPrintDTO comingRequest) {
         OutputResponse response = new OutputResponse();
@@ -69,8 +71,8 @@ public class UserBiomectrics {
         return response.toString();
     }
 
-    @ApiOperation(value = "Get fingerprint by username", consumes = "application/json", produces = "application/json")
-    @RequestMapping(value = "/get/fingerprint/{userID}/wo", method = RequestMethod.GET)
+    @Operation(summary = "Get fingerprint by username")
+    @GetMapping(value = "/get/fingerprint/{userID}/wo")
     public String getFingerprintsByUsername(@PathVariable("userID") Long userID) {
         logger.info("Get fingerprint by username ..." + userID);
         OutputResponse response = new OutputResponse();

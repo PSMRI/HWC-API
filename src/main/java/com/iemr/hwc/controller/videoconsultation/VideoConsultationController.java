@@ -25,18 +25,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iemr.hwc.service.videoconsultation.VideoConsultationService;
 import com.iemr.hwc.utils.response.OutputResponse;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping(value = "/videoConsultation", headers = "Authorization")
+@RequestMapping(value = "/videoConsultation", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class VideoConsultationController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -45,9 +45,8 @@ public class VideoConsultationController {
 	private VideoConsultationService videoConsultationService;
 
 	@CrossOrigin()
-	@ApiOperation(value = "Login to video consultation service", produces = "application/json")
-	@RequestMapping(value = "/login/{userID}", headers = "Authorization", method = { RequestMethod.GET }, produces = {
-			"application/json" })
+	@Operation(summary = "Login to video consultation service")
+	@GetMapping(value = "/login/{userID}", headers = "Authorization", produces = { "application/json" })
 	public String login(@PathVariable("userID") Long userID) {
 
 		OutputResponse response = new OutputResponse();
@@ -68,9 +67,8 @@ public class VideoConsultationController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Call user for video consultation", produces = "application/json")
-	@RequestMapping(value = "/call/{fromUserID}/{touserID}", headers = "Authorization", method = {
-			RequestMethod.GET }, produces = { "application/json" })
+	@Operation(summary = "Call user for video consultation")
+	@GetMapping(value = "/call/{fromUserID}/{touserID}", headers = "Authorization", produces = { "application/json" })
 	public String call(@PathVariable("fromUserID") Long fromUserID, @PathVariable("toUserID") Long toUserID) {
 
 		OutputResponse response = new OutputResponse();
@@ -91,9 +89,9 @@ public class VideoConsultationController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Video consultatation for users by passing type", produces = "application/json")
-	@RequestMapping(value = "/call/{fromUserID}/{toUserID}/{type}", headers = "Authorization", method = {
-			RequestMethod.GET }, produces = { "application/json" })
+	@Operation(summary = "Video consultatation for users by passing type")
+	@GetMapping(value = "/call/{fromUserID}/{toUserID}/{type}", headers = "Authorization", produces = {
+			"application/json" })
 	public String callSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
 			@PathVariable("toUserID") Long toUserID, @PathVariable("type") String Type) {
 
@@ -119,9 +117,8 @@ public class VideoConsultationController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Call van through Swymed", produces = "application/json")
-	@RequestMapping(value = "/callvan/{fromUserID}/{vanID}", headers = "Authorization", method = {
-			RequestMethod.GET }, produces = { "application/json" })
+	@Operation(summary = "Call van through Swymed")
+	@GetMapping(value = "/callvan/{fromUserID}/{vanID}", headers = "Authorization", produces = { "application/json" })
 	public String callvan(@PathVariable("fromUserID") Long fromUserID, @PathVariable("vanID") Integer vanID) {
 
 		OutputResponse response = new OutputResponse();
@@ -142,9 +139,9 @@ public class VideoConsultationController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Call van through Swymed by passing type", produces = "application/json")
-	@RequestMapping(value = "/callvan/{fromUserID}/{vanID}/{type}", headers = "Authorization", method = {
-			RequestMethod.GET }, produces = { "application/json" })
+	@Operation(summary = "Call van through Swymed by passing type")
+	@GetMapping(value = "/callvan/{fromUserID}/{vanID}/{type}", headers = "Authorization", produces = {
+			"application/json" })
 	public String callVanSwymedAndJitsi(@PathVariable("fromUserID") Long fromUserID,
 			@PathVariable("vanID") Integer vanID, @PathVariable("type") String type) {
 
@@ -171,9 +168,8 @@ public class VideoConsultationController {
 	}
 
 	@CrossOrigin()
-	@ApiOperation(value = "Logout of video consultation service", produces = "application/json")
-	@RequestMapping(value = "/logout", headers = "Authorization", method = { RequestMethod.GET }, produces = {
-			"application/json" })
+	@Operation(summary = "Logout of video consultation service")
+	@GetMapping(value = "/logout", headers = "Authorization", produces = { "application/json" })
 	public String logout() {
 
 		OutputResponse response = new OutputResponse();

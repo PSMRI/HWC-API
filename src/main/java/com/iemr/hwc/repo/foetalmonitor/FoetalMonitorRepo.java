@@ -23,7 +23,7 @@ package com.iemr.hwc.repo.foetalmonitor;
 
 import java.util.ArrayList;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

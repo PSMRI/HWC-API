@@ -24,7 +24,7 @@ package com.iemr.hwc.repo.nurse.pnc;
 import java.sql.Date;
 import java.util.ArrayList;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,7 +37,7 @@ import com.iemr.hwc.data.pnc.PNCCare;
 
 @Repository
 @RestResource(exported = false)
-public interface PNCCareRepo extends CrudRepository<PNCCare, Integer> {
+public interface PNCCareRepo extends CrudRepository<PNCCare, Long> {
 
 	@Query(" SELECT ID, beneficiaryRegID, benVisitID, providerServiceMapID, visitNo, deliveryTypeID, deliveryType, deliveryPlaceID, "
 			+ "deliveryPlace, otherDeliveryPlace, dateOfDelivery, deliveryComplicationID, deliveryComplication, otherDeliveryComplication, "

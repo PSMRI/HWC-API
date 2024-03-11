@@ -23,12 +23,13 @@ package com.iemr.hwc.utils.http;
 
 import java.util.HashMap;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -38,7 +39,7 @@ public class HttpUtils {
 	public static final String AUTHORIZATION = "Authorization";
 	private RestTemplate rest;
 	private HttpHeaders headers;
-	private HttpStatus status;
+	private HttpStatusCode status;
 
 	public HttpUtils() {
 		if (rest == null) {
@@ -109,11 +110,11 @@ public class HttpUtils {
 		return responseEntity;
 	}
 
-	public HttpStatus getStatus() {
+	public HttpStatusCode getStatus() {
 		return status;
 	}
 
-	public void setStatus(HttpStatus status) {
-		this.status = status;
+	public void setStatus(HttpStatusCode httpStatusCode) {
+		this.status = httpStatusCode;
 	}
 }

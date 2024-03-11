@@ -23,8 +23,6 @@ package com.iemr.hwc.data.anc;
 
 import java.util.List;
 
-import com.iemr.hwc.data.doctor.CancerSignAndSymptoms;
-
 public class WrapperANCCareDetail {
 	
 	private ANCCareDetails ancCareDetails;
