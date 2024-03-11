@@ -33,7 +33,7 @@ import com.iemr.hwc.data.doctor.DrugFrequencyMaster;
 @RestResource(exported = false)
 public interface DrugFrequencyMasterRepo extends CrudRepository<DrugFrequencyMaster, Integer> {
 	
-	@Query("SELECT drugFrequencyID, frequency FROM DrugFrequencyMaster c where c.deleted != 1 order by frequency")
+	@Query("SELECT drugFrequencyID, frequency FROM DrugFrequencyMaster c where c.deleted != true order by frequency")
 	public  ArrayList<Object[]> getDrugFrequencyMaster();
 	
 }

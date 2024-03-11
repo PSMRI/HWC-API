@@ -21,14 +21,17 @@
 */
 package com.iemr.mmu.report;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Timestamp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.iemr.hwc.service.report.CRMReportServiceImpl;
-
+@ExtendWith(MockitoExtension.class)
 public class TestReport {
 
 	@Test

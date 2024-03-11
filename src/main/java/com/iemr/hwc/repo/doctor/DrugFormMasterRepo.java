@@ -33,7 +33,7 @@ import com.iemr.hwc.data.doctor.DrugFormMaster;
 @RestResource(exported = false)
 public interface DrugFormMasterRepo extends CrudRepository<DrugFormMaster, Integer> {
 	
-	@Query("SELECT drugFormID, drugForm FROM DrugFormMaster c where c.deleted != 1 order by drugForm")
+	@Query("SELECT drugFormID, drugForm FROM DrugFormMaster c where c.deleted != true order by drugForm")
 	public  ArrayList<Object[]> getDrugFormMaster();
 	
 }

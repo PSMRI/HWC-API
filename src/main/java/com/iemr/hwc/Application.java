@@ -37,11 +37,7 @@ import org.springframework.web.client.RestTemplate;
 import com.iemr.hwc.fhir.config.fhirRestfulServer.FhirRestfulServer;
 import com.iemr.hwc.utils.IEMRApplBeans;
 
-@Configuration
-@EnableAutoConfiguration
-@ComponentScan("com.iemr.hwc")
 @SpringBootApplication
-@EnableCaching(proxyTargetClass = true)
 public class Application {
 
 	public static void main(String[] args) {

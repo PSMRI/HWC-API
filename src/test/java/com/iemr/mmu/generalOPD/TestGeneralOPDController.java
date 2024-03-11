@@ -21,15 +21,17 @@
 */
 package com.iemr.mmu.generalOPD;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.controller.generalOPD.GeneralOPDController;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
-
+@ExtendWith(MockitoExtension.class)
 public class TestGeneralOPDController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -72,7 +74,7 @@ public class TestGeneralOPDController {
 	static Long beneficiaryRegID = null;
 	static Long benVisitID = null;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initializeParams() {
 
 		createControllerMock.setGeneralOPDServiceImpl(generalOPDServiceImplMock);
@@ -150,11 +152,6 @@ public class TestGeneralOPDController {
 
 	}
 
-	@Before
-	public void initialize() {
-
-	}
-
 	@Test
 	public void saveGOPDNurseDataPveTest() {
 
@@ -162,7 +159,7 @@ public class TestGeneralOPDController {
 
 		String response = null;
 
-		assertTrue("", response.equals(
+		assertEquals("", response.equals(
 				"{\"data\":{\"response\":\"General OPD Nurse Entered Details stored successfully.\"},\"statusCode\":200,"
 						+ "\"errorMessage\":\"Success\",\"status\":\"Success\"}"));
 	}
@@ -173,7 +170,7 @@ public class TestGeneralOPDController {
 //		String response = createControllerMock.saveBenGenOPDNurseData(nurseObjNve);
 		String response = null;
 
-		assertTrue("",
+		assertEquals("",
 				response.equals("{\"data\":{\"response\":\"Failed to store General OPD Details.\"},\"statusCode\":200,"
 						+ "\"errorMessage\":\"Success\",\"status\":\"Success\"}"));
 	}
@@ -183,7 +180,7 @@ public class TestGeneralOPDController {
 
 		String response = createControllerMock.saveBenGenOPDDoctorData(doctorObjPve, "");
 
-		assertTrue("", response.equals(
+		assertEquals("", response.equals(
 				"{\"data\":{\"response\":\"General OPD doctor Entered Details stored successfully.\"},\"statusCode\":200,"
 						+ "\"errorMessage\":\"Success\",\"status\":\"Success\"}"));
 	}
@@ -193,7 +190,7 @@ public class TestGeneralOPDController {
 
 		String response = createControllerMock.saveBenGenOPDDoctorData(doctorObjNve, "");
 
-		assertTrue("",
+		assertEquals("",
 				response.equals(
 						"{\"data\":{\"response\":\"Failed to store General OPD doctor Details.\"},\"statusCode\":200,"
 								+ "\"errorMessage\":\"Success\",\"status\":\"Success\"}"));
@@ -355,7 +352,7 @@ public class TestGeneralOPDController {
 		String response = fetchControllerMock.getBenVisitDetailsFrmNurseGOPD(fetchObjPve);
 
 		System.out.println("getBenVisitDetailsFrmNurseGOPDPveTest " + response);
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -365,7 +362,7 @@ public class TestGeneralOPDController {
 		String response = fetchControllerMock.getBenHistoryDetails(fetchObjPve);
 
 		System.out.println("getBenHistoryDetailsPveTest " + response);
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -375,7 +372,7 @@ public class TestGeneralOPDController {
 		String response = fetchControllerMock.getBenVitalDetailsFrmNurse(fetchObjPve);
 
 		System.out.println("getBenVitalDetailsFrmNursePveTest " + response);
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -385,7 +382,7 @@ public class TestGeneralOPDController {
 		String response = fetchControllerMock.getBenExaminationDetails(fetchObjPve);
 
 		System.out.println("getBenExaminationDetailsPveTest " + response);
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -393,7 +390,7 @@ public class TestGeneralOPDController {
 		String expectedRes = "{\"data\":{\"result\":1},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 		String response = updateControllerMock.updateHistoryNurse(nurseObjPve);
 
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -402,7 +399,7 @@ public class TestGeneralOPDController {
 				+ "\"status\":\"Failed to update General OPD History Nurse Data\"}";
 		String response = updateControllerMock.updateHistoryNurse(nurseObjNve);
 
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -410,7 +407,7 @@ public class TestGeneralOPDController {
 		String expectedRes = "{\"data\":{\"result\":1},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 		String response = updateControllerMock.updateVitalNurse(nurseObjPve);
 
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 	@Test
@@ -418,7 +415,7 @@ public class TestGeneralOPDController {
 		String expectedRes = "{\"data\":{\"result\":1},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 		String response = updateControllerMock.updateGeneralOPDExaminationNurse(nurseObjPve);
 
-		assertTrue("", response.equals(expectedRes));
+		assertEquals("", response.equals(expectedRes));
 	}
 
 }

@@ -60,12 +60,12 @@ public interface BenVisitDetailRepo extends CrudRepository<BeneficiaryVisitDetai
 	@Query(" SELECT bvd from BeneficiaryVisitDetail bvd WHERE bvd.beneficiaryRegID = :benRegID AND bvd.visitCode = :visitCode")
 	public BeneficiaryVisitDetail getSubVisitCategory(@Param("benRegID") Long benRegID, @Param("visitCode") Long visitCode);
 
-	@Query(" SELECT bvd from BeneficiaryVisitDetail bvd WHERE bvd.beneficiaryRegID = :benRegID and DATE(CreatedDate)<curdate()")
+	@Query(" SELECT bvd from BeneficiaryVisitDetail bvd WHERE bvd.beneficiaryRegID = :benRegID and DATE(createdDate)<curdate()")
 	public List<BeneficiaryVisitDetail> getBeneficiaryVisitHistory(@Param("benRegID") Long benRegID);
 
 	@Transactional
 	@Modifying
-	@Query("UPDATE BeneficiaryVisitDetail set visitFlowStatusFlag = :visitFlowStatusFlag, lastModDate = curdate() where benVisitID = :benVisitID ")
+	@Query("UPDATE BeneficiaryVisitDetail SET visitFlowStatusFlag = :visitFlowStatusFlag, lastModDate = current_timestamp() WHERE benVisitID = :benVisitID")
 	public Integer updateBenFlowStatus(@Param("visitFlowStatusFlag") String visitFlowStatusFlag,
 			@Param("benVisitID") Long benVisitID);
 

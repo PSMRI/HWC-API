@@ -22,7 +22,8 @@
 package com.iemr.mmu.anc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -30,9 +31,12 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.aspectj.lang.annotation.Before;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,12 +51,11 @@ import com.iemr.hwc.repo.nurse.anc.ANCDiagnosisRepo;
 import com.iemr.hwc.repo.nurse.anc.ANCWomenVaccineRepo;
 import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
 import com.iemr.hwc.repo.nurse.anc.SysObstetricExaminationRepo;
-import com.iemr.hwc.repo.quickConsultation.LabTestOrderDetailRepo;
 import com.iemr.hwc.service.anc.ANCNurseServiceImpl;
 import com.iemr.hwc.service.anc.ANCServiceImpl;
 import com.iemr.mmu.common.TestCommonServices;
 
-
+@ExtendWith(MockitoExtension.class)
 public class TestANCServices
 {
 
@@ -79,7 +82,7 @@ public class TestANCServices
 	static Long beneficiaryRegID = 7506L;
 	static Long benVisitID = 131L;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void initializeParams()
 	{
 
@@ -129,7 +132,7 @@ public class TestANCServices
 		ANCWomenVaccineDetail ancWomenVaccine = spy(ANCWomenVaccineDetail.class);
 		ancWomenVaccine.setID(1L);
 		ancWomenVaccines.add(ancWomenVaccine);
-		when(ancWomenVaccineRepoMock.save(Matchers.anyListOf(ANCWomenVaccineDetail.class))).thenReturn(ancWomenVaccines);
+		//when(ancWomenVaccineRepoMock.save(Matchers.any())).thenReturn(ancWomenVaccines);
 		
 		SysObstetricExamination obsExmn = spy(SysObstetricExamination.class);
 		obsExmn.setID(1L);

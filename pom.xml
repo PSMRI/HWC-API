@@ -39,17 +39,20 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<version>3.2.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>3.2.2</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -61,7 +64,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>3.2.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.tomcat.embed</groupId>
@@ -72,7 +74,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
-			<version>3.2.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path -->
@@ -82,38 +83,18 @@
 			<version>2.9.0</version>
 		</dependency>
 
-
-		<!--
-		https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api -->
 		<dependency>
-			<groupId>jakarta.servlet.jsp.jstl</groupId>
-			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-			<version>3.0.0</version>
-		</dependency>
-
-		<!--
-		https://mvnrepository.com/artifact/org.hibernate/hibernate-core-jakarta -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core-jakarta</artifactId>
-			<version>5.6.15.Final</version>
-		</dependency>
-
-
-		<!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
-		<dependency>
-			<groupId>org.hibernate.orm</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-
-
-		<!-- Need this to compile JSP -->
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-			<version>11.0.0-M16</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.1.Final</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
 		<dependency>
 			<groupId>com.mysql</groupId>
@@ -139,36 +120,24 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>1.5.5.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>6.1.3</version>
-		</dependency>
-
 
 		<!--
 		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>3.2.2</version>
 		</dependency>
-
+		<!-- Tomcat provided -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 		</dependency>
-
-		<!--
-		https://mvnrepository.com/artifact/org.springframework/spring-context -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>6.1.4</version>
-		</dependency>
-
-
 		<!-- https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
 		<dependency>
 			<groupId>jakarta.ws.rs</groupId>
@@ -213,45 +182,27 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
-			<version>3.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
-			<version>3.2.2</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
-			<version>3.2.2</version>
 		</dependency>
+		
+	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
 		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<version>3.2.2</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/biz.paluch.redis/lettuce -->
-		<dependency>
-			<groupId>biz.paluch.redis</groupId>
-			<artifactId>lettuce</artifactId>
-			<version>4.5.0.Final</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
-		<dependency>
-			<groupId>io.lettuce</groupId>
-			<artifactId>lettuce-core</artifactId>
-			<version>6.3.1.RELEASE</version>
-		</dependency>
-
-
 		<!--
 		https://mvnrepository.com/artifact/org.springframework.session/spring-session-data-redis -->
 		<dependency>
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session-data-redis</artifactId>
-			<version>3.2.1</version>
 		</dependency>
 
 
@@ -259,7 +210,6 @@
 		<dependency>
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session-core</artifactId>
-			<version>3.2.1</version>
 		</dependency>
 
 

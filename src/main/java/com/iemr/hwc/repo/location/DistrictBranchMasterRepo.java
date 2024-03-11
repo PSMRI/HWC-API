@@ -38,7 +38,7 @@ import jakarta.transaction.Transactional;
 @RestResource(exported = false)
 public interface DistrictBranchMasterRepo extends CrudRepository<DistrictBranchMapping, Integer> {
 
-	@Query(" SELECT districtBranchID, villageName,govtLGDSubDistrictID,govtLGDVillageID, latitude, longitude, active, address FROM DistrictBranchMapping WHERE blockID = :blockID  AND deleted != 1 ")
+	@Query(" SELECT districtBranchID, villageName,govtLGDSubDistrictID,govtLGDVillageID, latitude, longitude, active, address FROM DistrictBranchMapping WHERE blockID = :blockID  AND deleted != true ")
 	public ArrayList<Object[]> findByBlockID(@Param("blockID") Integer blockID);
 
 	@Query(" SELECT d FROM DistrictBranchMapping d WHERE d.districtBranchID = :districtBranchID  AND d.deleted = false ")
@@ -55,6 +55,6 @@ public interface DistrictBranchMasterRepo extends CrudRepository<DistrictBranchM
 	@Query("update DistrictBranchMapping u set u.active = :active where u.districtBranchID = :districtBranchID")
 	int updateActiceStatus(@Param("active") boolean active, @Param("districtBranchID") Integer districtBranchID);
 
-	@Query(" SELECT d FROM DistrictBranchMapping d WHERE d.districtBranchID = :districtBranchID  AND d.deleted != 1 ")
+	@Query(" SELECT d FROM DistrictBranchMapping d WHERE d.districtBranchID = :districtBranchID  AND d.deleted != true ")
 	public DistrictBranchMapping findByDistrictBranchID(@Param("districtBranchID") Integer districtBranchID);
 }

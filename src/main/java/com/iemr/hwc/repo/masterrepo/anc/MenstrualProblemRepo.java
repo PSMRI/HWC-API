@@ -34,6 +34,6 @@ import com.iemr.hwc.data.masterdata.anc.MenstrualProblem;
 @RestResource(exported = false)
 public interface MenstrualProblemRepo extends CrudRepository<MenstrualProblem, Short>{
 	
-	@Query("select menstrualProblemID, problemName, menstrualProblemDesc from MenstrualProblem where deleted = false order by name")
+	@Query("select menstrualProblemID, problemName, menstrualProblemDesc from MenstrualProblem where deleted = false order by problemName")
 	public ArrayList<Object[]> getMenstrualProblems();
 }

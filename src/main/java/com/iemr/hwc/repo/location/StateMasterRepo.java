@@ -34,6 +34,6 @@ import com.iemr.hwc.data.location.States;
 @Repository
 @RestResource(exported = false)
 public interface StateMasterRepo extends CrudRepository<States, Integer> {
-	@Query(" SELECT stateID, stateName,govtLGDStateID FROM States WHERE deleted != 1 ")
+	@Query(" SELECT stateID, stateName,govtLGDStateID FROM States WHERE deleted != true ")
 	public ArrayList<Object[]> getStateMaster();
 }

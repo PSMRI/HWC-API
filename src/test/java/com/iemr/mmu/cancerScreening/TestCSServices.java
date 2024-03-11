@@ -22,7 +22,11 @@
 package com.iemr.mmu.cancerScreening;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -31,10 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -76,7 +82,7 @@ import com.iemr.hwc.service.cancerScreening.CSServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
-
+@ExtendWith(MockitoExtension.class)
 public class TestCSServices
 {
 	private static CSServiceImpl cSServiceImpl = spy(CSServiceImpl.class);
@@ -125,8 +131,8 @@ public class TestCSServices
 	
 	static Long beneficiaryRegID = 7506L;
 	static Long benVisitID = 131L;
-	@BeforeClass
-	public static void initializeParams(){
+	@BeforeAll
+	public static void initializeParams() throws JSONException{
 		
 		cSServiceImpl.setCommonNurseServiceImpl(commonNurseServiceImpl);
 		cSServiceImpl.setcSNurseServiceImpl(cSNurseServiceImpl);
@@ -215,7 +221,7 @@ public class TestCSServices
 		List<BenFamilyCancerHistory> familyRes =  new ArrayList<BenFamilyCancerHistory>();
 		familyRes.add(benFamilyHistory);
 		familyRes.add(spy(BenFamilyCancerHistory.class));
-		when(benFamilyCancerHistoryRepoMock.save(Matchers.anyListOf(BenFamilyCancerHistory.class))).thenReturn(familyRes);
+		when(benFamilyCancerHistoryRepoMock.saveAll(anyList())).thenReturn(familyRes);
 		
 		BenPersonalCancerHistory personalHstry = spy(BenPersonalCancerHistory.class);
 		personalHstry.setID(1L);
@@ -238,7 +244,7 @@ public class TestCSServices
 		CancerLymphNodeDetails lymphNode = new CancerLymphNodeDetails();
 		lymphNode.setID(1L);
 		lymphNodes.add(lymphNode );
-		when(cancerLymphNodeExaminationRepoMock.save(Matchers.anyListOf(CancerLymphNodeDetails.class))).thenReturn(lymphNodes);
+		when(cancerLymphNodeExaminationRepoMock.saveAll(anyList())).thenReturn(lymphNodes);
 		
 		CancerOralExamination cancerOralExamination = spy(CancerOralExamination.class);
 		cancerOralExamination.setID(1L);
@@ -259,7 +265,7 @@ public class TestCSServices
 		List<CancerExaminationImageAnnotation> imgAntns = new ArrayList<CancerExaminationImageAnnotation>();
 		CancerExaminationImageAnnotation imgAntn = spy(CancerExaminationImageAnnotation.class);
 		imgAntns.add(imgAntn);
-		when(cancerExaminationImageAnnotationRepoMock.save(Matchers.anyListOf(CancerExaminationImageAnnotation.class))).thenReturn(imgAntns);
+		when(cancerExaminationImageAnnotationRepoMock.saveAll(anyList())).thenReturn(imgAntns);
 		
 		BenCancerVitalDetail benCancerVitalDetail= spy(BenCancerVitalDetail.class);
 		benCancerVitalDetail.setID(1L);
@@ -277,95 +283,95 @@ public class TestCSServices
 		when(benFamilyCancerHistoryRepoMock.deleteExistingFamilyRecord(1L, "N")).thenReturn(1);
 		
 		when(benObstetricCancerHistoryRepoMock.getObstetricCancerHistoryStatus(
-				Matchers.anyLong(), Matchers.anyLong())).thenReturn("N");
+				anyLong(), anyLong())).thenReturn("N");
 		
 		//Integer, String, Boolean, String, Integer, Boolean, Boolean, Boolean, Integer, Boolean, Integer, Integer, String, Boolean, Boolean, Integer, Boolean, Boolean, String, Long, Long, String
 		
 		
 		
-		when(benObstetricCancerHistoryRepoMock.updateBenObstetricCancerHistory(Matchers.any(), Matchers.anyString(), Matchers.any(), Matchers.anyString(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),  Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.anyString(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.anyString(), 
-				Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString())).thenReturn(1);
+		when(benObstetricCancerHistoryRepoMock.updateBenObstetricCancerHistory(any(), anyString(), any(), anyString(), 
+				any(), any(), any(), any(),  any(), any(), any(), any(), 
+				anyString(), any(), any(), any(), any(), any(), anyString(), 
+				anyLong(), anyLong(), anyString())).thenReturn(1);
 		
 		
-		when(benPersonalCancerHistoryRepoMock.getPersonalCancerHistoryStatus(Matchers.anyLong(), Matchers.anyLong())).thenReturn("N");
+		when(benPersonalCancerHistoryRepoMock.getPersonalCancerHistoryStatus(anyLong(), anyLong())).thenReturn("N");
 		
-		when(benPersonalCancerHistoryRepoMock.updateBenPersonalCancerHistory(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any())).thenReturn(1);
+		when(benPersonalCancerHistoryRepoMock.updateBenPersonalCancerHistory(any(), any(), any(), any(), any(), any(),
+				any(), any(), any(), any(), any(), any(), any(), any(), any(), 
+				any(), any())).thenReturn(1);
 		 
 		 
-		when(benPersonalCancerDietHistoryRepoMock.getPersonalCancerDietHistoryStatus(Matchers.anyLong(), Matchers.anyLong())).thenReturn("N");
+		when(benPersonalCancerDietHistoryRepoMock.getPersonalCancerDietHistoryStatus(anyLong(), anyLong())).thenReturn("N");
 		 
-		when(benPersonalCancerDietHistoryRepoMock.updateBenPersonalCancerDietHistory(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any())).thenReturn(1);
+		when(benPersonalCancerDietHistoryRepoMock.updateBenPersonalCancerDietHistory(any(), any(), any(), any(),
+				any(), any(), any(), any(), any(), any(), any(), any(), any(), 
+				any(), any())).thenReturn(1);
 		
-		when(benCancerVitalDetailRepoMock.updateBenCancerVitalDetail(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any()
-				, Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
+		when(benCancerVitalDetailRepoMock.updateBenCancerVitalDetail(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any()
+				, any(), any(), any())).thenReturn(1);
 		
 		
 		
 		when(cancerSignAndSymptomsRepoMock.getCancerSignAndSymptomsStatus(
-				Matchers.any(), Matchers.any())).thenReturn("N");
+				any(), any())).thenReturn("N");
 		
 		
-		when(cancerSignAndSymptomsRepoMock.updateCancerSignAndSymptoms(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any())).thenReturn(1);
+		when(cancerSignAndSymptomsRepoMock.updateCancerSignAndSymptoms(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(), any(), 
+				any())).thenReturn(1);
 		
 		
-		when(cancerLymphNodeExaminationRepoMock.deleteExistingLymphNodeDetails(Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerLymphNodeExaminationRepoMock.deleteExistingLymphNodeDetails(any(), any())).thenReturn(1);
 		
 		when(cancerOralExaminationRepoMock.getCancerOralExaminationStatus(
-				Matchers.any(), Matchers.any())).thenReturn("N");
+				any(), any())).thenReturn("N");
 		
 		
-		when(cancerOralExaminationRepoMock.updateCancerOralExaminationDetails(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
-		
-		when(cancerBreastExaminationRepoMock.getCancerBreastExaminationStatus(
-				Matchers.any(), Matchers.any())).thenReturn("N");
-		
-		when(cancerBreastExaminationRepoMock.updateCancerBreastExaminatio(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerOralExaminationRepoMock.updateCancerOralExaminationDetails(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any())).thenReturn(1);
 		
 		when(cancerBreastExaminationRepoMock.getCancerBreastExaminationStatus(
-				Matchers.any(), Matchers.any())).thenReturn("N");
+				any(), any())).thenReturn("N");
 		
-		when(cancerBreastExaminationRepoMock.updateCancerBreastExaminatio(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerBreastExaminationRepoMock.updateCancerBreastExaminatio(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(),any(), 
+				any(), any(), any(), any(), any(), any())).thenReturn(1);
+		
+		when(cancerBreastExaminationRepoMock.getCancerBreastExaminationStatus(
+				any(), any())).thenReturn("N");
+		
+		when(cancerBreastExaminationRepoMock.updateCancerBreastExaminatio(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(),any(), 
+				any(), any(), any(), any(), any(), any())).thenReturn(1);
 		
 		when(cancerAbdominalExaminationRepoMock.getCancerAbdominalExaminationStatus(
-				Matchers.any(), Matchers.any())).thenReturn("N");
+				any(), any())).thenReturn("N");
 		
-		when(cancerAbdominalExaminationRepoMock.updateCancerAbdominalExamination(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerAbdominalExaminationRepoMock.updateCancerAbdominalExamination(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(),any(), 
+				any(), any(), any(), any(), any())).thenReturn(1);
 		
 		when(cancerGynecologicalExaminationRepoMock.getCancerGynecologicalExaminationStatus(
-				Matchers.any(), Matchers.any())).thenReturn("N");
+				any(), any())).thenReturn("N");
 		
-		when(cancerGynecologicalExaminationRepoMock.updateCancerGynecologicalExamination(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(),Matchers.any(), 
-				Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerGynecologicalExaminationRepoMock.updateCancerGynecologicalExamination(any(), any(), any(), any(), 
+				any(), any(), any(), any(), any(), any(), any(),any(), 
+				any(), any(), any())).thenReturn(1);
 		
 		ArrayList list = new ArrayList<Object[]>();
 		Object[] objs= {1, "N"};
 		list.add(objs);
 		when(cancerExaminationImageAnnotationRepoMock
 		.getCancerExaminationImageAnnotationDetailsStatus(
-				Matchers.any(), Matchers.any(), Matchers.anyList())).thenReturn(list);
+				any(), any(), anyList())).thenReturn(list);
 		
-		when(cancerExaminationImageAnnotationRepoMock.deleteExistingImageAnnotationDetails(Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerExaminationImageAnnotationRepoMock.deleteExistingImageAnnotationDetails(any(), any())).thenReturn(1);
 		
-		when(cancerDiagnosisRepoMock.updateDetailsByOncologist(Matchers.any(), Matchers.any(),Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(1);
+		when(cancerDiagnosisRepoMock.updateDetailsByOncologist(any(), any(),any(), any(), any())).thenReturn(1);
 		
 		when(benVisitDetailRepoMock.getVisitDetails(beneficiaryRegID, benVisitID)).thenReturn(spy(BeneficiaryVisitDetail.class));
 		

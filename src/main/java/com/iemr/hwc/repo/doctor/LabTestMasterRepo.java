@@ -34,12 +34,12 @@ import com.iemr.hwc.data.doctor.LabTestMaster;
 @Repository
 @RestResource(exported = false)
 public interface LabTestMasterRepo extends CrudRepository<LabTestMaster, Integer> {
-	@Query("SELECT testID, testName, isRadiologyImaging FROM LabTestMaster c where c.deleted != 1 ORDER BY testName  ")
+	@Query("SELECT testID, testName, isRadiologyImaging FROM LabTestMaster c where c.deleted != true ORDER BY testName  ")
 	public ArrayList<Object[]> getLabTestMaster();
 	
-	@Query("SELECT testID, testName, testDesc, isRadiologyImaging FROM LabTestMaster c where c.isRadiologyImaging != 1 AND c.deleted != 1 ORDER BY testName")
+	@Query("SELECT testID, testName, testDesc, isRadiologyImaging FROM LabTestMaster c where c.isRadiologyImaging != true AND c.deleted != true ORDER BY testName")
 	public ArrayList<Object[]> getNonRadiologyLabTests();
 	
-	@Query("SELECT testID, testName FROM LabTestMaster c where c.testFor=:testFor AND c.deleted != 1 ORDER BY testName")
+	@Query("SELECT testID, testName FROM LabTestMaster c where c.testFor=:testFor AND c.deleted != true ORDER BY testName")
 	public ArrayList<Object[]> getTestsBYVisitCategory(@Param("testFor") String testFor);
 }

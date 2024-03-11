@@ -34,7 +34,7 @@ import com.iemr.hwc.data.doctor.DrugDoseMaster;
 @RestResource(exported = false)
 public interface DrugDoseMasterRepo extends CrudRepository<DrugDoseMaster, Integer> {
 	
-	@Query("SELECT drugDoseID, drugDose, itemFormID FROM DrugDoseMaster c where c.deleted != 1 order by drugDose")
+	@Query("SELECT drugDoseID, drugDose, itemFormID FROM DrugDoseMaster c where c.deleted != true order by drugDose")
 	public  ArrayList<Object[]> getDrugDoseMaster();
 	
 }

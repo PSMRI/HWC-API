@@ -26,16 +26,13 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-import javax.transaction.Transactional;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
@@ -54,10 +51,9 @@ import com.iemr.hwc.service.anc.ANCNurseServiceImpl;
 @Transactional
 @SpringBootTest(classes = Application.class)
 @Configuration*/
+@ExtendWith(MockitoExtension.class)
 public class TestUpdateNurseANCController {
 
-	@Autowired
-    private TestEntityManager entityManager;
 	
 	@Autowired
 	private BenMedHistoryRepo benMedHistoryRepo;
@@ -89,15 +85,14 @@ public class TestUpdateNurseANCController {
 		medHistory.setIllnessTypeID(1);
 		medHistory.setIllnessType("waeq");
 		medHistory.setCreatedBy("Navya");
-		entityManager.persist(medHistory); 
-		entityManager.flush();
+
 		 
 		BenMedHistory History = benMedHistoryRepo.save(medHistory);
 
 		System.out.println(History);
 		assertThat(History).isEqualTo(medHistory);
 		
-		BenMedHistory result = benMedHistoryRepo.findOne(History.getBenMedHistoryID());
+		BenMedHistory result = benMedHistoryRepo.findById(History.getBenMedHistoryID()).get();
 		System.out.println(result.getIllnessType());
 		
 	}

@@ -34,6 +34,6 @@ import com.iemr.hwc.data.login.MasterServicePoint;
 @Repository
 @RestResource(exported = false)
 public interface ServicePointMasterRepo extends CrudRepository<MasterServicePoint, Integer> {
-	@Query(" SELECT servicePointID, servicePointName FROM MasterServicePoint WHERE parkingPlaceID = :parkingPlaceID AND deleted != 1 ")
+	@Query(" SELECT servicePointID, servicePointName FROM MasterServicePoint WHERE parkingPlaceID = :parkingPlaceID AND deleted != true ")
 	public ArrayList<Object[]> getServicePointMaster(@Param("parkingPlaceID") Integer parkingPlaceID);
 }

@@ -34,6 +34,6 @@ import com.iemr.hwc.data.location.ZoneMaster;
 @Repository
 @RestResource(exported = false)
 public interface ZoneMasterRepo extends CrudRepository<ZoneMaster, Integer> {
-	@Query(" SELECT zoneID, zoneName FROM ZoneMaster WHERE providerServiceMapID = :providerServiceMapID AND deleted != 1 ")
+	@Query(" SELECT zoneID, zoneName FROM ZoneMaster WHERE providerServiceMapID = :providerServiceMapID AND deleted != true ")
 	public ArrayList<Object[]> getZoneMaster(@Param("providerServiceMapID") Integer providerServiceMapID);
 }

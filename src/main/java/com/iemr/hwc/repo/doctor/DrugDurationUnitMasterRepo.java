@@ -33,7 +33,7 @@ import com.iemr.hwc.data.doctor.DrugDurationUnitMaster;
 @RestResource(exported = false)
 public interface DrugDurationUnitMasterRepo extends CrudRepository<DrugDurationUnitMaster, Integer> {
 	
-	@Query("SELECT drugDurationID, drugDuration FROM DrugDurationUnitMaster c where c.deleted != 1 order by drugDuration")
+	@Query("SELECT drugDurationID, drugDuration FROM DrugDurationUnitMaster c where c.deleted != true order by drugDuration")
 	public  ArrayList<Object[]> getDrugDurationUnitMaster();
 	
 }

@@ -34,6 +34,6 @@ import com.iemr.hwc.data.masterdata.ncdscreening.NCDScreeningCondition;
 @RestResource(exported = false)
 public interface NCDScreeningConditionRepo extends CrudRepository<NCDScreeningCondition, Integer>{
 
-	@Query("select ncdScreeningConditionID, screeningCondition from NCDScreeningCondition where deleted = false order by ncdScreeningCondition")
+	@Query("select ncdScreeningConditionID, screeningCondition from NCDScreeningCondition where deleted = false order by screeningCondition")
 	public ArrayList<Object[]> getNCDScreeningConditions();
 }

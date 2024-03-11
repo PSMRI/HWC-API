@@ -36,6 +36,6 @@ import com.iemr.hwc.data.login.ServicePointVillageMapping;
 public interface ServicePointVillageMappingRepo extends CrudRepository<ServicePointVillageMapping, Integer>{
 	@Query("SELECT d.districtBranchID,d.villageName from ServicePointVillageMapping s "
 			+ " INNER JOIN s.districtBranchMapping d"
-			+ " WHERE s.servicePointID = :servicePointID and s.deleted != 1 ")
+			+ " WHERE s.servicePointID = :servicePointID and s.deleted != true ")
 	public List<Object[]> getServicePointVillages(@Param("servicePointID") Integer servicePointID);
 }

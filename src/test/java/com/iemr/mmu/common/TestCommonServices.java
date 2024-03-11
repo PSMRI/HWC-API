@@ -22,7 +22,14 @@
 package com.iemr.mmu.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyShort;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -30,10 +37,11 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -91,7 +99,7 @@ import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.repo.registrar.RegistrarRepoBenData;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
-
+@ExtendWith(MockitoExtension.class)
 public class TestCommonServices {
 	@InjectMocks
 	public static CommonNurseServiceImpl commonNurseServiceImpl = spy(CommonNurseServiceImpl.class);
@@ -168,7 +176,7 @@ public class TestCommonServices {
 	public static String vitalDetailsPveRes = "";
 	public static String examinationDetailsPveRes = "";
 
-	@BeforeClass
+	@BeforeAll
 	public static void initializeParams() {
 		commonNurseServiceImpl.setRegistrarRepoBenData(registrarRepoBenData);
 
@@ -266,33 +274,33 @@ public class TestCommonServices {
 		benChiefComplaint.setBenChiefComplaintID(1L);
 		List<BenChiefComplaint> chiefcmplntres = new ArrayList<BenChiefComplaint>();
 		chiefcmplntres.add(benChiefComplaint);
-		when(benChiefComplaintRepoMock.save(Matchers.anyListOf(BenChiefComplaint.class))).thenReturn(chiefcmplntres);
+		when(benChiefComplaintRepoMock.saveAll(anyList())).thenReturn(chiefcmplntres);
 
 		/* Mocking History Repo's */
 		BenMedHistory benMedHistory = spy(BenMedHistory.class);
 		benMedHistory.setBenMedHistoryID(1L);
 		List<BenMedHistory> medres = new ArrayList<BenMedHistory>();
 		medres.add(benMedHistory);
-		when(benMedHistoryRepoMock.save(Matchers.anyListOf(BenMedHistory.class))).thenReturn(medres);
+		when(benMedHistoryRepoMock.saveAll(anyList())).thenReturn(medres);
 
 		BencomrbidityCondDetails bencomrbidityCondDetails = spy(BencomrbidityCondDetails.class);
 		bencomrbidityCondDetails.setID(1L);
 		List<BencomrbidityCondDetails> comorbidRes = new ArrayList<BencomrbidityCondDetails>();
 		comorbidRes.add(bencomrbidityCondDetails);
-		when(bencomrbidityCondRepoMock.save(Matchers.anyListOf(BencomrbidityCondDetails.class)))
+		when(bencomrbidityCondRepoMock.saveAll(anyList()))
 				.thenReturn(comorbidRes);
 
 		BenMedicationHistory benMedicationHistory = spy(BenMedicationHistory.class);
 		benMedicationHistory.setID(1L);
 		List<BenMedicationHistory> medRes = new ArrayList<BenMedicationHistory>();
 		medRes.add(benMedicationHistory);
-		when(benMedicationHistoryRepoMock.save(Matchers.anyListOf(BenMedicationHistory.class))).thenReturn(medRes);
+		when(benMedicationHistoryRepoMock.saveAll(anyList())).thenReturn(medRes);
 
 		FemaleObstetricHistory femaleObstetricHistory = spy(FemaleObstetricHistory.class);
 		femaleObstetricHistory.setObstetricHistoryID(1L);
 		List<FemaleObstetricHistory> femaleObsRes = new ArrayList<FemaleObstetricHistory>();
 		femaleObsRes.add(femaleObstetricHistory);
-		when(femaleObstetricHistoryRepoMock.save(Matchers.anyListOf(FemaleObstetricHistory.class)))
+		when(femaleObstetricHistoryRepoMock.saveAll(anyList()))
 				.thenReturn(femaleObsRes);
 
 		BenMenstrualDetails benMenstrualDetails = spy(BenMenstrualDetails.class);
@@ -303,32 +311,32 @@ public class TestCommonServices {
 		benFamilyHistory.setID(1L);
 		List<BenFamilyHistory> familyRes = new ArrayList<BenFamilyHistory>();
 		familyRes.add(benFamilyHistory);
-		when(benFamilyHistoryRepoMock.save(Matchers.anyListOf(BenFamilyHistory.class))).thenReturn(familyRes);
+		when(benFamilyHistoryRepoMock.saveAll(anyList())).thenReturn(familyRes);
 
 		BenPersonalHabit benPersonalHabit = spy(BenPersonalHabit.class);
 		benPersonalHabit.setBenPersonalHabitID(1);
 		List<BenPersonalHabit> habitRes = new ArrayList<BenPersonalHabit>();
 		habitRes.add(benPersonalHabit);
-		when(benPersonalHabitRepoMock.save(Matchers.anyListOf(BenPersonalHabit.class))).thenReturn(habitRes);
+		when(benPersonalHabitRepoMock.saveAll(anyList())).thenReturn(habitRes);
 
 		BenAllergyHistory benAllergyHistory = spy(BenAllergyHistory.class);
 		benAllergyHistory.setID(1L);
 		List<BenAllergyHistory> allergyRes = new ArrayList<BenAllergyHistory>();
 		allergyRes.add(benAllergyHistory);
-		when(benAllergyHistoryRepoMock.save(Matchers.anyListOf(BenAllergyHistory.class))).thenReturn(allergyRes);
+		when(benAllergyHistoryRepoMock.saveAll(anyList())).thenReturn(allergyRes);
 
 		ChildOptionalVaccineDetail optionalVaccineDetail = spy(ChildOptionalVaccineDetail.class);
 		optionalVaccineDetail.setID(1L);
 		List<ChildOptionalVaccineDetail> vaccineRes = new ArrayList<ChildOptionalVaccineDetail>();
 		vaccineRes.add(optionalVaccineDetail);
-		when(childOptionalVaccineDetailRepoMock.save(Matchers.anyListOf(ChildOptionalVaccineDetail.class)))
+		when(childOptionalVaccineDetailRepoMock.saveAll(anyList()))
 				.thenReturn(vaccineRes);
 
 		ChildVaccineDetail1 childVaccineDetail1 = spy(ChildVaccineDetail1.class);
 		childVaccineDetail1.setID(1L);
 		List<ChildVaccineDetail1> childVaccineRes = new ArrayList<ChildVaccineDetail1>();
 		childVaccineRes.add(childVaccineDetail1);
-		when(childVaccineDetail1RepoMock.save(Matchers.anyListOf(ChildVaccineDetail1.class)))
+		when(childVaccineDetail1RepoMock.saveAll(anyList()))
 				.thenReturn(childVaccineRes);
 
 		/*
@@ -536,68 +544,68 @@ public class TestCommonServices {
 
 		// Mocking Update Repo's
 		/*
-		 * when(commonNurseServiceImpl.updateBenChiefComplaints(Matchers.anyListOf(
+		 * when(commonNurseServiceImpl.updateBenChiefComplaints(anyListOf(
 		 * BenChiefComplaint.class))).thenReturn(1);
 		 */
 
-//		when(benMenstrualDetailsRepoMock.updateMenstrualDetails(Matchers.anyShort(),Matchers.anyString(), Matchers.anyShort(), Matchers.anyString(), Matchers.anyShort(),
-//				Matchers.anyString(), Matchers.anyShort(), Matchers.anyString(), Matchers.any(), Matchers.anyString(), Matchers.anyString(), Matchers.anyLong(), 
-//				Matchers.anyLong())).thenReturn(1);
+//		when(benMenstrualDetailsRepoMock.updateMenstrualDetails(anyShort(),anyString(), anyShort(), anyString(), anyShort(),
+//				anyString(), anyShort(), anyString(), any(), anyString(), anyString(), anyLong(), 
+//				anyLong())).thenReturn(1);
 
-		when(childVaccineDetail1RepoMock.updateChildANCImmunization(Matchers.any(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(1);
+		when(childVaccineDetail1RepoMock.updateChildANCImmunization(any(), anyString(),
+				anyString(), anyLong(), anyLong(), anyString(),
+				anyString(), anyString(), anyString(), anyString())).thenReturn(1);
 
-		when(benAnthropometryRepoMock.updateANCCareDetails(Matchers.anyDouble(), Matchers.anyDouble(),
-				Matchers.anyDouble(), Matchers.anyDouble(), Matchers.anyDouble(), Matchers.anyDouble(),
-				Matchers.anyDouble(), Matchers.anyDouble(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyLong(), Matchers.anyLong())).thenReturn(1);
+		when(benAnthropometryRepoMock.updateANCCareDetails(anyDouble(), anyDouble(),
+				anyDouble(), anyDouble(), anyDouble(), anyDouble(),
+				anyDouble(), anyDouble(), anyString(), anyString(),
+				anyLong(), anyLong())).thenReturn(1);
 
-		when(benPhysicalVitalRepoMock.updatePhysicalVitalDetails(Matchers.anyDouble(), Matchers.anyShort(),
-				Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(),
-				Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(),
-				Matchers.anyString(), Matchers.anyShort(), Matchers.anyShort(), Matchers.anyShort(),
-				Matchers.anyShort(), Matchers.anyShort(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong(), Matchers.anyDouble())).thenReturn(1);
+		when(benPhysicalVitalRepoMock.updatePhysicalVitalDetails(anyDouble(), anyShort(),
+				anyShort(), anyShort(), anyShort(), anyShort(), anyShort(),
+				anyShort(), anyShort(), anyShort(), anyShort(), anyShort(),
+				anyString(), anyShort(), anyShort(), anyShort(),
+				anyShort(), anyShort(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyLong(), anyLong(), anyDouble())).thenReturn(1);
 
-//		when(phyGeneralExaminationRepoMock.updatePhyGeneralExamination(Matchers.anyVararg(), Matchers.anyString(), Matchers.anyString(), 
-//				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), 
-//				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), 
-//				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyLong(), 
-//				Matchers.anyLong())).thenReturn(1);
+//		when(phyGeneralExaminationRepoMock.updatePhyGeneralExamination(anyVararg(), anyString(), anyString(), 
+//				anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), 
+//				anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), 
+//				anyString(), anyString(), anyString(), anyString(), anyString(), anyLong(), 
+//				anyLong())).thenReturn(1);
 
-		when(phyHeadToToeExaminationRepoMock.updatePhyHeadToToeExamination(Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong(),
-				Matchers.anyString())).thenReturn(1);
+		when(phyHeadToToeExaminationRepoMock.updatePhyHeadToToeExamination(anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyLong(), anyLong(),
+				anyString())).thenReturn(1);
 
-		when(sysCardiovascularExaminationRepoMock.updateSysCardiovascularExamination(Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong())).thenReturn(1);
+		when(sysCardiovascularExaminationRepoMock.updateSysCardiovascularExamination(anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyLong(), anyLong())).thenReturn(1);
 
-		when(sysRespiratoryExaminationRepoMock.updateSysRespiratoryExamination(Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong())).thenReturn(1);
+		when(sysRespiratoryExaminationRepoMock.updateSysRespiratoryExamination(anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyLong(), anyLong())).thenReturn(1);
 
-		when(sysCentralNervousExaminationRepoMock.updateSysCentralNervousExamination(Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong())).thenReturn(1);
+		when(sysCentralNervousExaminationRepoMock.updateSysCentralNervousExamination(anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyLong(), anyLong())).thenReturn(1);
 
-		when(sysMusculoskeletalSystemExaminationRepoMock.updateSysMusculoskeletalSystemExamination(Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyLong(), Matchers.anyLong())).thenReturn(1);
+		when(sysMusculoskeletalSystemExaminationRepoMock.updateSysMusculoskeletalSystemExamination(anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyLong(), anyLong())).thenReturn(1);
 
-		when(sysGenitourinarySystemExaminationRepoMock.updateSysGenitourinarySystemExamination(Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyLong(), Matchers.anyLong())).thenReturn(1);
+		when(sysGenitourinarySystemExaminationRepoMock.updateSysGenitourinarySystemExamination(anyString(),
+				anyString(), anyString(), anyString(), anyString(),
+				anyLong(), anyLong())).thenReturn(1);
 
 		when(benClinicalObservationsRepoMock.save(isA(BenClinicalObservations.class)))
 				.thenReturn(spy(BenClinicalObservations.class));
@@ -615,20 +623,20 @@ public class TestCommonServices {
 		LabTestOrderDetailListRS.add(new LabTestOrderDetail());
 		LabTestOrderDetailListRS.add(new LabTestOrderDetail());
 		LabTestOrderDetailListRS.add(new LabTestOrderDetail());
-		when(labTestOrderDetailRepoMock.save(Matchers.anyListOf(LabTestOrderDetail.class)))
+		when(labTestOrderDetailRepoMock.saveAll(anyList()))
 				.thenReturn(LabTestOrderDetailListRS);
 
 		PrescribedDrugDetail prescribedDrugDetail = new PrescribedDrugDetail();
 		List<PrescribedDrugDetail> prescribedDrugDetailListRS = new ArrayList<PrescribedDrugDetail>();
 		prescribedDrugDetailListRS.add(prescribedDrugDetail);
-		when(prescribedDrugDetailRepoMock.save(Matchers.anyListOf(PrescribedDrugDetail.class)))
+		when(prescribedDrugDetailRepoMock.saveAll(anyList()))
 				.thenReturn(prescribedDrugDetailListRS);
 
 		when(benVisitDetailRepoMock.updateBenFlowStatus("D", benVisitID)).thenReturn(1);
 
-		when(benVisitDetailRepoMock.updateBeneficiaryVisitDetail(Matchers.anyShort(), Matchers.anyString(),
-				Matchers.anyInt(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(),
-				Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyLong())).thenReturn(1);
+		when(benVisitDetailRepoMock.updateBeneficiaryVisitDetail(anyShort(), anyString(),
+				anyInt(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), anyString(), anyLong())).thenReturn(1);
 
 		when(benVisitDetailRepoMock.getVisitDetails(null, null)).thenReturn(null);
 	}

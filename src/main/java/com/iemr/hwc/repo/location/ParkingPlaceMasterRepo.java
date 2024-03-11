@@ -34,7 +34,7 @@ import com.iemr.hwc.data.login.ParkingPlace;
 @Repository
 @RestResource(exported = false)
 public interface ParkingPlaceMasterRepo extends CrudRepository<ParkingPlace, Integer> {
-	@Query(" SELECT parkingPlaceID, parkingPlaceName FROM ParkingPlace WHERE providerServiceMapID = :providerServiceMapID AND deleted != 1 ")
+	@Query(" SELECT parkingPlaceID, parkingPlaceName FROM ParkingPlace WHERE providerServiceMapID = :providerServiceMapID AND deleted != true ")
 	public ArrayList<Object[]> getParkingPlaceMaster(@Param("providerServiceMapID") Integer providerServiceMapID);
 
 }
