@@ -328,9 +328,9 @@ public class LocationServiceImpl implements LocationService {
 		// other location details, changed for TM
 		ArrayList<Object[]> resultSet = null;
 		if(null != userID) {
-			resultSet = v_getVanLocDetailsRepo.getVanDetailsWithUserID(vanID,userID);
+			resultSet = v_getVanLocDetailsRepo.getVanLocDetailsWithUserID(vanID,userID);
 		}else{
-			resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
+			resultSet = v_getVanLocDetailsRepo.getVanLocDetails(vanID);
 		}
 
 
