@@ -43,4 +43,26 @@ public interface V_getVanLocDetailsRepo extends CrudRepository<V_getVanLocDetail
 			+ "t.blockid, t.blockname, t.villageId, t.villageName, t.govtLGDStateID,t.govtLGDDistrictID"
 			+ " FROM V_getVanLocDetails t WHERE t.vanID = :vanID")
 	ArrayList<Object[]> getVanDetails(@Param("vanID") Integer vanID);
+	
+
+	@Query(value="SELECT distinct dis.stateID, van.parkingPlaceID, dis.districtID, dis.districtName, db.BlockID, db.BlockName, usrm.Villageid, usrm.VillageName, dis.GovtStateID, dis.GovtDistrictID FROM db_iemr.m_van van "
+			+ "left join db_iemr.m_parkingplacesubdistrictmap prkdis on van.ParkingPlaceID = prkdis.ParkingPlaceID "
+			+ "left join db_iemr.m_district dis on prkdis.DistrictID = dis.DistrictID "
+			+ "left join db_iemr.m_districtblock db on db.DistrictID = dis.DistrictID "
+			+ "left join db_iemr.m_userservicerolemapping usrm on usrm.Blockid = db.BlockID "
+			+ "where van.Deleted is false and db.Deleted is false "
+			+ "and prkdis.Deleted is false and dis.Deleted is false "
+			+ "and van.vanid = :vanID ",nativeQuery=true)
+	ArrayList<Object[]> getVanLocDetails(@Param("vanID") Integer vanID);
+	
+	@Query(value="SELECT distinct dis.stateID, van.parkingPlaceID, dis.districtID, dis.districtName, db.BlockID, db.BlockName, usrm.Villageid, usrm.VillageName, dis.GovtStateID, dis.GovtDistrictID FROM db_iemr.m_van van "
+			+ "left join db_iemr.m_parkingplacesubdistrictmap prkdis on van.ParkingPlaceID = prkdis.ParkingPlaceID "
+			+ "left join db_iemr.m_district dis on prkdis.DistrictID = dis.DistrictID "
+			+ "left join db_iemr.m_districtblock db on db.DistrictID = dis.DistrictID "
+			+ "left join db_iemr.m_userservicerolemapping usrm on usrm.Blockid = db.BlockID "
+			+ "where van.Deleted is false and db.Deleted is false "
+			+ "and prkdis.Deleted is false and dis.Deleted is false "
+			+ "and van.vanid = :vanID and usrm.userID = :userID",nativeQuery=true)
+	ArrayList<Object[]> getVanLocDetailsWithUserID(@Param("vanID") Integer vanID,@Param("userID") Integer userID);
+	
 }
