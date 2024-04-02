@@ -27,14 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.gson.GsonBuilder;
-import com.iemr.hwc.data.choApp.Outreach;
-import com.iemr.hwc.repo.choApp.OutreachRepo;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.iemr.hwc.data.choApp.Outreach;
 import com.iemr.hwc.data.location.Country;
 import com.iemr.hwc.data.location.CountryCityMaster;
 import com.iemr.hwc.data.location.DistrictBlock;
@@ -47,6 +46,7 @@ import com.iemr.hwc.data.location.ZoneMaster;
 import com.iemr.hwc.data.login.MasterServicePoint;
 import com.iemr.hwc.data.login.ParkingPlace;
 import com.iemr.hwc.data.login.ServicePointVillageMapping;
+import com.iemr.hwc.repo.choApp.OutreachRepo;
 import com.iemr.hwc.repo.location.CountryCityMasterRepo;
 import com.iemr.hwc.repo.location.CountryMasterRepo;
 import com.iemr.hwc.repo.location.DistrictBlockMasterRepo;
@@ -328,9 +328,9 @@ public class LocationServiceImpl implements LocationService {
 		// other location details, changed for TM
 		ArrayList<Object[]> resultSet = null;
 		if(null != userID) {
-			resultSet = v_getVanLocDetailsRepo.getVanDetailsWithUserID(vanID,userID);
+			resultSet = v_getVanLocDetailsRepo.getVanLocDetailsWithUserID(vanID,userID);
 		}else{
-			resultSet = v_getVanLocDetailsRepo.getVanDetails(vanID);
+			resultSet = v_getVanLocDetailsRepo.getVanLocDetails(vanID);
 		}
 
 
