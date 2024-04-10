@@ -59,7 +59,7 @@ public interface BenMedHistoryRepo extends CrudRepository<BenMedHistory, Long> {
 			@Param("visitCode") Long visitCode);
 
 	@Query("SELECT benMedHistoryID FROM BenMedHistory WHERE beneficiaryRegID = :benRegID AND "
-			+ "   (illnessTypeID IN (11, 13, 15, 16, 17) OR surgeryID IN (5, 15, 16 )) AND deleted is false ")
+			+ "   (illnessTypeID IN (11, 13, 15, 16, 17) OR surgeryID IN (5, 15, 16 )) AND deleted = false ")
 	public ArrayList<Long> getHRPStatus(@Param("benRegID") Long benRegID);
 
 }

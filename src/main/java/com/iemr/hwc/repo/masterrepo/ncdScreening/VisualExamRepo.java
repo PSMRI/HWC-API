@@ -32,7 +32,7 @@ import com.iemr.hwc.data.masterdata.ncdscreening.VisualExamination;
 @Repository
 @RestResource(exported = false)
 public interface VisualExamRepo extends CrudRepository<VisualExamination, Integer> {
-	@Query("SELECT obj FROM VisualExamination obj WHERE obj.deleted is false")
+	@Query("SELECT obj FROM VisualExamination obj WHERE obj.deleted = false")
 	ArrayList<VisualExamination> getVisualExaminationMasters();
 
 }

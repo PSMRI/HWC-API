@@ -33,7 +33,7 @@ import com.iemr.hwc.data.masterdata.ncdscreening.MouthOpening;
 @RestResource(exported = false)
 public interface MouthOpeningRepo extends CrudRepository<MouthOpening, Integer> {
 	
-	@Query("SELECT obj FROM MouthOpening obj WHERE obj.deleted is false")
+	@Query("SELECT obj FROM MouthOpening obj WHERE obj.deleted = false")
 	ArrayList<MouthOpening> getMouthOpeningMasters();
 
 }

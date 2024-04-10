@@ -112,6 +112,6 @@ public interface ANCCareRepo extends CrudRepository<ANCCareDetails, Long> {
 	@Query(" SELECT a FROM ANCCareDetails a WHERE a.beneficiaryRegID = :benRegID "
 			+ " AND (a.gravida_G > 5  OR a.pretermDeliveries_P > 0 OR a.abortions_A > 0 OR a.stillBirth > 0 "
 			+ "  OR (a.bloodGroup = 'A-Ve' OR a.bloodGroup = 'B-Ve' OR a.bloodGroup = 'O-Ve' OR a.bloodGroup = 'AB-Ve'))"
-			+ " AND a.deleted is false ")
+			+ " AND a.deleted = false ")
 	public ArrayList<ANCCareDetails> getANCCareDataForHRP(@Param("benRegID") Long benRegID);
 }

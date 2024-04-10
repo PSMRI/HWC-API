@@ -32,7 +32,7 @@ import com.iemr.hwc.data.masterdata.ncdscreening.InpectionofBreasts;
 @Repository
 @RestResource(exported = false)
 public interface InpectionBreastsRepo extends CrudRepository<InpectionofBreasts, Integer> {
-	@Query("SELECT obj FROM InpectionofBreasts obj WHERE obj.deleted is false")
+	@Query("SELECT obj FROM InpectionofBreasts obj WHERE obj.deleted = false")
 	ArrayList<InpectionofBreasts> getBreastInspectionMasters();
 
 }

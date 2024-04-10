@@ -42,7 +42,6 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 
 @Service
-@PropertySource("classpath:application.properties")
 public class CSCarestreamServiceImpl implements CSCarestreamService {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());

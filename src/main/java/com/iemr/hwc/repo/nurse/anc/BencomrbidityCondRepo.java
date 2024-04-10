@@ -59,7 +59,7 @@ public interface BencomrbidityCondRepo extends CrudRepository<BencomrbidityCondD
 			@Param("visitCode") Long visitCode);
 
 	@Query("SELECT ID FROM BencomrbidityCondDetails where beneficiaryRegID=:benRegID AND "
-			+ " (comorbidConditionID IN (2, 3, 5, 6)) AND deleted is false")
+			+ " (comorbidConditionID IN (2, 3, 5, 6)) AND deleted = false")
 	public ArrayList<Long> getHRPStatus(@Param("benRegID") Long benRegID);
 
 }

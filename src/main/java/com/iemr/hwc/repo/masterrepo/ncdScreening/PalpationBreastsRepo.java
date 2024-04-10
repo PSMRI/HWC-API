@@ -32,7 +32,7 @@ import com.iemr.hwc.data.masterdata.ncdscreening.PalpationOfBreasts;
 @Repository
 @RestResource(exported = false)
 public interface PalpationBreastsRepo extends CrudRepository<PalpationOfBreasts, Integer> {
-	@Query("SELECT obj FROM PalpationOfBreasts obj WHERE obj.deleted is false")
+	@Query("SELECT obj FROM PalpationOfBreasts obj WHERE obj.deleted = false")
 	ArrayList<PalpationOfBreasts> getPalpationBreastsMasters();
 
 }

@@ -32,7 +32,7 @@ import com.iemr.hwc.data.masterdata.ncdscreening.PalpationOfOralCavity;
 @Repository
 @RestResource(exported = false)
 public interface PalpationOralCavityRepo extends CrudRepository<PalpationOfOralCavity, Integer> {
-	@Query("SELECT obj FROM PalpationOfOralCavity obj WHERE obj.deleted is false")
+	@Query("SELECT obj FROM PalpationOfOralCavity obj WHERE obj.deleted = false")
 	ArrayList<PalpationOfOralCavity> getPalpationOralCavityMasters();
 
 }

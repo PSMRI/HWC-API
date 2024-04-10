@@ -34,7 +34,7 @@ import com.iemr.hwc.data.masterdata.doctor.ItemFormMaster;
 @RestResource(exported = false)
 public interface ItemFormMasterRepo extends CrudRepository<ItemFormMaster, Integer> {
 	
-	@Query("SELECT itemFormID, itemFormName FROM ItemFormMaster WHERE deleted is false")
+	@Query("SELECT itemFormID, itemFormName FROM ItemFormMaster WHERE deleted = false")
 	public ArrayList<Object[]> getItemFormMaster();
 
 }

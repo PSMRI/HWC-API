@@ -49,8 +49,8 @@ public interface V_getVanLocDetailsRepo extends CrudRepository<V_getVanLocDetail
 			+ "left join db_iemr.m_district dis on prkdis.DistrictID = dis.DistrictID "
 			+ "left join db_iemr.m_districtblock db on db.DistrictID = dis.DistrictID "
 			+ "left join db_iemr.m_userservicerolemapping usrm on usrm.Blockid = db.BlockID "
-			+ "where van.Deleted is false and db.Deleted is false "
-			+ "and prkdis.Deleted is false and dis.Deleted is false "
+			+ "where van.Deleted = false and db.Deleted = false "
+			+ "and prkdis.Deleted = false and dis.Deleted = false "
 			+ "and van.vanid = :vanID ",nativeQuery=true)
 	ArrayList<Object[]> getVanLocDetails(@Param("vanID") Integer vanID);
 	
@@ -59,8 +59,8 @@ public interface V_getVanLocDetailsRepo extends CrudRepository<V_getVanLocDetail
 			+ "left join db_iemr.m_district dis on prkdis.DistrictID = dis.DistrictID "
 			+ "left join db_iemr.m_districtblock db on db.DistrictID = dis.DistrictID "
 			+ "left join db_iemr.m_userservicerolemapping usrm on usrm.Blockid = db.BlockID "
-			+ "where van.Deleted is false and db.Deleted is false "
-			+ "and prkdis.Deleted is false and dis.Deleted is false "
+			+ "where van.Deleted = false and db.Deleted = false "
+			+ "and prkdis.Deleted = false and dis.Deleted = false "
 			+ "and van.vanid = :vanID and usrm.userID = :userID",nativeQuery=true)
 	ArrayList<Object[]> getVanLocDetailsWithUserID(@Param("vanID") Integer vanID,@Param("userID") Integer userID);
 }

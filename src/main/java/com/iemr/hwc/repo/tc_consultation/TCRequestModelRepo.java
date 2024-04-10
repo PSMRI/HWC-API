@@ -87,7 +87,7 @@ public interface TCRequestModelRepo extends CrudRepository<TCRequestModel, Long>
 	@Transactional
 	@Modifying
 	@Query("UPDATE TCRequestModel t SET t.status = :status WHERE t.beneficiaryRegID = :benRegID "
-			+ " AND t.visitCode = :visitCode AND t.deleted is false ")
+			+ " AND t.visitCode = :visitCode AND t.deleted = false ")
 	public int updateStatusIfConsultationCompleted(@Param("benRegID") Long benRegID, @Param("visitCode") Long visitCode,
 			@Param("status") String status);
 

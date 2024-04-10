@@ -34,11 +34,11 @@ import com.iemr.hwc.data.tele_consultation.TeleconsultationStats;
 public interface TeleconsultationStatsRepo extends CrudRepository<TeleconsultationStats, Long> {
 
 	@Query(" SELECT COUNT(tMStatsID)  FROM TeleconsultationStats t"
-			+ " WHERE t.beneficiaryRegID = :benRegID AND t.visitCode = :visitCode and t.deleted is false")
+			+ " WHERE t.beneficiaryRegID = :benRegID AND t.visitCode = :visitCode and t.deleted = false")
 	public int checkTCRecordCount(@Param("benRegID") Long benRegID, @Param("visitCode") Long visitCode);
 
 	@Query(nativeQuery = true, value = " SELECT * from t_tmstats t "
-			+ " WHERE t.beneficiaryRegID = :benRegID AND t.visitCode = :visitCode and t.deleted is false "
+			+ " WHERE t.beneficiaryRegID = :benRegID AND t.visitCode = :visitCode and t.deleted = false "
 			+ " ORDER BY t.tMStatsID DESC LIMIT 1 ")
 	public TeleconsultationStats getLatestStartTime(@Param("benRegID") Long benRegID,
 			@Param("visitCode") Long visitCode);

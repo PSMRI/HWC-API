@@ -36,7 +36,7 @@ import com.iemr.hwc.data.syncActivity_syncLayer.SyncDownloadMaster;
 @Repository
 @RestResource(exported = false)
 public interface SyncDownloadMasterRepo extends CrudRepository<SyncDownloadMaster, Integer> {
-	@Query(" SELECT u FROM SyncDownloadMaster u WHERE u.deleted is false ")
+	@Query(" SELECT u FROM SyncDownloadMaster u WHERE u.deleted = false ")
 	ArrayList<SyncDownloadMaster> getDownloadTables();
 
 	@Transactional

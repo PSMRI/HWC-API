@@ -121,7 +121,7 @@ public interface FemaleObstetricHistoryRepo extends CrudRepository<FemaleObstetr
 			+ " OR (f.pregComplicationType like %:pregCompTran%) OR (f.pregComplicationType like %:pregCompAphP%) "
 			+ " OR (f.deliveryTypeID = 3) "
 			+ " OR (f.deliveryComplicationType like %:delivCompProl%) OR (f.deliveryComplicationType like %:delivCompPrec%) ) "
-			+ " AND f.deleted is false ")
+			+ " AND f.deleted = false ")
 	public ArrayList<FemaleObstetricHistory> getPastObestetricDataForHRP(@Param("benRegID") Long benRegID,
 			@Param("pregCompHypo") String pregCompHypo, @Param("pregCompObst") String pregCompObst,
 			@Param("pregCompSeve") String pregCompSeve, @Param("pregCompPih") String pregCompPih,

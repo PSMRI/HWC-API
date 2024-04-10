@@ -33,6 +33,6 @@ import com.iemr.hwc.data.masterdata.ncdscreening.CervicalLymph;
 @RestResource(exported = false)
 public interface CervicalLympRepo extends CrudRepository<CervicalLymph, Integer> {
 
-	@Query("SELECT obj FROM CervicalLymph obj WHERE obj.deleted is false")
+	@Query("SELECT obj FROM CervicalLymph obj WHERE obj.deleted = false")
 	List<CervicalLymph> getCervicalScreening();
 }
