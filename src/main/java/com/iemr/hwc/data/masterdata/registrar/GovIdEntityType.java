@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -35,7 +36,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_govtidentitytype")
 public class GovIdEntityType {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "GovtIdentityTypeID")
 	private Short govtIdentityTypeID;

@@ -42,7 +42,7 @@ import com.iemr.hwc.utils.mapper.OutputMapper;
 @Table(name = "m_item")
 public class ItemMaster {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name="ItemID")
 	private Integer itemID;

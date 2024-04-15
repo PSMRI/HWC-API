@@ -39,7 +39,7 @@ import com.iemr.hwc.utils.mapper.OutputMapper;
 public class M_Pharmacologicalcategory {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "PharmCategoryID")
 	private Integer pharmacologyCategoryID; 

@@ -40,7 +40,7 @@ import com.google.gson.annotations.Expose;
 public class NCDScreening {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ID")
 	private Long ID;

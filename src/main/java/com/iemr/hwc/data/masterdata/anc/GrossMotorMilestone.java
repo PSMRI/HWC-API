@@ -38,7 +38,7 @@ import com.google.gson.annotations.Expose;
 public class GrossMotorMilestone {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "GMMilestoneID")
 	private Short gMMilestoneID;

@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_jointtype")
 public class JointTypes {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "JointID")
 	private Short jointID;

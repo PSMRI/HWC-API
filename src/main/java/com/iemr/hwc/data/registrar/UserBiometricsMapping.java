@@ -38,7 +38,7 @@ import java.sql.Timestamp;
 public class UserBiometricsMapping {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
     @Column(name = "UserBiometricMapID", insertable = false)
     private Long userBiometricMapID;

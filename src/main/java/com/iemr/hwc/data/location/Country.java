@@ -35,7 +35,7 @@ import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
 @Table(name = "m_country")
 public class Country {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CountryID")
 	@Expose
 	private Integer countryID;

@@ -41,7 +41,7 @@ import com.google.gson.annotations.Expose;
 public class M_Uom {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name="UOMID")
 	private Integer uOMID;

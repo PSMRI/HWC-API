@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_deliverycomplication")
 public class DeliveryComplicationTypes {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "DeliveryComplicationID")
 	private Short deliveryComplicationID;

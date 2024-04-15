@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_musculoskeletal")
 public class Musculoskeletal {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ID")
 	private Short ID;

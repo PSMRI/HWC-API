@@ -42,7 +42,7 @@ import com.google.gson.annotations.Expose;
 public class FetchBeneficiaryDetails {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Expose

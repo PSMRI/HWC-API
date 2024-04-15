@@ -36,7 +36,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "v_DocWorkist")
 public class DocWorkList {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Expose

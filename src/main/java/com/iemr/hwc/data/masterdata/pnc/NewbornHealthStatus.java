@@ -39,7 +39,7 @@ import com.iemr.hwc.data.masterdata.anc.AllergicReactionTypes;
 public class NewbornHealthStatus
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "NewBornHealthStatusID")
 	private Integer newBornHealthStatusID;

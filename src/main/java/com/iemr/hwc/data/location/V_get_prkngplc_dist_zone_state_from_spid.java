@@ -24,6 +24,7 @@ package com.iemr.hwc.data.location;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -33,7 +34,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "v_get_prkngplc_dist_zone_state_from_spid")
 public class V_get_prkngplc_dist_zone_state_from_spid {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long ID;
 
 	@Expose

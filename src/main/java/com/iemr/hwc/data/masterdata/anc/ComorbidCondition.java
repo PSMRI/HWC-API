@@ -38,7 +38,7 @@ import com.google.gson.annotations.Expose;
 public class ComorbidCondition {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ComorbidConditionID")
 	private Short comorbidConditionID;

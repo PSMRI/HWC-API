@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 public class UserJitsi {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "JitsiID")
 	private Long jitsiID;

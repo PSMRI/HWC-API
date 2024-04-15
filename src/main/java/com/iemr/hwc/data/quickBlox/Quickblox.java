@@ -39,7 +39,7 @@ import com.google.gson.annotations.Expose;
 public class Quickblox {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "QuickbloxID")
 	private Integer quickbloxID;

@@ -40,7 +40,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_procedure")
 public class ProcedureData {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ProcedureID")
 	@Expose
 	private Integer procedureID;

@@ -39,7 +39,7 @@ import com.iemr.hwc.utils.mapper.OutputMapper;
 @Table(name = "m_ServiceProvider")
 public class ServiceProvider {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ServiceProviderId")
 	private Integer serviceProviderId;

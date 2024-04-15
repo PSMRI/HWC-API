@@ -38,7 +38,7 @@ import com.iemr.hwc.data.doctor.CancerDiagnosis;
 @Table(name = "m_allergicreactiontype")
 public class AllergicReactionTypes {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "AllergicReactionTypeID")
 	private Short allergicReactionTypeID;

@@ -40,7 +40,7 @@ import com.iemr.hwc.utils.mapper.OutputMapper;
 public class M_Route {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "RouteID")
 	private Integer routeID;

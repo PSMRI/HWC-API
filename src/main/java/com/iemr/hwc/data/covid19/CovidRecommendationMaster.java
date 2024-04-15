@@ -35,7 +35,7 @@ import com.google.gson.annotations.Expose;
 public class CovidRecommendationMaster {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "CovidrecommendationID", insertable = false, updatable = false)
 	private Integer CovidrecommendationID;

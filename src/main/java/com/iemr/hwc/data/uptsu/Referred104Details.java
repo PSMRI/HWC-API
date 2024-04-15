@@ -39,7 +39,7 @@ import lombok.Data;
 @Table(name = "t_104referredcdssdetails")
 public class Referred104Details {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "id")
 	private int id;

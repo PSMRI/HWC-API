@@ -34,7 +34,7 @@ import lombok.Data;
 @Table(name = "m_user")
 public class Users {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "UserID")
 	private Long userID;

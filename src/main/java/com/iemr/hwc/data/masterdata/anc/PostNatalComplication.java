@@ -38,7 +38,7 @@ import com.google.gson.annotations.Expose;
 public class PostNatalComplication {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "PostNatalComplicationID")
 	private Short postNatalComplicationID;

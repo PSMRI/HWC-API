@@ -41,7 +41,7 @@ import com.google.gson.annotations.Expose;
 public class FoetalMonitor {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "fetosenseID")
 	private Long partnerFoetalMonitorId;

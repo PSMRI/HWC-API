@@ -42,7 +42,7 @@ import com.iemr.hwc.utils.mapper.OutputMapper;
 public class VideoConsultationUser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "UserSwymedMapID")
 	private Long userSwymedMapID;

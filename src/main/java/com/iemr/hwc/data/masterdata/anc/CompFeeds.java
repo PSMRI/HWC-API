@@ -38,7 +38,7 @@ import com.google.gson.annotations.Expose;
 public class CompFeeds {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "FeedID")
 	private Integer feedID;

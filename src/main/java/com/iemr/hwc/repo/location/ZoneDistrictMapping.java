@@ -28,6 +28,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -39,7 +40,7 @@ import com.iemr.hwc.data.location.Districts;
 @Table(name = "m_zonedistrictmap")
 public class ZoneDistrictMapping {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ZoneDistrictMapID")
 	private Integer zoneDistrictMapID;

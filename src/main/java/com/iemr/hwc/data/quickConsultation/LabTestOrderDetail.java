@@ -28,6 +28,7 @@ import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -41,7 +42,7 @@ import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 @Table(name = "t_lab_testorder")
 public class LabTestOrderDetail {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ID")
 	private Long labTestOrderID;

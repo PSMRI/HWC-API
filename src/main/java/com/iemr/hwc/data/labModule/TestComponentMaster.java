@@ -43,7 +43,7 @@ public class TestComponentMaster {
 
 	@Expose
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "TestComponentID")
 	private Integer testComponentID;
 	@Expose

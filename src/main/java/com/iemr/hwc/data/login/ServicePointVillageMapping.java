@@ -41,7 +41,7 @@ import com.iemr.hwc.data.location.DistrictBranchMapping;
 @Table(name = "m_servicepointvillagemap")
 public class ServicePointVillageMapping {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "ServicePointVillageMapID")
 	private Integer servicePointVillageMapID;

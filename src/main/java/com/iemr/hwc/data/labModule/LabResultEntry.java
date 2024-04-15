@@ -46,7 +46,7 @@ import com.google.gson.annotations.Expose;
 public class LabResultEntry {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
 	@Expose
 	private Long ID;

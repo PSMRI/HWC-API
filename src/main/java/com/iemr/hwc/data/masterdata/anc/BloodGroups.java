@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_bloodgroup")
 public class BloodGroups {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "BloodGroupID")
 	private Integer bloodGroupID;

@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_pregduration")
 public class PregDuration {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "PregDurationID")
 	private Short pregDurationID;

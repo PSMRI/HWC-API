@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_menstrualcyclestatus")
 public class MenstrualCycleStatus {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "MenstrualCycleStatusID")
 	private Short menstrualCycleStatusID;

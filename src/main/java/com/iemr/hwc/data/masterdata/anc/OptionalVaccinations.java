@@ -38,7 +38,7 @@ import com.google.gson.annotations.Expose;
 public class OptionalVaccinations {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "OptionalVaccinationID")
 	@Expose
 	private Short vaccineID;

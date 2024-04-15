@@ -38,7 +38,7 @@ import com.google.gson.annotations.Expose;
 public class FoetalMonitorTestMaster {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "fetosensetestid")
 	private Integer foetalMonitorTestId;

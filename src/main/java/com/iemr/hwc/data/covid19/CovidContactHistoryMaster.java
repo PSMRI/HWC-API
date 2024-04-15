@@ -35,7 +35,7 @@ import com.google.gson.annotations.Expose;
 public class CovidContactHistoryMaster {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "CovidcontacthistoryID", insertable = false, updatable = false)
 	private Integer covidcontacthistoryID;

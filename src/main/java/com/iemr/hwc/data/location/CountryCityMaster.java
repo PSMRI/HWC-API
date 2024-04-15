@@ -34,7 +34,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_countrycity")
 public class CountryCityMaster {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CityID")
 	@Expose
 	private Integer cityID;

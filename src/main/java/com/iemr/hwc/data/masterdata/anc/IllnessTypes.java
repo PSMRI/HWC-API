@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_illness")
 public class IllnessTypes {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "IllnessID")
 	private Integer illnessID;

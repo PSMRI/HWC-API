@@ -36,7 +36,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_synctablegroup")
 public class DataSyncGroups {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "SyncTableGroupID")
 	private Integer syncTableGroupID;

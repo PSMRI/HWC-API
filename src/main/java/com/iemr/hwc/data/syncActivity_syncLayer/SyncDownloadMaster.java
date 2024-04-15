@@ -37,7 +37,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "m_downloadmastertable")
 public class SyncDownloadMaster {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "DownloadMasterTableID", updatable = false)
 	private Integer downloadMasterTableID;

@@ -33,7 +33,7 @@ import java.sql.Timestamp;
 @Table(name = "t_usermastervillagemapping")
 public class UsersMasterVillage {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
     @Column(name = "id")
     private Long id;

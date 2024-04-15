@@ -44,7 +44,7 @@ import com.google.gson.annotations.Expose;
 public class V_BenAdvanceSearch {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Expose

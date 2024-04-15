@@ -38,7 +38,7 @@ import com.iemr.hwc.utils.mapper.OutputMapper;
 @Table(name = "m_districtblock")
 public class DistrictBlock {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "BlockID")
 	@Expose
 	private Integer blockID;

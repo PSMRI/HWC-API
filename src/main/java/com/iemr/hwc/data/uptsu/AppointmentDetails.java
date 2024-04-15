@@ -42,7 +42,7 @@ import lombok.Data;
 public class AppointmentDetails {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "Id")
 	private int id;

@@ -34,7 +34,7 @@ import com.google.gson.annotations.Expose;
 @Table(name = "v_userprkngplacvanspstatedisblok")
 public class UserVanSpDetails_View {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long ID;
 
 	@Expose

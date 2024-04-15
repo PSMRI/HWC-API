@@ -40,7 +40,7 @@ import com.iemr.hwc.data.doctor.LabTestMaster;
 public class BPAndDiabeticStatus {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
 	@Column(name = "BPAndDiabeticStatusID")
 	private Short bpAndDiabeticStatusID; 
