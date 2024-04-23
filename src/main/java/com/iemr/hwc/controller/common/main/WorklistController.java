@@ -212,7 +212,7 @@ public class WorklistController {
 	// Get Lab technician worklist new
 	@CrossOrigin()
 	@Operation(summary = "Get lab technician worklist")
-	@PostMapping(value = { "/getLabWorklistNew/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getLabWorklistNew/{providerServiceMapID}/{serviceID}/{vanID}" })
 	public String getLabWorkListNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
 			@PathVariable("vanID") Integer vanID) {
 		OutputResponse response = new OutputResponse();

@@ -89,10 +89,10 @@ public class CRMReportServiceImpl implements CRMReportService {
 		ChiefComplaintReport report = new ChiefComplaintReport();
 		report.setChiefComplaintID((Integer) obj[0]);
 		report.setChiefComplaint((String) obj[1]);
-		report.setMale((BigInteger) obj[7]);
-		report.setFemale((BigInteger) obj[8]);
-		report.setTransgender((BigInteger) obj[9]);
-		report.setGrandTotal((BigInteger) obj[6]);
+		report.setMale(BigInteger.valueOf((long)obj[7]));
+		report.setFemale(BigInteger.valueOf((long)obj[8]));
+		report.setTransgender(BigInteger.valueOf((long)obj[9]));
+		report.setGrandTotal(BigInteger.valueOf((long)obj[6]));
 
 		return report;
 
@@ -183,10 +183,10 @@ public class CRMReportServiceImpl implements CRMReportService {
 	static TMDailyReport getTMDailyReportObj(Object[] obj) {
 		TMDailyReport report = new TMDailyReport();
 		report.setSpokeName((String) obj[1]);
-		report.setCurrentConsultations(obj[2] == null ? new BigInteger("0") : (BigInteger) obj[2]);
-		report.setRevisitConsultations(obj[3] == null ? new BigInteger("0") : (BigInteger) obj[3]);
-		report.setCumulativeConsultationsForMonth(obj[4] == null ? new BigInteger("0") : (BigInteger) obj[4]);
-		report.setCumulativeRevisitConsultationsForMonth(obj[5] == null ? new BigInteger("0") : (BigInteger) obj[5]);
+		report.setCurrentConsultations(obj[2] == null ? new BigInteger("0") : BigInteger.valueOf((long) obj[2]));
+		report.setRevisitConsultations(obj[3] == null ? new BigInteger("0") : BigInteger.valueOf((long) obj[3]));
+		report.setCumulativeConsultationsForMonth(obj[4] == null ? new BigInteger("0") : BigInteger.valueOf((long) obj[4]));
+		report.setCumulativeRevisitConsultationsForMonth(obj[5] == null ? new BigInteger("0") : BigInteger.valueOf((long)  obj[5]));
 
 		return report;
 
@@ -261,7 +261,7 @@ public class CRMReportServiceImpl implements CRMReportService {
 				listcc = new LinkedHashMap<>(header);
 				listcc.put("Spoke", spoke.getVanName());
 			}
-			listcc.put((String) obj[2], ((BigInteger) obj[3]).toString());
+			listcc.put((String) obj[2], BigInteger.valueOf((long) obj[3]).toString());
 			report.put(spoke, listcc);
 
 		}
@@ -316,7 +316,7 @@ public class CRMReportServiceImpl implements CRMReportService {
 				listcc = new LinkedHashMap<>(header);
 				listcc.put("Indicator", indicator);
 			}
-			listcc.put((String) obj[1], ((BigInteger) obj[2]).toString());
+			listcc.put((String) obj[1], BigInteger.valueOf((long) obj[2]).toString());
 			report.put(indicator, listcc);
 
 		}
