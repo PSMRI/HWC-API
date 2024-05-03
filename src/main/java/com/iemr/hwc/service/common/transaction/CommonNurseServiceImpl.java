@@ -3105,29 +3105,30 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		if (prescription != null && prescription.getProvisionalDiagnosisList() != null
 				&& prescription.getProvisionalDiagnosisList().size() > 0) {
-			int pointer = 1;
 			for (SCTDescription obj : prescription.getProvisionalDiagnosisList()) {
 				if (obj.getTerm() != null) {
-					if (pointer == prescription.getProvisionalDiagnosisList().size()) {
+					if(pdTerm.toString().isEmpty()){
 						pdTerm.append(obj.getTerm());
-						if (obj.getConceptID() != null)
+						if(null != obj.getConceptID()) {
 							pdConceptID.append(obj.getConceptID());
-						else
+						}else {
 							pdConceptID.append("N/A");
-					} else {
-						pdTerm.append(obj.getTerm()).append("  ||  ");
-						if (obj.getConceptID() != null)
-							pdConceptID.append(obj.getConceptID()).append("  ||  ");
-						else
-							pdConceptID.append("N/A").append("  ||  ");
+						}
+					}else{
+						if(obj.getTerm() != null){
+							pdTerm.append("  ||  ").append(obj.getTerm());
+						}
+						if (obj.getConceptID() != null){
+							pdConceptID.append("  ||  ").append(obj.getConceptID());
+						}else{
+							pdConceptID.append("  ||  ").append("N/A");
+						}
+						
 					}
 				}
-				pointer++;
 			}
 			prescription.setDiagnosisProvided(pdTerm.toString());
 			prescription.setDiagnosisProvided_SCTCode(pdConceptID.toString());
-			// prescription.setDiagnosisProvided_SCTTerm(pdTerm.toString());
-
 		}
 
 		PrescriptionDetail prescriptionRS = prescriptionDetailRepo.save(prescription);
