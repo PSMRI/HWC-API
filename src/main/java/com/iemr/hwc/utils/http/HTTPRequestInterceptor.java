@@ -64,7 +64,13 @@ public class HTTPRequestInterceptor extends WebRequestHandlerInterceptorAdapter 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
 		boolean status = true;
 		logger.debug("In preHandle we are Intercepting the Request");
-		String authorization = request.getHeader("Authorization");
+	//	String authorization = request.getHeader("Authorization");
+		String authorization = null;
+		String preAuth = request.getHeader("Authorization");
+		if(null != preAuth && preAuth.contains("Bearer "))
+			authorization=preAuth.replace("Bearer ", "");
+		else
+			authorization = preAuth;
 		logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization
 				+ " || method :: " + request.getMethod());
 		if (!request.getMethod().equalsIgnoreCase("OPTIONS")) {
@@ -124,7 +130,13 @@ public class HTTPRequestInterceptor extends WebRequestHandlerInterceptorAdapter 
 			throws Exception {
 		try {
 			logger.debug("In postHandle we are Intercepting the Request");
-			String authorization = request.getHeader("Authorization");
+		//	String authorization = request.getHeader("Authorization");
+			String authorization = null;
+			String postAuth = request.getHeader("Authorization");
+			if(null != postAuth && postAuth.contains("Bearer "))
+				authorization=postAuth.replace("Bearer ", "");
+			else
+				authorization = postAuth;
 			logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
 			if (authorization != null) {
 				sessionObject.updateSessionObject(authorization, sessionObject.getSessionObject(authorization));
