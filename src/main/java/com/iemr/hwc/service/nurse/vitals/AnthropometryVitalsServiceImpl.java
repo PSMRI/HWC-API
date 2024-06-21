@@ -13,9 +13,14 @@ public class AnthropometryVitalsServiceImpl {
 	private BenAnthropometryRepo benAnthropometryRepo;
 	
 
-	public String getBeneficiaryHeightDetails(Long benRegID, Long visitCode) {
+	public String getBeneficiaryHeightDetails(Long benRegID) {
 		// TODO Auto-generated method stub
-		Double benHeight = benAnthropometryRepo.getBenLatestHeight(benRegID);;
+		Long visitCode = benAnthropometryRepo.getBenLatestVisitCode(benRegID);
+		if(visitCode==null)
+		{
+			return "Visit code is not found";
+		}
+		Double benHeight = benAnthropometryRepo.getBenLatestHeightDetails(visitCode);;
         if(benHeight == null)
         	return "No data found";
 	

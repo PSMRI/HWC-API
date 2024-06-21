@@ -32,17 +32,16 @@ public class AnthropometryVitalsController {
 		@Operation(summary = "Get beneficiary height details")
 		@PostMapping(value = { "/getBenHeightDetailsFrmNurse" })
 		public String getBenHeightDetailsFrmNurse(
-				@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+				@Param(value = "{\"benRegID\":\"Long\"}") @RequestBody String comingRequest) {
 			OutputResponse response = new OutputResponse();
 
 			logger.info("Request object for beneficiary height data fetching :" + comingRequest);
 			try {
 				JSONObject obj = new JSONObject(comingRequest);
-				if (obj.has("benRegID") && obj.has("visitCode")) {
+				if (obj.has("benRegID")) {
 					Long benRegID = obj.getLong("benRegID");
-					Long visitCode = obj.getLong("visitCode");
 
-					String res = anthropometryVitalsService.getBeneficiaryHeightDetails(benRegID, visitCode);
+					String res = anthropometryVitalsService.getBeneficiaryHeightDetails(benRegID);
 					response.setResponse(res);
 				} else {
 					logger.info("Invalid request");
