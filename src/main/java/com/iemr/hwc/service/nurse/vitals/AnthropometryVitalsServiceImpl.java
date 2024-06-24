@@ -7,12 +7,12 @@ import com.google.gson.Gson;
 import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 
 @Service
-public class AnthropometryVitalsServiceImpl {
+public class AnthropometryVitalsServiceImpl implements AnthropometryVitalsService {
 
 	@Autowired
 	private BenAnthropometryRepo benAnthropometryRepo;
 	
-
+	@Override
 	public String getBeneficiaryHeightDetails(Long benRegID) {
 		// TODO Auto-generated method stub
 		Long visitCode = benAnthropometryRepo.getBenLatestVisitCode(benRegID);
