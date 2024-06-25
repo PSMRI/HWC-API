@@ -74,7 +74,7 @@ public interface BenAnthropometryRepo extends CrudRepository<BenAnthropometryDet
 	@Query(nativeQuery = true, value = " SELECT Height_cm from ( "
 			+ " (select Height_cm from t_phy_anthropometry where visitCode=:visitCode)"
 			+ " union "
-			+"(select Height_cm from t_cancervitals where visitCode=:visitCode1))a")
-	public Double getBenLatestHeightDetails(@Param("visitCode") Long visitCode, @Param("visitCode1") Long visitCode1);
+			+"(select Height_cm from t_cancervitals where visitCode=:visitCode))a")
+	public Double getBenLatestHeightDetails(@Param("visitCode") Long visitCode);
 
 }
