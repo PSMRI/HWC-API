@@ -283,7 +283,7 @@
 
 
 	<build>
-		<finalName>hwc-facility-service</finalName>
+		<finalName>hwc-facility-service-v3.0.0</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.owasp</groupId>
