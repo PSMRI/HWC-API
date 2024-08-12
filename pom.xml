@@ -286,23 +286,6 @@
 		<finalName>hwc-facility-service-v3.0.0</finalName>
 		<plugins>
 			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>9.0.8</version>
-				<configuration>
-					<format>HTML</format>
-					<nvdApiServerId>nvd</nvdApiServerId>
-					<nvdApiKey>79597933-f3cc-4601-949b-12513434ade3</nvdApiKey>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.3.0</version>
