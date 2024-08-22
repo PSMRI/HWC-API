@@ -36,6 +36,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -79,6 +80,7 @@ public class TestUpdateNurseANCController {
 	}*/
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of saving medical history (TC_Save_Med_History_PVE_001)")
 	public void saveMedHistory() {
 		BenMedHistory medHistory = new BenMedHistory();
 		medHistory.setBeneficiaryRegID(new Long(7509));
@@ -98,6 +100,7 @@ public class TestUpdateNurseANCController {
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving medical history (TC_Get_Med_History_PVE_002")
 	public void getMedHistory(){
 		
 	}

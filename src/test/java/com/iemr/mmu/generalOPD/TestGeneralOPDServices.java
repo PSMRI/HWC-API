@@ -51,6 +51,8 @@ import com.iemr.hwc.repo.nurse.anc.SysGastrointestinalExaminationRepo;
 import com.iemr.hwc.service.generalOPD.GeneralOPDNurseServiceImpl;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 import com.iemr.mmu.common.TestCommonServices;
+
+import ca.uhn.fhir.model.api.annotation.Description;
 @ExtendWith(MockitoExtension.class)
 public class TestGeneralOPDServices {
 
@@ -159,6 +161,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of saving GOPD nurse data (TC_Save_GOPD_Nurse_Data_PVE_001)")
 	public void saveGOPDNurseDataPveTest() {
 
 		Long response = null;
@@ -175,6 +178,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests negative/non-functional aspects of saving GOPD nurse data (TC_Save_GOPD_Nurse_Data_NVE_002)")
 	public void saveGOPDNurseDataNveTest() {
 
 		Long response = null;
@@ -192,6 +196,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of saving GOPD doctor data (TC_Save_GOPD_Doctor_Data_PVE_003)")
 	public void saveGOPDDoctorDataPveTest() {
 
 		Long response = null;
@@ -638,6 +643,7 @@ public class TestGeneralOPDServices {
 	// }
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary visit details (TC_Get_Ben_Visit_Details_PVE_004)")
 	public void getBenVisitDetailsPveTest() {
 
 		String response = null;
@@ -653,6 +659,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary history details (TC_Get_Ben_History_Details_PVE_005)")
 	public void getBenHistoryDetailsPveTest() {
 
 		String response = null;
@@ -668,6 +675,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary vital details (TC_Get_Ben_Vital_Details_PVE_006)")
 	public void getBeneficiaryVitalDetailsPveTest() {
 
 		String response = null;
@@ -683,6 +691,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving examination details (TC_Get_Exam_Details_PVE_007)")
 	public void getExaminationDetailsPveTest() {
 
 		String response = null;
@@ -710,6 +719,7 @@ public class TestGeneralOPDServices {
 	 */
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating beneficiary history details (TC_Update_Ben_History_Details_PVE_008)")
 	public void updateBenHistoryDetailsPveTest() {
 
 		int response = 0;
@@ -726,6 +736,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating beneficiary vital details (TC_Update_Ben_Vital_Details_PVE_009)")
 	public void updateBenVitalDetailsPveTest() {
 
 		int response = 0;
@@ -740,6 +751,7 @@ public class TestGeneralOPDServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating beneficiary examination details (TC_Update_Ben_Exam_Details_PVE_010)")
 	public void updateBenExaminationDetailsPveTest() {
 
 		int response = 0;

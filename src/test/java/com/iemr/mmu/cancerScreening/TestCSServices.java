@@ -82,6 +82,8 @@ import com.iemr.hwc.service.cancerScreening.CSServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.registrar.RegistrarServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
+
+import ca.uhn.fhir.model.api.annotation.Description;
 @ExtendWith(MockitoExtension.class)
 public class TestCSServices
 {
@@ -467,6 +469,7 @@ public class TestCSServices
 //		assertThat(response).isEqualTo(1L);
 //	}
 	@Test
+	@Description("Tests performance, volume, and endurance of saving cancer screening doctor data (TC_Save_Cancer_Screen_Doc_PVE_001)")
 	public void  saveCancerScreeningDoctorDataPveTest(){
 		
 		Long response = null;
@@ -485,6 +488,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests negative/non-functional aspects of saving cancer screening doctor data (TC_Save_Cancer_Screen_Doc_NVE_002)")
 	public void  saveCancerScreeningDoctorDataNveTest(){
 		
 		Long response = null;
@@ -503,6 +507,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of updating CS history nurse data (TC_Update_CSH_Nurse_Data_PVE_003)")
 	public void  UpdateCSHistoryNurseDataPveTest(){
 		
 		int response = 0;
@@ -519,6 +524,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of updating beneficiary vital details (TC_Update_Ben_Vital_PVE_004)")
 	public void  updateBenVitalDetailPveTest(){
 		
 		int response = 0;
@@ -538,6 +544,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests negative/non-functional aspects of updating beneficiary vital details (TC_Update_Ben_Vital_NVE_005)")
 	public void  updateBenVitalDetailNveTest(){
 		
 		int response = 0;
@@ -556,6 +563,7 @@ public class TestCSServices
 		assertThat(response).isEqualTo(1);
 	}
 	@Test
+	@Description("Tests negative/non-functional aspects of updating beneficiary vital details (TC_Update_Ben_Vital_NVE_006)")
 	public void  updateBenVitalDetailNveTest2(){
 		
 		int response = 0;
@@ -574,6 +582,7 @@ public class TestCSServices
 		assertThat(response).isEqualTo(1);
 	}
 	@Test
+	@Description("Tests performance, volume, and endurance of updating beneficiary examination details (TC_Update_Ben_Exam_PVE_007)")
 	public void  updateBenExaminationDetailPveTest(){
 		
 		int response = 0;
@@ -591,6 +600,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests negative/non-functional aspects of updating beneficiary examination details (TC_Update_Ben_Exam_NVE_008)")
 	public void  updateBenExaminationDetailNveTest(){
 		
 		int response = 0;
@@ -608,6 +618,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of updating cancer diagnosis details by oncologist (TC_Update_Cancer_Diag_Onc_PVE_009)")
 	public void  updateCancerDiagnosisDetailsByOncologistPveTest(){
 		
 		int response = 0;
@@ -626,6 +637,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary data from nurse to doctor visit details screen (TC_Get_Ben_Data_Nurse_Doc_VD_PVE_010)")
 	public void  getBenDataFrmNurseToDocVisitDetailsScreenPveTest(){
 		
 		String response = "";
@@ -642,6 +654,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary data from nurse screen to doctor screen history (TC_Get_Ben_Data_Nurse_Doc_Hist_PVE_011)")
 	public void  getBenDataFrmNurseScrnToDocScrnHistoryPveTest(){
 		
 		String response = "";
@@ -658,6 +671,7 @@ public class TestCSServices
 		assertThat(response).isEqualTo("{\"benPersonalDietHistory\":{\"ID\":null,\"beneficiaryRegID\":null,\"benVisitID\":null,\"providerServiceMapID\":null,\"dietType\":null,\"fruitConsumptionDays\":null,\"fruitQuantityPerDay\":null,\"vegetableConsumptionDays\":null,\"vegetableQuantityPerDay\":null,\"intakeOfOutsidePreparedMeal\":null,\"typeOfOilConsumed\":null,\"physicalActivityType\":null,\"ssRadiationExposure\":null,\"isThyroidDisorder\":null,\"deleted\":null,\"processed\":null,\"createdBy\":null,\"CreatedDate\":null,\"modifiedBy\":null,\"lastModDate\":null,\"vanSerialNo\":null,\"vehicalNo\":null,\"parkingPlaceID\":null,\"syncedBy\":null,\"syncedDate\":null,\"reservedForChange\":null,\"typeOfOilConsumedList\":[],\"captureDate\":null},\"benObstetricHistory\":{\"ID\":null,\"beneficiaryRegID\":null,\"benVisitID\":null,\"providerServiceMapID\":null,\"pregnancyStatus\":null,\"isUrinePregTest\":null,\"pregnant_No\":null,\"noOfLivingChild\":null,\"isAbortion\":null,\"isOralContraceptiveUsed\":null,\"isHormoneReplacementTherapy\":null,\"menarche_Age\":null,\"isMenstrualCycleRegular\":null,\"menstrualCycleLength\":null,\"menstrualFlowDuration\":null,\"menstrualFlowType\":null,\"isDysmenorrhea\":null,\"isInterMenstrualBleeding\":null,\"menopauseAge\":null,\"isPostMenopauseBleeding\":null,\"isFoulSmellingDischarge\":null,\"deleted\":null,\"processed\":null,\"createdBy\":null,\"createdDate\":null,\"modifiedBy\":null,\"lastModDate\":null,\"vanSerialNo\":null,\"vehicalNo\":null,\"parkingPlaceID\":null,\"syncedBy\":null,\"syncedDate\":null,\"reservedForChange\":null,\"captureDate\":null},\"benFamilyHistory\":[],\"benPersonalHistory\":{\"ID\":null,\"beneficiaryRegID\":null,\"benVisitID\":null,\"providerServiceMapID\":null,\"tobaccoUse\":null,\"startAge_year\":null,\"endAge_year\":null,\"typeOfTobaccoProduct\":null,\"quantityPerDay\":null,\"isFilteredCigaerette\":null,\"isCigaretteExposure\":null,\"isBetelNutChewing\":null,\"durationOfBetelQuid\":null,\"alcoholUse\":null,\"ssAlcoholUsed\":null,\"frequencyOfAlcoholUsed\":null,\"deleted\":null,\"processed\":null,\"createdBy\":null,\"createdDate\":null,\"modifiedBy\":null,\"lastModDate\":null,\"vanSerialNo\":null,\"vehicalNo\":null,\"parkingPlaceID\":null,\"syncedBy\":null,\"syncedDate\":null,\"reservedForChange\":null,\"typeOfTobaccoProductList\":null,\"captureDate\":null}}");
 	}
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary data from nurse to doctor vital screen (TC_Get_Ben_Data_Nurse_Doc_Vital_PVE_012)")
 	public void  getBenDataFrmNurseToDocVitalScreenPveTest(){
 		String response = "";
 		try
@@ -674,6 +688,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary data from nurse to doctor examination screen (TC_Get_Ben_Data_Nurse_Doc_Exam_PVE_013)")
 	public void  getBenDataFrmNurseToDocExaminationScreenPveTest(){
 		String response = "";
 		try
@@ -690,6 +705,8 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary data for case sheet (TC_Get_Ben_Data_CaseSheet_PVE_014)")
+
 	public void  getBenDataForCaseSheetPveTest(){
 		String response = "";
 		try
@@ -705,6 +722,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary family history data (TC_Get_Ben_Family_Hist_PVE_015)")
 	public void getBenFamilyHistoryDataPveTest(){
 		String response = "";
 		try
@@ -720,6 +738,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary personal history data (TC_Get_Ben_Personal_Hist_PVE_016)")
 	public void getBenPersonalHistoryDataPveTest(){
 		String response = "";
 		try
@@ -735,6 +754,7 @@ public class TestCSServices
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary personal diet history data (TC_Get_Ben_Personal_Diet_Hist_PVE_017)")
 	public void getBenPersonalDietHistoryDataPveTest(){
 		String response = "";
 		try
@@ -750,6 +770,7 @@ public class TestCSServices
 	}
 	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary obstetric history data (TC_Get_Ben_Obstetric_Hist_PVE_018)")
 	public void getBenObstetricHistoryDataPveTest(){
 		String response = "";
 		try

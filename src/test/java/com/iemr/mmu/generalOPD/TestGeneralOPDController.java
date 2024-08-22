@@ -40,6 +40,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.controller.generalOPD.GeneralOPDController;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
+
+import ca.uhn.fhir.model.api.annotation.Description;
 @ExtendWith(MockitoExtension.class)
 public class TestGeneralOPDController {
 
@@ -153,6 +155,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of saving GOPD nurse data (TC_Save_GOPD_Nurse_Data_PVE_001)")
 	public void saveGOPDNurseDataPveTest() {
 
 //		String response = createControllerMock.saveBenGenOPDNurseData(nurseObjPve);
@@ -165,6 +168,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests negative/non-functional aspects of saving GOPD nurse data (TC_Save_GOPD_Nurse_Data_NVE_002)")
 	public void saveGOPDNurseDataNveTest() {
 
 //		String response = createControllerMock.saveBenGenOPDNurseData(nurseObjNve);
@@ -176,6 +180,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of saving GOPD doctor data (TC_Save_GOPD_Doctor_Data_PVE_003)")
 	public void saveGOPDDoctorDataPveTest() {
 
 		String response = createControllerMock.saveBenGenOPDDoctorData(doctorObjPve, "");
@@ -186,6 +191,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests negative/non-functional aspects of saving GOPD doctor data (TC_Save_GOPD_Doctor_Data_NVE_004)")
 	public void saveGOPDDoctorDataNveTest() {
 
 		String response = createControllerMock.saveBenGenOPDDoctorData(doctorObjNve, "");
@@ -346,6 +352,7 @@ public class TestGeneralOPDController {
 //	}
 //	
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary visit details from nurse GOPD (TC_Get_Ben_Visit_Details_Nurse_GOPD_PVE_005)")
 	public void getBenVisitDetailsFrmNurseGOPDPveTest() {
 		String expectedRes = "{\"data\":{\"response\":\"\"},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 
@@ -356,6 +363,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary history details (TC_Get_Ben_History_Details_PVE_006)")
 	public void getBenHistoryDetailsPveTest() {
 		String expectedRes = "{\"data\":{\"response\":\"\"},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 
@@ -366,6 +374,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary vital details from nurse (TC_Get_Ben_Vital_Details_Nurse_PVE_007)")
 	public void getBenVitalDetailsFrmNursePveTest() {
 		String expectedRes = "{\"data\":{\"response\":\"\"},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 
@@ -376,6 +385,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary examination details (TC_Get_Ben_Exam_Details_PVE_008)")
 	public void getBenExaminationDetailsPveTest() {
 		String expectedRes = "{\"data\":{\"response\":\"\"},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 
@@ -386,6 +396,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating history by nurse (TC_Update_History_Nurse_PVE_009)")
 	public void updateHistoryNursePveTest() {
 		String expectedRes = "{\"data\":{\"result\":1},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 		String response = updateControllerMock.updateHistoryNurse(nurseObjPve);
@@ -394,6 +405,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests negative/non-functional aspects of updating history by nurse (TC_Update_History_Nurse_NVE_010)")
 	public void updateHistoryNurseNveTest() {
 		String expectedRes = "{\"statusCode\":500,\"errorMessage\":\"Failed to update General OPD History Nurse Data\","
 				+ "\"status\":\"Failed to update General OPD History Nurse Data\"}";
@@ -403,6 +415,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating vital by nurse (TC_Update_Vital_Nurse_PVE_011)")
 	public void updateVitalNursePveTest() {
 		String expectedRes = "{\"data\":{\"result\":1},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 		String response = updateControllerMock.updateVitalNurse(nurseObjPve);
@@ -411,6 +424,7 @@ public class TestGeneralOPDController {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating examination by nurse (TC_Update_Exam_Nurse_PVE_012)")
 	public void updateExaminationNursePveTest() {
 		String expectedRes = "{\"data\":{\"result\":1},\"statusCode\":200,\"errorMessage\":\"Success\",\"status\":\"Success\"}";
 		String response = updateControllerMock.updateGeneralOPDExaminationNurse(nurseObjPve);

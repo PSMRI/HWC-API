@@ -31,10 +31,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.iemr.hwc.service.report.CRMReportServiceImpl;
+
+import ca.uhn.fhir.model.api.annotation.Description;
 @ExtendWith(MockitoExtension.class)
 public class TestReport {
 
 	@Test
+	@Description("Test for Successfull Calculate Time (TC_successfull_calculate_Time_001)")
 	public void TimeTest1() {
 
 		Timestamp consultedTime = new Timestamp(2019, 01, 01, 10, 22, 5, 100);
@@ -46,6 +49,7 @@ public class TestReport {
 	}
 
 	@Test
+	@Description("Test for Successfull Calculate Time (TC_successfull_calculate_Time_002)")
 	public void TimeTest2() {
 
 		Timestamp consultedTime = new Timestamp(2019, 01, 01, 9, 40, 5, 100);
@@ -64,6 +68,7 @@ public class TestReport {
 	}
 
 	@Test
+	@Description("Test for Successfull Calculate Time (TC_successfull_calculate_Time_003)")
 	public void TimeTest3() {
 
 		Timestamp consultedTime = new Timestamp(2019, 01, 01, 11, 21, 5, 100);
@@ -75,6 +80,7 @@ public class TestReport {
 	}
 
 	@Test
+	@Description("Test for Successfull Calculate Time (TC_successfull_calculate_Time_004)")
 	public void TimeTest4() {
 
 		Timestamp consultedTime = new Timestamp(2019, 01, 01, 10, 23, 5, 100);

@@ -99,6 +99,8 @@ import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.repo.registrar.RegistrarRepoBenData;
 import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
+
+import ca.uhn.fhir.model.api.annotation.Description;
 @ExtendWith(MockitoExtension.class)
 public class TestCommonServices {
 	@InjectMocks
@@ -642,6 +644,7 @@ public class TestCommonServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of saving beneficiary visit details (TC_Save_Ben_Visit_Details_PVE_001)")
 	public void saveBeneficiaryVisitDetailsPveTest() {
 		Long response = null;
 		try {
@@ -656,6 +659,7 @@ public class TestCommonServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving beneficiary visit count (TC_Get_Ben_Visit_Count_PVE_002)")
 	public void getBenVisitCountPveTest() {
 		Short response = null;
 		try {
@@ -669,6 +673,7 @@ public class TestCommonServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of updating beneficiary visit details (TC_Update_Ben_Visit_Details_PVE_003)")
 	public void updateBeneficiaryVisitDetailsPveTest() {
 		int response = 0;
 		try {
@@ -683,6 +688,7 @@ public class TestCommonServices {
 	}
 
 	@Test
+	@Description("Tests performance, volume, and endurance of retrieving CS visit details (TC_Get_CS_Visit_Details_PVE_004)")
 	public void getCSVisitDetailsPveTest() {
 		BeneficiaryVisitDetail response = null;
 		try {
