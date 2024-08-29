@@ -63,4 +63,5 @@ public interface V_getVanLocDetailsRepo extends CrudRepository<V_getVanLocDetail
 			+ "and prkdis.Deleted = false and dis.Deleted = false "
 			+ "and van.vanid = :vanID and usrm.userID = :userID",nativeQuery=true)
 	ArrayList<Object[]> getVanLocDetailsWithUserID(@Param("vanID") Integer vanID,@Param("userID") Integer userID);
+
 }
