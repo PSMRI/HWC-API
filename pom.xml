@@ -277,7 +277,7 @@
 	<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>6.1.6</version>
+			<version>6.1.12</version>
 		</dependency>
 	</dependencies>
 
@@ -285,6 +285,15 @@
 	<build>
 		<finalName>hwc-facility-service-v3.0.0</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>10.0.3</version>
+				<configuration>
+					<format>HTML</format>
+					<nvdApiServerId>nvd</nvdApiServerId>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
