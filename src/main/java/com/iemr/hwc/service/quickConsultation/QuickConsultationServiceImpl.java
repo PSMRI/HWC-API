@@ -348,6 +348,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Integer prescriptionSuccessFlag = null;
 		Integer investigationSuccessFlag = null;
 		Integer vitalsRBSTestFlag = null;
+		Long referSaveSuccessFlag = null;
 		// Integer tcRequestStatusFlag = null;
 
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -420,14 +421,21 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		} else {
 			vitalsRBSTestFlag = 1;
 		}
-
+		// save referral details
+		if (quickConsultDoctorOBJ.has("refer") && !quickConsultDoctorOBJ.get("refer").isJsonNull()) {
+			referSaveSuccessFlag = commonDoctorServiceImpl
+					.saveBenReferDetails(quickConsultDoctorOBJ.get("refer").getAsJsonObject(), false);
+		} else {
+			referSaveSuccessFlag = new Long(1);
+		}
 		// check if all data updated successfully
 		if ((null != benChiefComplaintID && benChiefComplaintID > 0)
 				&& (null != clinicalObservationID && clinicalObservationID > 0)
 				&& (prescriptionID != null && prescriptionID > 0)
 				&& (prescriptionSuccessFlag != null && prescriptionSuccessFlag > 0)
 				&& (investigationSuccessFlag != null && investigationSuccessFlag > 0)
-				&& (vitalsRBSTestFlag != null && vitalsRBSTestFlag > 0)) {
+				&& (vitalsRBSTestFlag != null && vitalsRBSTestFlag > 0)
+				&& (referSaveSuccessFlag != null && referSaveSuccessFlag > 0)) {
 
 			// call method to update beneficiary flow table
 			if (prescriptionID != null) {
@@ -517,6 +525,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		resMap.put("diagnosis", generalOPDDoctorServiceImpl.getGeneralOPDDiagnosisDetails(benRegID, visitCode));
 		resMap.put("investigation", commonDoctorServiceImpl.getInvestigationDetails(benRegID, visitCode));
 		resMap.put("prescription", commonDoctorServiceImpl.getPrescribedDrugs(benRegID, visitCode));
+		resMap.put("Refer", commonDoctorServiceImpl.getReferralDetails(benRegID, visitCode, false));
 		resMap.put("LabReport",
 				new Gson().toJson(labTechnicianServiceImpl.getLabResultDataForBen(benRegID, visitCode)));
 		resMap.put("ArchivedVisitcodeForLabResult",
@@ -540,6 +549,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Long prescribedDrugSuccessFlag = null;
 		Long labTestOrderSuccessFlag = null;
 		Long vitalsRBSTestFlag = null;
+		Long referupdateSuccessFlag = null;
 
 		Integer tcRequestStatusFlag = null;
 
@@ -628,12 +638,19 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		} else {
 			vitalsRBSTestFlag = new Long(1);
 		}
-
+		// update referral
+		if (quickConsultDoctorOBJ.has("refer") && !quickConsultDoctorOBJ.get("refer").isJsonNull()) {
+			referupdateSuccessFlag = commonDoctorServiceImpl
+					.updateBenReferDetails(quickConsultDoctorOBJ.get("refer").getAsJsonObject(), false);
+		} else {
+			referupdateSuccessFlag = new Long(1);
+		}
 		if ((null != benChiefComplaintID && benChiefComplaintID > 0)
 				&& (null != clinicalObservationID && clinicalObservationID > 0)
 				&& (null != prescribedDrugSuccessFlag && prescribedDrugSuccessFlag > 0)
 				&& (null != labTestOrderSuccessFlag && labTestOrderSuccessFlag > 0)
-				&& (null != vitalsRBSTestFlag && vitalsRBSTestFlag > 0)) {
+				&& (null != vitalsRBSTestFlag && vitalsRBSTestFlag > 0)
+				&& (referupdateSuccessFlag != null && referupdateSuccessFlag > 0)) {
 
 			// call method to update beneficiary flow table
 

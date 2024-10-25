@@ -3123,7 +3123,6 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 						}else{
 							pdConceptID.append("  ||  ").append("N/A");
 						}
-						
 					}
 				}
 			}
