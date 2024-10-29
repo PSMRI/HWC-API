@@ -280,22 +280,7 @@ public class ProcedureComponentMapping {
                 tmpList.add(procCompListMap);
                 i++;
             } 
-//            else {
-//                compMap = new HashMap<>();
-//                compMap.put("testComponentID", obj1[1]);
-//                compMap.put("testComponentName", obj1[4]);
-//                compMap.put("testComponentDesc", obj1[6]);
-//                compList.add(compMap);
-//
-//                s.append(", (" + i + ")" + (String) obj1[4]);
-//                procCompListMap.put("compList", s);
-//
-//                procCompListMap.put("compListDetails", compList);
-//
-//                i++;
-//            }
 
- 
 
             tmpProcID = procID;
         }

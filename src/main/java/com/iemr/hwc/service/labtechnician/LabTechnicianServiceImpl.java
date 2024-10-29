@@ -508,6 +508,7 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 		return new Gson().toJson(labResultList);
 	}
 	
+	
 	public String getProcedureComponentMappedMasterData(Long providerServiceMapID) throws Exception {
 		ArrayList<Object[]> procCompMapMasterList = procedureCompMappedMasterRepo.getProcedureComponentMappedMasterData(providerServiceMapID);
 		if (procCompMapMasterList != null && procCompMapMasterList.size() > 0) {
