@@ -36,7 +36,7 @@ jobs:
       run: mvn -B package --file pom.xml
       
     - name: Upload WAR file as artifact
-      uses: actions/upload-artifact@v2 
+      uses: actions/upload-artifact@v3 
       with:
         name: HWC-API
         path: target/hwc-facility-service.war
