@@ -32,11 +32,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.iemr.hwc.data.labModule.ProcedureComponentMapping;
 import com.iemr.hwc.data.labModule.LabResultEntry;
 import com.iemr.hwc.data.labModule.WrapperLabResultEntry;
 import com.iemr.hwc.data.labtechnician.V_benLabTestOrderedDetails;
 import com.iemr.hwc.repo.labModule.LabResultEntryRepo;
 import com.iemr.hwc.repo.labtechnician.V_benLabTestOrderedDetailsRepo;
+import com.iemr.hwc.repo.procedureCompMapMaster.ProcedureCompMappedMasterRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
 
@@ -44,6 +46,7 @@ import com.iemr.hwc.utils.mapper.InputMapper;
 public class LabTechnicianServiceImpl implements LabTechnicianService {
 	private V_benLabTestOrderedDetailsRepo v_benLabTestOrderedDetailsRepo;
 	private LabResultEntryRepo labResultEntryRepo;
+	private ProcedureCompMappedMasterRepo procedureCompMappedMasterRepo;
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
 	@Autowired
@@ -59,6 +62,11 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 	@Autowired
 	public void setV_benLabTestOrderedDetailsRepo(V_benLabTestOrderedDetailsRepo v_benLabTestOrderedDetailsRepo) {
 		this.v_benLabTestOrderedDetailsRepo = v_benLabTestOrderedDetailsRepo;
+	}
+	
+	@Autowired
+	public void setProcedureCompMappedMasterRepo(ProcedureCompMappedMasterRepo procedureCompMappedMasterRepo) {
+		this.procedureCompMappedMasterRepo = procedureCompMappedMasterRepo;
 	}
 
 	public String getBenePrescribedProcedureDetails(Long benRegID, Long visitCode) {
@@ -499,4 +507,26 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 		ArrayList<LabResultEntry> labResultList = getLabResultDataForBen(benRegID, visitCode);
 		return new Gson().toJson(labResultList);
 	}
+	
+	
+	public String getProcedureComponentMappedMasterData(Long providerServiceMapID) throws Exception {
+		ArrayList<Object[]> procCompMapMasterList = procedureCompMappedMasterRepo.getProcedureComponentMappedMasterData(providerServiceMapID);
+		if (procCompMapMasterList != null && procCompMapMasterList.size() > 0) {
+			ArrayList<Map<String, Object>> responseList = ProcedureComponentMapping
+					.getProcedureComponentMappedMasterDataObjListDetails(procCompMapMasterList);
+			return new Gson().toJson(responseList);
+		} else {
+			return new Gson().toJson(new ArrayList<>());
+		}
+		
+		
+		
+		
+	}
+	
+	
+	
+
+	
+	
 }
