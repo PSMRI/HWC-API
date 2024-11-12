@@ -39,100 +39,106 @@ import com.iemr.hwc.utils.sessionobject.SessionObject;
 import com.iemr.hwc.utils.validator.Validator;
 
 @Component
-public class HTTPRequestInterceptor implements HandlerInterceptor {
-	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+public class HTTPRequestInterceptor extends WebRequestHandlerInterceptorAdapter {
+	private Validator validator;
 
-@Autowired
-private SessionObject sessionObject;
+	public HTTPRequestInterceptor(WebRequestInterceptor requestInterceptor) {
+		super(requestInterceptor);
+		// TODO Auto-generated constructor stub
+	}
 
-@Override
-public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-	logger.info("http interceptor - pre Handle");
-	boolean status = true;
+	
+	Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	if (request.getRequestURI().toLowerCase().contains("swagger-ui"))
-		return status;
+	@Autowired
+	public void setValidator(Validator validator) {
+		this.validator = validator;
+	}
 
-	String authorization = null;
-	String preAuth = request.getHeader("Authorization");
-	if(null != preAuth && preAuth.contains("Bearer "))
-		authorization=preAuth.replace("Bearer ", "");
-	else
-		authorization = preAuth;
-	if (!request.getMethod().equalsIgnoreCase("OPTIONS")) {
-		try {
-			String[] requestURIParts = request.getRequestURI().split("/");
-			String requestAPI = requestURIParts[requestURIParts.length - 1];
-			switch (requestAPI) {
-			case "swagger-ui.html":
-				break;
-			case "index.html":
-				break;
-			case "swagger-initializer.js":
-				break;
-			case "swagger-config":
-				break;
-			case "ui":
-				break;
-			case "swagger-resources":
-				break;
-			case "api-docs":
-				break;
+	private SessionObject sessionObject;
 
-			case "error":
+	@Autowired
+	public void setSessionObject(SessionObject sessionObject) {
+		this.sessionObject = sessionObject;
+	}
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
+		boolean status = true;
+		logger.debug("In preHandle we are Intercepting the Request");
+		String authorization = request.getHeader("Authorization");
+		logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization
+				+ " || method :: " + request.getMethod());
+		if (!request.getMethod().equalsIgnoreCase("OPTIONS")) {
+			try {
+				String[] requestURIParts = request.getRequestURI().split("/");
+				String requestAPI = requestURIParts[requestURIParts.length - 1];
+				switch (requestAPI) {
+				// case "doctorData":
+				case "wo":
+				case "startMasterDownload":
+				case "checkMastersDownloadProgress":
+				case "getVanDetailsForMasterDownload":
+				case "userAuthenticate":
+				case "superUserAuthenticate":
+				case "userAuthenticateNew":
+				case "userAuthenticateV1":
+				case "forgetPassword":
+				case "setForgetPassword":
+				case "changePassword":
+				case "saveUserSecurityQuesAns":
+				case "doAgentLogout":
+				case "userLogout":
+				case "swagger-ui.html":
+				case "ui":
+				case "swagger-resources":
+				case "version":
+				case "api-docs":
+
+					break;
+				case "error":
+					status = false;
+					break;
+				default:
+					String remoteAddress = request.getHeader("X-FORWARDED-FOR");
+					if (remoteAddress == null || remoteAddress.trim().length() == 0) {
+						remoteAddress = request.getRemoteAddr();
+					}
+					validator.checkKeyExists(authorization, remoteAddress);
+					break;
+				}
+			} catch (Exception e) {
+				OutputResponse output = new OutputResponse();
+				output.setError(e);
+				response.setContentType(MediaType.APPLICATION_JSON);
+
+				response.setContentLength(output.toString().length());
+				response.setHeader("Access-Control-Allow-Origin", "*");
+				response.getOutputStream().print(output.toString());
 				status = false;
-				break;
-			default:
-				logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
-				if (authorization == null)
-					throw new Exception(
-							"Authorization key is NULL, please pass valid session key to proceed further. ");
-				String userRespFromRedis = sessionObject.getSessionObject(authorization);
-				if (userRespFromRedis == null)
-					throw new Exception("invalid Authorization key, please pass a valid key to proceed further. ");
-				break;
+			}
+		}
+		return status;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView model)
+			throws Exception {
+		try {
+			logger.debug("In postHandle we are Intercepting the Request");
+			String authorization = request.getHeader("Authorization");
+			logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
+			if (authorization != null) {
+				sessionObject.updateSessionObject(authorization, sessionObject.getSessionObject(authorization));
 			}
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
-
-			OutputResponse output = new OutputResponse();
-			output.setError(e);
-			response.getOutputStream().print(output.toString());
-			response.setContentType(MediaType.APPLICATION_JSON);
-			response.setContentLength(output.toString().length());
-			response.setHeader("Access-Control-Allow-Origin", "*");
-			status = false;
+			logger.debug("postHandle failed with error " + e.getMessage());
 		}
 	}
 
-	return status;
-}
-
-@Override
-public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView model)
-		throws Exception {
-	try {
-		logger.debug("In postHandle we are Intercepting the Request");
-		String authorization = null;
-		String postAuth = request.getHeader("Authorization");
-		if(null != postAuth && postAuth.contains("Bearer "))
-			authorization=postAuth.replace("Bearer ", "");
-		else
-			authorization = postAuth;
-		logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
-		if (authorization != null) {
-			sessionObject.updateSessionObject(authorization, sessionObject.getSessionObject(authorization));
-		}
-	} catch (Exception e) {
-		logger.debug("postHandle failed with error " + e.getMessage());
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception arg3)
+			throws Exception {
+		logger.debug("In afterCompletion Request Completed");
 	}
-}
-
-@Override
-public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception arg3)
-		throws Exception {
-	logger.info("http interceptor - after completion");
-
-}
-
 }
