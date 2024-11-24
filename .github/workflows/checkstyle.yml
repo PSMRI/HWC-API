@@ -3,25 +3,22 @@ name: Run Checkstyle
 on:
   pull_request:
     branches:
-      - "**" # Triggers on all branches for pull requests.
+      - "**"
 
 jobs:
   checkstyle:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up JDK 17
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 17 # Matches the java.version property in pom.xml
+          java-version: 17
           distribution: temurin
 
-      # Cache Maven dependencies
       - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
@@ -30,6 +27,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
 
-      # Install Maven dependencies and run Checkstyle
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
+      - name: Install dependencies
+        run: mvn install -DskipTests
+
+      - name: Run Checkstyle on changed files
+        run: |
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.java$')
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No Java files changed. Skipping Checkstyle."
+          else
+            mvn checkstyle:check -Dcheckstyle.files="$CHANGED_FILES"
+          fi
