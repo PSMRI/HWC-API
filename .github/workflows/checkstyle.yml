@@ -27,9 +27,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2
 
+      # Install dependencies and handle compilation errors
       - name: Install dependencies
-        run: mvn install -DskipTests
+        run: |
+          # First check if the code compiles
+          mvn compile -DskipTests
+          if [ $? -eq 0 ]; then
+            # If compilation is successful, install dependencies
+            mvn install -DskipTests
+          else
+            # If compilation fails, output error message and stop the workflow
+            echo "Compilation failed! Fix compilation errors before running Checkstyle."
+            exit 1
+          fi
 
+      # Run Checkstyle on changed files
       - name: Run Checkstyle on changed files
         run: |
           CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.java$')
