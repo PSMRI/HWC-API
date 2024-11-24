@@ -435,6 +435,14 @@
 					</webResources>
 				</configuration>
 			</plugin>
+			<plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-checkstyle-plugin</artifactId>
+                  <version>3.2.2</version>
+                     <configuration>
+               <configLocation>.github/workflows/checkstyle.xml</configLocation> 
+            </configuration>
+        </plugin>
 		</plugins>
 	</build>
 
