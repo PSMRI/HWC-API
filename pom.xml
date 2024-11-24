@@ -440,7 +440,7 @@
               <artifactId>maven-checkstyle-plugin</artifactId>
                   <version>3.2.2</version>
                      <configuration>
-               <configLocation>.github/workflows/checkstyle.xml</configLocation> 
+               <configLocation>.github/workflows/checkstyle.yml</configLocation> 
             </configuration>
         </plugin>
 		</plugins>
