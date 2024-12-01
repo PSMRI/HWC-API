@@ -225,7 +225,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -245,7 +245,7 @@ public class CommonServiceImpl implements CommonService {
 				new Gson().toJson(cSNurseServiceImpl.getCancerExaminationImageAnnotationCasesheet(
 						benFlowOBJ.getBeneficiaryRegID(), benFlowOBJ.getBenVisitCode())));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -262,7 +262,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -279,7 +279,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -299,7 +299,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -319,7 +319,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -336,7 +336,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -353,7 +353,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -370,7 +370,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -387,7 +387,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -404,7 +404,7 @@ public class CommonServiceImpl implements CommonService {
 		caseSheetData.put("BeneficiaryData",
 				getBenDetails(benFlowOBJ.getBenFlowID(), benFlowOBJ.getBeneficiaryRegID()));
 
-		caseSheetData.put("serviceID", 4);
+		caseSheetData.put("serviceID", 9);
 
 		return caseSheetData.toString();
 	}
@@ -539,7 +539,7 @@ public class CommonServiceImpl implements CommonService {
 		// List<Short> flagList = new ArrayList<>();
 		// flagList.add((short) 9);
 		// flagList.add((short) 3);
-		List<Integer> psmIDList = providerServiceMappingRepo.getProviderServiceMapIdForServiceID((short) 4);
+		List<Integer> psmIDList = providerServiceMappingRepo.getProviderServiceMapIdForServiceID((short) 9);
 		psmIDList.add(0);
 		ArrayList<Object[]> resultList = beneficiaryFlowStatusRepo.getBenPreviousHistory(obj.getBeneficiaryRegID(),
 				psmIDList);
