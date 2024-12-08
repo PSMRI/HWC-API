@@ -22,5 +22,5 @@
 package com.iemr.hwc.service.labtechnician;
 
 public interface LabTechnicianService {
-
+	String getProcedureComponentMappedMasterData(Long providerServiceMapID) throws Exception;
 }

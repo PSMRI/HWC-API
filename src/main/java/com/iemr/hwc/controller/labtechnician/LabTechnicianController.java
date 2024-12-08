@@ -167,11 +167,10 @@ public class LabTechnicianController {
 	public String getProcedureComponentMappedMasterData(@RequestBody String requestOBJ) {
 		OutputResponse response = new OutputResponse();
 		try {
-			logger.info("Request obj to fetch procedure component mapped master data  :" + requestOBJ);
+			logger.info("Request obj to fetch procedure component mapped master data ");
 			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+			JsonElement jsnElement = JsonParser.parseString(requestOBJ);
+			jsnOBJ = jsnElement.getAsJsonObject();
 
 			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("providerServiceMapID")) {
 

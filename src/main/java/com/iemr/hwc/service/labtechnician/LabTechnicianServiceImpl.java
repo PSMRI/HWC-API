@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -510,6 +511,10 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 	}
 	
 	public String getProcedureComponentMappedMasterData(Long providerServiceMapID) throws Exception {
+		if(providerServiceMapID == null) {
+			throw new IllegalArgumentException("Provider service map id cannot be null");
+		}
+		try {
 		ArrayList<Object[]> procCompMapMasterList = procedureCompMappedMasterRepo.getProcedureComponentMappedMasterData(providerServiceMapID);
 		if (procCompMapMasterList != null && procCompMapMasterList.size() > 0) {
 			ArrayList<Map<String, Object>> responseList = ProcedureComponentMapping
@@ -519,5 +524,11 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 			return new Gson().toJson(new ArrayList<>());
 		}	
 	}
+		catch (DataAccessResourceFailureException e) {
+			throw new DataAccessResourceFailureException("Failed to fetch procedure component mapped master data", e);
+	}
+	
+	}
+	
 	
 }
