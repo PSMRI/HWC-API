@@ -50,7 +50,7 @@ public class JwtUserIdValidationFilter implements Filter {
 
 		// Log headers for debugging
 		String jwtTokenFromHeader = request.getHeader("Jwttoken");
-		logger.info("JWT token from header: " + jwtTokenFromHeader);
+		logger.info("JWT token from header: ");
 
 		// Skip login and public endpoints
 		if (path.equals(contextPath + "/user/userAuthenticate")
@@ -64,7 +64,7 @@ public class JwtUserIdValidationFilter implements Filter {
 		try {
 			// Retrieve JWT token from cookies
 			String jwtTokenFromCookie = getJwtTokenFromCookies(request);
-			logger.info("JWT token from cookie: " + jwtTokenFromCookie);
+			logger.info("JWT token from cookie: ");
 
 			// Determine which token (cookie or header) to validate
 			String jwtToken = jwtTokenFromCookie != null ? jwtTokenFromCookie : jwtTokenFromHeader;
