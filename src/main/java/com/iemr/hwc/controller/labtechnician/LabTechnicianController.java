@@ -160,5 +160,35 @@ public class LabTechnicianController {
 		}
 		return response.toString();
 	}
+	
+	@CrossOrigin
+	@Operation(summary = "Get procedure component mapped master data")
+	@PostMapping(value = { "/get/fetchProcCompMapMasterData" })
+	public String getProcedureComponentMappedMasterData(@RequestBody String requestOBJ) {
+		OutputResponse response = new OutputResponse();
+		try {
+			logger.info("Request obj to fetch procedure component mapped master data ");
+			JsonObject jsnOBJ = new JsonObject();
+			JsonElement jsnElement = JsonParser.parseString(requestOBJ);
+			jsnOBJ = jsnElement.getAsJsonObject();
+
+			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("providerServiceMapID")) {
+
+				String s = labTechnicianServiceImpl.getProcedureComponentMappedMasterData(
+						jsnOBJ.get("providerServiceMapID").getAsLong());
+				if (s != null)
+					response.setResponse(s);
+				else
+					response.setError(5000, "Error in fetching procedure component mapped master data");
+			} else {
+				response.setError(5000, "Invalid request");
+			}
+		} catch (Exception e) {
+			logger.error("Error while fetching procedure component mapped master data:" + e);
+			response.setError(5000, "Error while fetching procedure component mapped master data");
+		}
+		return response.toString();
+	}
+
 
 }
