@@ -8,6 +8,6 @@ on:
 
 jobs:
   style-check:
-    uses: ./PSMRI/.github/workflows/checkstyle.yml@main
+    uses: PSMRI/.github/.github/workflows/checkstyle.yml@main
     with:
       java-version: '17'
