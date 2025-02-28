@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.MediaType;
 
 import com.iemr.hwc.data.login.Users;
@@ -45,12 +46,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
+import com.iemr.hwc.utils.CookieUtil;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
 
@@ -91,6 +95,8 @@ public class RegistrarServiceImpl implements RegistrarService {
 	private RegistrarRepoBeneficiaryDetails registrarRepoBeneficiaryDetails;
 	private BeneficiaryImageRepo beneficiaryImageRepo;
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
+	@Autowired
+	private CookieUtil cookieUtil;
 
 	@Autowired
 	private UserLoginRepo userRepo;
@@ -700,10 +706,14 @@ public class RegistrarServiceImpl implements RegistrarService {
 		Long beneficiaryID = null;
 
 		RestTemplate restTemplate = new RestTemplate();
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
 		// headers.add("Content-Type", MediaType.APPLICATION_JSON);
 		headers.add("AUTHORIZATION", Authorization);
+		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
 		ResponseEntity<String> response = restTemplate.exchange(registrationUrl, HttpMethod.POST, request,
 				String.class);
@@ -752,11 +762,10 @@ public class RegistrarServiceImpl implements RegistrarService {
 			ResponseEntity<String> response = restTemplate.exchange(syncSearchByLocation, HttpMethod.POST, request,
 					String.class);
 
-			if (response.hasBody()){
+			if (response.hasBody()) {
 				returnOBJ = response.getBody();
 			}
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -768,10 +777,14 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public Integer updateBeneficiary(String comingRequest, String Authorization) throws Exception {
 		Integer returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		// headers.add("Content-Type", "application/json");
 		headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
 		headers.add("AUTHORIZATION", Authorization);
+		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
 		ResponseEntity<String> response = restTemplate.exchange(beneficiaryEditUrl, HttpMethod.POST, request,
 				String.class);
@@ -790,10 +803,14 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public String beneficiaryQuickSearch(String requestObj, String Authorization) {
 		String returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		JSONObject obj = new JSONObject(requestObj);
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		headers.add("Content-Type", "application/json");
 		headers.add("AUTHORIZATION", Authorization);
+		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 		if ((obj.has("beneficiaryID") && !obj.isNull("beneficiaryID"))
 				|| (obj.has("HealthID") && !obj.isNull("HealthID"))
 				|| (obj.has("HealthIDNumber") && !obj.isNull("HealthIDNumber"))
@@ -822,10 +839,14 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public String beneficiaryAdvanceSearch(String requestObj, String Authorization) {
 		String returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		JSONObject obj = new JSONObject(requestObj);
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		headers.add("Content-Type", "application/json");
 		headers.add("AUTHORIZATION", Authorization);
+		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 		HttpEntity<Object> request = new HttpEntity<Object>(requestObj, headers);
 		ResponseEntity<String> response = restTemplate.exchange(registrarAdvanceSearchUrl, HttpMethod.POST, request,
 				String.class);
@@ -845,7 +866,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public String saveFingerprints(FingerPrintDTO comingRequest) {
 		String response = "";
 		Users user = userRepo.getUserByUsername(comingRequest.getUserName());
-		if(user !=null){
+		if (user != null) {
 			UserBiometricsMapping userBiometricsMapping = new UserBiometricsMapping();
 			userBiometricsMapping.setUserID(user.getUserID());
 			userBiometricsMapping.setFirstName(user.getFirstName());
@@ -858,14 +879,12 @@ public class RegistrarServiceImpl implements RegistrarService {
 			userBiometricsMapping.setLeftIndexFinger(comingRequest.getLeftIndexFinger());
 
 			UserBiometricsMapping resp = userBiometricsRepo.save(userBiometricsMapping);
-			if(resp !=null){
+			if (resp != null) {
 				response = "ok";
-			}
-			else{
+			} else {
 				response = "ko";
 			}
-		}
-		else{
+		} else {
 			response = "wrong username";
 		}
 
