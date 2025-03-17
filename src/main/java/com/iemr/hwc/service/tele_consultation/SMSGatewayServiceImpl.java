@@ -36,6 +36,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -44,6 +46,9 @@ import com.google.gson.JsonParser;
 import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
 import com.iemr.hwc.data.tele_consultation.SmsRequestOBJ;
 import com.iemr.hwc.repo.tc_consultation.TCRequestModelRepo;
+import com.iemr.hwc.utils.CookieUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -63,6 +68,8 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 	private TCRequestModelRepo tCRequestModelRepo;
 	@Autowired
 	RestTemplate restTemplate;
+	@Autowired
+	private CookieUtil cookieUtil;
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
@@ -70,27 +77,24 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 			Long tMRequestCancelID, String createdBy, String tcDate, String tcPreviousDate, String Authorization) {
 
 		int returnOBJ = 0;
-		try
-		{
-		String requestOBJ = createSMSRequest(smsType, benRegID, specializationID, tMRequestID, tMRequestCancelID,
-				createdBy, tcDate, tcPreviousDate);
+		try {
+			String requestOBJ = createSMSRequest(smsType, benRegID, specializationID, tMRequestID, tMRequestCancelID,
+					createdBy, tcDate, tcPreviousDate);
 
-		if (requestOBJ != null) {
-			String smsStatus = sendSMS(requestOBJ, Authorization);
-			if (smsStatus != null) {
-				JsonObject jsnOBJ = new JsonObject();
-				JsonParser jsnParser = new JsonParser();
-				JsonElement jsnElmnt = jsnParser.parse(smsStatus);
-				jsnOBJ = jsnElmnt.getAsJsonObject();
-				if (jsnOBJ != null && jsnOBJ.get("statusCode").getAsInt() == 200)
-					returnOBJ = 1;
+			if (requestOBJ != null) {
+				String smsStatus = sendSMS(requestOBJ, Authorization);
+				if (smsStatus != null) {
+					JsonObject jsnOBJ = new JsonObject();
+					JsonParser jsnParser = new JsonParser();
+					JsonElement jsnElmnt = jsnParser.parse(smsStatus);
+					jsnOBJ = jsnElmnt.getAsJsonObject();
+					if (jsnOBJ != null && jsnOBJ.get("statusCode").getAsInt() == 200)
+						returnOBJ = 1;
+				}
+				// System.out.println("hello");
 			}
-			// System.out.println("hello");
-		}
-		}
-		catch(Exception e)
-		{
-			logger.info("Exception during sending "+smsType+" SMS " + e.getMessage());
+		} catch (Exception e) {
+			logger.info("Exception during sending " + smsType + " SMS " + e.getMessage());
 		}
 		return returnOBJ;
 
@@ -191,9 +195,13 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 
 	@Override
 	public String sendSMS(String request, String Authorization) {
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		headers.set("AUTHORIZATION", Authorization);
+		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 
 		HttpEntity<Object> requestOBJ = new HttpEntity<Object>(request, headers);
 

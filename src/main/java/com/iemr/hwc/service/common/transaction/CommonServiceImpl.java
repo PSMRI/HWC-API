@@ -37,6 +37,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -65,8 +67,11 @@ import com.iemr.hwc.service.neonatal.NeonatalService;
 import com.iemr.hwc.service.pnc.PNCServiceImpl;
 import com.iemr.hwc.service.quickConsultation.QuickConsultationServiceImpl;
 import com.iemr.hwc.service.tele_consultation.TeleConsultationServiceImpl;
+import com.iemr.hwc.utils.CookieUtil;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.mapper.InputMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -96,7 +101,9 @@ public class CommonServiceImpl implements CommonService {
 	private ProviderServiceMappingRepo providerServiceMappingRepo;
 
 	@Autowired
-	private BenVisitDetailRepo benVisitDetailRepo; 
+	private BenVisitDetailRepo benVisitDetailRepo;
+	@Autowired
+	private CookieUtil cookieUtil;
 
 	@Autowired
 	public void setCsServiceImpl(CSServiceImpl csServiceImpl) {
@@ -411,11 +418,11 @@ public class CommonServiceImpl implements CommonService {
 
 	private String getBenDetails(Long benFlowID, Long benRegID) {
 		BeneficiaryFlowStatus obj = beneficiaryFlowStatusRepo.getBenDetailsForLeftSidePanel(benFlowID);
-		if(obj != null && obj.getVisitCode() != null) {
-		BeneficiaryVisitDetail visitDetail = benVisitDetailRepo.getSubVisitCategory(benRegID, obj.getVisitCode());
-		
-		if (visitDetail != null && visitDetail.getSubVisitCategory() != null)
-			obj.setSubVisitCategory(visitDetail.getSubVisitCategory());
+		if (obj != null && obj.getVisitCode() != null) {
+			BeneficiaryVisitDetail visitDetail = benVisitDetailRepo.getSubVisitCategory(benRegID, obj.getVisitCode());
+
+			if (visitDetail != null && visitDetail.getSubVisitCategory() != null)
+				obj.setSubVisitCategory(visitDetail.getSubVisitCategory());
 		}
 
 		// BeneficiaryFlowStatus obj =
@@ -425,7 +432,7 @@ public class CommonServiceImpl implements CommonService {
 //		if (tcspID != null && tcspID > 0) {
 //			obj.settCSpecialistUserID(tcspID);
 //		}
-					
+
 		return new Gson().toJson(obj);
 	}
 
@@ -628,6 +635,9 @@ public class CommonServiceImpl implements CommonService {
 
 	public String getOpenKMDocURL(String requestOBJ, String Authorization) {
 		RestTemplate restTemplate = new RestTemplate();
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		String fileUUID = null;
 		JSONObject obj = new JSONObject(requestOBJ);
 		if (obj.has("fileID")) {
@@ -640,6 +650,7 @@ public class CommonServiceImpl implements CommonService {
 				MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 				headers.add("Content-Type", "application/json");
 				headers.add("AUTHORIZATION", Authorization);
+				headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 				HttpEntity<Object> request = new HttpEntity<Object>(requestBody, headers);
 				ResponseEntity<String> response = restTemplate.exchange(openkmDocUrl, HttpMethod.POST, request,
 						String.class);
