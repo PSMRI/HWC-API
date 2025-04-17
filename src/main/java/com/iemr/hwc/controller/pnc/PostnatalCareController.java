@@ -51,7 +51,7 @@ import io.swagger.v3.oas.annotations.Operation;
  * @Objective Saving PNC nurse and doctor data
  *
  */
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/PNC", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class PostnatalCareController {
@@ -70,7 +70,7 @@ public class PostnatalCareController {
 	 * @throws Exception
 	 */
 
-	@CrossOrigin
+	
 	@Operation(summary = "Save PNC nurse data")
 	@PostMapping(value = { "/save/nurseData" })
 	public String saveBenPNCNurseData(@RequestBody String requestObj,
@@ -108,7 +108,7 @@ public class PostnatalCareController {
 	 * @return success or failure response
 	 */
 
-	@CrossOrigin
+	
 	@Operation(summary = "Save PNC doctor data")
 	@PostMapping(value = { "/save/doctorData" })
 	public String saveBenPNCDoctorData(@RequestBody String requestObj,
@@ -144,7 +144,7 @@ public class PostnatalCareController {
 	 * @param comingRequest
 	 * @return visit details in JSON format
 	 */
-	@CrossOrigin()
+	()
 	@Operation(summary = "Get PNC beneficiary visit details from nurse")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNursePNC" })
 	@Transactional(rollbackFor = Exception.class)
@@ -178,7 +178,7 @@ public class PostnatalCareController {
 	 * @param comingRequest
 	 * @return PNC Care data in JSON format
 	 */
-	@CrossOrigin()
+	()
 	@Operation(summary = "Get PNC beneficiary details from nurse")
 	@PostMapping(value = { "/getBenPNCDetailsFrmNursePNC" })
 	@Transactional(rollbackFor = Exception.class)
@@ -215,7 +215,7 @@ public class PostnatalCareController {
 	 * @param comingRequest
 	 * @return history data in JSON format
 	 */
-	@CrossOrigin()
+	()
 	@Operation(summary = "Get PNC bneficiary history from nurse")
 	@PostMapping(value = { "/getBenHistoryDetails" })
 
@@ -248,7 +248,7 @@ public class PostnatalCareController {
 	 * @param comingRequest
 	 * @return vital data in JSON format
 	 */
-	@CrossOrigin()
+	()
 	@Operation(summary = "Get PNC beneficiary vitals from nurse")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
 	public String getBenVitalDetailsFrmNurse(
@@ -281,7 +281,7 @@ public class PostnatalCareController {
 	 * @param comingRequest
 	 * @return examination data in JSON format
 	 */
-	@CrossOrigin()
+	()
 	@Operation(summary = "Get PNC beneficiary examination details from nurse")
 	@PostMapping(value = { "/getBenExaminationDetailsPNC" })
 
@@ -314,7 +314,7 @@ public class PostnatalCareController {
 	 * @param comingRequest
 	 * @return doctor data in JSON format
 	 */
-	@CrossOrigin()
+	()
 	@Operation(summary = "Get PNC beneficiary case record")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorPNC" })
 	@Transactional(rollbackFor = Exception.class)
@@ -351,7 +351,7 @@ public class PostnatalCareController {
 	 *            Doctor
 	 */
 
-	@CrossOrigin
+	
 	@Operation(summary = "Update PNC doctor data")
 	@PostMapping(value = { "/update/PNCScreen" })
 	public String updatePNCCareNurse(@RequestBody String requestObj) {
@@ -388,7 +388,7 @@ public class PostnatalCareController {
 	 *            by Doctor
 	 */
 
-	@CrossOrigin
+	
 	@Operation(summary = "Update PNC beneficiary history")
 	@PostMapping(value = { "/update/historyScreen" })
 	public String updateHistoryNurse(@RequestBody String requestObj) {
@@ -425,7 +425,7 @@ public class PostnatalCareController {
 	 *            by Doctor
 	 */
 
-	@CrossOrigin
+	
 	@Operation(summary = "Update PNC beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurse(@RequestBody String requestObj) {
@@ -462,7 +462,7 @@ public class PostnatalCareController {
 	 *            entered by Doctor
 	 */
 
-	@CrossOrigin
+	
 	@Operation(summary = "Update PNC examination data")
 	@PostMapping(value = { "/update/examinationScreen" })
 	public String updateGeneralOPDExaminationNurse(@RequestBody String requestObj) {
@@ -491,7 +491,7 @@ public class PostnatalCareController {
 		return response.toString();
 	}
 
-	@CrossOrigin
+	
 	@Operation(summary = "Update PNC doctor data")
 	@PostMapping(value = { "/update/doctorData" })
 	public String updatePNCDoctorData(@RequestBody String requestObj,

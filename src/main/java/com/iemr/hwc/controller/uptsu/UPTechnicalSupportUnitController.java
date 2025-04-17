@@ -47,14 +47,14 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RequestMapping(value = "/uptsu", headers = "Authorization", consumes = "application/json", produces = "application/json")
 @RestController
-@CrossOrigin
+
 public class UPTechnicalSupportUnitController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	@Autowired
 	private UptsuService uptsuService;
 
-	@CrossOrigin
+	
 	@Operation(summary = "Fetch 104 action master data")
 	@GetMapping(value = "/get/action-master", produces = MediaType.APPLICATION_JSON)
 	public String getActionMaster() {
@@ -69,7 +69,7 @@ public class UPTechnicalSupportUnitController {
 		return response.toString();
 	}
 
-	@CrossOrigin
+	
 	@Operation(summary = "Fetch 104 work list data")
 	@GetMapping("/getWorklistByVanID/{vanId}")
 	public String getWolklist104Data(@PathVariable Integer vanId) {
@@ -88,7 +88,7 @@ public class UPTechnicalSupportUnitController {
 		return response.toString();
 	}
 
-	@CrossOrigin
+	
 	@Operation(summary = "Save 104 referred details")
 	@PostMapping("/submit/closevisit")
 	public String saveReferred104Details(@RequestBody String request) {

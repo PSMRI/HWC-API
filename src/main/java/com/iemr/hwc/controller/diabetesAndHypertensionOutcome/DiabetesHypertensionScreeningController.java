@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/screeningOutcome", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class DiabetesHypertensionScreeningController {
@@ -48,7 +48,7 @@ public class DiabetesHypertensionScreeningController {
 	@Autowired
 	private DiabetesAndHypertensionOutcomeService diabetesAndHypertensionOutcomeService;
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Evaluate hypertension screening outcome")
 	@PostMapping(value = { "/hypertension" })
 	public String getHypertensionOutcome(
@@ -66,7 +66,7 @@ public class DiabetesHypertensionScreeningController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Evaluate diabetes screening outcome")
 	@PostMapping(value = { "/diabetes" })
 	public String getDiabetesOutcome(

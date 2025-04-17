@@ -48,7 +48,7 @@ import io.swagger.v3.oas.annotations.Operation;
  * @purpose Class used for data sync from van-to-server & server-to-van
  *
  */
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/dataSyncActivity", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class StartSyncActivity {
@@ -59,7 +59,7 @@ public class StartSyncActivity {
 	@Autowired
 	private DownloadDataFromServerImpl downloadDataFromServerImpl;
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Initiate data sync from van to server")
 	@PostMapping(value = { "/van-to-server" })
 	public String dataSyncToServer(@RequestBody String requestOBJ,
@@ -86,7 +86,7 @@ public class StartSyncActivity {
 		return response.toStringWithSerialization();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get data sync group details")
 	@GetMapping(value = { "/getSyncGroupDetails" })
 	public String getSyncGroupDetails() {
@@ -108,7 +108,7 @@ public class StartSyncActivity {
 	 * 
 	 * @return Masters download in van from central server
 	 */
-	@CrossOrigin()
+	
 	@Operation(summary = "Download synched master data")
 	@PostMapping(value = { "/startMasterDownload" })
 	public String startMasterDownload(@RequestBody String requestOBJ,
@@ -141,7 +141,7 @@ public class StartSyncActivity {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Master data sync download progress check")
 	@GetMapping(value = { "/checkMastersDownloadProgress" })
 	public String checkMastersDownloadProgress() {
@@ -155,7 +155,7 @@ public class StartSyncActivity {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get van details for master sync data download")
 	@GetMapping(value = { "/getVanDetailsForMasterDownload" })
 	public String getVanDetailsForMasterDownload() {

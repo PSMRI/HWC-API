@@ -53,7 +53,7 @@ public class VanSpokeController {
 		this.iemrMmuLoginServiceImpl = iemrMmuLoginServiceImpl;
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get user service point van details")
 	@PostMapping(value = "/getUserServicePointVanDetails", produces = {
 			"application/json" })
@@ -74,7 +74,7 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get service point villages")
 	@PostMapping(value = "/getServicepointVillages", produces = {
 			"application/json" })
@@ -96,7 +96,7 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get user van details")
 	@PostMapping(value = "/getUserVanSpDetails", produces = { "application/json" })
 	public String getUserVanSpDetails(@RequestBody String comingRequest) {
@@ -121,7 +121,7 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get user spoke details")
 	@GetMapping(value = "/getUserSpokeDetails/{psmId}")
 	public String getUserSpokeDetails(@PathVariable("psmId") Integer psmId) {

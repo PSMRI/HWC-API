@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "wo/user_biometrics")
 public class UserBiomectrics {
@@ -46,7 +46,7 @@ public class UserBiomectrics {
 
     @Autowired
     private RegistrarServiceImpl registrarService;
-    @CrossOrigin()
+    
     @Operation(summary = "add fingerprint for a given username")
     @PostMapping(value = "add/fingerprint/wo", produces = {
             "application/json" })

@@ -36,7 +36,7 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/quickblox", headers = "Authorization", consumes = "application/json", produces = "application/json")
 
@@ -45,7 +45,7 @@ public class QuickbloxController {
 	@Autowired
 	private QuickbloxService quickbloxService;
 
-	@CrossOrigin
+	
 	@Operation(summary = "Get quickblox id")
 	@PostMapping(value = { "/getquickbloxIds" })
 	public String getquickbloxIds(@RequestBody String requestObj,
