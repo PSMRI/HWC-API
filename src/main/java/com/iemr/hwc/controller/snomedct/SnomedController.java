@@ -55,7 +55,7 @@ public class SnomedController {
 		this.snomedService = snomedService;
 	}
 
-	@CrossOrigin
+	
 	@Operation(summary = "Retrieve Snomed clinical term")
 	@PostMapping(value = "/getSnomedCTRecord", headers = "Authorization")
 	public String getSnomedCTRecord(@Param(value = "{\"term\":\"String\"}") @RequestBody String request) {
@@ -81,7 +81,7 @@ public class SnomedController {
 		return output.toString();
 	}
 
-	@CrossOrigin
+	
 	@Operation(summary = "Retrieve Snomed clinical term list")
 	@PostMapping(value = "/getSnomedCTRecordList", headers = "Authorization")
 	public String getSnomedCTRecordList(@Param(value = "{\"term\":\"String\"}") @RequestBody String request) {

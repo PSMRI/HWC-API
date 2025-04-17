@@ -40,7 +40,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "wo/location")
 public class LocationControllerWo {
@@ -136,7 +136,7 @@ public class LocationControllerWo {
 	 * @param comingRequest
 	 * @return
 	 */
-	@CrossOrigin()
+	
 	@Operation(summary = "Get location details from service point id and provider service map id")
 	@PostMapping(value = "/getLocDetailsBasedOnSpIDAndPsmID/wo", produces = { "application/json" })
 	public String getLocDetailsBasedOnSpIDAndPsmIDNew(@RequestBody String comingRequest) {
@@ -158,7 +158,7 @@ public class LocationControllerWo {
 		return response.toString();
 	}
 
-	@CrossOrigin
+	
 	@Operation(summary = "Update health and wellness center coordinates")
 	@PostMapping(value = { "/update/villageCoordinates" })
 	public String updateGeolocationVillage(@RequestBody String requestObj) {

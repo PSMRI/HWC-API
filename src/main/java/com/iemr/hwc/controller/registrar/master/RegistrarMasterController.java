@@ -41,7 +41,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/registrar", headers = "Authorization", consumes = "application/json", produces = "application/json")
 /** Objective: Get Registration related master Data */
@@ -55,7 +55,7 @@ public class RegistrarMasterController {
 		this.registrarServiceMasterDataImpl = registrarServiceMasterDataImpl;
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Get master data for registrar")
 	@PostMapping(value = { "/registrarMasterData" })
 	public String masterDataForRegistration(

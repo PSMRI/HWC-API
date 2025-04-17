@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/masterVillage", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class MasterVillageController {

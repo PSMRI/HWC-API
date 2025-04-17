@@ -51,7 +51,7 @@ public class CRMReportController {
 	@Autowired
 	private CRMReportService cRMReportService;
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Fetch chief complaints report")
 	@PostMapping(value = "/chiefcomplaintreport", headers = "Authorization", produces = { "application/json" })
 	public String chiefcomplaintreport(@RequestBody ReportInput input) {
@@ -72,7 +72,7 @@ public class CRMReportController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Fetch consultation report")
 	@PostMapping(value = "/ConsultationReport", headers = "Authorization", produces = { "application/json" })
 	public String getConsultationReport(@RequestBody ReportInput input) {
@@ -93,7 +93,7 @@ public class CRMReportController {
 		return response.toStringWithSerialization();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Fetch total consultation report")
 	@PostMapping(value = "/TotalConsultationReport", headers = "Authorization", produces = { "application/json" })
 	public String getTotalConsultationReport(@RequestBody ReportInput input) {
@@ -114,7 +114,7 @@ public class CRMReportController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Fetch monthly report")
 	@PostMapping(value = "/MonthlyReport", headers = "Authorization", produces = {
 			"application/json" })
@@ -136,7 +136,7 @@ public class CRMReportController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
+	
 	@Operation(summary = "Fetch daily report")
 	@PostMapping(value = "/DailyReport", headers = "Authorization", produces = {
 			"application/json" })

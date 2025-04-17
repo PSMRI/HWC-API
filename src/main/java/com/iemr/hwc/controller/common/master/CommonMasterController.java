@@ -39,7 +39,7 @@ import jakarta.ws.rs.core.MediaType;
 
 
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/master", headers = "Authorization", consumes = "application/json", produces = "application/json")
 /** Objective: provides master data based on given visitCategory */

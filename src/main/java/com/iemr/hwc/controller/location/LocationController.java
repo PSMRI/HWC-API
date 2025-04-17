@@ -40,7 +40,7 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/location", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class LocationController {
@@ -179,7 +179,7 @@ public class LocationController {
 	 * @param comingRequest
 	 * @return
 	 */
-	@CrossOrigin()
+	
 	@Operation(summary = "Get location details from service point id and provider service map id")
 	@PostMapping(value = "/getLocDetailsBasedOnSpIDAndPsmID", produces = { "application/json" })
 	public String getLocDetailsBasedOnSpIDAndPsmIDNew(@RequestBody String comingRequest) {
