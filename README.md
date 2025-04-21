@@ -97,6 +97,7 @@ This project uses Git hooks to enforce consistent code quality and commit messag
 2. **Install dependencies**
    - From the project root directory, run:
      ```
+     npm install
      npm ci
      ```
    - This will install all required dependencies including Husky and commitlint
