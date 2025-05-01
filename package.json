@@ -16,9 +16,6 @@
     "src/**/*.{ts,js}": [
       "eslint --fix"
     ],
-    "**/*.java": [
-    "java -jar checkstyle.jar -c checkstyle.xml "
-  ],
   "**/*.xml": [
     "xmllint --noout "
   ]
