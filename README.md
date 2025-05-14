@@ -27,21 +27,22 @@ Health and Wellness centre (HWC) is one of the comprehensive applications of AMR
 This microservice is built on Java, Spring boot framework and MySQL DB.
 
 ### Pre-requisites 
-* JDK 1.8
+* JDK 17 [Oracle website](https://www.oracle.com/java/technologies/javase-downloads.html) or use an open-source JDK like [OpenJDK](https://adoptopenjdk.net/)
 * Spring Tool Suite 3 / Eclipse(2023-03)
-* Maven (if not pre-installed with the editor)
+* Maven [Apache Maven website](https://maven.apache.org/download.cgi).
 * Redis-x64-3.0.504
 * MySQL Workbench 8.0
-
+* Node.js (v14 or later)
+* npm (comes with Node.js)
 ### Creating a build configuration in STS / Eclipse
 
-* You can copy `common_example.properties` to `common_local.properties` and edit the file accordingly. The file is under `src/main/environment` folder.
-* In your editor, click on Run -> Run configuration.
-* Double-click on Maven build and give a suitable name for the new configuration.
-* Populate the base directory by clicking on workspace and selecting HWC-API module.
-* Set goals to clean install -DENV_VAR=local(your choice of desired environment) and click on Apply. 
-* It is advisable have a personal environment properties file under src/main/environment filling out all the placeholders to avoid repetitive manual work each time you run locally.
-* Click Run to run the build configuration.
+1. You can copy `common_example.properties` to `common_local.properties` and edit the file accordingly. The file is under `src/main/environment` folder.
+2. In your editor, click on Run -> Run configuration.
+3. Double-click on Maven build and give a suitable name for the new configuration.
+4. Populate the base directory by clicking on workspace and selecting HWC-API module.
+5. Set goals to clean install `-DENV_VAR=local(your choice of desired environment)` and click on Apply. 
+6. It is advisable have a personal environment properties file under src/main/environment filling out all the placeholders to avoid repetitive manual work each time you run locally.
+7. Click Run to run the build configuration.
 
 ### Creating a run configuration in STS / Eclipse
 
@@ -55,28 +56,22 @@ This microservice is built on Java, Spring boot framework and MySQL DB.
 
 1. **Install Visual Studio Code**: Download and install [Visual Studio Code](https://code.visualstudio.com/) from the official website.
 
-2. **Install Java**: Ensure you have the Java Development Kit (JDK 1.8) installed on your computer. You can download it from the [Oracle website](https://www.oracle.com/java/technologies/javase-downloads.html) or use an open-source JDK like [OpenJDK](https://adoptopenjdk.net/).
-
-3. **Install Maven**: Make sure you have Apache Maven installed on your system. Download it from the [Apache Maven website](https://maven.apache.org/download.cgi).
-
-4. **Install Visual Studio Code Extensions**:
+2. **Install Visual Studio Code Extensions**:
    - **Java Extension Pack**: Open Visual Studio Code, go to the Extensions view by clicking on the Extensions icon in the Activity Bar, and search for "Java Extension Pack." Install it to get Java support and Maven integration.
 
-5. **Open the Project in Visual Studio Code**:
-   - Launch Visual Studio Code.
-   - Use the **File > Open Folder** option to open your Maven project folder.
+3. **Open the Project in Visual Studio Code**:
+   - Launch Visual Studio Code and open your folder in the editor.
 
-6. **Configure Java and Maven**:
+4. **Configure Java and Maven**:
    - If not already configured, set up your Java Home and Maven Home in Visual Studio Code.
    - Go to **File > Preferences > Settings**, search for "Java Home" and "Maven Home," and specify the paths to your JDK and Maven installations.
 
-7. **Build and Run**:
-   - To build and run your Maven project, open the integrated terminal in Visual Studio Code (**Terminal > New Terminal**).
+5. **Build and Run**:
    - Navigate to your project directory using the `cd` command.
    - Use Maven commands like `mvn clean install` to build your project.
-   - To run your Java application, use mvn spring-boot:run. Ensure the redis server is open during run.
+   - To run your Java application, use `mvn spring-boot:run`. Ensure the redis server is open during run.
    
-##DB restoration
+## DB restoration
 [blank_db_zip](https://psmri.github.io/PSMRI/developer-guides/technical-overview/#db-restoration)   
 
 ## Integrations
@@ -84,6 +79,52 @@ This microservice is built on Java, Spring boot framework and MySQL DB.
 
 ## Usage
 All features have been exposed as REST endpoints. Refer to the SWAGGER API specification for details.
+
+## Setting Up Commit Hooks
+
+This project uses Git hooks to enforce consistent code quality and commit message standards. Even though this is a Java project, the hooks are powered by Node.js. Follow these steps to set up the hooks locally:
+
+### Setup Steps
+
+1. **Install Node.js and npm**
+   - Download and install from [nodejs.org](https://nodejs.org/)
+   - Verify installation with:
+     ```
+     node --version
+     npm --version
+     ```
+
+2. **Install dependencies**
+   - From the project root directory, run:
+     ```
+     npm install
+     npm ci
+     ```
+   - This will install all required dependencies including Husky and commitlint
+
+3. **Verify hooks installation**
+   - The hooks should be automatically installed by Husky
+   - You can verify by checking if the `.husky` directory contains executable hooks
+
+### Commit Message Convention
+
+This project follows a specific commit message format:
+- Format: `type(scope): subject`
+- Example: `feat(login): add remember me functionality`
+
+Types include:
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code changes that neither fix bugs nor add features
+- `perf`: Performance improvements
+- `test`: Adding or fixing tests
+- `build`: Changes to build process or tools
+- `ci`: Changes to CI configuration
+- `chore`: Other changes (e.g., maintenance tasks, dependencies)
+
+Your commit messages will be automatically validated when you commit, ensuring project consistency.
 
 ## Filing Issues
 
