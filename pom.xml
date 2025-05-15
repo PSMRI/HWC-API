@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.iemr.hwc</groupId>
-	<artifactId>hwc-facility-service</artifactId>
-	<version>v3.1.0</version>
+	<artifactId>hwc-api</artifactId>
+	<version>3.1.0</version>
 	<packaging>war</packaging>
 
-	<name>hwc-facility-service-api</name>
+	<name>hwc-api</name>
 	<description>Piramal HWC Service / APIs</description>
 
 	<parent>
