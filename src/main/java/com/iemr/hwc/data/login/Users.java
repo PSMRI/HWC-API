@@ -21,10 +21,12 @@
 */
 package com.iemr.hwc.data.login;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 import com.iemr.hwc.data.location.DistrictBranchMapping;
 import lombok.Data;
@@ -32,7 +34,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "m_user")
-public class Users {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Users implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose

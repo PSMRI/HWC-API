@@ -32,8 +32,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.client.RestTemplate;
 
+import com.iemr.hwc.data.login.Users;
 import com.iemr.hwc.fhir.config.fhirRestfulServer.FhirRestfulServer;
 import com.iemr.hwc.utils.IEMRApplBeans;
 
@@ -57,11 +62,26 @@ public class Application {
 		return new RestTemplate();
 	}
 
-	//Registering new fhir servlet for CHO mobile app
+	// Registering new fhir servlet for CHO mobile app
 	@Bean
 	public ServletRegistrationBean ServletRegistrationBean() {
-		ServletRegistrationBean registration= new ServletRegistrationBean(new FhirRestfulServer(context),"/fhir/*");
+		ServletRegistrationBean registration = new ServletRegistrationBean(new FhirRestfulServer(context), "/fhir/*");
 		registration.setName("FhirServlet");
 		return registration;
+	}
+
+	@Bean
+	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
+		template.setConnectionFactory(factory);
+
+		// Use StringRedisSerializer for keys (userId)
+		template.setKeySerializer(new StringRedisSerializer());
+
+		// Use Jackson2JsonRedisSerializer for values (Users objects)
+		Jackson2JsonRedisSerializer<Users> serializer = new Jackson2JsonRedisSerializer<>(Users.class);
+		template.setValueSerializer(serializer);
+
+		return template;
 	}
 }

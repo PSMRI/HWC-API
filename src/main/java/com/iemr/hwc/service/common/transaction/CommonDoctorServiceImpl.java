@@ -42,6 +42,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -78,9 +80,12 @@ import com.iemr.hwc.repo.tc_consultation.TeleconsultationStatsRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.snomedct.SnomedServiceImpl;
 import com.iemr.hwc.service.tele_consultation.SMSGatewayServiceImpl;
+import com.iemr.hwc.utils.CookieUtil;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.mapper.OutputMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -118,6 +123,8 @@ public class CommonDoctorServiceImpl {
 	private SMSGatewayServiceImpl sMSGatewayServiceImpl;
 	@Autowired
 	private FoetalMonitorRepo foetalMonitorRepo;
+	@Autowired
+	private CookieUtil cookieUtil;
 
 	@Autowired
 	public void setSnomedServiceImpl(SnomedServiceImpl snomedServiceImpl) {
@@ -353,7 +360,7 @@ public class CommonDoctorServiceImpl {
 				benChiefComplaint.setCreatedBy(wrapperAncFindings.getCreatedBy());
 
 				if (null != complaintsDetails.getChiefComplaintID()) {
-					
+
 					benChiefComplaint.setChiefComplaintID(complaintsDetails.getChiefComplaintID());
 				}
 				if (null != complaintsDetails.getChiefComplaint())
@@ -405,7 +412,6 @@ public class CommonDoctorServiceImpl {
 	// New doc work-list service (Future scheduled beneficiary for TM)
 	public String getDocWorkListNewFutureScheduledForTM(Integer providerServiceMapId, Integer serviceID,
 			Integer vanID) {
-
 
 		ArrayList<BeneficiaryFlowStatus> docWorkListFutureScheduled = new ArrayList<>();
 		if (serviceID != null && serviceID == 9) {
@@ -542,8 +548,6 @@ public class CommonDoctorServiceImpl {
 
 		return new Gson().toJson(prescribedDrugs);
 	}
-
-	
 
 	public String getReferralDetails(Long beneficiaryRegID, Long visitCode, Boolean rrList) {
 		ArrayList<BenReferDetails> resList = benReferDetailsRepo.findByBeneficiaryRegIDAndVisitCode(beneficiaryRegID,
@@ -717,7 +721,8 @@ public class CommonDoctorServiceImpl {
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 9) {
-			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo
+					.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
 			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
 				for (FoetalMonitor data : foetalMonitorData) {
@@ -770,7 +775,6 @@ public class CommonDoctorServiceImpl {
 		}
 
 		int i = 0;
-
 
 		if (commonUtilityClass != null && commonUtilityClass.getIsSpecialist() != null
 				&& commonUtilityClass.getIsSpecialist() == true) {
@@ -856,7 +860,8 @@ public class CommonDoctorServiceImpl {
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 9) {
-			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
+			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo
+					.getFoetalMonitorDetailsByFlowId(tmpBenFlowID);
 			if (foetalMonitorData.size() > 0) {
 				labTechnicianFlag = 3;
 				for (FoetalMonitor data : foetalMonitorData) {
@@ -951,7 +956,6 @@ public class CommonDoctorServiceImpl {
 		return i;
 	}
 
-
 	public String deletePrescribedMedicine(JSONObject obj) {
 		int i = 0;
 		if (obj != null && obj.has("id")) {
@@ -971,9 +975,13 @@ public class CommonDoctorServiceImpl {
 		String requestOBJ = OutputMapper.gson().toJson(tcSpecialistSlotBookingRequestOBJ);
 
 		RestTemplate restTemplate = new RestTemplate();
+		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 		headers.add("Content-Type", "application/json");
 		headers.add("AUTHORIZATION", Authorization);
+		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 		HttpEntity<Object> request = new HttpEntity<Object>(requestOBJ, headers);
 		ResponseEntity<String> response = restTemplate.exchange(tcSpecialistSlotBook, HttpMethod.POST, request,
 				String.class);
@@ -1029,8 +1037,8 @@ public class CommonDoctorServiceImpl {
 
 	public String getFoetalMonitorData(Long beneFiciaryRegID, Long visitCode) {
 
-		ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo.getFoetalMonitorDetailsForCaseRecord(beneFiciaryRegID,
-				visitCode);
+		ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo
+				.getFoetalMonitorDetailsForCaseRecord(beneFiciaryRegID, visitCode);
 
 		return new Gson().toJson(foetalMonitorData);
 
