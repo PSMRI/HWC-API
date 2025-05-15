@@ -6,7 +6,7 @@
 
 	<groupId>com.iemr.hwc</groupId>
 	<artifactId>hwc-facility-service</artifactId>
-	<version>v-1.0</version>
+	<version>v3.1.0</version>
 	<packaging>war</packaging>
 
 	<name>hwc-facility-service-api</name>
@@ -295,7 +295,7 @@
 
 
 	<build>
-		<finalName>hwc-facility-service-v3.0.0</finalName>
+		<finalName>${artifactId}-${version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.owasp</groupId>
