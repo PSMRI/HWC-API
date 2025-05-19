@@ -9,7 +9,7 @@
 	<version>3.1.0</version>
 	<packaging>war</packaging>
 
-	<name>hwc-api</name>
+	<name>HWC-API</name>
 	<description>Piramal HWC Service / APIs</description>
 
 	<parent>
