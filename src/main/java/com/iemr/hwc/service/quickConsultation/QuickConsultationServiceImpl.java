@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +66,7 @@ import com.iemr.hwc.service.labtechnician.LabTechnicianServiceImpl;
 import com.iemr.hwc.service.tele_consultation.SMSGatewayServiceImpl;
 import com.iemr.hwc.service.tele_consultation.TeleConsultationServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
+import com.google.gson.JsonElement;
 
 @Service
 public class QuickConsultationServiceImpl implements QuickConsultationService {
@@ -100,6 +103,8 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 	
 	@Autowired
 	private BenAdherenceRepo benAdherenceRepo;
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
 	public Long saveBeneficiaryChiefComplaint(JsonObject caseSheet) {
@@ -239,6 +244,19 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				benPhysicalVitalDetail.setVisitCode(benVisitCode);
 				Long benPhysicalVitalID = commonNurseServiceImpl
 						.saveBeneficiaryPhysicalVitalDetails(benPhysicalVitalDetail);
+
+		//Chief Complaint QC update
+ 				JsonArray chiefComplaintsArray = jsnOBJ.getAsJsonArray("chiefComplaints");
+                if (chiefComplaintsArray != null && chiefComplaintsArray.size() > 0) {
+                    for (JsonElement elem : chiefComplaintsArray) {
+                        JsonObject complaintObj = elem.getAsJsonObject();
+                        complaintObj.addProperty("benVisitID", benVisitID);
+                    }
+                }
+
+                jsnOBJ.add("chiefComplaints", chiefComplaintsArray);
+                Long benChiefComplaintID = saveBeneficiaryChiefComplaint(jsnOBJ);
+
 				if (benAnthropometryID != null && benAnthropometryID > 0 && benPhysicalVitalID != null
 						&& benPhysicalVitalID > 0) {
 					// Integer i = commonNurseServiceImpl.updateBeneficiaryStatus('N',
@@ -479,6 +497,9 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		if (null != benVisitDetailsOBJ) {
 
 			resMap.put("benVisitDetails", benVisitDetailsOBJ);
+
+			resMap.put("BenChiefComplaints", commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode));
+
 		}
 		if(cdssObj != null) {
 			resMap.put("cdss", cdssObj);
