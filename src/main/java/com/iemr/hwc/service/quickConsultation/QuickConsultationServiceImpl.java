@@ -245,20 +245,21 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				Long benPhysicalVitalID = commonNurseServiceImpl
 						.saveBeneficiaryPhysicalVitalDetails(benPhysicalVitalDetail);
 
-		//Chief Complaint QC update
- 				JsonArray chiefComplaintsArray = jsnOBJ.getAsJsonArray("chiefComplaints");
-                if (chiefComplaintsArray != null && chiefComplaintsArray.size() > 0) {
-                    for (JsonElement elem : chiefComplaintsArray) {
-                        JsonObject complaintObj = elem.getAsJsonObject();
-                        complaintObj.addProperty("benVisitID", benVisitID);
-                    }
-                }
 
-                jsnOBJ.add("chiefComplaints", chiefComplaintsArray);
-                Long benChiefComplaintID = saveBeneficiaryChiefComplaint(jsnOBJ);
+			//Chief Complaint QC update
+			Long benChiefComplaintID = null;
+			JsonArray chiefComplaintArray = jsnOBJ.getAsJsonArray("chiefComplaintList");
+			
+			for (JsonElement element : chiefComplaintArray) {
+    			JsonObject complaint = element.getAsJsonObject();
+    			complaint.addProperty("benVisitID", benVisitID);
+    			complaint.addProperty("visitCode", benVisitCode);
+			}
+
+			benChiefComplaintID = saveBeneficiaryChiefComplaint(jsnOBJ);
 
 				if (benAnthropometryID != null && benAnthropometryID > 0 && benPhysicalVitalID != null
-						&& benPhysicalVitalID > 0) {
+						&& benPhysicalVitalID > 0 && benChiefComplaintID != null && benChiefComplaintID > 0) {
 					// Integer i = commonNurseServiceImpl.updateBeneficiaryStatus('N',
 					// benVisitDetailsOBJ.getBeneficiaryRegID());
 
@@ -494,13 +495,18 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		BeneficiaryVisitDetail benVisitDetailsOBJ = commonNurseServiceImpl.getCSVisitDetails(benRegID, visitCode);
 		CDSS cdssObj = commonNurseServiceImpl.getCdssDetails(benRegID, visitCode);
 
+		String benChiefComplaintsJson = commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode);
+    	BenChiefComplaint[] complaintsArray = gson.fromJson(benChiefComplaintsJson, BenChiefComplaint[].class);
+    	List<BenChiefComplaint> benChiefComplaints = Arrays.asList(complaintsArray);
+	
+
 		if (null != benVisitDetailsOBJ) {
-
 			resMap.put("benVisitDetails", benVisitDetailsOBJ);
-
-			resMap.put("BenChiefComplaints", commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode));
-
 		}
+
+		 if (benChiefComplaints != null && !benChiefComplaints.isEmpty()) {
+	        resMap.put("BenChiefComplaints", benChiefComplaints);
+    	}
 		if(cdssObj != null) {
 			resMap.put("cdss", cdssObj);
 		}

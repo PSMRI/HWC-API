@@ -31,6 +31,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
@@ -39,6 +41,7 @@ import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
 @Entity
 @Table(name = "t_benchiefcomplaint")
 public class BenChiefComplaint {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose
@@ -342,21 +345,25 @@ public class BenChiefComplaint {
 	public void setConceptID(String conceptID) {
 		this.conceptID = conceptID;
 	}
+private static final Logger logger = LoggerFactory.getLogger(BenChiefComplaint.class);
+
 
 	public static ArrayList<BenChiefComplaint> getBenChiefComplaintList(JsonObject emrgCasesheet) {
+
+
 		ArrayList<BenChiefComplaint> resArray = new ArrayList<>();
 		BenChiefComplaint benChiefComplaint = null;
-		// System.out.println("ello");
+		
 		if (emrgCasesheet.has("chiefComplaintList") && !emrgCasesheet.get("chiefComplaintList").isJsonNull()
 				&& emrgCasesheet.get("chiefComplaintList").isJsonArray()) {
 			for (JsonElement csobj : emrgCasesheet.getAsJsonArray("chiefComplaintList")) {
 				benChiefComplaint = new BenChiefComplaint();
 
-				if (emrgCasesheet.has("benVisitID") && !emrgCasesheet.get("benVisitID").isJsonNull())
-					benChiefComplaint.setBenVisitID(emrgCasesheet.get("benVisitID").getAsLong());
+				// if (emrgCasesheet.has("benVisitID") && !emrgCasesheet.get("benVisitID").isJsonNull())
+				// 	benChiefComplaint.setBenVisitID(emrgCasesheet.get("benVisitID").getAsLong());
 
-				if (emrgCasesheet.has("visitCode") && !emrgCasesheet.get("visitCode").isJsonNull())
-					benChiefComplaint.setVisitCode(emrgCasesheet.get("visitCode").getAsLong());
+				// if (emrgCasesheet.has("visitCode") && !emrgCasesheet.get("visitCode").isJsonNull())
+				// 	benChiefComplaint.setVisitCode(emrgCasesheet.get("visitCode").getAsLong());
 
 				if (emrgCasesheet.has("beneficiaryRegID") && !emrgCasesheet.get("beneficiaryRegID").isJsonNull())
 					benChiefComplaint.setBeneficiaryRegID(emrgCasesheet.get("beneficiaryRegID").getAsLong());
@@ -366,6 +373,15 @@ public class BenChiefComplaint {
 					benChiefComplaint.setProviderServiceMapID(emrgCasesheet.get("providerServiceMapID").getAsInt());
 
 				JsonObject obj = csobj.getAsJsonObject();
+				
+logger.info("Visit id="+obj.get("benVisitID"));
+logger.info("Visit code="+obj.get("visitCode"));
+
+				if (obj.has("benVisitID") && !obj.get("benVisitID").isJsonNull())
+            		benChiefComplaint.setBenVisitID(obj.get("benVisitID").getAsLong());
+
+        		if (obj.has("visitCode") && !obj.get("visitCode").isJsonNull())
+            		benChiefComplaint.setVisitCode(obj.get("visitCode").getAsLong());
 
 				if (obj.has("chiefComplaintID") && !obj.get("chiefComplaintID").isJsonNull())
 					benChiefComplaint.setChiefComplaintID(obj.get("chiefComplaintID").getAsInt());
