@@ -345,8 +345,8 @@ public class BenChiefComplaint {
 	public void setConceptID(String conceptID) {
 		this.conceptID = conceptID;
 	}
-private static final Logger logger = LoggerFactory.getLogger(BenChiefComplaint.class);
 
+	private static final Logger logger = LoggerFactory.getLogger(BenChiefComplaint.class);
 
 	public static ArrayList<BenChiefComplaint> getBenChiefComplaintList(JsonObject emrgCasesheet) {
 
@@ -359,12 +359,6 @@ private static final Logger logger = LoggerFactory.getLogger(BenChiefComplaint.c
 			for (JsonElement csobj : emrgCasesheet.getAsJsonArray("chiefComplaintList")) {
 				benChiefComplaint = new BenChiefComplaint();
 
-				// if (emrgCasesheet.has("benVisitID") && !emrgCasesheet.get("benVisitID").isJsonNull())
-				// 	benChiefComplaint.setBenVisitID(emrgCasesheet.get("benVisitID").getAsLong());
-
-				// if (emrgCasesheet.has("visitCode") && !emrgCasesheet.get("visitCode").isJsonNull())
-				// 	benChiefComplaint.setVisitCode(emrgCasesheet.get("visitCode").getAsLong());
-
 				if (emrgCasesheet.has("beneficiaryRegID") && !emrgCasesheet.get("beneficiaryRegID").isJsonNull())
 					benChiefComplaint.setBeneficiaryRegID(emrgCasesheet.get("beneficiaryRegID").getAsLong());
 
@@ -374,9 +368,6 @@ private static final Logger logger = LoggerFactory.getLogger(BenChiefComplaint.c
 
 				JsonObject obj = csobj.getAsJsonObject();
 				
-logger.info("Visit id="+obj.get("benVisitID"));
-logger.info("Visit code="+obj.get("visitCode"));
-
 				if (obj.has("benVisitID") && !obj.get("benVisitID").isJsonNull())
             		benChiefComplaint.setBenVisitID(obj.get("benVisitID").getAsLong());
 
