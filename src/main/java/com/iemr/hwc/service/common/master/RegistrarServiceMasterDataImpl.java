@@ -73,6 +73,7 @@ import com.iemr.hwc.repo.masterrepo.ReligionMasterRepo;
 import com.iemr.hwc.repo.nurse.anc.ANCCareRepo;
 import com.iemr.hwc.repo.registrar.BeneficiaryImageRepo;
 import com.iemr.hwc.repo.registrar.ReistrarRepoBenSearch;
+import com.iemr.hwc.utils.RestTemplateUtil;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -273,11 +274,7 @@ public class RegistrarServiceMasterDataImpl implements RegistrarServiceMasterDat
 		String returnOBJ = null;
 		String tempResponse = null;
 		RestTemplate restTemplate = new RestTemplate();
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", "application/json");
-		headers.add("AUTHORIZATION", Authorization);
-		//String encodedRequest = URLEncoder.encode(comingRequest, "UTF-8");
-		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
 		ResponseEntity<String> response = restTemplate.exchange(getBenImageFromIdentity, HttpMethod.POST, request,
 				String.class);
 		returnOBJ = response.getBody();
