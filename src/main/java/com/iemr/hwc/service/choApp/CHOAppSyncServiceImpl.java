@@ -39,6 +39,7 @@ import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
+import com.iemr.hwc.utils.RestTemplateUtil;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -171,8 +172,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
         headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
         headers.add("AUTHORIZATION", Authorization);
-
-        HttpEntity<Object> registrationRequest = new HttpEntity<Object>(comingRequest, headers);
+        HttpEntity<Object> registrationRequest = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
 
         try {
             ResponseEntity<String> registrationResponse = restTemplate.exchange(registrationUrl, HttpMethod.POST, registrationRequest,
@@ -253,7 +253,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 villageIDAndLastSyncDate.setLastModifiedDate(dt.toDate().getTime());
 
                 String identityRequestString = new GsonBuilder().create().toJson(villageIDAndLastSyncDate);
-                HttpEntity<String> request = new HttpEntity<>(identityRequestString, headers);
+                HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(identityRequestString, Authorization);
                 ResponseEntity<String> response = restTemplate.exchange(syncSearchByLocation, HttpMethod.POST, request,
                         String.class);
 
@@ -316,7 +316,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 villageIDAndLastSyncDate.setLastModifiedDate(dt.toDate().getTime());
 
                 String identityRequestString = new GsonBuilder().create().toJson(villageIDAndLastSyncDate);
-                HttpEntity<String> request = new HttpEntity<>(identityRequestString, headers);
+                HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(identityRequestString, Authorization);
                 ResponseEntity<String> response = restTemplate.exchange(getBenCountToSync, HttpMethod.POST, request,
                         String.class);
 
