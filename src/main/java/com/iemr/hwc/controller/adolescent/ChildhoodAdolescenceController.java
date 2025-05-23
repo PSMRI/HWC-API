@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -46,7 +45,6 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
 @RestController
 @RequestMapping(value = "/child-adolescent-care", headers = "Authorization")
 public class ChildhoodAdolescenceController {
@@ -61,7 +59,7 @@ public class ChildhoodAdolescenceController {
 	 * @return success or failure response with visit code
 	 * @throws Exception
 	 */
-	
+
 	@Operation(summary = "Save child adolescent care (CAC) nurse data")
 	@PostMapping(value = { "/save/nurseData" })
 	public String saveBenNurseDataCAC(@RequestBody String requestObj,
@@ -94,7 +92,6 @@ public class ChildhoodAdolescenceController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Save child adolescent care doctor data")
 	@PostMapping(value = { "save/doctorData" })
 	public String saveDoctorDataCAC(@RequestBody String requestObj,
@@ -128,7 +125,7 @@ public class ChildhoodAdolescenceController {
 	 * @param comingRequest
 	 * @return visit details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get beneficiary visit details from nurse for child adolescent care")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseCAC" })
 	@Transactional(rollbackFor = Exception.class)
@@ -163,7 +160,6 @@ public class ChildhoodAdolescenceController {
 	 * @return history details in JSON format
 	 */
 
-	
 	@Operation(summary = "Get child adolescent care beneficiary history")
 	@PostMapping(value = { "/getBenHistoryDetails" })
 
@@ -196,7 +192,6 @@ public class ChildhoodAdolescenceController {
 	 * @return vital details in JSON format
 	 */
 
-	
 	@Operation(summary = "Get child adolescent care beneficiary vitals from nurse")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
 	public String getBenVitalDetailsFrmNurse(
@@ -231,7 +226,6 @@ public class ChildhoodAdolescenceController {
 	 * @return immunization service details in JSON format
 	 */
 
-	
 	@Operation(summary = "Get child adolescent care beneficiary immunization details")
 	@PostMapping(value = { "/getBenImmunizationServiceDetails" })
 
@@ -265,7 +259,6 @@ public class ChildhoodAdolescenceController {
 	 * @return doctor details in JSON format
 	 */
 
-	
 	@Operation(summary = "Get child adolescent care beneficiary details entered by doctor")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctor" })
 	@Transactional(rollbackFor = Exception.class)
@@ -299,7 +292,7 @@ public class ChildhoodAdolescenceController {
 	 * @param comingRequest
 	 * @return vital details in JSON format
 	 */
-	
+
 	@Operation(summary = "Update child adolescent care beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurseCAC(@RequestBody String requestObj) {
@@ -334,7 +327,6 @@ public class ChildhoodAdolescenceController {
 	 * @return history details in JSON format
 	 */
 
-	
 	@Operation(summary = "Update birth and immunization history")
 	@PostMapping(value = { "/update/BirthAndImmunizationHistoryScreen" })
 	public String updateBirthAndImmunizationHistoryNurse(@RequestBody String requestObj) {
@@ -370,7 +362,6 @@ public class ChildhoodAdolescenceController {
 	 * @return immunization service details in JSON format
 	 */
 
-	
 	@Operation(summary = "Update immunization service data")
 	@PostMapping(value = { "/update/ImmunizationServicesScreen" })
 	public String updateImmunizationServicesNurse(@RequestBody String requestObj) {
@@ -405,7 +396,6 @@ public class ChildhoodAdolescenceController {
 	 * @return doctor details in JSON format
 	 */
 
-	
 	@Operation(summary = "Update child adolescent care doctor data")
 	@PostMapping(value = { "/update/doctorData" })
 	public String updateCACDoctorData(@RequestBody String requestObj,

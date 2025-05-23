@@ -21,15 +21,6 @@
  */
 package com.iemr.hwc.controller.wo;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.iemr.hwc.controller.common.master.CommonMasterController;
-import com.iemr.hwc.service.location.LocationServiceImpl;
-import com.iemr.hwc.utils.response.OutputResponse;
-
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +29,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.iemr.hwc.controller.common.master.CommonMasterController;
+import com.iemr.hwc.service.location.LocationServiceImpl;
+import com.iemr.hwc.utils.response.OutputResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(value = "wo/location")
@@ -136,7 +140,7 @@ public class LocationControllerWo {
 	 * @param comingRequest
 	 * @return
 	 */
-	
+
 	@Operation(summary = "Get location details from service point id and provider service map id")
 	@PostMapping(value = "/getLocDetailsBasedOnSpIDAndPsmID/wo", produces = { "application/json" })
 	public String getLocDetailsBasedOnSpIDAndPsmIDNew(@RequestBody String comingRequest) {
@@ -158,7 +162,6 @@ public class LocationControllerWo {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update health and wellness center coordinates")
 	@PostMapping(value = { "/update/villageCoordinates" })
 	public String updateGeolocationVillage(@RequestBody String requestObj) {

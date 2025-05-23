@@ -25,7 +25,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +38,6 @@ import com.iemr.hwc.service.location.LocationServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-
 
 @RestController
 @RequestMapping(value = "/location", headers = "Authorization", consumes = "application/json", produces = "application/json")
@@ -179,7 +177,7 @@ public class LocationController {
 	 * @param comingRequest
 	 * @return
 	 */
-	
+
 	@Operation(summary = "Get location details from service point id and provider service map id")
 	@PostMapping(value = "/getLocDetailsBasedOnSpIDAndPsmID", produces = { "application/json" })
 	public String getLocDetailsBasedOnSpIDAndPsmIDNew(@RequestBody String comingRequest) {

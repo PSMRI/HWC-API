@@ -27,14 +27,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -47,9 +45,6 @@ import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-
-
-
 
 /**
  * 
@@ -74,7 +69,7 @@ public class NCDScreeningController {
 	 * @return success or failure response
 	 * @throws Exception
 	 */
-	
+
 	@Operation(summary = "Save NCD screening beneficiary data collected by nurse")
 
 	@PostMapping(value = { "/save/nurseData" })
@@ -106,7 +101,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Save NCD screening beneficiary data collected by doctor")
 	@PostMapping(value = { "/save/doctorData" })
 	public String saveBenNCDScreeningDoctorData(@RequestBody String requestObj,
@@ -143,7 +137,7 @@ public class NCDScreeningController {
 	 * @param benRegID and benVisitID
 	 * @return NCD Screening nurse data in JSON format
 	 */
-	
+
 	@Operation(summary = "Get NCD screening beneficiary visit details")
 	@PostMapping(value = { "/get/nurseData" })
 	public String getNCDScreenigDetails(
@@ -170,7 +164,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Get NCD screening visit count for beneficiary register id")
 	@GetMapping(value = { "/getNcdScreeningVisitCount/{beneficiaryRegID}" })
 	public String getNcdScreeningVisitCount(@PathVariable("beneficiaryRegID") Long beneficiaryRegID) {
@@ -198,7 +191,7 @@ public class NCDScreeningController {
 	 * @param comingRequest
 	 * @return visit details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get NCD screening beneficiary case record and referral")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorNCDScreening" })
 	@Transactional(rollbackFor = Exception.class)
@@ -227,7 +220,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Get NCD screening beneficiary visit details")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseNCDScreening" })
 	@Transactional(rollbackFor = Exception.class)
@@ -256,7 +248,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Get NCD screening beneficiary general OPD history")
 	@PostMapping(value = { "/getBenHistoryDetails" })
 
@@ -284,7 +275,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Get NCD screening beneficiary vitals from general OPD nurse")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
 	public String getBenVitalDetailsFrmNurse(
@@ -312,7 +302,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Get NCD screening IDRS details from general OPD nurse")
 	@PostMapping(value = { "/getBenIdrsDetailsFrmNurse" })
 	public String getBenIdrsDetailsFrmNurse(
@@ -341,7 +330,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Get confirmed NCD diseases")
 	@PostMapping(value = { "/fetchConfirmedScreeningDisease" })
 	public String fetchConfirmedScreeningDisease(
@@ -360,7 +348,7 @@ public class NCDScreeningController {
 	}
 
 	// get NCD screening data - dia, htn, oral, breast, cervical
-	
+
 	@Operation(summary = "Get NCD screening beneficiary data - dia, htn, oral, breast, cervical")
 	@PostMapping(value = { "/get/ncd/screening/data" })
 	public String getNCDScreeningData(
@@ -382,7 +370,6 @@ public class NCDScreeningController {
 		return response.toStringWithSerializeNulls();
 	}
 
-	
 	@Operation(summary = "Get NCD screening beneficiary CBAC details")
 	@PostMapping(value = { "/getCbacDetails" })
 	public String getCbacDetails(
@@ -410,7 +397,7 @@ public class NCDScreeningController {
 	 * 
 	 *            NOT using as of now
 	 */
-	
+
 	@Operation(summary = "Update NCD screening beneficiary details")
 	@PostMapping(value = { "/update/nurseData" })
 	public String updateBeneficiaryNCDScreeningDetails(@RequestBody String requestObj) {
@@ -445,7 +432,7 @@ public class NCDScreeningController {
 	/*
 	 * Updating the history WDF requirement
 	 */
-	
+
 	@Operation(summary = "Update NCD screening beneficiary history")
 	@PostMapping(value = { "/update/historyScreen" })
 	public String updateHistoryNurse(@RequestBody String requestObj) {
@@ -474,7 +461,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update NCD screening beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurse(@RequestBody String requestObj) {
@@ -503,7 +489,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update NCD screening beneficiary history")
 	@PostMapping(value = { "/update/idrsScreen" })
 	public String updateIDRSScreen(@RequestBody String requestObj) {
@@ -532,7 +517,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update NCD screening beneficiary case record and referral")
 	@PostMapping(value = { "/update/doctorData" })
 	public String updateDoctorData(@RequestBody String requestObj,
@@ -560,7 +544,6 @@ public class NCDScreeningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update NCD screening beneficiary data")
 	@PostMapping(value = { "/update/ncd/screening/data" })
 	public String updateNCDScreeningData(@RequestBody String requestObj) {

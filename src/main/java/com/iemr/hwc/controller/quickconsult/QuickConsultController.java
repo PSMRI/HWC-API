@@ -27,12 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -44,9 +42,6 @@ import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-
-
-
 
 /**
  * 
@@ -75,7 +70,7 @@ public class QuickConsultController {
 	 *            Beneficiary Vital and Anthropometry Detail Object and pushed to
 	 *            Database table
 	 */
-	
+
 	@Operation(summary = "Save quick consult nurse data")
 	@PostMapping(value = { "/save/nurseData" })
 	public String saveBenQuickConsultDataNurse(@RequestBody String requestObj,
@@ -112,7 +107,6 @@ public class QuickConsultController {
 	 * @objective Save beneficiary data for doctor quick consult - QC.
 	 */
 
-	
 	@Operation(summary = "Save quick consult details for doctor")
 	@PostMapping(value = { "/save/doctorData" })
 	public String saveQuickConsultationDetail(
@@ -158,7 +152,6 @@ public class QuickConsultController {
 	 * @return visit details in JSON format
 	 */
 
-	()
 	@Operation(summary = "Get quick consult beneficiary visit details")
 	@PostMapping(value = { "/getBenDataFrmNurseToDocVisitDetailsScreen" })
 	public String getBenDataFrmNurseScrnToDocScrnVisitDetails(
@@ -191,7 +184,6 @@ public class QuickConsultController {
 	 * @return visit details in JSON format
 	 */
 
-	()
 	@Operation(summary = "Get quick consult beneficiary vital details")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
 	public String getBenVitalDetailsFrmNurse(
@@ -224,7 +216,7 @@ public class QuickConsultController {
 	 * @param benRegID and benVisitID
 	 * @return visit details in JSON format
 	 */
-	()
+
 	@Operation(summary = "Get quick consult beneficiary case record")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorQuickConsult" })
 	@Transactional(rollbackFor = Exception.class)
@@ -261,7 +253,6 @@ public class QuickConsultController {
 	 * 
 	 */
 
-	
 	@Operation(summary = "Update quick consult doctor data")
 	@PostMapping(value = { "/update/doctorData" })
 	public String updateGeneralOPDQCDoctorData(@RequestBody String requestObj,

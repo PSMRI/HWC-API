@@ -24,11 +24,9 @@ package com.iemr.hwc.controller.labtechnician;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -38,8 +36,6 @@ import com.iemr.hwc.service.labtechnician.LabTechnicianServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-
-
 
 /***
  * 
@@ -66,7 +62,7 @@ public class LabTechnicianController {
 	 * @param JSON requestObj
 	 * @return success or failure response
 	 */
-	
+
 	@Operation(summary = "Save lab test result")
 	@PostMapping(value = { "/save/LabTestResult" })
 	public String saveLabTestResult(@RequestBody String requestObj) {
@@ -102,7 +98,7 @@ public class LabTechnicianController {
 	 * @param requestOBJ
 	 * @return lab tests prescribed by doctor
 	 */
-	
+
 	@Operation(summary = "Get beneficiary lab test prescription")
 	@PostMapping(value = { "/get/prescribedProceduresList" })
 	public String getBeneficiaryPrescribedProcedure(@RequestBody String requestOBJ) {
@@ -133,7 +129,7 @@ public class LabTechnicianController {
 	}
 
 	// API for getting lab result based on beneficiaryRegID and visitCode
-	
+
 	@Operation(summary = "Get lab test result for a beneficiary visit")
 	@PostMapping(value = { "/get/labResultForVisitcode" })
 	public String getLabResultForVisitCode(@RequestBody String requestOBJ) {
@@ -160,8 +156,7 @@ public class LabTechnicianController {
 		}
 		return response.toString();
 	}
-	
-	
+
 	@Operation(summary = "Get procedure component mapped master data")
 	@PostMapping(value = { "/get/fetchProcCompMapMasterData" })
 	public String getProcedureComponentMappedMasterData(@RequestBody String requestOBJ) {
@@ -174,8 +169,8 @@ public class LabTechnicianController {
 
 			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("providerServiceMapID")) {
 
-				String s = labTechnicianServiceImpl.getProcedureComponentMappedMasterData(
-						jsnOBJ.get("providerServiceMapID").getAsLong());
+				String s = labTechnicianServiceImpl
+						.getProcedureComponentMappedMasterData(jsnOBJ.get("providerServiceMapID").getAsLong());
 				if (s != null)
 					response.setResponse(s);
 				else
@@ -189,6 +184,5 @@ public class LabTechnicianController {
 		}
 		return response.toString();
 	}
-
 
 }

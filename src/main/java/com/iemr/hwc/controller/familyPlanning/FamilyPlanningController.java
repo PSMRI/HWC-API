@@ -27,12 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -44,10 +42,6 @@ import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-
-
-
-
 
 @RestController
 @RequestMapping(value = "/family-planning", headers = "Authorization")
@@ -155,7 +149,6 @@ public class FamilyPlanningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Save family planning data collected by doctor")
 	@PostMapping(value = { "save-family-planning-doctor-data" })
 	public String saveFamilyPlanningDoctorData(@RequestBody String requestObj,
@@ -190,7 +183,6 @@ public class FamilyPlanningController {
 	 * @return visit details in JSON format
 	 */
 
-	
 	@Operation(summary = "Get family planning beneficiary visit details")
 	@PostMapping(value = { "/getBenVisitDetails-Nurse-FamilyPlanning" })
 	@Transactional(rollbackFor = Exception.class)
@@ -223,7 +215,7 @@ public class FamilyPlanningController {
 	 * @param benRegID and benVisitID
 	 * @return vital details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get family planning beneficiary vitals")
 	@RequestMapping(value = { "/getBenVitalDetailsFrmNurseFamilyPlanning" })
 	public String getBenVitalDetailsFrmNurseFamilyPlanning(
@@ -253,7 +245,7 @@ public class FamilyPlanningController {
 	 * @param benRegID and benVisitID
 	 * @return FamilyPlanning details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get family planning beneficiary details")
 	@PostMapping(value = { "/getBenFPDetailsFrmNurseFamilyPlanning" })
 	@Transactional(rollbackFor = Exception.class)
@@ -281,7 +273,7 @@ public class FamilyPlanningController {
 	 * @param comingRequest
 	 * @return doctor details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get family planning beneficiary case record")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctor" })
 	@Transactional(rollbackFor = Exception.class)
@@ -310,7 +302,6 @@ public class FamilyPlanningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update family planning data")
 	@PostMapping(value = { "/update/FamilyPlanningScreen" })
 	public String updateFamilyPlanningNurse(@RequestBody String requestObj) {
@@ -339,7 +330,6 @@ public class FamilyPlanningController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update family planning beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurseFamilyPlanning(@RequestBody String requestObj) {
@@ -374,7 +364,7 @@ public class FamilyPlanningController {
 	 * @return success or failure response
 	 * @objective Update FamilyPlanning doctor data for the doctor next visit
 	 */
-	
+
 	@Operation(summary = "Update family planning data")
 	@PostMapping(value = { "/update/doctorData" })
 	public String updateFamilyPlanningDoctorData(@RequestBody String requestObj,

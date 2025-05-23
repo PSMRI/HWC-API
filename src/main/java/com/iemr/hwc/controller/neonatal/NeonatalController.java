@@ -29,12 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.JsonElement;
@@ -46,10 +44,6 @@ import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-
-
-
-
 
 @RestController
 @RequestMapping(value = "/neonatal-infant-services", headers = "Authorization", consumes = "application/json", produces = "application/json")
@@ -66,7 +60,7 @@ public class NeonatalController {
 	 * @return success or failure response with visit code
 	 * @throws Exception
 	 */
-	
+
 	@Operation(summary = "Save neonatal infant nurse data")
 	@PostMapping(value = { "/save/nurseData" })
 	public String saveBenNeoNatalAndInfantNurseData(@RequestBody String requestObj,
@@ -101,7 +95,6 @@ public class NeonatalController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Save neonatal infant doctor data")
 	@PostMapping(value = { "save-neo-natal-doctor-data" })
 	public String saveNNIDoctorData(@RequestBody String requestObj,
@@ -135,7 +128,7 @@ public class NeonatalController {
 	 * @param comingRequest
 	 * @return visit details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get neonatal infant beneficiary visit details")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseNNI" })
 	@Transactional(rollbackFor = Exception.class)
@@ -169,7 +162,7 @@ public class NeonatalController {
 	 * @param comingRequest
 	 * @return vital details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get neonatal infant beneficiary vitals")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
 	public String getBenVitalDetailsFrmNurse(
@@ -202,7 +195,7 @@ public class NeonatalController {
 	 * @param comingRequest
 	 * @return history details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get neonatal infant beneficiary history")
 	@PostMapping(value = { "/getBenHistoryDetails" })
 
@@ -235,7 +228,7 @@ public class NeonatalController {
 	 *          "30022000171431" }
 	 * @return immunization service details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get neonatal infant beneficiary immunization service details")
 	@PostMapping(value = { "/getBenImmunizationServiceDetails" })
 
@@ -268,7 +261,7 @@ public class NeonatalController {
 	 * @param comingRequest
 	 * @return doctor details in JSON format
 	 */
-	
+
 	@Operation(summary = "Get neonatal infant beneficiary case record and referral")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctor" })
 	@Transactional(rollbackFor = Exception.class)
@@ -297,7 +290,6 @@ public class NeonatalController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update neonatal infant beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
 	public String updateVitalNurseNNI(@RequestBody String requestObj) {
@@ -326,7 +318,6 @@ public class NeonatalController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update neonatal infant birth and immunization history")
 	@PostMapping(value = { "/update/BirthAndImmunizationHistoryScreen" })
 	public String updateBirthAndImmunizationHistoryNurse(@RequestBody String requestObj) {
@@ -355,7 +346,6 @@ public class NeonatalController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update neonatal infant immunization services")
 	@PostMapping(value = { "/update/ImmunizationServicesScreen" })
 	public String updateImmunizationServicesNurse(@RequestBody String requestObj) {
@@ -384,7 +374,6 @@ public class NeonatalController {
 		return response.toString();
 	}
 
-	
 	@Operation(summary = "Update neonatal infant data collected by doctor")
 	@PostMapping(value = { "/update/doctorData" })
 	public String updateNNIDoctorData(@RequestBody String requestObj,
