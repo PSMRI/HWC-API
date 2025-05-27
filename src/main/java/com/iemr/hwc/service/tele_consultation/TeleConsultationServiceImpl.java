@@ -60,6 +60,7 @@ import com.iemr.hwc.repo.tc_consultation.TCRequestModelRepo;
 import com.iemr.hwc.repo.tc_consultation.TeleconsultationStatsRepo;
 import com.iemr.hwc.service.common.transaction.CommonServiceImpl;
 import com.iemr.hwc.utils.CookieUtil;
+import com.iemr.hwc.utils.RestTemplateUtil;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.mapper.OutputMapper;
 
@@ -218,14 +219,7 @@ public class TeleConsultationServiceImpl implements TeleConsultationService {
 			String requestOBJ = OutputMapper.gson().toJson(obj);
 
 			RestTemplate restTemplate = new RestTemplate();
-			HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-					.getRequest();
-			String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Content-Type", "application/json");
-			headers.add("AUTHORIZATION", Authorization);
-			headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-			HttpEntity<Object> request = new HttpEntity<Object>(requestOBJ, headers);
+			HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestOBJ, Authorization);
 			ResponseEntity<String> response = restTemplate.exchange(tcSpecialistSlotCancel, HttpMethod.POST, request,
 					String.class);
 

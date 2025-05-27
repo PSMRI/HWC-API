@@ -23,8 +23,16 @@ public class CookieUtil {
 		return Optional.empty();
 	}
 
-	public String getJwtTokenFromCookie(HttpServletRequest request) {
-		return Arrays.stream(request.getCookies()).filter(cookie -> "Jwttoken".equals(cookie.getName()))
-				.map(Cookie::getValue).findFirst().orElse(null);
+	public static String getJwtTokenFromCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+	    if (cookies == null) {
+	        return null; // No cookies present, return null safely
+	    }
+
+	    return Arrays.stream(cookies)
+	                 .filter(cookie -> "Jwttoken".equals(cookie.getName()))
+	                 .map(Cookie::getValue)
+	                 .findFirst()
+	                 .orElse(null);
 	}
 }

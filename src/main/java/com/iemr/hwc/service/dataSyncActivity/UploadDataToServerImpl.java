@@ -46,6 +46,7 @@ import com.google.gson.GsonBuilder;
 import com.iemr.hwc.data.syncActivity_syncLayer.DataSyncGroups;
 import com.iemr.hwc.data.syncActivity_syncLayer.SyncUtilityClass;
 import com.iemr.hwc.repo.syncActivity_syncLayer.DataSyncGroupsRepo;
+import com.iemr.hwc.utils.RestTemplateUtil;
 
 /***
  * 
@@ -223,10 +224,7 @@ public class UploadDataToServerImpl implements UploadDataToServer {
 
 		String requestOBJ = gson.toJson(dataMap);
 
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", "application/json");
-		headers.add("AUTHORIZATION", Authorization);
-		HttpEntity<Object> request = new HttpEntity<Object>(requestOBJ, headers);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestOBJ, Authorization);
 
 		ResponseEntity<String> response = restTemplate.exchange(dataSyncUploadUrl, HttpMethod.POST, request,
 				String.class);

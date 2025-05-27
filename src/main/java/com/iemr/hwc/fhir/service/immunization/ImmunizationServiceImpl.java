@@ -10,6 +10,7 @@ import com.iemr.hwc.fhir.model.immunization.ImmunizationExt;
 import com.iemr.hwc.fhir.utils.mapper.MapperUtils;
 import com.iemr.hwc.fhir.utils.validation.ImmunizationValidation;
 import com.iemr.hwc.utils.CookieUtil;
+import com.iemr.hwc.utils.RestTemplateUtil;
 
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -60,14 +61,8 @@ public class ImmunizationServiceImpl implements ImmunizationService {
 		String covidVaccineStatus = new GsonBuilder().serializeNulls().create().toJson(covidVaccineStatusDTO);
 
 		RestTemplate restTemplate = new RestTemplate();
-		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-		headers.add("AUTHORIZATION", theRequest.getHeader("Authorization"));
-		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-		HttpEntity<Object> request = new HttpEntity<Object>(covidVaccineStatus, headers);
+		
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(covidVaccineStatus, theRequest.getHeader("Authorization"));
 		ResponseEntity<String> response = restTemplate.exchange(saveCovidVaccineDetailsURL, HttpMethod.POST, request,
 				String.class);
 

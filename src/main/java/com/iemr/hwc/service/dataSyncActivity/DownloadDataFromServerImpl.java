@@ -49,6 +49,7 @@ import com.iemr.hwc.data.syncActivity_syncLayer.SyncDownloadMaster;
 import com.iemr.hwc.data.syncActivity_syncLayer.TempVan;
 import com.iemr.hwc.repo.syncActivity_syncLayer.SyncDownloadMasterRepo;
 import com.iemr.hwc.repo.syncActivity_syncLayer.TempVanRepo;
+import com.iemr.hwc.utils.RestTemplateUtil;
 import com.iemr.hwc.utils.mapper.InputMapper;
 
 @Service
@@ -167,11 +168,7 @@ public class DownloadDataFromServerImpl implements DownloadDataFromServer {
 		// initializing RestTemplate
 		RestTemplate restTemplate = new RestTemplate();
 
-		// Multivalue map for headers with content-type and auth key
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", "application/json");
-		headers.add("AUTHORIZATION", ServerAuthorization);
-		HttpEntity<Object> request = new HttpEntity<Object>(syncDownloadMaster, headers);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(syncDownloadMaster, ServerAuthorization);
 
 		// Call rest-template to call API to download master data for given table
 		ResponseEntity<String> response = restTemplate.exchange(dataSyncDownloadUrl, HttpMethod.POST, request,

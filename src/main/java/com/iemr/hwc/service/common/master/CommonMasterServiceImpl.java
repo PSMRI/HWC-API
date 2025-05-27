@@ -127,7 +127,9 @@ public class CommonMasterServiceImpl implements CommonMaterService {
 				break;
 			case 7: {
 				// 7 : General OPD (QC)
-				nurseMasterData = "No Master Data found for QuickConsultation";
+				// nurseMasterData = "No Master Data found for QuickConsultation";
+				nurseMasterData = ancMasterDataServiceImpl
+						.getCommonNurseMasterDataForGenopdAncNcdcarePnc(visitCategoryID, providerServiceMapID, gender);
 			}
 				break;
 			case (8): {
