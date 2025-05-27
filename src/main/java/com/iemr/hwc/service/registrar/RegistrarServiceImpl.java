@@ -55,6 +55,7 @@ import com.google.gson.JsonObject;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.utils.CookieUtil;
+import com.iemr.hwc.utils.RestTemplateUtil;
 import com.iemr.hwc.utils.mapper.InputMapper;
 import com.iemr.hwc.utils.response.OutputResponse;
 
@@ -706,15 +707,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 		Long beneficiaryID = null;
 
 		RestTemplate restTemplate = new RestTemplate();
-		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-		// headers.add("Content-Type", MediaType.APPLICATION_JSON);
-		headers.add("AUTHORIZATION", Authorization);
-		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
 		ResponseEntity<String> response = restTemplate.exchange(registrationUrl, HttpMethod.POST, request,
 				String.class);
 		if (response.getStatusCodeValue() == 200 & response.hasBody()) {
@@ -756,9 +749,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 			obj.put("villageID", Integer.parseInt(villageID));
 			obj.put("lastModifiedDate", lastModifDate.getTime());
 
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Content-Type", "application/json");
-			HttpEntity<String> request = new HttpEntity<String>(obj.toString(), headers);
+			HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(obj.toString(), Authorization);
 			ResponseEntity<String> response = restTemplate.exchange(syncSearchByLocation, HttpMethod.POST, request,
 					String.class);
 
@@ -777,15 +768,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public Integer updateBeneficiary(String comingRequest, String Authorization) throws Exception {
 		Integer returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
-		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		// headers.add("Content-Type", "application/json");
-		headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-		headers.add("AUTHORIZATION", Authorization);
-		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-		HttpEntity<Object> request = new HttpEntity<Object>(comingRequest, headers);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
 		ResponseEntity<String> response = restTemplate.exchange(beneficiaryEditUrl, HttpMethod.POST, request,
 				String.class);
 
@@ -803,20 +786,13 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public String beneficiaryQuickSearch(String requestObj, String Authorization) {
 		String returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
-		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 		JSONObject obj = new JSONObject(requestObj);
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", "application/json");
-		headers.add("AUTHORIZATION", Authorization);
-		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
 		if ((obj.has("beneficiaryID") && !obj.isNull("beneficiaryID"))
 				|| (obj.has("HealthID") && !obj.isNull("HealthID"))
 				|| (obj.has("HealthIDNumber") && !obj.isNull("HealthIDNumber"))
 				|| (obj.has("familyId") && !obj.isNull("familyId"))
 				|| (obj.has("identity") && !obj.isNull("identity"))) {
-			HttpEntity<Object> request = new HttpEntity<Object>(requestObj, headers);
 			ResponseEntity<String> response = restTemplate.exchange(registrarQuickSearchByIdUrl, HttpMethod.POST,
 					request, String.class);
 			if (response.hasBody())
@@ -824,7 +800,6 @@ public class RegistrarServiceImpl implements RegistrarService {
 
 		} else {
 			if (obj.has("phoneNo") && !obj.isNull("phoneNo")) {
-				HttpEntity<Object> request = new HttpEntity<Object>(requestObj, headers);
 				ResponseEntity<String> response = restTemplate.exchange(registrarQuickSearchByPhoneNoUrl,
 						HttpMethod.POST, request, String.class);
 				if (response.hasBody())
@@ -839,15 +814,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 	public String beneficiaryAdvanceSearch(String requestObj, String Authorization) {
 		String returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
-		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-		JSONObject obj = new JSONObject(requestObj);
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		headers.add("Content-Type", "application/json");
-		headers.add("AUTHORIZATION", Authorization);
-		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-		HttpEntity<Object> request = new HttpEntity<Object>(requestObj, headers);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
 		ResponseEntity<String> response = restTemplate.exchange(registrarAdvanceSearchUrl, HttpMethod.POST, request,
 				String.class);
 

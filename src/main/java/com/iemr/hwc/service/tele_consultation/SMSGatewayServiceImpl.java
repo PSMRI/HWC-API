@@ -47,6 +47,7 @@ import com.iemr.hwc.data.quickConsultation.PrescribedDrugDetail;
 import com.iemr.hwc.data.tele_consultation.SmsRequestOBJ;
 import com.iemr.hwc.repo.tc_consultation.TCRequestModelRepo;
 import com.iemr.hwc.utils.CookieUtil;
+import com.iemr.hwc.utils.RestTemplateUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -194,17 +195,9 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 	}
 
 	@Override
-	public String sendSMS(String request, String Authorization) {
-		HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.set("AUTHORIZATION", Authorization);
-		headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
+	public String sendSMS(String requestOBJ, String Authorization) {
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestOBJ, Authorization);
 
-		HttpEntity<Object> requestOBJ = new HttpEntity<Object>(request, headers);
-
-		return restTemplate.exchange(sendSMSUrl, HttpMethod.POST, requestOBJ, String.class).getBody();
+		return restTemplate.exchange(sendSMSUrl, HttpMethod.POST, request, String.class).getBody();
 	}
 }

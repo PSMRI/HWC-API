@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +66,7 @@ import com.iemr.hwc.service.labtechnician.LabTechnicianServiceImpl;
 import com.iemr.hwc.service.tele_consultation.SMSGatewayServiceImpl;
 import com.iemr.hwc.service.tele_consultation.TeleConsultationServiceImpl;
 import com.iemr.hwc.utils.mapper.InputMapper;
+import com.google.gson.JsonElement;
 
 @Service
 public class QuickConsultationServiceImpl implements QuickConsultationService {
@@ -100,6 +103,8 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 	
 	@Autowired
 	private BenAdherenceRepo benAdherenceRepo;
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
 	public Long saveBeneficiaryChiefComplaint(JsonObject caseSheet) {
@@ -239,8 +244,22 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				benPhysicalVitalDetail.setVisitCode(benVisitCode);
 				Long benPhysicalVitalID = commonNurseServiceImpl
 						.saveBeneficiaryPhysicalVitalDetails(benPhysicalVitalDetail);
+
+
+			//Chief Complaint QC update
+			Long benChiefComplaintID = null;
+			JsonArray chiefComplaintArray = jsnOBJ.getAsJsonArray("chiefComplaintList");
+			
+			for (JsonElement element : chiefComplaintArray) {
+    			JsonObject complaint = element.getAsJsonObject();
+    			complaint.addProperty("benVisitID", benVisitID);
+    			complaint.addProperty("visitCode", benVisitCode);
+			}
+
+			benChiefComplaintID = saveBeneficiaryChiefComplaint(jsnOBJ);
+
 				if (benAnthropometryID != null && benAnthropometryID > 0 && benPhysicalVitalID != null
-						&& benPhysicalVitalID > 0) {
+						&& benPhysicalVitalID > 0 && benChiefComplaintID != null && benChiefComplaintID > 0) {
 					// Integer i = commonNurseServiceImpl.updateBeneficiaryStatus('N',
 					// benVisitDetailsOBJ.getBeneficiaryRegID());
 
@@ -476,10 +495,18 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		BeneficiaryVisitDetail benVisitDetailsOBJ = commonNurseServiceImpl.getCSVisitDetails(benRegID, visitCode);
 		CDSS cdssObj = commonNurseServiceImpl.getCdssDetails(benRegID, visitCode);
 
-		if (null != benVisitDetailsOBJ) {
+		String benChiefComplaintsJson = commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode);
+    	BenChiefComplaint[] complaintsArray = gson.fromJson(benChiefComplaintsJson, BenChiefComplaint[].class);
+    	List<BenChiefComplaint> benChiefComplaints = Arrays.asList(complaintsArray);
+	
 
+		if (null != benVisitDetailsOBJ) {
 			resMap.put("benVisitDetails", benVisitDetailsOBJ);
 		}
+
+		 if (benChiefComplaints != null && !benChiefComplaints.isEmpty()) {
+	        resMap.put("BenChiefComplaints", benChiefComplaints);
+    	}
 		if(cdssObj != null) {
 			resMap.put("cdss", cdssObj);
 		}
