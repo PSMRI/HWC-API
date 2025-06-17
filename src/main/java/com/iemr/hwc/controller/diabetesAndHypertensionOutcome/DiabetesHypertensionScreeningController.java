@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,10 +36,6 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
-
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/screeningOutcome", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class DiabetesHypertensionScreeningController {
@@ -48,7 +44,6 @@ public class DiabetesHypertensionScreeningController {
 	@Autowired
 	private DiabetesAndHypertensionOutcomeService diabetesAndHypertensionOutcomeService;
 
-	@CrossOrigin()
 	@Operation(summary = "Evaluate hypertension screening outcome")
 	@PostMapping(value = { "/hypertension" })
 	public String getHypertensionOutcome(
@@ -66,7 +61,6 @@ public class DiabetesHypertensionScreeningController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Evaluate diabetes screening outcome")
 	@PostMapping(value = { "/diabetes" })
 	public String getDiabetesOutcome(
