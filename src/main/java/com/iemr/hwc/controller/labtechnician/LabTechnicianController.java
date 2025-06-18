@@ -24,7 +24,7 @@ package com.iemr.hwc.controller.labtechnician;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,8 +39,6 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
 /***
  * 
  * @Objective Saving lab test results given by LabTechnician
@@ -48,7 +46,6 @@ import io.swagger.v3.oas.annotations.Operation;
  */
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/labTechnician", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class LabTechnicianController {
 
@@ -66,7 +63,6 @@ public class LabTechnicianController {
 	 * @param JSON requestObj
 	 * @return success or failure response
 	 */
-	@CrossOrigin
 	@Operation(summary = "Save lab test result")
 	@PostMapping(value = { "/save/LabTestResult" })
 	public String saveLabTestResult(@RequestBody String requestObj) {
@@ -102,7 +98,6 @@ public class LabTechnicianController {
 	 * @param requestOBJ
 	 * @return lab tests prescribed by doctor
 	 */
-	@CrossOrigin
 	@Operation(summary = "Get beneficiary lab test prescription")
 	@PostMapping(value = { "/get/prescribedProceduresList" })
 	public String getBeneficiaryPrescribedProcedure(@RequestBody String requestOBJ) {
@@ -133,7 +128,6 @@ public class LabTechnicianController {
 	}
 
 	// API for getting lab result based on beneficiaryRegID and visitCode
-	@CrossOrigin()
 	@Operation(summary = "Get lab test result for a beneficiary visit")
 	@PostMapping(value = { "/get/labResultForVisitcode" })
 	public String getLabResultForVisitCode(@RequestBody String requestOBJ) {
@@ -160,8 +154,7 @@ public class LabTechnicianController {
 		}
 		return response.toString();
 	}
-	
-	@CrossOrigin
+
 	@Operation(summary = "Get procedure component mapped master data")
 	@PostMapping(value = { "/get/fetchProcCompMapMasterData" })
 	public String getProcedureComponentMappedMasterData(@RequestBody String requestOBJ) {
@@ -189,6 +182,5 @@ public class LabTechnicianController {
 		}
 		return response.toString();
 	}
-
 
 }

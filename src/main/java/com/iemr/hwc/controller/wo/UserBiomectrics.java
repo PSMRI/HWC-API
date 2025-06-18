@@ -37,16 +37,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping(value = "wo/user_biometrics")
 public class UserBiomectrics {
-    //    private OutputResponse response;
+    // private OutputResponse response;
     private Logger logger = LoggerFactory.getLogger(CommonMasterController.class);
 
     @Autowired
     private RegistrarServiceImpl registrarService;
-    @CrossOrigin()
+
     @Operation(summary = "add fingerprint for a given username")
     @PostMapping(value = "add/fingerprint/wo", produces = {
             "application/json" })
@@ -55,10 +54,9 @@ public class UserBiomectrics {
         try {
             if (comingRequest != null && comingRequest.getUserName() != null) {
                 String resp = registrarService.saveFingerprints(comingRequest);
-                if(resp !=null && resp.equals("ok")){
+                if (resp != null && resp.equals("ok")) {
                     response.setResponse(resp);
-                }
-                else if(resp !=null && resp.equals("ko")){
+                } else if (resp != null && resp.equals("ko")) {
                     response.setError(500, "Error adding fingerprints");
                 }
             } else {
@@ -77,7 +75,7 @@ public class UserBiomectrics {
         logger.info("Get fingerprint by username ..." + userID);
         OutputResponse response = new OutputResponse();
         UserBiometricsMapping user = registrarService.getFingerprintsByUserID(userID);
-        if (user != null){
+        if (user != null) {
             Gson gson = new Gson();
             UserBiometricsMapping userBiometricsMapping = new UserBiometricsMapping();
             userBiometricsMapping.setUserID(user.getUserID());
@@ -91,9 +89,8 @@ public class UserBiomectrics {
             userBiometricsMapping.setLeftIndexFinger(user.getLeftIndexFinger());
 
             response.setResponse(gson.toJson(userBiometricsMapping));
-        }
-        else{
-            response.setError(404, "User with userID: "+userID+" not found");
+        } else {
+            response.setError(404, "User with userID: " + userID + " not found");
         }
         logger.info("Get fingerprint " + response.toString());
         return response.toString();

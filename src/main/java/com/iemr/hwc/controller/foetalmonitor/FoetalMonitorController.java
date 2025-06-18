@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,10 +47,6 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
-
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/foetalMonitor", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class FoetalMonitorController {
@@ -64,8 +60,6 @@ public class FoetalMonitorController {
 	 * @param JSON requestObj
 	 * @return success or failure response
 	 */
-
-	@CrossOrigin
 	@Operation(summary = "Send the mother data and prescribed test details to foetal monitor")
 	@PostMapping(value = "/sendMotherTestDetailsToFoetalMonitor", headers = "Authorization")
 	public ResponseEntity<String> sendANCMotherTestDetailsToFoetalMonitor(
@@ -79,7 +73,8 @@ public class FoetalMonitorController {
 
 				FoetalMonitor foetalMonitorRequest = InputMapper.gson().fromJson(requestObj, FoetalMonitor.class);
 
-				String response = foetalMonitorService.sendFoetalMonitorTestDetails(foetalMonitorRequest, authorization);
+				String response = foetalMonitorService.sendFoetalMonitorTestDetails(foetalMonitorRequest,
+						authorization);
 
 				output.setResponse(response);
 			} else {
@@ -99,7 +94,6 @@ public class FoetalMonitorController {
 	 * @param authorization
 	 * @return
 	 */
-	@CrossOrigin
 	@Operation(summary = "Foetal monitor device status check")
 	@PostMapping(value = "/registerMother", headers = "Authorization")
 	public String saveMother(@RequestBody String requestObj,
@@ -122,10 +116,10 @@ public class FoetalMonitorController {
 	 * @return
 	 * @throws Exception
 	 */
-	@CrossOrigin
 	@Operation(summary = "Get the foetal monitor details")
 	@GetMapping(value = "/fetch/foetalMonitorDetails/{benFlowID}", headers = "Authorization")
-	public String getFoetalMonitorDetails(@Param("{\"benFlowID\":\"Long\"}") @PathVariable("benFlowID") Long benFlowID) {
+	public String getFoetalMonitorDetails(
+			@Param("{\"benFlowID\":\"Long\"}") @PathVariable("benFlowID") Long benFlowID) {
 
 		logger.info("Request Object for getting Foetal Monitor data - " + benFlowID);
 		OutputResponse output = new OutputResponse();
@@ -143,7 +137,6 @@ public class FoetalMonitorController {
 		return output.toString();
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Fetch foetal monitor pdf report (Base64 format)")
 	@PostMapping(value = "/fetch/reportGraphBase64", headers = "Authorization")
 	public ResponseEntity<String> getFoetalMonitorDetails(
@@ -177,7 +170,6 @@ public class FoetalMonitorController {
 	 * @return
 	 * @throws IOException
 	 */
-	@CrossOrigin
 	@Operation(summary = "Update foetal monitor data")
 	@PostMapping(value = "/update/foetalMonitorData")
 	public ResponseEntity<String> updateFoetalMonitorData(

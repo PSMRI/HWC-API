@@ -36,11 +36,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/sync", headers = "Authorization", consumes = "application/json", produces = "application/json")
 /**
- * Objective: Performs beneficiaries and ben flow status sync to AMRIT server from CHO app and vice-versa.
+ * Objective: Performs beneficiaries and ben flow status sync to AMRIT server
+ * from CHO app and vice-versa.
  * Details
  */
 public class CHOAppSyncController {
@@ -51,11 +51,12 @@ public class CHOAppSyncController {
         this.choappSyncService = choappSyncService;
     }
 
-    // beneficiary registration sync from CHO app to AMRIT server with common and identity new
+    // beneficiary registration sync from CHO app to AMRIT server with common and
+    // identity new
     @Operation(summary = "Sync new beneficiaries to AMRIT server")
     @PostMapping(value = { "/beneficiariesToServer" })
     public ResponseEntity<String> beneficiaryRegistrationSyncToServer(@RequestBody String comingReq,
-                                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.registerCHOAPPBeneficiary(comingReq, Authorization);
     }
@@ -64,48 +65,54 @@ public class CHOAppSyncController {
     @Operation(summary = "Sync beneficiaries from AMRIT server to CHO App")
     @PostMapping(value = { "/beneficiariesToApp" })
     public ResponseEntity<String> beneficiarySyncToAppLocal(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
-                                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.getBeneficiaryByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
     }
 
-    // Get count of beneficiary to sync from AMRIT server to CHO app with identity new
+    // Get count of beneficiary to sync from AMRIT server to CHO app with identity
+    // new
     @Operation(summary = "Returns count of beneficiaries to be synced from AMRIT server to CHO App")
     @PostMapping(value = { "/beneficiariesToAppCount" })
-    public ResponseEntity<String> beneficiarySyncToAppLocalCount(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
-                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+    public ResponseEntity<String> beneficiarySyncToAppLocalCount(
+            @RequestBody SyncSearchRequest villageIDAndLastSyncDate,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
-        return choappSyncService.countBeneficiaryByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+        return choappSyncService.countBeneficiaryByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate,
+                Authorization);
     }
 
-    //Count of beneficiary flow status records to sync from AMRIT server to CHO app
+    // Count of beneficiary flow status records to sync from AMRIT server to CHO app
     @Operation(summary = "Returns count of beneficiaries flow status records to be synced")
     @PostMapping(value = { "/benFlowStatusRecordsCount" })
-    public ResponseEntity<String> flowStatusesSyncToAppLocalCount(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
-                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+    public ResponseEntity<String> flowStatusesSyncToAppLocalCount(
+            @RequestBody SyncSearchRequest villageIDAndLastSyncDate,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
-        return choappSyncService.countFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+        return choappSyncService.countFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate,
+                Authorization);
     }
 
     // beneficiary flow status records sync from AMRIT server to CHO app
     @Operation(summary = "Sync beneficiaries flow status records ")
     @PostMapping(value = { "/benFlowStatusRecordsToApp" })
     public ResponseEntity<String> flowStatusesSyncToAppLocal(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
-                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
-            return choappSyncService.getFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+        return choappSyncService.getFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
     }
 
     // Login logout logs sync from CHO app to AMRIT server
     @Operation(summary = "Sync user activity logs to AMRIT server")
     @PostMapping(value = { "/userActivityLogsToServer" })
     public ResponseEntity<String> userActivityLogsSyncToServer(@RequestBody List<UserActivityLogs> logsList,
-                                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.saveUserActivityLogs(logsList, Authorization);
     }
 
-    // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) sync from AMRIT server to CHO app
+    // beneficiary nurse-form data(visit details,vitals,chief
+    // complaints,history,examinations) sync from AMRIT server to CHO app
     @Operation(summary = "Sync beneficiaries nurse-form data from AMRIT server to CHO App")
     @PostMapping(value = { "/beneficiaryGeneralOPDNurseFormDataToApp" })
     public ResponseEntity<String> beneficiaryNurseFormDataGeneralOPDSyncToAppLocal(
@@ -115,11 +122,12 @@ public class CHOAppSyncController {
         return choappSyncService.getBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
     }
 
-    // beneficiary nurse-form data(visit details,vitals,chief complaints,history,examinations) save from CHO app to server
+    // beneficiary nurse-form data(visit details,vitals,chief
+    // complaints,history,examinations) save from CHO app to server
     @Operation(summary = "Save beneficiaries nurse-form data CHO App to AMRIT server")
     @PostMapping(value = { "/generalOPDNurseFormDataToServer" })
     public ResponseEntity<String> beneficiaryNurseFormDataGeneralOPDSyncToServer(@RequestBody String comingRequest,
-                                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.saveBeneficiaryNurseFormDataGeneralOPD(comingRequest, Authorization);
     }
@@ -128,7 +136,7 @@ public class CHOAppSyncController {
     @Operation(summary = "Save prescription templates to AMRIT server")
     @PostMapping(value = { "/prescriptionTemplatesToServer" })
     public ResponseEntity<String> prescriptionTemplatesToServer(@RequestBody List<PrescriptionTemplates> templateList,
-                                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.savePrescriptionTemplatesToServer(templateList, Authorization);
     }
@@ -137,7 +145,7 @@ public class CHOAppSyncController {
     @Operation(summary = "Fetch prescription templates for doctor to AMRIT server")
     @GetMapping(value = { "/{userID}/prescriptionTemplatesDataToApp" })
     public ResponseEntity<String> prescriptionTemplatesToApp(@PathVariable Integer userID,
-                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.savePrescriptionTemplatesToApp(userID, Authorization);
     }
@@ -146,8 +154,8 @@ public class CHOAppSyncController {
     @Operation(summary = "Delete prescription templates for doctor to AMRIT server")
     @DeleteMapping(value = { "/{userID}/prescriptionTemplates/{tempID}/delete" })
     public ResponseEntity<String> deleteTemplate(@PathVariable Integer userID,
-                                                             @PathVariable Integer tempID,
-                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @PathVariable Integer tempID,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.deletePrescriptionTemplates(userID, tempID);
     }
@@ -156,7 +164,7 @@ public class CHOAppSyncController {
     @Operation(summary = "Create new event for outreach activity")
     @PostMapping(value = { "/activity/create" })
     public ResponseEntity<String> createNewOutreachActivity(@RequestBody OutreachActivity activity,
-                                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.createNewOutreachActivity(activity, Authorization);
     }
@@ -165,7 +173,7 @@ public class CHOAppSyncController {
     @Operation(summary = "Get list of all outreach activities by user")
     @GetMapping(value = { "/activity/{userId}/getAllByUser" })
     public ResponseEntity<String> getActivitiesByUser(@PathVariable Integer userId,
-                                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.getActivitiesByUser(userId, Authorization);
     }
@@ -174,7 +182,7 @@ public class CHOAppSyncController {
     @Operation(summary = "Get an outreach activities by activityId")
     @GetMapping(value = { "/activity/{activityId}/getById" })
     public ResponseEntity<String> getActivityByIdr(@PathVariable Integer activityId,
-                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.getActivityById(activityId, Authorization);
     }

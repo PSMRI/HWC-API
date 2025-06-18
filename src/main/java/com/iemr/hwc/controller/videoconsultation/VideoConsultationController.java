@@ -24,7 +24,7 @@ package com.iemr.hwc.controller.videoconsultation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +44,6 @@ public class VideoConsultationController {
 	@Autowired
 	private VideoConsultationService videoConsultationService;
 
-	@CrossOrigin()
 	@Operation(summary = "Login to video consultation service")
 	@GetMapping(value = "/login/{userID}", headers = "Authorization", produces = { "application/json" })
 	public String login(@PathVariable("userID") Long userID) {
@@ -66,7 +65,6 @@ public class VideoConsultationController {
 
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Call user for video consultation")
 	@GetMapping(value = "/call/{fromUserID}/{touserID}", headers = "Authorization", produces = { "application/json" })
 	public String call(@PathVariable("fromUserID") Long fromUserID, @PathVariable("toUserID") Long toUserID) {
@@ -88,7 +86,6 @@ public class VideoConsultationController {
 
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Video consultatation for users by passing type")
 	@GetMapping(value = "/call/{fromUserID}/{toUserID}/{type}", headers = "Authorization", produces = {
 			"application/json" })
@@ -116,7 +113,6 @@ public class VideoConsultationController {
 
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Call van through Swymed")
 	@GetMapping(value = "/callvan/{fromUserID}/{vanID}", headers = "Authorization", produces = { "application/json" })
 	public String callvan(@PathVariable("fromUserID") Long fromUserID, @PathVariable("vanID") Integer vanID) {
@@ -138,7 +134,6 @@ public class VideoConsultationController {
 
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Call van through Swymed by passing type")
 	@GetMapping(value = "/callvan/{fromUserID}/{vanID}/{type}", headers = "Authorization", produces = {
 			"application/json" })
@@ -167,7 +162,6 @@ public class VideoConsultationController {
 
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Logout of video consultation service")
 	@GetMapping(value = "/logout", headers = "Authorization", produces = { "application/json" })
 	public String logout() {
