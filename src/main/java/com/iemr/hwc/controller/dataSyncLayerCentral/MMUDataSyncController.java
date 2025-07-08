@@ -24,7 +24,7 @@ package com.iemr.hwc.controller.dataSyncLayerCentral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -39,14 +39,11 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
 /***
  * 
  * @operation Class used for data sync from van-to-server & server-to-van
  *
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/dataSync", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class MMUDataSyncController {
@@ -57,7 +54,6 @@ public class MMUDataSyncController {
 	@Autowired
 	private GetMasterDataFromCentralForVanImpl getMasterDataFromCentralForVanImpl;
 
-	@CrossOrigin()
 	@Operation(summary = "Sync data from van (Mobile Medical Unit) to server")
 	@PostMapping(value = { "/van-to-server" })
 	public String dataSyncToServer(@RequestBody String requestOBJ,
@@ -76,7 +72,6 @@ public class MMUDataSyncController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Download data from server to van (Mobile Medical Unit)")
 	@PostMapping(value = { "/server-to-van" })
 	public String dataDownloadFromServer(@RequestBody SyncDownloadMaster syncDownloadMaster,

@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,8 +39,6 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
 @RequestMapping(value = "/user", headers = "Authorization", consumes = "application/json", produces = "application/json")
 @RestController
 public class VanSpokeController {
@@ -53,7 +51,6 @@ public class VanSpokeController {
 		this.iemrMmuLoginServiceImpl = iemrMmuLoginServiceImpl;
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Get user service point van details")
 	@PostMapping(value = "/getUserServicePointVanDetails", produces = {
 			"application/json" })
@@ -74,7 +71,6 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Get service point villages")
 	@PostMapping(value = "/getServicepointVillages", produces = {
 			"application/json" })
@@ -96,7 +92,6 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Get user van details")
 	@PostMapping(value = "/getUserVanSpDetails", produces = { "application/json" })
 	public String getUserVanSpDetails(@RequestBody String comingRequest) {
@@ -121,7 +116,6 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@CrossOrigin()
 	@Operation(summary = "Get user spoke details")
 	@GetMapping(value = "/getUserSpokeDetails/{psmId}")
 	public String getUserSpokeDetails(@PathVariable("psmId") Integer psmId) {

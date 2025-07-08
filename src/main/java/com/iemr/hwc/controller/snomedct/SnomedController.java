@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +40,6 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
-
 @RequestMapping(value = "/snomed")
 @RestController
 public class SnomedController {
@@ -55,7 +52,6 @@ public class SnomedController {
 		this.snomedService = snomedService;
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Retrieve Snomed clinical term")
 	@PostMapping(value = "/getSnomedCTRecord", headers = "Authorization")
 	public String getSnomedCTRecord(@Param(value = "{\"term\":\"String\"}") @RequestBody String request) {
@@ -81,7 +77,6 @@ public class SnomedController {
 		return output.toString();
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Retrieve Snomed clinical term list")
 	@PostMapping(value = "/getSnomedCTRecordList", headers = "Authorization")
 	public String getSnomedCTRecordList(@Param(value = "{\"term\":\"String\"}") @RequestBody String request) {

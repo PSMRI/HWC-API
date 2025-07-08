@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/masterVillage", headers = "Authorization", consumes = "application/json", produces = "application/json")
 public class MasterVillageController {
@@ -43,7 +42,7 @@ public class MasterVillageController {
     private MasterVillageService masterVillageService;
 
     @Autowired
-    public void setMasterVillageService(MasterVillageService masterVillageService){
+    public void setMasterVillageService(MasterVillageService masterVillageService) {
         this.masterVillageService = masterVillageService;
     }
 
@@ -53,19 +52,18 @@ public class MasterVillageController {
     public String setMasterVillage(@RequestBody UserMasterVillageDTO userMasterVillageDTO) {
         OutputResponse response = new OutputResponse();
         try {
-            if (userMasterVillageDTO!=null && userMasterVillageDTO.getUserID() != null && userMasterVillageDTO.getMasterVillageID() != null) {
-                String resp = masterVillageService.setMasterVillage(userMasterVillageDTO.getUserID(), userMasterVillageDTO.getMasterVillageID());
+            if (userMasterVillageDTO != null && userMasterVillageDTO.getUserID() != null
+                    && userMasterVillageDTO.getMasterVillageID() != null) {
+                String resp = masterVillageService.setMasterVillage(userMasterVillageDTO.getUserID(),
+                        userMasterVillageDTO.getMasterVillageID());
 
-                if(resp !=null && resp.equals("not_ok")){
+                if (resp != null && resp.equals("not_ok")) {
                     response.setError(500, "Error setting master village");
-                }
-                else if(resp !=null && resp.equals("villageID_not_exist")){
+                } else if (resp != null && resp.equals("villageID_not_exist")) {
                     response.setError(404, "Village ID does not exist");
-                }
-                else if(resp !=null && resp.equals("userID_not_exist")){
+                } else if (resp != null && resp.equals("userID_not_exist")) {
                     response.setError(404, "User ID does not exist");
-                }
-                else if(resp!=null){
+                } else if (resp != null) {
                     response.setResponse(resp);
                 }
             } else {
@@ -84,19 +82,17 @@ public class MasterVillageController {
         logger.info("Get master village by userID ..." + userID);
         OutputResponse response = new OutputResponse();
         UsersMasterVillage user = masterVillageService.getMasterVillage(userID);
-        if (user != null){
-            if(user.getMasterVillage()!=null){
+        if (user != null) {
+            if (user.getMasterVillage() != null) {
                 Gson gson = new Gson();
                 response.setResponse(gson.toJson(user.getMasterVillage()));
-            }
-            else{
+            } else {
                 logger.error("No master village associated with user " + userID);
-                response.setError(404, "User with userID: "+userID+" do not have master village");
+                response.setError(404, "User with userID: " + userID + " do not have master village");
             }
-        }
-        else{
+        } else {
             logger.error("No active master village record for user " + userID + " found");
-            response.setError(404, "No master village record found with userID: "+userID);
+            response.setError(404, "No master village record found with userID: " + userID);
         }
         return response.toString();
     }
