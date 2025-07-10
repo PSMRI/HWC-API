@@ -604,36 +604,44 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
     }
 
-    @Override
-    public ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization) {
-        OutputResponse outputResponse = new OutputResponse();
-        HttpStatus statusCode = HttpStatus.OK;
+	@Override
+	public ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization) {
+		OutputResponse outputResponse = new OutputResponse();
+		HttpStatus statusCode = HttpStatus.OK;
 
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/json");
+		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+		headers.add("Content-Type", "application/json");
+		try {
+			List<PrescriptionTemplates> templateList = prescriptionTemplatesRepo
+					.getPrescriptionTemplatesByUserID(userID);
+			outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
+					.create().toJson(templateList));
+		} catch (Exception e) {
+			logger.error("Error while fetching Prescription Templates userID : " + userID);
+			outputResponse.setError(500, "Unable to fetch Prescription Templates userID" + userID + "Exception - " + e);
+			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        List<PrescriptionTemplates> templateList =  prescriptionTemplatesRepo.getPrescriptionTemplatesByUserID(userID);
+		}
+		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+	}
 
-        outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(templateList));
-
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
-    }
-
-    @Override
-    public ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID) {
-        OutputResponse outputResponse = new OutputResponse();
-        HttpStatus statusCode = HttpStatus.OK;
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/json");
-
-        prescriptionTemplatesRepo.deletePrescriptionTemplatesByUserIDAndTempID(userID, tempID);
-
-        outputResponse.setResponse("Successfully deleted");
-
-        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
-    }
-
+	@Override
+	public ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID) {
+		OutputResponse outputResponse = new OutputResponse();
+		HttpStatus statusCode = HttpStatus.OK;
+		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+		headers.add("Content-Type", "application/json");
+		try {
+			prescriptionTemplatesRepo.deletePrescriptionTemplatesByUserIDAndTempID(userID, tempID);
+			outputResponse.setResponse("Successfully deleted");
+		} catch (Exception e) {
+			logger.error("Error while deleting Prescription Templates userID : " + userID + " tempID : " + tempID);
+			outputResponse.setError(500, "Unable to delete Prescription Templates userID : " + userID + " tempID "
+					+ tempID + "Exception - " + e);
+			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
+	}
 
     @Override
     public ResponseEntity<String> createNewOutreachActivity(OutreachActivity activity, String authorization) {
@@ -674,45 +682,56 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
     }
 
-    @Override
-    public ResponseEntity<String> getActivitiesByUser(Integer userId, String authorization) {
-        OutputResponse outputResponse = new OutputResponse();
-        HttpStatus statusCode = HttpStatus.OK;
+	@Override
+	public ResponseEntity<String> getActivitiesByUser(Integer userId, String authorization) {
+		OutputResponse outputResponse = new OutputResponse();
+		HttpStatus statusCode = HttpStatus.OK;
 
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/json");
+		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+		headers.add("Content-Type", "application/json");
+		try {
+			ArrayList<Object[]> activitiesObj = outreachActivityRepo.getActivitiesByUserID(userId);
 
-        ArrayList<Object[]> activitiesObj =  outreachActivityRepo.getActivitiesByUserID(userId);
+			ArrayList<OutreachActivity> activities = OutreachActivity.getActivitiesForUser(activitiesObj);
 
-        ArrayList<OutreachActivity> activities = OutreachActivity.getActivitiesForUser(activitiesObj);
+			outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
+					.create().toJson(activities));
+		} catch (Exception e) {
+			logger.error("Encountered exception while fetching activity userId : " + userId);
+			outputResponse.setError(500, "Encountered exception while fetching activity. " + e);
+			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+	}
 
-        outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(activities));
+	@Override
+	public ResponseEntity<String> getActivityById(Integer activityId, String authorization) {
+		OutputResponse outputResponse = new OutputResponse();
+		HttpStatus statusCode = HttpStatus.OK;
 
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
-    }
+		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+		headers.add("Content-Type", "application/json");
+		try {
+			OutreachActivity activity = outreachActivityRepo.findById(activityId).get();
+			if (null != activity) {
+				if (activity.getImg1Data() != null) {
+					String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());
+					activity.setImg1(img1);
+				}
 
-    @Override
-    public ResponseEntity<String> getActivityById(Integer activityId, String authorization) {
-        OutputResponse outputResponse = new OutputResponse();
-        HttpStatus statusCode = HttpStatus.OK;
+				if (activity.getImg2Data() != null) {
+					String img2 = Base64.getEncoder().encodeToString(activity.getImg2Data());
+					activity.setImg2(img2);
+				}
 
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/json");
-
-        OutreachActivity activity =  outreachActivityRepo.findById(activityId).get();
-
-        if (activity != null && activity.getImg1Data() != null){
-            String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());
-            activity.setImg1(img1);
-        }
-
-        if (activity != null && activity.getImg2Data() != null){
-            String img2 = Base64.getEncoder().encodeToString(activity.getImg2Data());
-            activity.setImg2(img2);
-        }
-
-        outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(activity));
-
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
-    }
+				outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
+						.create().toJson(activity));
+			}
+		} catch (Exception e) {
+			logger.error("Encountered exception while fetching activity activityId " + activityId);
+			outputResponse.setError(500, "Encountered exception while fetching activity. " + e);
+			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+	}
 }
