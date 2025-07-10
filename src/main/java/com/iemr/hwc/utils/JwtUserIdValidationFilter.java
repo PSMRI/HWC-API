@@ -142,7 +142,7 @@ public class JwtUserIdValidationFilter implements Filter {
 		if (userAgent == null)
 			return false;
 		userAgent = userAgent.toLowerCase();
-		return userAgent.contains(Constants.OKHTTP); // iOS (custom clients)
+		return userAgent.contains(Constants.OKHTTP);
 	}
 
 	private String getJwtTokenFromCookies(HttpServletRequest request) {
