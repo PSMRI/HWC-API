@@ -712,8 +712,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 		headers.add("Content-Type", "application/json");
 		try {
-			OutreachActivity activity = outreachActivityRepo.findById(activityId).get();
-			if (null != activity) {
+			Optional<OutreachActivity> activityOptional = outreachActivityRepo.findById(activityId);
+			if (activityOptional.isPresent()) {
+				OutreachActivity activity = activityOptional.get();
 				if (activity.getImg1Data() != null) {
 					String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());
 					activity.setImg1(img1);
@@ -726,6 +727,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
 				outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
 						.create().toJson(activity));
+			}else {
+				outputResponse.setError(404, "Activity not found with ID : "+activityId);
+				statusCode = HttpStatus.NOT_FOUND;
 			}
 		} catch (Exception e) {
 			logger.error("Encountered exception while fetching activity activityId " + activityId);

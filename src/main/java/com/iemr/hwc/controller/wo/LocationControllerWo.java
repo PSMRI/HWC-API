@@ -198,7 +198,7 @@ public class LocationControllerWo {
 	public ResponseEntity<String> getOutreachMasterForState(@PathVariable("stateID") Integer stateID) {
 		logger.info("get Outreach programs for state with Id ..." + stateID);
 
-		response = new OutputResponse();
+		OutputResponse response = new OutputResponse();
 		HttpStatus statusCode = HttpStatus.OK;
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 		headers.add("Content-Type", "application/json");
