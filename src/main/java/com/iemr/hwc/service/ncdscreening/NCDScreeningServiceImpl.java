@@ -1697,7 +1697,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			List<Object[]> resultSet = hypertensionScreeningRepo.fetchConfirmedScreening(beneficiaryRegId);
 			if (resultSet != null && resultSet.size() > 0) {
 				for (Object[] obj : resultSet) {
-					map.put("beneficiaryRegId", obj[0] != null ? ((BigInteger) obj[0]).longValue() : null);
+					map.put("beneficiaryRegId", obj[0] != null ? ((Long) obj[0]) : null);
 					if (obj[1] != null && (Boolean) obj[1] == true)
 						response.add("Diabetes Mellitus");
 					if (obj[2] != null && (Boolean) obj[2] == true)
