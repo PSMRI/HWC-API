@@ -25,6 +25,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
+import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
+import com.iemr.hwc.data.login.MasterVan;
+import com.iemr.hwc.data.masterdata.registrar.GenderMaster;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,11 +40,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-
-import com.google.gson.annotations.Expose;
-import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
-import com.iemr.hwc.data.login.MasterVan;
-import com.iemr.hwc.data.masterdata.registrar.GenderMaster;
 
 /***
  * 
@@ -296,11 +296,19 @@ public class BeneficiaryFlowStatus {
 	@Column(name = "referred_visit_id")
 	private Long referred_visit_id;
 	
-	@Expose
-	@Column(name = "is_high_risk", insertable = false, updatable = false)
-	private Boolean is_high_risk;
-
 	
+	@Transient
+	Boolean is_high_risk;
+	 
+	
+	public Boolean isIs_high_risk() {
+		return is_high_risk;
+	}
+
+	public void setIs_high_risk(boolean is_high_risk) {
+		this.is_high_risk = is_high_risk;
+	}
+
 	@Transient
 	private I_bendemographics i_bendemographics;
 	@Transient

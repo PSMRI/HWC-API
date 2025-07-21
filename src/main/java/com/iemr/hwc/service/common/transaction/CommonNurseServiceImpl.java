@@ -3545,7 +3545,11 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getNurseWorklistNew(providerServiceMapId,
 				vanID, fromDate);
-
+		for (BeneficiaryFlowStatus beneficiaryFlowStatus : obj) {
+			Boolean isHighrisk = beneficiaryFlowStatusRepo.getIsHighrisk(beneficiaryFlowStatus.getBeneficiaryID());
+			if(null != isHighrisk)
+				beneficiaryFlowStatus.setIs_high_risk(isHighrisk);
+		}
 		return new Gson().toJson(obj);
 	}
 
