@@ -3541,9 +3541,10 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		else
 			cal.add(Calendar.DAY_OF_YEAR, -7);
 		long sevenDaysAgo = cal.getTimeInMillis();
+		Timestamp fromDate = new Timestamp(sevenDaysAgo);
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getNurseWorklistNew(providerServiceMapId,
-				vanID, new Timestamp(sevenDaysAgo));
+				vanID, fromDate);
 
 		return new Gson().toJson(obj);
 	}

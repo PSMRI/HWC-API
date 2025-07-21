@@ -296,6 +296,11 @@ public class BeneficiaryFlowStatus {
 	@Column(name = "referred_visit_id")
 	private Long referred_visit_id;
 	
+	@Expose
+	@Column(name = "is_high_risk", insertable = false, updatable = false)
+	private Boolean is_high_risk;
+
+	
 	@Transient
 	private I_bendemographics i_bendemographics;
 	@Transient

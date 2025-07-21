@@ -51,12 +51,14 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 //	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
 //			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID);
 
-	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.nurseFlag = 1 OR t.nurseFlag = 100) AND (t.specialist_flag <> 100 OR t.specialist_flag is null) AND t.deleted = false "
-			+ " AND Date(t.visitDate)  >= Date(:fromDate) AND t.providerServiceMapId = :providerServiceMapId "
-			+ " AND t.vanID = :vanID  ORDER BY t.visitDate DESC ")
-	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
-			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID,
-			@Param("fromDate") Timestamp fromDate);
+	@Query(value = "SELECT t.*, anc.is_high_risk as is_high_risk FROM i_ben_flow_outreach t "
+			+ "INNER JOIN t_anc_visit anc ON t.beneficiary_id = anc.ben_id "
+			+ "WHERE (t.nurse_flag = 1 OR t.nurse_flag = 100) "
+			+ "AND (t.specialist_flag <> 100 OR t.specialist_flag IS NULL) " + "AND t.deleted = false "
+			+ "AND DATE(t.created_date) >= DATE(:fromDate) " + "AND t.providerServiceMapId = :providerServiceMapId "
+			+ "AND t.vanID = :vanID " + "ORDER BY t.created_date DESC", nativeQuery = true)
+	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(@Param("providerServiceMapId") Integer providerServiceMapId,
+			@Param("vanID") Integer vanID, @Param("fromDate") Timestamp fromDate);
 
 	// nurse worklist TC current date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.specialist_flag != 0 AND t.specialist_flag != 100 AND t.specialist_flag is not null)"
