@@ -145,7 +145,7 @@
 		<dependency>
 			<groupId>jakarta.ws.rs</groupId>
 			<artifactId>jakarta.ws.rs-api</artifactId>
-			<version>3.3.0</version>
+			<version>3.1.0</version>
 		</dependency>
 
 		<dependency>
@@ -368,7 +368,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.1.0</version>
 				<executions>
 					<execution>
 						<phase>process-resources</phase>
