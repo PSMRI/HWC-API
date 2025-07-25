@@ -198,19 +198,19 @@ public class LocationControllerWo {
 	public ResponseEntity<String> getOutreachMasterForState(@PathVariable("stateID") Integer stateID) {
 		logger.info("get Outreach programs for state with Id ..." + stateID);
 
-		OutputResponse outputResponse = new OutputResponse();
+		OutputResponse response = new OutputResponse();
 		HttpStatus statusCode = HttpStatus.OK;
 		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 		headers.add("Content-Type", "application/json");
 
 		try {
 			String resList = locationServiceImpl.getOutreachProgramsList(stateID);
-			outputResponse.setResponse(resList);
+			response.setResponse(resList);
 		} catch (Exception e) {
 			logger.error("Error while fetching outreach list for stateId" + stateID);
 			response.setError(500, "Unable to fetch outreach list for stateId" + stateID + "Exception - " + e);
 			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+		return new ResponseEntity<>(response.toStringWithSerializeNulls(), headers, statusCode);
 	}
 }

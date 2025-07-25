@@ -124,7 +124,7 @@ public class HTTPRequestInterceptor implements HandlerInterceptor {
 			else
 				authorization = postAuth;
 			logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
-			if (authorization != null) {
+			if (authorization != null && !authorization.isEmpty()) {
 				sessionObject.updateSessionObject(authorization, sessionObject.getSessionObject(authorization));
 			}
 		} catch (Exception e) {
