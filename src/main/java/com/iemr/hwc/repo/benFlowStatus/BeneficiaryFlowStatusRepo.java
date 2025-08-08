@@ -57,7 +57,6 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID,
 			@Param("fromDate") Timestamp fromDate);
-
 	// nurse worklist TC current date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.specialist_flag != 0 AND t.specialist_flag != 100 AND t.specialist_flag is not null)"
 			+ " AND t.deleted = false AND DATE(t.benVisitDate) >= DATE(:fromDate) "
