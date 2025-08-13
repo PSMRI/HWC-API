@@ -1166,18 +1166,26 @@ public class ANCServiceImpl implements ANCService {
 	@Override
 	public String getBenANCDetailsFrmNurseANC(Long benRegID, Long visitCode) throws IEMRException {
 		Map<String, Object> resMap = new HashMap<>();
+		Long benVisitId = null;
 
 		// check the latest visit code for ANC visit, if any
 		if (visitCode == null && benRegID != null) {
 			visitCode = beneficiaryFlowStatusRepo.getLatestVisitCode(benRegID, "ANC");
-			if (visitCode == null)
-				return resMap.toString();
-
+			if (visitCode == null) {
+				benVisitId = beneficiaryFlowStatusRepo.getLatestBenVisitId(benRegID, "ANC");
+			}
 		}
-
-		resMap.put("ANCCareDetail", ancNurseServiceImpl.getANCCareDetails(benRegID, visitCode));
-
-		resMap.put("ANCWomenVaccineDetails", ancNurseServiceImpl.getANCWomenVaccineDetails(benRegID, visitCode));
+		if(benVisitId != null) {
+			resMap.put("ANCCareDetail", ancNurseServiceImpl.getANCCareDetailsWithBenVisitId(benRegID, benVisitId));
+		} else {
+			resMap.put("ANCCareDetail", ancNurseServiceImpl.getANCCareDetails(benRegID, visitCode));
+		}
+		
+		if(benVisitId != null) {
+			resMap.put("ANCWomenVaccineDetails", ancNurseServiceImpl.getANCWomenVaccineDetailsWithBenVisitId(benRegID, benVisitId));
+		} else {
+			resMap.put("ANCWomenVaccineDetails", ancNurseServiceImpl.getANCWomenVaccineDetails(benRegID, visitCode));
+		}
 
 		return resMap.toString();
 	}

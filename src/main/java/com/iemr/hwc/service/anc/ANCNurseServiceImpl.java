@@ -279,6 +279,20 @@ public class ANCNurseServiceImpl implements ANCNurseService {
 		WrapperAncImmunization ancWomenVaccineDetails = ANCWomenVaccineDetail.getANCWomenVaccineDetails(resList);
 		return new Gson().toJson(ancWomenVaccineDetails);
 	}
+	
+	@Override
+	public String getANCCareDetailsWithBenVisitId(Long beneficiaryRegID, Long benVisitId) {
+		ArrayList<Object[]> resList = ancCareRepo.getANCCareDetailsWithBenVisitId(beneficiaryRegID, benVisitId);
+		ANCCareDetails ancCareDetails = ANCCareDetails.getANCCareDetails(resList, 0);
+		return new Gson().toJson(ancCareDetails);
+	}
+
+	@Override
+	public String getANCWomenVaccineDetailsWithBenVisitId(Long beneficiaryRegID, Long benVisitId) {
+		ArrayList<Object[]> resList = ancWomenVaccineRepo.getANCWomenVaccineDetailsWithBenVisitId(beneficiaryRegID, benVisitId);
+		WrapperAncImmunization ancWomenVaccineDetails = ANCWomenVaccineDetail.getANCWomenVaccineDetails(resList);
+		return new Gson().toJson(ancWomenVaccineDetails);
+	}
 
 	@Override
 	public int updateBenAdherenceDetails(BenAdherence benAdherence) {
