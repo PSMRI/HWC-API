@@ -1175,6 +1175,9 @@ public class ANCServiceImpl implements ANCService {
 				benVisitId = beneficiaryFlowStatusRepo.getLatestBenVisitId(benRegID, "ANC");
 			}
 		}
+		if (visitCode == null && benVisitId == null) {
+			return new Gson().toJson(resMap);
+			}
 		if(benVisitId != null) {
 			resMap.put("ANCCareDetail", ancNurseServiceImpl.getANCCareDetailsWithBenVisitId(benRegID, benVisitId));
 		} else {
