@@ -308,6 +308,7 @@ public class BeneficiaryFlowStatus {
 	public void setIs_high_risk(boolean is_high_risk) {
 		this.is_high_risk = is_high_risk;
 	}
+	 
 
 	@Transient
 	private I_bendemographics i_bendemographics;

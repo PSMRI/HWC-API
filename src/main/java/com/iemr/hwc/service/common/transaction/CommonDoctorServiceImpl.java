@@ -405,6 +405,11 @@ public class CommonDoctorServiceImpl {
 		else if (serviceID != null && serviceID == 9) {
 			docWorkList = beneficiaryFlowStatusRepo.getDocWorkListNewTC(providerServiceMapId,
 					new Timestamp(sevenDaysAgo), vanID);
+			for (BeneficiaryFlowStatus beneficiaryFlowStatus : docWorkList) {
+				Boolean isHighrisk = beneficiaryFlowStatusRepo.getIsHighrisk(beneficiaryFlowStatus.getBeneficiaryID());
+				if(null != isHighrisk)
+					beneficiaryFlowStatus.setIs_high_risk(isHighrisk);
+			}
 		}
 
 		return new Gson().toJson(docWorkList);

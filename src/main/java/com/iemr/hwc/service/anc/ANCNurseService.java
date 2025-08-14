@@ -214,6 +214,10 @@ public interface ANCNurseService {
 
 	String getANCWomenVaccineDetails(Long beneficiaryRegID, Long visitCode);
 
+	String getANCWomenVaccineDetailsWithBenVisitId(Long beneficiaryRegID, Long visitCode);
+
+	String getANCCareDetailsWithBenVisitId(Long beneficiaryRegID, Long visitCode);
+
 	// public int updatePhyHeadToToeExamination(PhyHeadToToeExamination
 	// headToToeExamination);
 
