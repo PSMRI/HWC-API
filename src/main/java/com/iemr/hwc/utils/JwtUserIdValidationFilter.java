@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import com.iemr.hwc.utils.http.AuthorizationHeaderRequestWrapper;
 
 import com.iemr.hwc.utils.http.AuthorizationHeaderRequestWrapper;
 
@@ -89,30 +90,31 @@ public class JwtUserIdValidationFilter implements Filter {
 		}
 
 		try {
-		    String jwtToken = getJwtTokenFromCookies(request);
-		    String jwtFromHeader = request.getHeader(Constants.JWT_TOKEN);
-		    String authHeader = request.getHeader("Authorization");
+			String jwtToken = getJwtTokenFromCookies(request);
+			String jwtFromHeader = request.getHeader(Constants.JWT_TOKEN);
+			String authHeader = request.getHeader("Authorization");
 
-		    if ((jwtToken != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtToken)) || 
-		        (jwtFromHeader != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtFromHeader))) {
-		        AuthorizationHeaderRequestWrapper authorizationHeaderRequestWrapper = new AuthorizationHeaderRequestWrapper(request, "");
-		        filterChain.doFilter(authorizationHeaderRequestWrapper, servletResponse);
-		        return;
-		    } else {
-		        String userAgent = request.getHeader(Constants.USER_AGENT);
-		        logger.info("User-Agent: " + userAgent);
-		        if (userAgent != null && isMobileClient(userAgent) && authHeader != null) {
-		            try {
-		                UserAgentContext.setUserAgent(userAgent);
-		                filterChain.doFilter(servletRequest, servletResponse);
-		            } finally {
-		                UserAgentContext.clear();
-		            }
-		            return;
-		        }
-		    }
-		    logger.warn("No valid authentication token found");
-		    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
+			if ((jwtToken != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtToken)) ||
+					(jwtFromHeader != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtFromHeader))) {
+				AuthorizationHeaderRequestWrapper authorizationHeaderRequestWrapper = new AuthorizationHeaderRequestWrapper(
+						request, "");
+				filterChain.doFilter(authorizationHeaderRequestWrapper, servletResponse);
+				return;
+			} else {
+				String userAgent = request.getHeader(Constants.USER_AGENT);
+				logger.info("User-Agent: " + userAgent);
+				if (userAgent != null && isMobileClient(userAgent) && authHeader != null) {
+					try {
+						UserAgentContext.setUserAgent(userAgent);
+						filterChain.doFilter(servletRequest, servletResponse);
+					} finally {
+						UserAgentContext.clear();
+					}
+					return;
+				}
+			}
+			logger.warn("No valid authentication token found");
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
 		} catch (Exception e) {
 		    logger.error("Authorization error: ", e);
 		    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization error: " + e.getMessage());
