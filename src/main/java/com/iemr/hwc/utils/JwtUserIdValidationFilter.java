@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.iemr.hwc.utils.http.AuthorizationHeaderRequestWrapper;
 
+import com.iemr.hwc.utils.http.AuthorizationHeaderRequestWrapper;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -114,8 +116,8 @@ public class JwtUserIdValidationFilter implements Filter {
 			logger.warn("No valid authentication token found");
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
 		} catch (Exception e) {
-			logger.error("Authorization error: ", e);
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization error: " + e.getMessage());
+		    logger.error("Authorization error: ", e);
+		    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization error: " + e.getMessage());
 		}
 	}
 

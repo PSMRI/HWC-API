@@ -6,7 +6,7 @@
 
 	<groupId>com.iemr.hwc</groupId>
 	<artifactId>hwc-api</artifactId>
-	<version>3.2.1</version>
+	<version>3.4.0</version>
 	<packaging>war</packaging>
 
 	<name>HWC-API</name>
