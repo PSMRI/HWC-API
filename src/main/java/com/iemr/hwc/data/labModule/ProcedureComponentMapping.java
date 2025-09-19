@@ -328,18 +328,19 @@ public class ProcedureComponentMapping {
 				compMap.put("range_max", obj1[23]);
                 compList.add(compMap);
 
- 
 
-                s = new StringBuilder("(" + i + ")" + (String) obj1[13]);
-                procCompListMap.put("procedureID", procID);
-                procCompListMap.put("procedureName", (String) obj1[6]);
-                procCompListMap.put("procedureDesc", (String) obj1[7]);
-		procCompListMap.put("procedureType", (String) obj1[8]);
-		procCompListMap.put("gender", (String) obj1[9]);
-		procCompListMap.put("IOTProcedureID", obj1[10]);
-	//	procCompListMap.put("isMandatory", (String) obj1[11]);
-			procCompListMap.put("isMandatory", obj1[11]);
-		procCompListMap.put("isCalibration", (String) obj1[12]);
+
+				s = new StringBuilder("(" + i + ")" + String.valueOf(obj1[13]));
+
+				procCompListMap.put("procedureID", procID);
+				procCompListMap.put("procedureName", String.valueOf(obj1[6]));
+				procCompListMap.put("procedureDesc", String.valueOf(obj1[7]));
+				procCompListMap.put("procedureType", String.valueOf(obj1[8]));
+				procCompListMap.put("gender", String.valueOf(obj1[9]));
+				procCompListMap.put("IOTProcedureID", obj1[10]);
+
+				procCompListMap.put("isMandatory", obj1[11]);
+				procCompListMap.put("isCalibration", obj1[12]);
                 procCompListMap.put("compList", s);
 
  
