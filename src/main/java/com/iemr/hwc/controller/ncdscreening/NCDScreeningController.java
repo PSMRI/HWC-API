@@ -48,6 +48,8 @@ import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.Map;
+
 /**
  * 
  * @Objective Saving NCD Screening nurse data.
@@ -385,6 +387,33 @@ public class NCDScreeningController {
 		}
 		return response.toStringWithSerializeNulls();
 	}
+
+	@Operation(summary = "Get NCD screening beneficiary CBAC details")
+	@PostMapping(value = { "/getByUserCbacDetails" })
+	public String getByUserCbacDetails(
+			@RequestBody Map<String, String> requestBody) {
+
+
+
+		OutputResponse response = new OutputResponse();
+		try {
+			String createdBy = requestBody.get("createdBy");
+
+			if (createdBy == null || createdBy.isEmpty()) {
+				response.setError(400, "createdBy' is required in request body");
+
+			}
+			if (createdBy==null)
+				throw new IEMRException("invalid user");
+			String screeningDetails = ncdScreeningService.getCbacData(createdBy);
+			response.setResponse(screeningDetails);
+		} catch (Exception e) {
+			response.setError(500, "Error while getting captured CBAC data ");
+			logger.error("Error while getting captured CBAC data :" + e);
+		}
+		return response.toStringWithSerializeNulls();
+	}
+
 
 	/**
 	 * 

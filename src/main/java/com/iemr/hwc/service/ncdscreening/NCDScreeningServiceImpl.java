@@ -1897,4 +1897,13 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		}
 	}
 
+	@Override
+	public String getCbacData(String userName) throws IEMRException {
+		try {
+			List<CbacDetails> cbac = cbacDetailsRepo.findByCreatedBy(userName);
+			return new Gson().toJson(cbac);
+		} catch (Exception e) {
+			throw new IEMRException(e.getLocalizedMessage());
+		}
+	}
 }
