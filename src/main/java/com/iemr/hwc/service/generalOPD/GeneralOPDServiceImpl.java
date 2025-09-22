@@ -1389,9 +1389,10 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 		String diagnosis_prescription = generalOPDDoctorServiceImpl.getGeneralOPDDiagnosisDetails(benRegID, visitCode);
 		resMap.put("diagnosis", diagnosis_prescription);
 		String[] counsellingProvidedList = null;
+		PrescriptionDetail pd = null;
 		if (diagnosis_prescription != null) {
 
-			PrescriptionDetail pd = new Gson().fromJson(diagnosis_prescription, PrescriptionDetail.class);
+			pd = new Gson().fromJson(diagnosis_prescription, PrescriptionDetail.class);
 			if (pd != null && pd.getCounsellingProvided() != null) {
 				counsellingProvidedList = pd.getCounsellingProvided().split("\\|\\|");
 				resMap.put("counsellingProvidedList", new Gson().toJson(counsellingProvidedList));
@@ -1399,6 +1400,9 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 		}
 		WrapperBenInvestigationANC investigationDetailsWrapper = commonDoctorServiceImpl.getInvestigationDetailsWrapper(benRegID, visitCode);
 		investigationDetailsWrapper.setCounsellingProvidedList(counsellingProvidedList);
+		if (null != pd) {
+			investigationDetailsWrapper.setExternalInvestigations(pd.getExternalInvestigation());
+		}
 		resMap.put("investigation", new Gson().toJson(investigationDetailsWrapper));
 
 		resMap.put("prescription", commonDoctorServiceImpl.getPrescribedDrugs(benRegID, visitCode));
