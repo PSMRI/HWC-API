@@ -542,6 +542,13 @@ public class CommonDoctorServiceImpl {
 		return new Gson().toJson(labTestOrdersList);
 	}
 
+	public WrapperBenInvestigationANC getInvestigationDetailsWrapper(Long beneficiaryRegID, Long visitCode) {
+		ArrayList<Object[]> labTestOrders = labTestOrderDetailRepo.getLabTestOrderDetails(beneficiaryRegID, visitCode);
+		WrapperBenInvestigationANC labTestOrdersList = LabTestOrderDetail.getLabTestOrderDetails(labTestOrders);
+
+		return labTestOrdersList;
+	}
+
 	public String getPrescribedDrugs(Long beneficiaryRegID, Long visitCode) {
 		ArrayList<Object[]> resList = prescribedDrugDetailRepo.getBenPrescribedDrugDetails(beneficiaryRegID, visitCode);
 
