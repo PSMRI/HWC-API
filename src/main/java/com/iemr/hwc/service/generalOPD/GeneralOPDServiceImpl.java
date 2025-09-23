@@ -894,16 +894,19 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 				}
 
-			} else if (requestOBJ.has("investigation")) {
+			} else if (requestOBJ.has("investigation") && !requestOBJ.get("investigation").isJsonNull()) {
 				JsonObject obj = requestOBJ.getAsJsonObject("investigation");
-				JsonArray array = obj.getAsJsonArray("counsellingProvidedList");
-
-				if (array != null && !array.isJsonNull()) {
-					StringJoiner joiner = new StringJoiner("||");
-					for (JsonElement element : array) {
-						joiner.add(element.getAsString());
+				if (obj.has("counsellingProvidedList") && !obj.get("counsellingProvidedList").isJsonNull()) {
+					JsonArray array = obj.getAsJsonArray("counsellingProvidedList");
+					if (array != null && array.size() > 0) {
+						StringJoiner joiner = new StringJoiner("||");
+						for (JsonElement element : array) {
+							if (!element.isJsonNull()) {
+								joiner.add(element.getAsString());
+							}
+						}
+						prescriptionDetail.setCounsellingProvided(joiner.toString());
 					}
-					prescriptionDetail.setCounsellingProvided(joiner.toString());
 				}
 			}
 			prescriptionID = commonNurseServiceImpl.saveBenPrescription(prescriptionDetail);
@@ -1398,9 +1401,13 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				resMap.put("counsellingProvidedList", new Gson().toJson(counsellingProvidedList));
 			}
 		}
-		WrapperBenInvestigationANC investigationDetailsWrapper = commonDoctorServiceImpl.getInvestigationDetailsWrapper(benRegID, visitCode);
+		WrapperBenInvestigationANC investigationDetailsWrapper = commonDoctorServiceImpl
+				.getInvestigationDetailsWrapper(benRegID, visitCode);
+		if (investigationDetailsWrapper == null) {
+			investigationDetailsWrapper = new WrapperBenInvestigationANC();
+		}
 		investigationDetailsWrapper.setCounsellingProvidedList(counsellingProvidedList);
-		if (null != pd) {
+		if (pd != null) {
 			investigationDetailsWrapper.setExternalInvestigations(pd.getExternalInvestigation());
 		}
 		resMap.put("investigation", new Gson().toJson(investigationDetailsWrapper));
@@ -1510,16 +1517,22 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 				} else
 					prescriptionDetail.setCounsellingProvided("");
-			} else if (requestOBJ.has("investigation")) {
+			} else if (requestOBJ.has("investigation") && !requestOBJ.get("investigation").isJsonNull()) {
 				JsonObject obj = requestOBJ.getAsJsonObject("investigation");
-				JsonArray array = obj.getAsJsonArray("counsellingProvidedList");
-
-				if (array != null && !array.isJsonNull()) {
-					StringJoiner joiner = new StringJoiner("||");
-					for (JsonElement element : array) {
-						joiner.add(element.getAsString());
+				if (obj.has("counsellingProvidedList") && !obj.get("counsellingProvidedList").isJsonNull()) {
+					JsonArray array = obj.getAsJsonArray("counsellingProvidedList");
+					if (array != null && array.size() > 0) {
+						if (prescriptionDetail == null) {
+							prescriptionDetail = new PrescriptionDetail();
+						}
+						StringJoiner joiner = new StringJoiner("||");
+						for (JsonElement element : array) {
+							if (!element.isJsonNull()) {
+								joiner.add(element.getAsString());
+							}
+						}
+						prescriptionDetail.setCounsellingProvided(joiner.toString());
 					}
-					prescriptionDetail.setCounsellingProvided(joiner.toString());
 				}
 			}
 			// update prescription
