@@ -23,14 +23,10 @@ package com.iemr.hwc.data.ncdScreening;
 
 import java.sql.Timestamp;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import com.google.gson.annotations.Expose;
+import lombok.Data;
 
 @Entity
 @Table(name = "t_cbacdetails")
@@ -267,6 +263,20 @@ public class CbacDetails {
 	@Expose
 	@Column(name = "SyncedDate")
 	private Timestamp syncedDate;
+
+	public Long getBeneficiaryId() {
+		return beneficiaryId;
+	}
+
+	@Transient
+	@Expose
+	private Long beneficiaryId;
+
+
+
+	public void setBeneficiaryId(Long beneficiaryId) {
+		this.beneficiaryId = beneficiaryId;
+	}
 
 	public Long getId() {
 		return id;
