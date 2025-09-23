@@ -27,10 +27,14 @@ import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.ncdScreening.CbacDetails;
 
+import java.util.List;
+
 @Repository
 @RestResource(exported = false)
 public interface CbacDetailsRepo extends CrudRepository<CbacDetails, Long> {
 	
 	public CbacDetails findByBeneficiaryRegIdAndVisitCode(Long beneficiaryRegId, Long visitCode);
+
+	List<CbacDetails> findByCreatedBy(String userName);
 
 }
