@@ -118,8 +118,6 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 	private IDRSDataRepo iDrsDataRepo;
 
 	@Autowired
-	private CbacAdditionalDetailRepo cbacAddRepo;
-	@Autowired
 	private BreastCancerScreeningRepo breastCancerScreeningRepo;
 
 	@Autowired
