@@ -29,6 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iemr.hwc.data.ncdScreening.*;
+import com.iemr.hwc.repo.nurse.ncdscreening.*;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,15 +59,6 @@ import com.iemr.hwc.data.anc.WrapperComorbidCondDetails;
 import com.iemr.hwc.data.anc.WrapperFemaleObstetricHistory;
 import com.iemr.hwc.data.anc.WrapperImmunizationHistory;
 import com.iemr.hwc.data.anc.WrapperMedicationHistory;
-import com.iemr.hwc.data.ncdScreening.BreastCancerScreening;
-import com.iemr.hwc.data.ncdScreening.CbacDetails;
-import com.iemr.hwc.data.ncdScreening.CervicalCancerScreening;
-import com.iemr.hwc.data.ncdScreening.DiabetesScreening;
-import com.iemr.hwc.data.ncdScreening.HypertensionScreening;
-import com.iemr.hwc.data.ncdScreening.IDRSData;
-import com.iemr.hwc.data.ncdScreening.NCDScreening;
-import com.iemr.hwc.data.ncdScreening.OralCancerScreening;
-import com.iemr.hwc.data.ncdScreening.PhysicalActivityType;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
@@ -77,13 +72,6 @@ import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.nurse.CDSSRepo;
 import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.BreastCancerScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.CbacDetailsRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.CervicalCancerScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.DiabetesScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.HypertensionScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.IDRSDataRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.OralCancerScreeningRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
@@ -99,6 +87,8 @@ import com.iemr.hwc.utils.mapper.InputMapper;
 @Service
 public class NCDScreeningServiceImpl implements NCDScreeningService {
 
+	ObjectMapper mapper = new ObjectMapper();
+	ModelMapper modelMapper = new ModelMapper();
 	private NCDScreeningNurseServiceImpl ncdScreeningNurseServiceImpl;
 	private CommonNurseServiceImpl commonNurseServiceImpl;
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
@@ -127,6 +117,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 	@Autowired
 	private IDRSDataRepo iDrsDataRepo;
 
+	@Autowired
+	private CbacAdditionalDetailRepo cbacAddRepo;
 	@Autowired
 	private BreastCancerScreeningRepo breastCancerScreeningRepo;
 
@@ -371,7 +363,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					cbacDetails.setParkingPlaceId(nurseUtilityClass.getParkingPlaceID());
 
 					cbacDetails.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
-					cbacDetails.setVisitcode(benVisitCode);
+					cbacDetails.setVisitCode(benVisitCode);
 
 					saveCbacDetails(cbacDetails);
 				}
