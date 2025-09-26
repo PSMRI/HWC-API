@@ -32,7 +32,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iemr.hwc.data.ncdScreening.*;
 import com.iemr.hwc.repo.nurse.ncdscreening.*;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,8 +86,7 @@ import com.iemr.hwc.utils.mapper.InputMapper;
 @Service
 public class NCDScreeningServiceImpl implements NCDScreeningService {
 
-	ObjectMapper mapper = new ObjectMapper();
-	ModelMapper modelMapper = new ModelMapper();
+
 	private NCDScreeningNurseServiceImpl ncdScreeningNurseServiceImpl;
 	private CommonNurseServiceImpl commonNurseServiceImpl;
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;

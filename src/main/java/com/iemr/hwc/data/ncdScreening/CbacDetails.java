@@ -293,6 +293,38 @@ public class CbacDetails {
 	@Column(name = "Cbac_Cooking_Oil")
 	private String CbacCookingOil;
 
+	@Expose
+	@Column(name = "Cbac_OccupationalExposure_score")
+	private  String CbacOccupationalExposureScore;
+
+	@Expose
+	@Column(name = "Cbac_BotheredProblem_last2weeks_score")
+	private  String CbacBotheredProblemLast2weeksScore;
+
+	@Expose
+	@Column(name = "Cbac_LittleInterest_Pleasure_score")
+	private  String CbacLittleInterestPleasureScore;
+
+	@Expose
+	@Column(name = "Cbac_Depressed_hopeless_score")
+	private  String CbacDepressedhopelessScore;
+
+	@Expose
+	@Column(name = "Cbac_DiscolorationSkin")
+	private  String CbacDiscolorationSkinScore;
+
+	@Expose
+	@Column(name = "Cbac_Cooking_Oil_score")
+	private String CbacCookingOilScore;
+
+
+	@Expose
+	@Column(name = "Cbac_Feeling_Down_score")
+	private String CbacFeelingDownScore;
+
+
+
+
 
 
 }
