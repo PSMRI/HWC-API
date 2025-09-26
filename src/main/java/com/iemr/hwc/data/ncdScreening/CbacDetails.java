@@ -310,10 +310,6 @@ public class CbacDetails {
 	private  String CbacDepressedhopelessScore;
 
 	@Expose
-	@Column(name = "Cbac_DiscolorationSkin")
-	private  String CbacDiscolorationSkinScore;
-
-	@Expose
 	@Column(name = "Cbac_Cooking_Oil_score")
 	private String CbacCookingOilScore;
 
