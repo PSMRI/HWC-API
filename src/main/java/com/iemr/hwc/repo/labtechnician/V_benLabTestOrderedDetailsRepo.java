@@ -32,6 +32,6 @@ import com.iemr.hwc.data.labtechnician.V_benLabTestOrderedDetails;
 @Repository
 @RestResource(exported = false)
 public interface V_benLabTestOrderedDetailsRepo extends CrudRepository<V_benLabTestOrderedDetails, String> {
-	ArrayList<V_benLabTestOrderedDetails> findDistinctByBeneficiaryRegIDAndVisitCodeAndProcedureTypeAndProcedureIDNotInOrderByProcedureIDAscTestComponentIDAscResultValueAsc(
+	ArrayList<V_benLabTestOrderedDetails> findDistinctByBeneficiaryRegIDAndVisitCodeAndProcedureTypeAndProcedureIDInOrderByProcedureIDAscTestComponentIDAscResultValueAsc(
 			Long benRegID, Long visitCode, String procedureType, ArrayList<Integer> ids);
 }

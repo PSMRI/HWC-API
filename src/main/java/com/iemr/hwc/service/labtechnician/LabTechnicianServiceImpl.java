@@ -89,11 +89,11 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 		resultEnteredProcList.add(0);
 
 		ArrayList<V_benLabTestOrderedDetails> orderedLabTestListLab = v_benLabTestOrderedDetailsRepo
-				.findDistinctByBeneficiaryRegIDAndVisitCodeAndProcedureTypeAndProcedureIDNotInOrderByProcedureIDAscTestComponentIDAscResultValueAsc(
+				.findDistinctByBeneficiaryRegIDAndVisitCodeAndProcedureTypeAndProcedureIDInOrderByProcedureIDAscTestComponentIDAscResultValueAsc(
 						benRegID, visitCode, "Laboratory", resultEnteredProcList);
 
 		ArrayList<V_benLabTestOrderedDetails> orderedLabTestListRadio = v_benLabTestOrderedDetailsRepo
-				.findDistinctByBeneficiaryRegIDAndVisitCodeAndProcedureTypeAndProcedureIDNotInOrderByProcedureIDAscTestComponentIDAscResultValueAsc(
+				.findDistinctByBeneficiaryRegIDAndVisitCodeAndProcedureTypeAndProcedureIDInOrderByProcedureIDAscTestComponentIDAscResultValueAsc(
 						benRegID, visitCode, "Radiology", resultEnteredProcList);
 
 		radiologyList = getPrescribedLabTestInJsonFormatRadiology(orderedLabTestListRadio);
