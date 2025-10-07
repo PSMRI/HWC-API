@@ -383,7 +383,7 @@ public class NCDCareDiagnosis {
 
 	public NCDCareDiagnosis(Long beneficiaryRegID, Long benVisitID, Integer providerServiceMapID, Long prescriptionID,
 			String ncdCareCondition, String ncdComplication, String ncdCareType, Long visitCode,
-			String externalInvestigation, String ncdCareConditionOther) {
+			String externalInvestigation, String ncdCareConditionOther, String createdBy, Timestamp createdDate) {
 		super();
 		this.beneficiaryRegID = beneficiaryRegID;
 		this.benVisitID = benVisitID;
@@ -395,6 +395,8 @@ public class NCDCareDiagnosis {
 		this.visitCode = visitCode;
 		this.externalInvestigation = externalInvestigation;
 		this.ncdScreeningConditionOther = ncdCareConditionOther;
+		this.createdBy = createdBy;
+		this.createdDate = createdDate;
 	}
 
 	public static NCDCareDiagnosis getNCDCareDiagnosisDetails(ArrayList<Object[]> resList) {
@@ -402,7 +404,7 @@ public class NCDCareDiagnosis {
 		if (null != resList && resList.size() > 0) {
 			Object[] obj = resList.get(0);
 			cOBJ = new NCDCareDiagnosis((Long) obj[0], (Long) obj[1], (Integer) obj[2], (Long) obj[3], (String) obj[4],
-					(String) obj[5], (String) obj[6], (Long) obj[7], null, (String) obj[8]);
+					(String) obj[5], (String) obj[6], (Long) obj[7], null, (String) obj[8], (String) obj[9], (Timestamp) obj[10]);
 
 		}
 		return cOBJ;
