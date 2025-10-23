@@ -318,6 +318,10 @@ public class CbacDetails {
 	@Column(name = "Cbac_Feeling_Down_score")
 	private String CbacFeelingDownScore;
 
+	@Expose
+	@Column(name = "is_refer")
+	private Boolean isRefer;
+
 
 
 
