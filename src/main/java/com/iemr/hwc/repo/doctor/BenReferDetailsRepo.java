@@ -71,4 +71,7 @@ public interface BenReferDetailsRepo extends CrudRepository<BenReferDetails, Lon
 			@Param("referredToInstituteName") String referredToInstituteName,
 			@Param("revisitDate") Timestamp revisitDate, @Param("referralReason") String referralReason,
 			@Param("benReferID") Long benReferID, @Param("processed") String processed);
+
+	@Query("SELECT ba FROM BenReferDetails ba WHERE ba.createdBy = :createdBy AND ba.deleted = false ORDER BY ba.createdDate DESC")
+	public ArrayList<BenReferDetails> getBenReferDetailsByCreatedBy(@Param("createdBy") String createdBy);
 }
