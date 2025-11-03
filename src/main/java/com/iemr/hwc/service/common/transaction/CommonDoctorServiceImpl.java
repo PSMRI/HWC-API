@@ -525,6 +525,24 @@ public class CommonDoctorServiceImpl {
 		return ID;
 	}
 
+	public String getBenReferDetailsByCreatedBy(String createdBy) {
+		ArrayList<BenReferDetails> resList = benReferDetailsRepo.getBenReferDetailsByCreatedBy(createdBy);
+
+		// Process referral reason and service lists for each record
+		if (resList != null && resList.size() > 0) {
+			for (BenReferDetails referDetails : resList) {
+				if (referDetails != null && referDetails.getReferralReason() != null) {
+					referDetails.setReferralReasonList(referDetails.getReferralReason().split("\\|\\|"));
+				}
+				if (referDetails != null && referDetails.getServiceName() != null) {
+					referDetails.setRefrredToAdditionalServiceList(referDetails.getServiceName().split("\\|\\|"));
+				}
+			}
+		}
+
+		return new Gson().toJson(resList);
+	}
+
 	public String getFindingsDetails(Long beneficiaryRegID, Long visitCode) {
 		ArrayList<Object[]> clinicalObservationsList = benClinicalObservationsRepo.getFindingsData(beneficiaryRegID,
 				visitCode);
