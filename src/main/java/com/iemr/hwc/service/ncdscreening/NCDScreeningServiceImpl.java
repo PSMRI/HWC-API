@@ -377,7 +377,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
 						nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
 
-				if (J > 0)
+				if (J < 0)
 					saveSuccessFlag = benVisitCode;
 				else
 					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
