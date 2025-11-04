@@ -179,6 +179,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Long saveSuccessFlag = null;
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		Long benVisitCode = null;
+		// 07-06-2018 visit code
+		Long benVisitID = null;
 
 		Boolean isDocVisitRequired = false;
 		// check if visit details data is not null
@@ -187,9 +189,6 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			// Call method to save visit details data
 			Map<String, Long> visitIdAndCodeMap = saveBenVisitDetails(requestOBJ.getAsJsonObject("visitDetails"),
 					nurseUtilityClass);
-
-			// 07-06-2018 visit code
-			Long benVisitID = null;
 
 			if (visitIdAndCodeMap != null && visitIdAndCodeMap.size() > 0 && visitIdAndCodeMap.containsKey("visitID")
 					&& visitIdAndCodeMap.containsKey("visitCode")) {
@@ -397,6 +396,9 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Map<String, String> responseMap = new HashMap<String, String>();
 		if (benVisitCode != null) {
 			responseMap.put("visitCode", benVisitCode.toString());
+		}
+		if (benVisitID != null) {
+			responseMap.put("benVisitID", benVisitID.toString());
 		}
 		if (null != saveSuccessFlag && saveSuccessFlag > 0) {
 			responseMap.put("response", "Data saved successfully");
