@@ -220,6 +220,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			benFlowID = nurseUtilityClass.getBenFlowID();
 			isFlw = nurseUtilityClass.getFlw();
 
+
 			if (benVisitID != null && benVisitID > 0) {
 				tcRequestOBJ = commonServiceImpl.createTcRequest(requestOBJ, nurseUtilityClass, Authorization);
 				// call method to save History data
