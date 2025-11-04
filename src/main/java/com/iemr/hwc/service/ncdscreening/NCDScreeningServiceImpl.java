@@ -359,7 +359,10 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					cbacDetails.setParkingPlaceId(nurseUtilityClass.getParkingPlaceID());
 
 					cbacDetails.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
-					cbacDetails.setVisitCode(benVisitCode);
+					if(benVisitCode!=null){
+						cbacDetails.setVisitCode(benVisitCode);
+
+					}
 
 					saveCbacDetails(cbacDetails);
 				}
