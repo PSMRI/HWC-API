@@ -41,6 +41,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
+import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
 import com.iemr.hwc.service.ncdscreening.NCDSCreeningDoctorService;
 import com.iemr.hwc.service.ncdscreening.NCDScreeningService;
 import com.iemr.hwc.utils.exception.IEMRException;
@@ -49,6 +50,8 @@ import com.iemr.hwc.utils.response.OutputResponse;
 import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.Map;
+import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 
@@ -65,6 +68,9 @@ public class NCDScreeningController {
 
 	@Autowired
 	private NCDSCreeningDoctorService ncdSCreeningDoctorService;
+
+	@Autowired
+	private CommonDoctorServiceImpl commonDoctorServiceImpl;
 
 	/**
 	 * @Objective Save NCD Screening data for nurse.
@@ -100,6 +106,40 @@ public class NCDScreeningController {
 				response.setError(5000, e.getMessage());
 			}
 		}
+		return response.toString();
+	}
+
+	@PostMapping(value = { "/save/referDetails" })
+	public String saveNCDReferDetails(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) {
+		OutputResponse response = new OutputResponse();
+
+		try {
+			if (requestObj != null) {
+				JsonParser jsnParser = new JsonParser();
+				JsonElement jsnElmnt = jsnParser.parse(requestObj);
+				JsonObject jsnOBJ = jsnElmnt.getAsJsonObject();
+
+				if (jsnOBJ != null && jsnOBJ.has("refer") && !jsnOBJ.get("refer").isJsonNull()) {
+					Long referID = commonDoctorServiceImpl.saveBenReferDetails(
+							jsnOBJ.get("refer").getAsJsonObject(), false);
+
+					if (referID != null && referID > 0) {
+						response.setResponse("Referral details saved successfully");
+					} else {
+						response.setError(5000, "Failed to save referral details");
+					}
+				} else {
+					response.setError(5000, "Invalid request - refer object missing");
+				}
+			} else {
+				response.setError(5000, "Invalid request");
+			}
+		} catch (Exception e) {
+			logger.error("Error while saving NCD referral details: " + e.getMessage());
+			response.setError(5000, "Error saving referral details: " + e.getMessage());
+		}
+
 		return response.toString();
 	}
 
