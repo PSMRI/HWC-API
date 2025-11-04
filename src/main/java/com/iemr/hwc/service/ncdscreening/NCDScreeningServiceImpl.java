@@ -374,6 +374,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				/**
 				 * We have to write new code to update ben status flow new logic
 				 */
+				logger.error("isFlw: "+tmpOBJ.get("isFlw"));
 				if(!tmpOBJ.get("isFlw").getAsBoolean()){
 					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
 							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
