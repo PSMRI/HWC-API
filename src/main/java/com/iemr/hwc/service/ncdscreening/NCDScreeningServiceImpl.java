@@ -378,12 +378,12 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 						nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
 				logger.info("NCD screening:"+J);
 
-				if (J < 0)
+				if (J == 0)
 					saveSuccessFlag = benVisitCode;
 				else
 					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
 
-				if (J < 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+				if (J == 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
 					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
 							tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
 							nurseUtilityClass.getCreatedBy(),
