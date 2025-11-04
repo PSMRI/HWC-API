@@ -179,6 +179,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Long saveSuccessFlag = null;
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		Long benVisitCode = null;
+		Boolean isFlw= false;
 
 		Boolean isDocVisitRequired = false;
 		// check if visit details data is not null
@@ -217,6 +218,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 			// Above if block code replaced by below line
 			benFlowID = nurseUtilityClass.getBenFlowID();
+			isFlw = nurseUtilityClass.getFlw();
 
 			if (benVisitID != null && benVisitID > 0) {
 				tcRequestOBJ = commonServiceImpl.createTcRequest(requestOBJ, nurseUtilityClass, Authorization);
@@ -374,28 +376,23 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				/**
 				 * We have to write new code to update ben status flow new logic
 				 */
-				logger.error("isFlw: "+tmpOBJ.get("isFlw"));
-				if(tmpOBJ.get("isFlw")!=null){
-					if(!tmpOBJ.get("isFlw").getAsBoolean()){
-						int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-								nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+				logger.error("isFlw: "+isFlw);
+				if(!isFlw){
+					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
+							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
 
-						if (J > 0)
-							saveSuccessFlag = benVisitCode;
-						else
-							throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
-
-						if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
-							int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
-									tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
-									nurseUtilityClass.getCreatedBy(),
-									tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
-											: "",
-									null, Authorization);
-						}
-					}else {
+					if (J > 0)
 						saveSuccessFlag = benVisitCode;
+					else
+						throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
 
+					if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+						int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
+								tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
+								nurseUtilityClass.getCreatedBy(),
+								tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
+										: "",
+								null, Authorization);
 					}
 				}else {
 					saveSuccessFlag = benVisitCode;
