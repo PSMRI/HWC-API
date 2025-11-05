@@ -377,28 +377,33 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				/**
 				 * We have to write new code to update ben status flow new logic
 				 */
+                if( isFlw!=null){
+					if(!isFlw){
+						int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
+								nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
 
-				if(!isFlw || isFlw ==null){
-					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+						if (J > 0)
+							saveSuccessFlag = benVisitCode;
+						else
+							throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
 
-					if (J > 0)
+						if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+							int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
+									tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
+									nurseUtilityClass.getCreatedBy(),
+									tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
+											: "",
+									null, Authorization);
+						}
+					}else {
 						saveSuccessFlag = benVisitCode;
-					else
-						throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
 
-					if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
-						int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
-								tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
-								nurseUtilityClass.getCreatedBy(),
-								tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
-										: "",
-								null, Authorization);
 					}
 				}else {
 					saveSuccessFlag = benVisitCode;
 
 				}
+
 
 
 
