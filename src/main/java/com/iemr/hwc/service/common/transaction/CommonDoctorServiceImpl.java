@@ -46,6 +46,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -540,7 +541,10 @@ public class CommonDoctorServiceImpl {
 			}
 		}
 
-		return new Gson().toJson(resList);
+		// Configure date format for JSON output
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.setDateFormat("MMM d, yyyy h:mm:ss a");
+		return gsonBuilder.create().toJson(resList);
 	}
 
 	public String getFindingsDetails(Long beneficiaryRegID, Long visitCode) {
