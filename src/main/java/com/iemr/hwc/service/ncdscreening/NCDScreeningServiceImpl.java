@@ -180,7 +180,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		Long benVisitCode = null;
 		Boolean isFlw= false;
-
+		Long benVisitID = null;
 		Boolean isDocVisitRequired = false;
 		// check if visit details data is not null
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -190,7 +190,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					nurseUtilityClass);
 
 			// 07-06-2018 visit code
-			Long benVisitID = null;
+
 
 			if (visitIdAndCodeMap != null && visitIdAndCodeMap.size() > 0 && visitIdAndCodeMap.containsKey("visitID")
 					&& visitIdAndCodeMap.containsKey("visitCode")) {
@@ -377,8 +377,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				/**
 				 * We have to write new code to update ben status flow new logic
 				 */
-				logger.error("isFlw: "+isFlw);
-				if(!isFlw){
+
+				if(!isFlw || isFlw ==null){
 					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
 							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
 
@@ -411,6 +411,9 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Map<String, String> responseMap = new HashMap<String, String>();
 		if (benVisitCode != null) {
 			responseMap.put("visitCode", benVisitCode.toString());
+		}
+		if (benVisitID != null) {
+			responseMap.put("benVisitID", benVisitID.toString());
 		}
 		if (null != saveSuccessFlag && saveSuccessFlag > 0) {
 			responseMap.put("response", "Data saved successfully");
