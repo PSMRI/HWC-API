@@ -538,6 +538,8 @@ public class CommonDoctorServiceImpl {
 				if (referDetails != null && referDetails.getServiceName() != null) {
 					referDetails.setRefrredToAdditionalServiceList(referDetails.getServiceName().split("\\|\\|"));
 				}
+				referDetails.setBernId(referDetails.getBeneficiaryRegID());
+
 			}
 		}
 
