@@ -150,14 +150,14 @@ public class BenReferDetails {
 	private String otherReferralReason;
 	@Expose
 	@Transient
-	private Long bernId;
+	private Long benId;
 
-	public Long getBernId() {
-		return bernId;
+	public Long getBeId() {
+		return benId;
 	}
 
-	public void setBernId(Long bernId) {
-		this.bernId = bernId;
+	public void setBenId(Long bernId) {
+		this.benId = bernId;
 	}
 
 
