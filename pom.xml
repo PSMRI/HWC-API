@@ -6,7 +6,7 @@
 
 	<groupId>com.iemr.hwc</groupId>
 	<artifactId>hwc-api</artifactId>
-	<version>3.4.0</version>
+	<version>3.7.0</version>
 	<packaging>war</packaging>
 
 	<name>HWC-API</name>
@@ -85,6 +85,12 @@
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
 			<version>2.9.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.4.4</version>
 		</dependency>
 
 		<dependency>
