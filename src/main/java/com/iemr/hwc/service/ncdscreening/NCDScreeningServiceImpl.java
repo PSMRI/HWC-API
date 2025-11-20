@@ -400,7 +400,22 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 					}
 				}else {
-					saveSuccessFlag = benVisitCode;
+					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
+							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+
+					if (J > 0)
+						saveSuccessFlag = benVisitCode;
+					else
+						throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+
+					if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+						int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
+								tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
+								nurseUtilityClass.getCreatedBy(),
+								tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
+										: "",
+								null, Authorization);
+					}
 
 				}
 
