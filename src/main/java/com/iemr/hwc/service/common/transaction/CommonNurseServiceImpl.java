@@ -3547,10 +3547,15 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		else
 			cal.add(Calendar.DAY_OF_YEAR, -7);
 		long sevenDaysAgo = cal.getTimeInMillis();
+		Timestamp fromDate = new Timestamp(sevenDaysAgo);
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getNurseWorklistNew(providerServiceMapId,
-				vanID, new Timestamp(sevenDaysAgo));
-
+				vanID, fromDate);
+		for (BeneficiaryFlowStatus beneficiaryFlowStatus : obj) {
+			Boolean isHighrisk = beneficiaryFlowStatusRepo.getIsHighrisk(beneficiaryFlowStatus.getBeneficiaryID());
+			if(null != isHighrisk)
+				beneficiaryFlowStatus.setIs_high_risk(isHighrisk);
+		}
 		return new Gson().toJson(obj);
 	}
 
