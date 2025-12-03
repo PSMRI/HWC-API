@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.iemr.hwc.data.anc.BenAdherence;
 import com.iemr.hwc.data.anc.BenAllergyHistory;
@@ -892,8 +894,21 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 				}
 
+			} else if (requestOBJ.has("investigation") && !requestOBJ.get("investigation").isJsonNull()) {
+				JsonObject obj = requestOBJ.getAsJsonObject("investigation");
+				if (obj.has("counsellingProvidedList") && !obj.get("counsellingProvidedList").isJsonNull()) {
+					JsonArray array = obj.getAsJsonArray("counsellingProvidedList");
+					if (array != null && array.size() > 0) {
+						StringJoiner joiner = new StringJoiner("||");
+						for (JsonElement element : array) {
+							if (!element.isJsonNull()) {
+								joiner.add(element.getAsString());
+							}
+						}
+						prescriptionDetail.setCounsellingProvided(joiner.toString());
+					}
+				}
 			}
-
 			prescriptionID = commonNurseServiceImpl.saveBenPrescription(prescriptionDetail);
 
 			// save prescribed lab test
@@ -1376,16 +1391,26 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 		String diagnosis_prescription = generalOPDDoctorServiceImpl.getGeneralOPDDiagnosisDetails(benRegID, visitCode);
 		resMap.put("diagnosis", diagnosis_prescription);
-
+		String[] counsellingProvidedList = null;
+		PrescriptionDetail pd = null;
 		if (diagnosis_prescription != null) {
 
-			PrescriptionDetail pd = new Gson().fromJson(diagnosis_prescription, PrescriptionDetail.class);
+			pd = new Gson().fromJson(diagnosis_prescription, PrescriptionDetail.class);
 			if (pd != null && pd.getCounsellingProvided() != null) {
-				resMap.put("counsellingProvidedList", new Gson().toJson(pd.getCounsellingProvided().split("\\|\\|")));
+				counsellingProvidedList = pd.getCounsellingProvided().split("\\|\\|");
+				resMap.put("counsellingProvidedList", new Gson().toJson(counsellingProvidedList));
 			}
 		}
-
-		resMap.put("investigation", commonDoctorServiceImpl.getInvestigationDetails(benRegID, visitCode));
+		WrapperBenInvestigationANC investigationDetailsWrapper = commonDoctorServiceImpl
+				.getInvestigationDetailsWrapper(benRegID, visitCode);
+		if (investigationDetailsWrapper == null) {
+			investigationDetailsWrapper = new WrapperBenInvestigationANC();
+		}
+		investigationDetailsWrapper.setCounsellingProvidedList(counsellingProvidedList);
+		if (pd != null) {
+			investigationDetailsWrapper.setExternalInvestigations(pd.getExternalInvestigation());
+		}
+		resMap.put("investigation", new Gson().toJson(investigationDetailsWrapper));
 
 		resMap.put("prescription", commonDoctorServiceImpl.getPrescribedDrugs(benRegID, visitCode));
 
@@ -1492,8 +1517,24 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 				} else
 					prescriptionDetail.setCounsellingProvided("");
+			} else if (requestOBJ.has("investigation") && !requestOBJ.get("investigation").isJsonNull()) {
+				JsonObject obj = requestOBJ.getAsJsonObject("investigation");
+				if (obj.has("counsellingProvidedList") && !obj.get("counsellingProvidedList").isJsonNull()) {
+					JsonArray array = obj.getAsJsonArray("counsellingProvidedList");
+					if (array != null && array.size() > 0) {
+						if (prescriptionDetail == null) {
+							prescriptionDetail = new PrescriptionDetail();
+						}
+						StringJoiner joiner = new StringJoiner("||");
+						for (JsonElement element : array) {
+							if (!element.isJsonNull()) {
+								joiner.add(element.getAsString());
+							}
+						}
+						prescriptionDetail.setCounsellingProvided(joiner.toString());
+					}
+				}
 			}
-
 			// update prescription
 			int p = commonNurseServiceImpl.updatePrescription(prescriptionDetail);
 

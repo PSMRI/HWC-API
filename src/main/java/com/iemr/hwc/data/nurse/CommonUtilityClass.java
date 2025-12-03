@@ -33,6 +33,8 @@ public class CommonUtilityClass {
 
 	private Long beneficiaryRegID;
 
+	private Boolean isFlw;
+
 	private Integer providerServiceMapID;
 	private Long benVisitID;
 	private Long visitCode;
@@ -362,4 +364,11 @@ public class CommonUtilityClass {
 		this.parkingPlaceId = parkingPlaceId;
 	}
 
+	public Boolean getFlw() {
+		return isFlw;
+	}
+
+	public void setFlw(Boolean flw) {
+		this.isFlw = flw;
+	}
 }

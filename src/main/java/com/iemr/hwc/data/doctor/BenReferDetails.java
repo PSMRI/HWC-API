@@ -148,6 +148,20 @@ public class BenReferDetails {
 	@Expose
 	@Column(name = "OtherReferralReason")
 	private String otherReferralReason;
+	@Expose
+	@Transient
+	private Long benId;
+
+	public Long getBeId() {
+		return benId;
+	}
+
+	public void setBenId(Long bernId) {
+		this.benId = bernId;
+	}
+
+
+
 
 	@Expose
 	@Transient

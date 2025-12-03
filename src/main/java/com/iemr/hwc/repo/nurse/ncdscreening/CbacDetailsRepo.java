@@ -21,16 +21,26 @@
 */
 package com.iemr.hwc.repo.nurse.ncdscreening;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.hwc.data.ncdScreening.CbacDetails;
+
+import java.util.List;
 
 @Repository
 @RestResource(exported = false)
 public interface CbacDetailsRepo extends CrudRepository<CbacDetails, Long> {
 	
 	public CbacDetails findByBeneficiaryRegIdAndVisitCode(Long beneficiaryRegId, Long visitCode);
+
+	List<CbacDetails> findByCreatedBy(String userName);
+
+	@Query(value = "SELECT BeneficiaryID FROM db_identity.m_beneficiaryregidmapping " +
+			"WHERE BenRegId = :benRegId AND Deleted = 0", nativeQuery = true)
+	Long getBeneficiaryId(@Param("benRegId") Long benRegId);
 
 }

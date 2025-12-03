@@ -395,6 +395,34 @@ public class WorklistController {
 		return response.toString();
 	}
 
+	@Operation(summary = "Get beneficiary referral details by created by")
+	@PostMapping(value = { "/getBenReferDetailsByCreatedBy" }, headers = "Authorization")
+	public String getBenReferDetailsByCreatedBy(
+			@Param(value = "{\"createdBy\":\"String\"}") @RequestBody String comingRequest,
+			@RequestHeader(value = "Authorization") String Authorization) {
+		OutputResponse response = new OutputResponse();
+
+		logger.info("getBenReferDetailsByCreatedBy request:" + comingRequest);
+		System.out.println("getBenReferDetailsByCreatedBy request:" + comingRequest);
+		try {
+			JSONObject obj = new JSONObject(comingRequest);
+			if (obj.has("createdBy")) {
+				String createdBy = obj.getString("createdBy");
+				System.out.println("createdBy:" + createdBy);
+				String s = commonDoctorServiceImpl.getBenReferDetailsByCreatedBy(createdBy);
+				response.setResponse(s);
+			} else {
+				logger.info("Invalid Request Data.");
+				response.setError(5000, "Invalid request - createdBy is required");
+			}
+			logger.info("getBenReferDetailsByCreatedBy response:" + response);
+		} catch (Exception e) {
+			response.setError(5000, "Error while getting referral details by createdBy");
+			logger.error("Error in getBenReferDetailsByCreatedBy:" + e);
+		}
+		return response.toString();
+	}
+
 	@Operation(summary = "Get beneficiary medication history")
 	@PostMapping(value = { "/getBenMedicationHistory" })
 	public String getBenMedicationHistory(@Param(value = "{\"benRegID\":\"Long\"}") @RequestBody String comingRequest) {
