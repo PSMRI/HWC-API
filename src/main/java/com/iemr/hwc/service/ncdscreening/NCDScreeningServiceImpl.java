@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iemr.hwc.data.ncdScreening.*;
+import com.iemr.hwc.repo.nurse.ncdscreening.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,15 +58,6 @@ import com.iemr.hwc.data.anc.WrapperComorbidCondDetails;
 import com.iemr.hwc.data.anc.WrapperFemaleObstetricHistory;
 import com.iemr.hwc.data.anc.WrapperImmunizationHistory;
 import com.iemr.hwc.data.anc.WrapperMedicationHistory;
-import com.iemr.hwc.data.ncdScreening.BreastCancerScreening;
-import com.iemr.hwc.data.ncdScreening.CbacDetails;
-import com.iemr.hwc.data.ncdScreening.CervicalCancerScreening;
-import com.iemr.hwc.data.ncdScreening.DiabetesScreening;
-import com.iemr.hwc.data.ncdScreening.HypertensionScreening;
-import com.iemr.hwc.data.ncdScreening.IDRSData;
-import com.iemr.hwc.data.ncdScreening.NCDScreening;
-import com.iemr.hwc.data.ncdScreening.OralCancerScreening;
-import com.iemr.hwc.data.ncdScreening.PhysicalActivityType;
 import com.iemr.hwc.data.nurse.BenAnthropometryDetail;
 import com.iemr.hwc.data.nurse.BenPhysicalVitalDetail;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
@@ -77,13 +71,6 @@ import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.nurse.CDSSRepo;
 import com.iemr.hwc.repo.nurse.anc.BenAdherenceRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.BreastCancerScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.CbacDetailsRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.CervicalCancerScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.DiabetesScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.HypertensionScreeningRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.IDRSDataRepo;
-import com.iemr.hwc.repo.nurse.ncdscreening.OralCancerScreeningRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
 import com.iemr.hwc.repo.quickConsultation.PrescriptionDetailRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
@@ -98,6 +85,7 @@ import com.iemr.hwc.utils.mapper.InputMapper;
 
 @Service
 public class NCDScreeningServiceImpl implements NCDScreeningService {
+
 
 	private NCDScreeningNurseServiceImpl ncdScreeningNurseServiceImpl;
 	private CommonNurseServiceImpl commonNurseServiceImpl;
@@ -191,7 +179,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Long saveSuccessFlag = null;
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		Long benVisitCode = null;
-
+		Boolean isFlw= false;
+		Long benVisitID = null;
 		Boolean isDocVisitRequired = false;
 		// check if visit details data is not null
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -201,7 +190,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					nurseUtilityClass);
 
 			// 07-06-2018 visit code
-			Long benVisitID = null;
+
 
 			if (visitIdAndCodeMap != null && visitIdAndCodeMap.size() > 0 && visitIdAndCodeMap.containsKey("visitID")
 					&& visitIdAndCodeMap.containsKey("visitCode")) {
@@ -229,6 +218,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 			// Above if block code replaced by below line
 			benFlowID = nurseUtilityClass.getBenFlowID();
+			isFlw = nurseUtilityClass.getFlw();
+
 
 			if (benVisitID != null && benVisitID > 0) {
 				tcRequestOBJ = commonServiceImpl.createTcRequest(requestOBJ, nurseUtilityClass, Authorization);
@@ -371,7 +362,10 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					cbacDetails.setParkingPlaceId(nurseUtilityClass.getParkingPlaceID());
 
 					cbacDetails.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
-					cbacDetails.setVisitcode(benVisitCode);
+					if(benVisitCode!=null){
+						cbacDetails.setVisitCode(benVisitCode);
+
+					}
 
 					saveCbacDetails(cbacDetails);
 				}
@@ -383,22 +377,50 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				/**
 				 * We have to write new code to update ben status flow new logic
 				 */
-				int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-						nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+                if( isFlw!=null){
+					if(!isFlw){
+						int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
+								nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
 
-				if (J > 0)
-					saveSuccessFlag = benVisitCode;
-				else
-					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+						if (J > 0)
+							saveSuccessFlag = benVisitCode;
+						else
+							throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
 
-				if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
-					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
-							tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
-							nurseUtilityClass.getCreatedBy(),
-							tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
-									: "",
-							null, Authorization);
+						if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+							int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
+									tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
+									nurseUtilityClass.getCreatedBy(),
+									tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
+											: "",
+									null, Authorization);
+						}
+					}else {
+						saveSuccessFlag = benVisitCode;
+
+					}
+				}else {
+					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
+							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+
+					if (J > 0)
+						saveSuccessFlag = benVisitCode;
+					else
+						throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+
+					if (J > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+						int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
+								tcRequestOBJ.getSpecializationID(), tcRequestOBJ.getTmRequestID(), null,
+								nurseUtilityClass.getCreatedBy(),
+								tcRequestOBJ.getAllocationDate() != null ? String.valueOf(tcRequestOBJ.getAllocationDate())
+										: "",
+								null, Authorization);
+					}
+
 				}
+
+
+
 
 			} else {
 				throw new RuntimeException("Error occurred while saving data");
@@ -409,6 +431,9 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Map<String, String> responseMap = new HashMap<String, String>();
 		if (benVisitCode != null) {
 			responseMap.put("visitCode", benVisitCode.toString());
+		}
+		if (benVisitID != null) {
+			responseMap.put("benVisitID", benVisitID.toString());
 		}
 		if (null != saveSuccessFlag && saveSuccessFlag > 0) {
 			responseMap.put("response", "Data saved successfully");
@@ -1897,4 +1922,18 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		}
 	}
 
+	@Override
+	public String getCbacData(String userName) throws IEMRException {
+		try {
+			List<CbacDetails> cbac = cbacDetailsRepo.findByCreatedBy(userName);
+			cbac.forEach(cbacDetails -> {
+				if(cbacDetailsRepo.getBeneficiaryId(cbacDetails.getBeneficiaryRegId())!=null){
+					cbacDetails.setBeneficiaryId(cbacDetailsRepo.getBeneficiaryId(cbacDetails.getBeneficiaryRegId()));
+				}
+			});
+			return new Gson().toJson(cbac);
+		} catch (Exception e) {
+			throw new IEMRException(e.getLocalizedMessage());
+		}
+	}
 }

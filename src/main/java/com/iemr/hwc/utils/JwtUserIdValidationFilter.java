@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import com.iemr.hwc.utils.http.AuthorizationHeaderRequestWrapper;
 
 import com.iemr.hwc.utils.http.AuthorizationHeaderRequestWrapper;
 
@@ -39,27 +40,60 @@ public class JwtUserIdValidationFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 
 		String origin = request.getHeader("Origin");
+		String method = request.getMethod();
+		String uri = request.getRequestURI();
 
 		logger.debug("Incoming Origin: {}", origin);
+		logger.debug("Request Method: {}", method);
+		logger.debug("Request URI: {}", uri);
 		logger.debug("Allowed Origins Configured: {}", allowedOrigins);
+		if ("OPTIONS".equalsIgnoreCase(method)) {
+			if (origin == null) {
+				logger.warn("BLOCKED - OPTIONS request without Origin header | Method: {} | URI: {}", method, uri);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "OPTIONS request requires Origin header");
+				return;
+			}
+			if (!isOriginAllowed(origin)) {
+				logger.warn("BLOCKED - Unauthorized Origin | Origin: {} | Method: {} | URI: {}", origin, method, uri);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Origin not allowed");
+				return;
+			}
+		} else {
+			// For non-OPTIONS requests, validate origin if present
+			if (origin != null && !isOriginAllowed(origin)) {
+				logger.warn("BLOCKED - Unauthorized Origin | Origin: {} | Method: {} | URI: {}", origin, method, uri);
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Origin not allowed");
+				return;
+			}
+		}
+
+		String path = request.getRequestURI();
+		String contextPath = request.getContextPath();
 
 		if (origin != null && isOriginAllowed(origin)) {
-			response.setHeader("Access-Control-Allow-Origin", origin);
-			response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-			response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, Jwttoken");
+			response.setHeader("Access-Control-Allow-Origin", origin); // Never use wildcard
+			response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+			response.setHeader("Access-Control-Allow-Headers",
+					"Authorization, Content-Type, Accept, Jwttoken, serverAuthorization, ServerAuthorization, serverauthorization, Serverauthorization");
 			response.setHeader("Access-Control-Allow-Credentials", "true");
+			response.setHeader("Access-Control-Max-Age", "3600");
+			logger.info("Origin Validated | Origin: {} | Method: {} | URI: {}", origin, method, uri);
 		} else {
 			logger.warn("Origin [{}] is NOT allowed. CORS headers NOT added.", origin);
 		}
 
 		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+			// OPTIONS (preflight) - respond with full allowed methods
+			response.setHeader("Access-Control-Allow-Origin", origin);
+			response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+			response.setHeader("Access-Control-Allow-Headers",
+					"Authorization, Content-Type, Accept, Jwttoken, serverAuthorization, ServerAuthorization, serverauthorization, Serverauthorization");
+			response.setHeader("Access-Control-Allow-Credentials", "true");
 			logger.info("OPTIONS request - skipping JWT validation");
 			response.setStatus(HttpServletResponse.SC_OK);
 			return;
 		}
 
-		String path = request.getRequestURI();
-		String contextPath = request.getContextPath();
 		logger.info("JwtUserIdValidationFilter invoked for path: " + path);
 
 		// Log cookies for debugging
@@ -89,30 +123,31 @@ public class JwtUserIdValidationFilter implements Filter {
 		}
 
 		try {
-		    String jwtToken = getJwtTokenFromCookies(request);
-		    String jwtFromHeader = request.getHeader(Constants.JWT_TOKEN);
-		    String authHeader = request.getHeader("Authorization");
+			String jwtToken = getJwtTokenFromCookies(request);
+			String jwtFromHeader = request.getHeader(Constants.JWT_TOKEN);
+			String authHeader = request.getHeader("Authorization");
 
-		    if ((jwtToken != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtToken)) || 
-		        (jwtFromHeader != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtFromHeader))) {
-		        AuthorizationHeaderRequestWrapper authorizationHeaderRequestWrapper = new AuthorizationHeaderRequestWrapper(request, "");
-		        filterChain.doFilter(authorizationHeaderRequestWrapper, servletResponse);
-		        return;
-		    } else {
-		        String userAgent = request.getHeader(Constants.USER_AGENT);
-		        logger.info("User-Agent: " + userAgent);
-		        if (userAgent != null && isMobileClient(userAgent) && authHeader != null) {
-		            try {
-		                UserAgentContext.setUserAgent(userAgent);
-		                filterChain.doFilter(servletRequest, servletResponse);
-		            } finally {
-		                UserAgentContext.clear();
-		            }
-		            return;
-		        }
-		    }
-		    logger.warn("No valid authentication token found");
-		    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
+			if ((jwtToken != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtToken)) ||
+					(jwtFromHeader != null && jwtAuthenticationUtil.validateUserIdAndJwtToken(jwtFromHeader))) {
+				AuthorizationHeaderRequestWrapper authorizationHeaderRequestWrapper = new AuthorizationHeaderRequestWrapper(
+						request, "");
+				filterChain.doFilter(authorizationHeaderRequestWrapper, servletResponse);
+				return;
+			} else {
+				String userAgent = request.getHeader(Constants.USER_AGENT);
+				logger.info("User-Agent: " + userAgent);
+				if (userAgent != null && isMobileClient(userAgent) && authHeader != null) {
+					try {
+						UserAgentContext.setUserAgent(userAgent);
+						filterChain.doFilter(servletRequest, servletResponse);
+					} finally {
+						UserAgentContext.clear();
+					}
+					return;
+				}
+			}
+			logger.warn("No valid authentication token found");
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
 		} catch (Exception e) {
 		    logger.error("Authorization error: ", e);
 		    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization error: " + e.getMessage());
@@ -130,8 +165,7 @@ public class JwtUserIdValidationFilter implements Filter {
 				.anyMatch(pattern -> {
 					String regex = pattern
 							.replace(".", "\\.")
-							.replace("*", ".*")
-							.replace("http://localhost:.*", "http://localhost:\\d+"); // special case for wildcard port
+							.replace("*", ".*");
 
 					boolean matched = origin.matches(regex);
 					return matched;

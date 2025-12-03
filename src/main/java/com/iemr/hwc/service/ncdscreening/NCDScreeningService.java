@@ -45,6 +45,7 @@ public interface NCDScreeningService {
 	public String updateNCDScreeningData(JsonObject jsonObject) throws IEMRException;
 
 	public String getCbacData(Long beneficiaryRegId, Long visitCode) throws IEMRException;
+	public String getCbacData(String userName) throws IEMRException;
 
 	public int updateBenVitalDetails(JsonObject jsnOBJ) throws Exception;
 
