@@ -3377,7 +3377,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 							}
 						} else {
 							if (frequency.equalsIgnoreCase("Single Dose") || frequency.equalsIgnoreCase("Stat Dose")|| 
-									frequency.equalsIgnoreCase("Single Dose Before  Food") || frequency.equalsIgnoreCase("Single Dose After Food")) {
+									frequency.equalsIgnoreCase("Single Dose Before  Food") || frequency.equalsIgnoreCase("Single Dose After  Food")) {
 								if (form.equalsIgnoreCase("Tablet")) {
 									if (dose.equalsIgnoreCase("Half Tab")) {
 										qtyInOneDay = .5;
