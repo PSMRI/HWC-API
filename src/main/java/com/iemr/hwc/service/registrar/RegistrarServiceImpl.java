@@ -78,6 +78,9 @@ public class RegistrarServiceImpl implements RegistrarService {
 	@Value("${registrarQuickSearchByPhoneNoUrl}")
 	private String registrarQuickSearchByPhoneNoUrl;
 
+	@Value("${registrarQuickSearchByESUrl}")
+	private String registrarQuickSearchByESUrl;
+	
 	@Value("${beneficiaryEditUrl}")
 	private String beneficiaryEditUrl;
 
@@ -809,6 +812,23 @@ public class RegistrarServiceImpl implements RegistrarService {
 		}
 		return returnOBJ;
 	}
+
+	// beneficiary quick search new integrated with common and identity with elasticsearch
+	public String beneficiaryQuickSearchES(String requestObj, String Authorization) {
+		String returnOBJ = null;
+		RestTemplate restTemplate = new RestTemplate();
+		JSONObject obj = new JSONObject(requestObj);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
+		if ((obj.has("search") && !obj.isNull("search"))) {
+			ResponseEntity<String> response = restTemplate.exchange(registrarQuickSearchByESUrl, HttpMethod.POST,
+					request, String.class);
+			if (response.hasBody())
+				returnOBJ = response.getBody();
+
+		} 
+		return returnOBJ;
+	}
+
 
 	// beneficiary advance search new integrated with common and identity
 	public String beneficiaryAdvanceSearch(String requestObj, String Authorization) {
