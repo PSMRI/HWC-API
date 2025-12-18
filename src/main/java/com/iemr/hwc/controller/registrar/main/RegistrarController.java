@@ -264,14 +264,14 @@ public class RegistrarController {
 		try {
 			searchList = registrarServiceImpl.beneficiaryQuickSearchES(requestObj, Authorization);
 			if (searchList == null) {
-				response.setError(5000, "Invalid request");
+				response.setError(400, "Invalid request");
 				return response.toString();
 			} else {
 				return searchList;
 			}
 		} catch (Exception e) {
 			logger.error("Error in Quick Search" + e);
-			response.setError(5000, "Error while searching beneficiary");
+			response.setError(400, "Error while searching beneficiary");
 			return response.toString();
 		}
 
