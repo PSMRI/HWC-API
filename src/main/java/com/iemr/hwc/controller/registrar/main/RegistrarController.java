@@ -301,6 +301,37 @@ public class RegistrarController {
 
 	}
 
+	/**
+ * NEW Elasticsearch-based beneficiary advance search
+ */
+@Operation(summary = "Beneficiary advance search using Elasticsearch")
+@PostMapping(value = { "/advanceSearchES" })
+public String advanceSearchES(
+        @RequestBody String requestObj,
+        @RequestHeader(value = "Authorization") String Authorization) {
+    
+    String searchList = null;
+    OutputResponse response = new OutputResponse();
+    
+    try {
+        logger.info("ES Advance Search request received");
+        
+        searchList = registrarServiceImpl.beneficiaryAdvanceSearchES(requestObj, Authorization);
+        
+        if (searchList == null) {
+            response.setError(5000, "Invalid request");
+            return response.toString();
+        } else {
+            return searchList;
+        }
+        
+    } catch (Exception e) {
+        logger.error("Error in ES Advance Search: {}", e.getMessage(), e);
+        response.setError(5000, "Error while searching beneficiary: " + e.getMessage());
+        return response.toString();
+    }
+}
+
 	@Operation(summary = "Beneficiary advance search")
 	@PostMapping(value = { "/benAdvanceSearchNew" })
 	public String benAdvanceSearchNew(@RequestBody String requestObj,

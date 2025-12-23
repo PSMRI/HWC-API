@@ -87,6 +87,9 @@ public class RegistrarServiceImpl implements RegistrarService {
 	@Value("${registrarAdvanceSearchUrl}")
 	private String registrarAdvanceSearchUrl;
 
+	@Value("${registrarAdvanceSearchESUrl}")
+	private String registrarAdvanceSearchESUrl;
+	
 	@Value("${syncSearchByLocation}")
 	private String syncSearchByLocation;
 
@@ -818,7 +821,10 @@ public class RegistrarServiceImpl implements RegistrarService {
 		String returnOBJ = null;
 		RestTemplate restTemplate = new RestTemplate();
 		JSONObject obj = new JSONObject(requestObj);
+		System.out.println("obj="+obj);
 		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
+		System.out.println("test create request="+request);
+
 		if ((obj.has("search") && !obj.isNull("search"))) {
 			ResponseEntity<String> response = restTemplate.exchange(registrarQuickSearchByESUrl, HttpMethod.POST,
 					request, String.class);
@@ -844,6 +850,31 @@ public class RegistrarServiceImpl implements RegistrarService {
 		return returnOBJ;
 
 	}
+
+	/**
+ * NEW Elasticsearch-based beneficiary advance search
+ */
+public String beneficiaryAdvanceSearchES(String requestObj, String Authorization) {
+    logger.info("beneficiaryAdvanceSearchES called with request: {}", requestObj);
+    
+    String returnOBJ = null;
+    RestTemplate restTemplate = new RestTemplate();
+    
+    HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
+    
+    ResponseEntity<String> response = restTemplate.exchange(
+        registrarAdvanceSearchESUrl, // NEW property
+        HttpMethod.POST, 
+        request,
+        String.class
+    );
+
+    if (response.hasBody()) {
+        returnOBJ = response.getBody();
+    }
+
+    return returnOBJ;
+}
 
 	public int searchAndSubmitBeneficiaryToNurse(String requestOBJ) throws Exception {
 		int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(requestOBJ, null, null);
