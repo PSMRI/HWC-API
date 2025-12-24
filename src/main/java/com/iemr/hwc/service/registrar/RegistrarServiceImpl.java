@@ -863,7 +863,7 @@ public String beneficiaryAdvanceSearchES(String requestObj, String Authorization
     HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
     
     ResponseEntity<String> response = restTemplate.exchange(
-        registrarAdvanceSearchESUrl, // NEW property
+        registrarAdvanceSearchESUrl,
         HttpMethod.POST, 
         request,
         String.class
