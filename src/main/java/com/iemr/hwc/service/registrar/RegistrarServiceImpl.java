@@ -854,8 +854,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 	/**
  * NEW Elasticsearch-based beneficiary advance search
  */
-public String beneficiaryAdvanceSearchES(String requestObj, String Authorization) {
-    logger.info("beneficiaryAdvanceSearchES called with request: {}", requestObj);
+public String beneficiaryAdvancedSearchES(String requestObj, String Authorization) {
     
     String returnOBJ = null;
     RestTemplate restTemplate = new RestTemplate();
@@ -872,7 +871,7 @@ public String beneficiaryAdvanceSearchES(String requestObj, String Authorization
     if (response.hasBody()) {
         returnOBJ = response.getBody();
     }
-
+	
     return returnOBJ;
 }
 
