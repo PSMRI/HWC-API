@@ -302,10 +302,10 @@ public class RegistrarController {
 	}
 
 	/**
- * NEW Elasticsearch-based beneficiary advance search
+ * Elasticsearch-based beneficiary advance search
  */
-@Operation(summary = "Beneficiary advance search using Elasticsearch")
-@PostMapping(value = { "/advanceSearchES" })
+@Operation(summary = "Beneficiary advanced search using Elasticsearch")
+@PostMapping(value = { "/advancedSearchES" })
 public String advanceSearchES(
         @RequestBody String requestObj,
         @RequestHeader(value = "Authorization") String Authorization) {
@@ -314,9 +314,9 @@ public String advanceSearchES(
     OutputResponse response = new OutputResponse();
     
     try {
-        logger.info("ES Advance Search request received");
+        logger.info("ES Advanced Search request received");
         
-        searchList = registrarServiceImpl.beneficiaryAdvanceSearchES(requestObj, Authorization);
+        searchList = registrarServiceImpl.beneficiaryAdvancedSearchES(requestObj, Authorization);
         
         if (searchList == null) {
             response.setError(5000, "Invalid request");

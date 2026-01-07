@@ -852,7 +852,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 	}
 
 	/**
- * NEW Elasticsearch-based beneficiary advance search
+ * Elasticsearch-based beneficiary advanced search
  */
 public String beneficiaryAdvancedSearchES(String requestObj, String Authorization) {
     
