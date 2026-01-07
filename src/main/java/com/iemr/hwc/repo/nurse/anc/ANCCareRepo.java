@@ -58,6 +58,12 @@ public interface ANCCareRepo extends CrudRepository<ANCCareDetails, Long> {
 			+ "primiGravida, gravida_G, termDeliveries_T, pretermDeliveries_P, abortions_A, livebirths_L, bloodGroup, stillBirth,para  "
 			+ "from ANCCareDetails ba WHERE ba.beneficiaryRegID = :benRegID AND visitCode = :visitCode")
 	public ArrayList<Object[]> getANCCareDetails(@Param("benRegID") Long benRegID, @Param("visitCode") Long visitCode);
+	
+	@Query(" SELECT ID, beneficiaryRegID, benVisitID, providerServiceMapID, visitCode, visitNo, comolaintType, duration, description, "
+			+ " lastMenstrualPeriod_LMP, gestationalAgeOrPeriodofAmenorrhea_POA, trimesterNumber, expectedDateofDelivery, "
+			+ "primiGravida, gravida_G, termDeliveries_T, pretermDeliveries_P, abortions_A, livebirths_L, bloodGroup, stillBirth,para  "
+			+ "from ANCCareDetails ba WHERE ba.beneficiaryRegID = :benRegID AND benVisitID = :benVisitId")
+	public ArrayList<Object[]> getANCCareDetailsWithBenVisitId(@Param("benRegID") Long benRegID, @Param("benVisitId") Long benVisitId); 
 
 	@Query(" SELECT processed from ANCCareDetails where beneficiaryRegID=:benRegID AND visitCode = :visitCode")
 	public String getBenANCCareDetailsStatus(@Param("benRegID") Long benRegID, @Param("visitCode") Long visitCode);

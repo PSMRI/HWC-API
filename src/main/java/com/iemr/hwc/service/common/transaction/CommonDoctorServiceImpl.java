@@ -46,6 +46,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -391,10 +392,8 @@ public class CommonDoctorServiceImpl {
 		if (docWL != null && docWL > 0 && docWL <= 30)
 			cal.add(Calendar.DAY_OF_YEAR, -docWL);
 		else
-			cal.add(Calendar.DAY_OF_YEAR, -7);
-		long sevenDaysAgo = cal.getTimeInMillis();
-
-		// new Timestamp(fiveDaysAgo);
+			cal.add(Calendar.DAY_OF_YEAR, -10);
+		long cutoffTime = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> docWorkList = new ArrayList<>();
 		// MMU doc work-list
@@ -404,7 +403,12 @@ public class CommonDoctorServiceImpl {
 		// TC doc work-list
 		else if (serviceID != null && serviceID == 9) {
 			docWorkList = beneficiaryFlowStatusRepo.getDocWorkListNewTC(providerServiceMapId,
-					new Timestamp(sevenDaysAgo), vanID);
+					new Timestamp(cutoffTime), vanID);
+			for (BeneficiaryFlowStatus beneficiaryFlowStatus : docWorkList) {
+				Boolean isHighrisk = beneficiaryFlowStatusRepo.getIsHighrisk(beneficiaryFlowStatus.getBeneficiaryID());
+				if(null != isHighrisk)
+					beneficiaryFlowStatus.setIs_high_risk(isHighrisk);
+			}
 		}
 
 		return new Gson().toJson(docWorkList);
@@ -525,6 +529,29 @@ public class CommonDoctorServiceImpl {
 		return ID;
 	}
 
+	public String getBenReferDetailsByCreatedBy(String createdBy) {
+		ArrayList<BenReferDetails> resList = benReferDetailsRepo.getBenReferDetailsByCreatedBy(createdBy);
+
+		// Process referral reason and service lists for each record
+		if (resList != null && resList.size() > 0) {
+			for (BenReferDetails referDetails : resList) {
+				if (referDetails != null && referDetails.getReferralReason() != null) {
+					referDetails.setReferralReasonList(referDetails.getReferralReason().split("\\|\\|"));
+				}
+				if (referDetails != null && referDetails.getServiceName() != null) {
+					referDetails.setRefrredToAdditionalServiceList(referDetails.getServiceName().split("\\|\\|"));
+				}
+				referDetails.setBenId(referDetails.getBeneficiaryRegID());
+
+			}
+		}
+
+		// Configure date format for JSON output
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.setDateFormat("MMM d, yyyy h:mm:ss a");
+		return gsonBuilder.create().toJson(resList);
+	}
+
 	public String getFindingsDetails(Long beneficiaryRegID, Long visitCode) {
 		ArrayList<Object[]> clinicalObservationsList = benClinicalObservationsRepo.getFindingsData(beneficiaryRegID,
 				visitCode);
@@ -540,6 +567,13 @@ public class CommonDoctorServiceImpl {
 		WrapperBenInvestigationANC labTestOrdersList = LabTestOrderDetail.getLabTestOrderDetails(labTestOrders);
 
 		return new Gson().toJson(labTestOrdersList);
+	}
+
+	public WrapperBenInvestigationANC getInvestigationDetailsWrapper(Long beneficiaryRegID, Long visitCode) {
+		ArrayList<Object[]> labTestOrders = labTestOrderDetailRepo.getLabTestOrderDetails(beneficiaryRegID, visitCode);
+		WrapperBenInvestigationANC labTestOrdersList = LabTestOrderDetail.getLabTestOrderDetails(labTestOrders);
+
+		return labTestOrdersList;
 	}
 
 	public String getPrescribedDrugs(Long beneficiaryRegID, Long visitCode) {

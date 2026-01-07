@@ -57,7 +57,6 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID,
 			@Param("fromDate") Timestamp fromDate);
-
 	// nurse worklist TC current date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.specialist_flag != 0 AND t.specialist_flag != 100 AND t.specialist_flag is not null)"
 			+ " AND t.deleted = false AND DATE(t.benVisitDate) >= DATE(:fromDate) "
@@ -447,6 +446,10 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	@Query(value = " SELECT beneficiary_visit_code FROM db_iemr.i_ben_flow_outreach WHERE beneficiary_reg_id =:benRegId AND "
 			+ " visit_category =:vc AND beneficiary_visit_code is not null  ORDER BY ben_flow_id DESC LIMIT 1 ", nativeQuery = true)
 	public Long getLatestVisitCode(@Param("benRegId") Long benRegId, @Param("vc") String vc);
+	
+	@Query(value = " SELECT BenVisitID FROM db_iemr.t_benvisitdetail WHERE BeneficiaryRegID =:benRegId AND "
+			+ " VisitCategory =:vc AND BenVisitID is not null  ORDER BY BenVisitID  DESC LIMIT 1 ", nativeQuery = true)
+	public Long getLatestBenVisitId(@Param("benRegId") Long benRegId, @Param("vc") String vc);
 
 	// get visit by location and modify_date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.villageID = :villageID AND t.modified_date > :lastModDate ORDER BY t.visitDate DESC ")
@@ -458,5 +461,8 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 
 	@Query("SELECT COUNT(t) from BeneficiaryFlowStatus t WHERE t.villageID IN :villageIDs AND t.modified_date > :lastModDate ")
 	Long getFlowRecordsCount(@Param("villageIDs") List<Integer> villageID, @Param("lastModDate") Timestamp lastModDate);
+	
+	@Query(value = "SELECT is_high_risk from t_anc_visit t WHERE t.ben_id = :ben_id order by 1 desc limit 1",nativeQuery = true)
+	public Boolean getIsHighrisk(@Param("ben_id") Long ben_id);
 
 }
