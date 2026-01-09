@@ -40,7 +40,8 @@ import com.iemr.hwc.data.ncdcare.NCDCareDiagnosis;
 public interface NCDCareDiagnosisRepo extends CrudRepository<NCDCareDiagnosis, Long> {
 
 	@Query(" SELECT beneficiaryRegID, benVisitID, providerServiceMapID, prescriptionID, "
-			+ " ncdScreeningCondition, ncdComplication, ncdCareType, visitCode, ncdScreeningConditionOther "
+			+ " ncdScreeningCondition, ncdComplication, ncdCareType, visitCode, ncdScreeningConditionOther, "
+			+ " createdBy, createdDate "
 			+ " from NCDCareDiagnosis ba " + " WHERE ba.beneficiaryRegID = :benRegID"
 			+ " AND ba.visitCode = :visitCode AND ba.deleted = false " + " ORDER BY createdDate desc")
 	public ArrayList<Object[]> getNCDCareDiagnosisDetails(@Param("benRegID") Long benRegID,

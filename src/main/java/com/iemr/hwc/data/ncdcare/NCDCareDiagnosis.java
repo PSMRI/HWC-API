@@ -146,24 +146,22 @@ public class NCDCareDiagnosis {
 	@Transient
 	@Expose
 	private String specialistDiagnosis;
-	
+
 	@Transient
 	@Expose
 	private String counsellingProvided;
-	
+
 	@Expose
 	@Transient
 	private ArrayList<SCTDescription> provisionalDiagnosisList;
-	
+
 	@Expose
 	@Transient
 	private String diagnosisProvided;
-	
+
 	@Expose
 	@Transient
 	private String diagnosisProvided_SCTCode;
-	
-	
 
 	public String getDiagnosisProvided() {
 		return diagnosisProvided;
@@ -404,6 +402,9 @@ public class NCDCareDiagnosis {
 			cOBJ = new NCDCareDiagnosis((Long) obj[0], (Long) obj[1], (Integer) obj[2], (Long) obj[3], (String) obj[4],
 					(String) obj[5], (String) obj[6], (Long) obj[7], null, (String) obj[8]);
 
+			// Set audit fields
+			cOBJ.setCreatedBy((String) obj[9]);
+			cOBJ.setCreatedDate((Timestamp) obj[10]);
 		}
 		return cOBJ;
 	}

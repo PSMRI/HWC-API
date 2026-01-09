@@ -144,7 +144,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 	@Autowired
 	private CommonNcdScreeningService commonNcdScreeningService;
-	
+
 	@Autowired
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	@Autowired
@@ -418,7 +418,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		return new Gson().toJson(responseMap);
 
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -984,9 +984,9 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				}
 			}
 
-//			if (idrsFlag != null && idrsFlag > 0 ) {
-//				vitalSuccessFlag = anthropometrySuccessFlag;
-//			}
+			// if (idrsFlag != null && idrsFlag > 0 ) {
+			// vitalSuccessFlag = anthropometrySuccessFlag;
+			// }
 		}
 
 		return idrsFlag;
@@ -1006,9 +1006,9 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				physicalActivityFlag = commonNurseServiceImpl.savePhysicalActivity(physicalActivityDetail);
 			}
 
-//			if (idrsFlag != null && idrsFlag > 0 ) {
-//				vitalSuccessFlag = anthropometrySuccessFlag;
-//			}
+			// if (idrsFlag != null && idrsFlag > 0 ) {
+			// vitalSuccessFlag = anthropometrySuccessFlag;
+			// }
 		}
 
 		return physicalActivityFlag;
@@ -1178,8 +1178,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 						idrsDetail.setAnswer(ar[i].getAnswer());
 						idrsDetail.setQuestion(ar[i].getQuestion());
 						idrsDetail.setDiseaseQuestionType(ar[i].getDiseaseQuestionType());
-//						idrsDetail.setBenVisitID(idrsDetail1.getBenVisitID());
-//						idrsDetail.setVisitCode(idrsDetail1.getVisitCode());
+						// idrsDetail.setBenVisitID(idrsDetail1.getBenVisitID());
+						// idrsDetail.setVisitCode(idrsDetail1.getVisitCode());
 
 						if (idrsDetail.getSuspectArray() != null && idrsDetail.getSuspectArray().length > 0) {
 							for (int a = 0; a < idrsDetail.getSuspectArray().length; a++) {
@@ -1265,15 +1265,15 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 							idrsFlag = new Long(1);
 						}
 					}
-//					idrsFlag = commonNurseServiceImpl
-//							.saveIDRS(idrsDetail1);
+					// idrsFlag = commonNurseServiceImpl
+					// .saveIDRS(idrsDetail1);
 				}
 
 			}
 
-//			if (idrsFlag != null && idrsFlag > 0 ) {
-//				vitalSuccessFlag = anthropometrySuccessFlag;
-//			}
+			// if (idrsFlag != null && idrsFlag > 0 ) {
+			// vitalSuccessFlag = anthropometrySuccessFlag;
+			// }
 		}
 
 		return idrsFlag;
@@ -1289,6 +1289,12 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
 		Integer tcRequestStatusFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -1392,7 +1398,17 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 					tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 				}
-				Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Map<String, Object> drugSaveResult = commonNurseServiceImpl
+						.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Integer r = (Integer) drugSaveResult.get("count");
+				List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+				// Store IDs in JsonObject
+				if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+					Gson gson = new Gson();
+					requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+				}
+
 				if (r > 0 && r != null) {
 					prescriptionSuccessFlag = r;
 				}
@@ -1423,7 +1439,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = investigationSuccessFlag;
@@ -1454,7 +1470,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 		resMap.put("findings", commonDoctorServiceImpl.getFindingsDetails(benRegID, visitCode));
 
-//		resMap.put("diagnosis", ncdCareDoctorServiceImpl.getNCDCareDiagnosisDetails(benRegID, visitCode));
+		// resMap.put("diagnosis",
+		// ncdCareDoctorServiceImpl.getNCDCareDiagnosisDetails(benRegID, visitCode));
 
 		String diagnosis_prescription = ncdSCreeningDoctorServiceImpl.getNCDDiagnosisData(benRegID, visitCode);
 		resMap.put("diagnosis", diagnosis_prescription);
@@ -1649,7 +1666,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			throw new IEMRException("Error while saving hypertension screening data");
 	}
 
-//save breast screening data
+	// save breast screening data
 	public Long saveBreastCancerDetails(BreastCancerScreening requestObj) throws IEMRException {
 
 		requestObj = breastCancerScreeningRepo.save(requestObj);
@@ -1768,8 +1785,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 					diabetesScreening.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
 					diabetesScreening.setVisitcode(nurseUtilityClass.getVisitCode());
-//					diabetesScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
-//					diabetesScreening.setProcessed("N");
+					// diabetesScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
+					// diabetesScreening.setProcessed("N");
 
 					if (diabetesScreening.getId() == null) {
 						diabetesScreening.setCreatedBy(nurseUtilityClass.getModifiedBy());
@@ -1817,8 +1834,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 					breastCancerScreening.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
 					breastCancerScreening.setVisitcode(nurseUtilityClass.getVisitCode());
-//					breastCancerScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
-//					breastCancerScreening.setProcessed('N');
+					// breastCancerScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
+					// breastCancerScreening.setProcessed('N');
 
 					if (breastCancerScreening.getId() == null) {
 						breastCancerScreening.setCreatedBy(nurseUtilityClass.getModifiedBy());
@@ -1842,8 +1859,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 					cervicalCancerScreening.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
 					cervicalCancerScreening.setVisitcode(nurseUtilityClass.getVisitCode());
-//					cervicalCancerScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
-//					cervicalCancerScreening.setProcessed('N');
+					// cervicalCancerScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
+					// cervicalCancerScreening.setProcessed('N');
 
 					if (cervicalCancerScreening.getId() == null) {
 						cervicalCancerScreening.setCreatedBy(nurseUtilityClass.getModifiedBy());
@@ -1866,8 +1883,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 					oralCancerScreening.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
 					oralCancerScreening.setVisitcode(nurseUtilityClass.getVisitCode());
-//					oralCancerScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
-//					oralCancerScreening.setProcessed('N');
+					// oralCancerScreening.setModifiedBy(nurseUtilityClass.getModifiedBy());
+					// oralCancerScreening.setProcessed('N');
 
 					if (oralCancerScreening.getId() == null) {
 						oralCancerScreening.setCreatedBy(nurseUtilityClass.getModifiedBy());

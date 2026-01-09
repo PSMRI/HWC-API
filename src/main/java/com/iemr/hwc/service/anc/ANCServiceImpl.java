@@ -129,7 +129,7 @@ public class ANCServiceImpl implements ANCService {
 
 	@Autowired
 	private SysObstetricExaminationRepo sysObstetricExaminationRepo;
-	
+
 	@Autowired
 	private BenVisitDetailRepo benVisitDetailRepo;
 	@Autowired
@@ -277,7 +277,7 @@ public class ANCServiceImpl implements ANCService {
 		}
 		return new Gson().toJson(responseMap);
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -360,6 +360,12 @@ public class ANCServiceImpl implements ANCService {
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
 		Integer tcRequestStatusFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -456,7 +462,17 @@ public class ANCServiceImpl implements ANCService {
 					tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 					tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 				}
-				Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Map<String, Object> drugSaveResult = commonNurseServiceImpl
+						.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Integer r = (Integer) drugSaveResult.get("count");
+				List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+				// Store IDs in JsonObject
+				if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+					Gson gson = new Gson();
+					requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+				}
+
 				if (r > 0 && r != null) {
 					prescriptionSuccessFlag = r;
 				}
@@ -495,7 +511,7 @@ public class ANCServiceImpl implements ANCService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = diagnosisSuccessFlag;
@@ -1632,11 +1648,13 @@ public class ANCServiceImpl implements ANCService {
 			obstetricExmnSuccessFlag = ancNurseServiceImpl.updateSysObstetricExamination(sysObstetricExamination);
 		}
 
-//		if (genExmnSuccessFlag > 0 && headToToeExmnSuccessFlag > 0 && cardiExmnSuccessFlag > 0
-//				&& respiratoryExmnSuccessFlag > 0 && centralNrvsExmnSuccessFlag > 0 && muskelstlExmnSuccessFlag > 0
-//				&& genitorinaryExmnSuccessFlag > 0 && obstetricExmnSuccessFlag > 0) {
-//			exmnSuccessFlag = genExmnSuccessFlag;
-//		}
+		// if (genExmnSuccessFlag > 0 && headToToeExmnSuccessFlag > 0 &&
+		// cardiExmnSuccessFlag > 0
+		// && respiratoryExmnSuccessFlag > 0 && centralNrvsExmnSuccessFlag > 0 &&
+		// muskelstlExmnSuccessFlag > 0
+		// && genitorinaryExmnSuccessFlag > 0 && obstetricExmnSuccessFlag > 0) {
+		// exmnSuccessFlag = genExmnSuccessFlag;
+		// }
 		return 1;
 	}
 
@@ -1701,6 +1719,12 @@ public class ANCServiceImpl implements ANCService {
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
 		Integer tcRequestStatusFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -1809,7 +1833,16 @@ public class ANCServiceImpl implements ANCService {
 					tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 					tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 				}
-				Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Map<String, Object> drugSaveResult = commonNurseServiceImpl
+						.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Integer r = (Integer) drugSaveResult.get("count");
+				List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+				// Store IDs in JsonObject
+				if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+					Gson gson = new Gson();
+					requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+				}
 				if (r > 0 && r != null) {
 					prescriptionSuccessFlag = r;
 				}
@@ -1840,7 +1873,7 @@ public class ANCServiceImpl implements ANCService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass,
-						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ);
+						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 				if (i > 0)
 					updateSuccessFlag = investigationSuccessFlag;
 				else

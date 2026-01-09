@@ -24,6 +24,7 @@ package com.iemr.hwc.service.ncdscreening;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,21 +69,21 @@ public class NCDSCreeningDoctorServiceImpl implements NCDSCreeningDoctorService 
 	private CommonServiceImpl commonServiceImpl;
 	@Autowired
 	private SMSGatewayServiceImpl sMSGatewayServiceImpl;
-//
-//	@Autowired
-//	private BreastCancerScreeningRepo breastCancerScreeningRepo;
-//
-//	@Autowired
-//	private CervicalCancerScreeningRepo cervicalCancerScreeningRepo;
-//
-//	@Autowired
-//	private DiabetesScreeningRepo diabetesScreeningRepo;
-//
-//	@Autowired
-//	private HypertensionScreeningRepo hypertensionScreeningRepo;
-//
-//	@Autowired
-//	private OralCancerScreeningRepo oralCancerScreeningRepo;
+	//
+	// @Autowired
+	// private BreastCancerScreeningRepo breastCancerScreeningRepo;
+	//
+	// @Autowired
+	// private CervicalCancerScreeningRepo cervicalCancerScreeningRepo;
+	//
+	// @Autowired
+	// private DiabetesScreeningRepo diabetesScreeningRepo;
+	//
+	// @Autowired
+	// private HypertensionScreeningRepo hypertensionScreeningRepo;
+	//
+	// @Autowired
+	// private OralCancerScreeningRepo oralCancerScreeningRepo;
 
 	@Autowired
 	private CommonNcdScreeningService commonNcdScreeningService;
@@ -99,9 +100,15 @@ public class NCDSCreeningDoctorServiceImpl implements NCDSCreeningDoctorService 
 		Long referSaveSuccessFlag = null;
 		// Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
-//			TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
+			// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
 			CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
 
 			// teleconsultation request
@@ -163,13 +170,12 @@ public class NCDSCreeningDoctorServiceImpl implements NCDSCreeningDoctorService 
 				prescriptionDetail.setExternalInvestigation(wrapperBenInvestigationANC.getExternalInvestigations());
 				prescriptionID = prescriptionDetail.getPrescriptionID();
 			}
-			
+
 			if (requestOBJ.has("counsellingProvidedList") && !requestOBJ.get("counsellingProvidedList").isJsonNull()
 					&& requestOBJ.get("counsellingProvidedList") != null) {
-				
+
 				PrescriptionDetail tempPrescription = InputMapper.gson().fromJson(requestOBJ, PrescriptionDetail.class);
-				
-				
+
 				if (tempPrescription != null && tempPrescription.getCounsellingProvidedList() != null
 						&& tempPrescription.getCounsellingProvidedList().length > 0) {
 					StringBuffer sb = new StringBuffer();
@@ -179,7 +185,7 @@ public class NCDSCreeningDoctorServiceImpl implements NCDSCreeningDoctorService 
 					if (sb.length() >= 2)
 						prescriptionDetail.setCounsellingProvided(sb.substring(0, sb.length() - 2));
 
-				}else
+				} else
 					prescriptionDetail.setCounsellingProvided("");
 			}
 			// update prescription
@@ -208,7 +214,16 @@ public class NCDSCreeningDoctorServiceImpl implements NCDSCreeningDoctorService 
 					tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 					tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 				}
-				Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Map<String, Object> drugSaveResult = commonNurseServiceImpl
+						.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Integer r = (Integer) drugSaveResult.get("count");
+				List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+				// Store IDs in JsonObject
+				if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+					Gson gson = new Gson();
+					requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+				}
 				if (r > 0 && r != null) {
 					prescriptionSuccessFlag = r;
 				}
@@ -232,7 +247,7 @@ public class NCDSCreeningDoctorServiceImpl implements NCDSCreeningDoctorService 
 
 				// call method to update beneficiary flow table
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass,
-						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ);
+						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					updateSuccessFlag = 1;
