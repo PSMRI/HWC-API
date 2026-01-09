@@ -60,7 +60,7 @@ public class BeneficiaryFlowStatus {
 	@Expose
 	@Column(name = "ben_flow_id")
 	private Long benFlowID;
-   
+
 	@Expose
 	@Column(name = "beneficiary_reg_id")
 	private Long beneficiaryRegID;
@@ -173,20 +173,20 @@ public class BeneficiaryFlowStatus {
 	@Expose
 	@Column(name = "father_name")
 	private String fatherName;
-//	@Expose
-//	@Column(name = "benQuickbloxID")
-//	private Long benQuickbloxID;
+	// @Expose
+	// @Column(name = "benQuickbloxID")
+	// private Long benQuickbloxID;
 	@Expose
 	@Column(name = "spouse_name")
 	private String spouseName;
 
-//	public Long getBenQuickbloxID() {
-//		return benQuickbloxID;
-//	}
-//
-//	public void setBenQuickbloxID(Long benQuickbloxID) {
-//		this.benQuickbloxID = benQuickbloxID;
-//	}
+	// public Long getBenQuickbloxID() {
+	// return benQuickbloxID;
+	// }
+	//
+	// public void setBenQuickbloxID(Long benQuickbloxID) {
+	// this.benQuickbloxID = benQuickbloxID;
+	// }
 	@SQLInjectionSafe
 	@Expose
 	@Column(name = "district")
@@ -300,7 +300,7 @@ public class BeneficiaryFlowStatus {
 	@Expose
 	@Column(name = "referred_visitcode")
 	private Long referredVisitCode;
-	
+
 	@Expose
 	@Column(name = "referred_visit_id")
 	private Long referred_visit_id;
@@ -348,7 +348,6 @@ public class BeneficiaryFlowStatus {
 	private String bloodGroup;
 	@Transient
 	private String subVisitCategory;
-	
 
 	// new variable added for patient app
 	@Transient
@@ -1036,9 +1035,5 @@ public class BeneficiaryFlowStatus {
 	public void setSubVisitCategory(String subVisitCategory) {
 		this.subVisitCategory = subVisitCategory;
 	}
-	
-	
-	
-	
 
 }
