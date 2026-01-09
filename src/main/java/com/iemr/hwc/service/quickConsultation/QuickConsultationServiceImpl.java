@@ -316,7 +316,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		return new Gson().toJson(responseMap);
 		// return returnOBJ;
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -373,6 +373,12 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Long referSaveSuccessFlag = null;
 		// Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (quickConsultDoctorOBJ.has("doctorSignatureFlag")
+				&& !quickConsultDoctorOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = quickConsultDoctorOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
 		CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(quickConsultDoctorOBJ,
@@ -382,7 +388,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 		Long benChiefComplaintID = saveBeneficiaryChiefComplaint(quickConsultDoctorOBJ);
 		Long clinicalObservationID = saveBeneficiaryClinicalObservations(quickConsultDoctorOBJ);
-		
+
 		// generate prescription
 		Long prescriptionID = commonNurseServiceImpl.saveBeneficiaryPrescription(quickConsultDoctorOBJ);
 
@@ -478,7 +484,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 			}
 			// call method to update beneficiary flow table
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0)
 				returnOBJ = 1;
@@ -592,6 +598,12 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 		Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (quickConsultDoctorOBJ.has("doctorSignatureFlag")
+				&& !quickConsultDoctorOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = quickConsultDoctorOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
 		CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(quickConsultDoctorOBJ,
@@ -645,7 +657,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 				tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 			}
-					// Use the modified method to get both count and IDs
+			// Use the modified method to get both count and IDs
 			Map<String, Object> drugSaveResult = commonNurseServiceImpl
 					.saveBenPrescribedDrugsList(prescribedDrugDetailList);
 			Integer r = (Integer) drugSaveResult.get("count");
@@ -710,7 +722,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 			}
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0)
 				updateSuccessFlag = benChiefComplaintID;

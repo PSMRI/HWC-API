@@ -361,6 +361,12 @@ public class ANCServiceImpl implements ANCService {
 		Long referSaveSuccessFlag = null;
 		Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
@@ -505,7 +511,7 @@ public class ANCServiceImpl implements ANCService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = diagnosisSuccessFlag;
@@ -1714,6 +1720,12 @@ public class ANCServiceImpl implements ANCService {
 		Long referSaveSuccessFlag = null;
 		Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
@@ -1861,7 +1873,7 @@ public class ANCServiceImpl implements ANCService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass,
-						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ);
+						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 				if (i > 0)
 					updateSuccessFlag = investigationSuccessFlag;
 				else

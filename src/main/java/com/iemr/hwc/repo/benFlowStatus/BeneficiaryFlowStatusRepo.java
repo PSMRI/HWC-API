@@ -45,11 +45,15 @@ import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlowStatus, Long> {
 
 	// nurse worklist
-//	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.nurseFlag = 1 OR t.nurseFlag = 100) AND (t.specialist_flag <> 100 OR t.specialist_flag is null) AND t.deleted = false "
-//			+ " AND Date(t.visitDate)  = curdate() AND t.providerServiceMapId = :providerServiceMapId "
-//			+ " AND t.vanID = :vanID  ORDER BY t.visitDate DESC ")
-//	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
-//			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID);
+	// @Query("SELECT t from BeneficiaryFlowStatus t WHERE (t.nurseFlag = 1 OR
+	// t.nurseFlag = 100) AND (t.specialist_flag <> 100 OR t.specialist_flag is
+	// null) AND t.deleted = false "
+	// + " AND Date(t.visitDate) = curdate() AND t.providerServiceMapId =
+	// :providerServiceMapId "
+	// + " AND t.vanID = :vanID ORDER BY t.visitDate DESC ")
+	// public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
+	// @Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID")
+	// Integer vanID);
 
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.nurseFlag = 1 OR t.nurseFlag = 100) AND (t.specialist_flag <> 100 OR t.specialist_flag is null) AND t.deleted = false "
 			+ " AND Date(t.visitDate)  >= Date(:fromDate) AND t.providerServiceMapId = :providerServiceMapId "
@@ -117,12 +121,16 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("tcDate") Timestamp tcDate, @Param("specialistID") Integer specialistID,
 			@Param("labTechnician") Short labTechnician);
 
-//	@Query("SELECT  t.benFlowID, t.beneficiaryRegID, t.visitDate, t.benName, t.age, t.ben_age_val, t.genderID, t.genderName, "
-//			+ " t.villageName, t.districtName, t.beneficiaryID, t.servicePointName, t.VisitReason, t.VisitCategory, t.benVisitID,  "
-//			+ " t.registrationDate, t.benVisitDate, t.visitCode, t.consultationDate FROM BeneficiaryFlowStatus t "
-//			+ " Where t.beneficiaryRegID = :benRegID AND t.benFlowID = :benFlowID ")
-//	public ArrayList<Object[]> getBenDetailsForLeftSidePanel(@Param("benRegID") Long benRegID,
-//			@Param("benFlowID") Long benFlowID);
+	// @Query("SELECT t.benFlowID, t.beneficiaryRegID, t.visitDate, t.benName,
+	// t.age, t.ben_age_val, t.genderID, t.genderName, "
+	// + " t.villageName, t.districtName, t.beneficiaryID, t.servicePointName,
+	// t.VisitReason, t.VisitCategory, t.benVisitID, "
+	// + " t.registrationDate, t.benVisitDate, t.visitCode, t.consultationDate FROM
+	// BeneficiaryFlowStatus t "
+	// + " Where t.beneficiaryRegID = :benRegID AND t.benFlowID = :benFlowID ")
+	// public ArrayList<Object[]> getBenDetailsForLeftSidePanel(@Param("benRegID")
+	// Long benRegID,
+	// @Param("benFlowID") Long benFlowID);
 
 	// HWC, 2.0 dob in response
 	@Query("SELECT t FROM BeneficiaryFlowStatus t Where t.benFlowID = :benFlowID ")
@@ -186,11 +194,15 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("providerServiceMapId") Integer providerServiceMapId,
 			@Param("tCSpecialistUserID") Integer tCSpecialistUserID);
 
-//	@Query("SELECT  t.benFlowID from BeneficiaryFlowStatus t WHERE t.beneficiaryRegID = :benRegID "
-//			+ "AND t.providerServiceMapId = :provoderSerMapID AND t.vanID = :vanID AND "
-//			+ " (t.nurseFlag = 1 OR t.nurseFlag = 100) AND Date(t.visitDate)  = curdate() AND t.deleted = false")
-//	public ArrayList<Long> checkBenAlreadyInNurseWorkList(@Param("benRegID") Long benRegID,
-//			@Param("provoderSerMapID") Integer provoderSerMapID, @Param("vanID") Integer vanID);
+	// @Query("SELECT t.benFlowID from BeneficiaryFlowStatus t WHERE
+	// t.beneficiaryRegID = :benRegID "
+	// + "AND t.providerServiceMapId = :provoderSerMapID AND t.vanID = :vanID AND "
+	// + " (t.nurseFlag = 1 OR t.nurseFlag = 100) AND Date(t.visitDate) = curdate()
+	// AND t.deleted = false")
+	// public ArrayList<Long> checkBenAlreadyInNurseWorkList(@Param("benRegID") Long
+	// benRegID,
+	// @Param("provoderSerMapID") Integer provoderSerMapID, @Param("vanID") Integer
+	// vanID);
 	@Query("SELECT  t.benFlowID from BeneficiaryFlowStatus t WHERE t.beneficiaryRegID = :benRegID "
 			+ "AND t.providerServiceMapId = :provoderSerMapID AND t.vanID = :vanID AND "
 			+ " (t.nurseFlag = 1 OR t.nurseFlag = 100) AND Date(t.visitDate) >= Date(:fromDate) AND t.deleted = false")
@@ -210,7 +222,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	 */
 	@Transactional
 	@Modifying
-	@Query("UPDATE BeneficiaryFlowStatus t set t.doctorFlag = :docFlag , t.pharmacist_flag = :pharmaFlag, "
+	@Query("UPDATE BeneficiaryFlowStatus t set t.doctorFlag = :docFlag , t.pharmacist_flag = :pharmaFlag, t.doctorSignatureFlag = :signatureFlag, "
 			+ " t.oncologist_flag = :oncologistFlag, t.consultationDate = now(), t.processed = 'U', "
 			+ " t.specialist_flag = :tcSpecialistFlag, t.tCSpecialistUserID = :tcSpecialistUserID, "
 			+ "t.tCRequestDate = :tcDate, t.lab_technician_flag = :labTechnicianFlag "
@@ -219,7 +231,8 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("benRegID") Long benRegID, @Param("benID") Long benID, @Param("docFlag") Short docFlag,
 			@Param("pharmaFlag") Short pharmaFlag, @Param("oncologistFlag") Short oncologistFlag,
 			@Param("tcSpecialistFlag") Short tcSpecialistFlag, @Param("tcSpecialistUserID") int tcSpecialistUserID,
-			@Param("tcDate") Timestamp tcDate, @Param("labTechnicianFlag") Short labTechnicianFlag);
+			@Param("tcDate") Timestamp tcDate, @Param("labTechnicianFlag") Short labTechnicianFlag,
+			@Param("signatureFlag") Boolean signatureFlag);
 
 	/***
 	 * @author DU20091017 updating lab technician flag as well after feto sense.
@@ -436,13 +449,14 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			+ " AND ben_gender_val = 2 AND ben_dob is not null order by ben_flow_id DESC LIMIT 1 ")
 	public Timestamp getBenAgeVal(@Param("benRegID") Long benRegID);
 
-//	/**
-//	 * get labtechnician flag and update for foetal monitor test
-//	 * @author SH20094090
-//	 * @param benFlowID
-//	 */
-//	@Query("SELECT  t.lab_technician_flag from BeneficiaryFlowStatus t WHERE t.benFlowID =:benFlowID ")
-//	public Short getLabTechnicianFlag(@Param("benFlowID") Long benFlowID);
+	// /**
+	// * get labtechnician flag and update for foetal monitor test
+	// * @author SH20094090
+	// * @param benFlowID
+	// */
+	// @Query("SELECT t.lab_technician_flag from BeneficiaryFlowStatus t WHERE
+	// t.benFlowID =:benFlowID ")
+	// public Short getLabTechnicianFlag(@Param("benFlowID") Long benFlowID);
 
 	@Query(value = " SELECT beneficiary_visit_code FROM db_iemr.i_ben_flow_outreach WHERE beneficiary_reg_id =:benRegId AND "
 			+ " visit_category =:vc AND beneficiary_visit_code is not null  ORDER BY ben_flow_id DESC LIMIT 1 ", nativeQuery = true)
@@ -450,11 +464,14 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 
 	// get visit by location and modify_date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.villageID = :villageID AND t.modified_date > :lastModDate ORDER BY t.visitDate DESC ")
-	public ArrayList<BeneficiaryFlowStatus> getVisitByLocationAndLastModifDate(@Param("villageID") Integer villageID, @Param("lastModDate") Timestamp lastModDate);
+	public ArrayList<BeneficiaryFlowStatus> getVisitByLocationAndLastModifDate(@Param("villageID") Integer villageID,
+			@Param("lastModDate") Timestamp lastModDate);
 
-	//get ben flow status records based on villageId and last sync date to sync to app local dB
+	// get ben flow status records based on villageId and last sync date to sync to
+	// app local dB
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.villageID IN :villageIDs AND t.modified_date > :lastModDate ")
-    ArrayList<BeneficiaryFlowStatus> getFlowRecordsToSync(@Param("villageIDs") List<Integer> villageID, @Param("lastModDate") Timestamp lastModDate);
+	ArrayList<BeneficiaryFlowStatus> getFlowRecordsToSync(@Param("villageIDs") List<Integer> villageID,
+			@Param("lastModDate") Timestamp lastModDate);
 
 	@Query("SELECT COUNT(t) from BeneficiaryFlowStatus t WHERE t.villageID IN :villageIDs AND t.modified_date > :lastModDate ")
 	Long getFlowRecordsCount(@Param("villageIDs") List<Integer> villageID, @Param("lastModDate") Timestamp lastModDate);

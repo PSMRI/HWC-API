@@ -135,7 +135,7 @@ public class PNCServiceImpl implements PNCService {
 
 	@Autowired
 	private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
-	
+
 	@Autowired
 	private BenVisitDetailRepo benVisitDetailRepo;
 	@Autowired
@@ -314,6 +314,11 @@ public class PNCServiceImpl implements PNCService {
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
 		// Integer tcRequestStatusFlag = null;
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -457,7 +462,7 @@ public class PNCServiceImpl implements PNCService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = diagnosisSuccessFlag;
@@ -1555,6 +1560,12 @@ public class PNCServiceImpl implements PNCService {
 		Long referSaveSuccessFlag = null;
 		// Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
@@ -1701,7 +1712,7 @@ public class PNCServiceImpl implements PNCService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass,
-						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ);
+						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					updateSuccessFlag = investigationSuccessFlag;

@@ -681,6 +681,12 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 	@Transactional(rollbackFor = Exception.class)
 	public Long updateDoctorDataFP(JsonObject requestOBJ, String Authorization) throws Exception {
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
@@ -801,7 +807,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 			commonUtilityClass.setAuthorization(Authorization);
 
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0) {
 				if (tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
@@ -832,6 +838,12 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 		Integer findingSuccessFlag = null;
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		// Integer tcRequestStatusFlag = null;
 
@@ -969,7 +981,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = 1;
