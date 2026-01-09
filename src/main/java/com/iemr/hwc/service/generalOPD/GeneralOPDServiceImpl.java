@@ -121,7 +121,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 	/// --------------- start of saving nurse data ------------------------
 	@Override
-//	@Transactional(rollbackFor = Exception.class)
+	// @Transactional(rollbackFor = Exception.class)
 	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
 		Long historySaveSuccessFlag = null;
 		Long vitalSaveSuccessFlag = null;
@@ -191,8 +191,9 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 				// if (i > 0)
 				saveSuccessFlag = historySaveSuccessFlag;
-//				else
-//					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+				// else
+				// throw new RuntimeException("Error occurred while saving data. Beneficiary
+				// status update failed");
 
 				if (i > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
 					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", nurseUtilityClass.getBeneficiaryRegID(),
@@ -922,7 +923,17 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 						tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 					}
 
-					Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Map<String, Object> drugSaveResult = commonNurseServiceImpl
+							.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Integer r = (Integer) drugSaveResult.get("count");
+					List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+					// Store IDs in JsonObject
+					if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+						Gson gson = new Gson();
+						requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+					}
+
 					if (r > 0 && r != null) {
 						prescriptionSuccessFlag = r;
 					}
@@ -1394,7 +1405,8 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 		resMap.put("LabReport",
 				new Gson().toJson(labTechnicianServiceImpl.getLabResultDataForBen(benRegID, visitCode)));
 
-		resMap.put("GraphData", new Gson().toJson(commonNurseServiceImpl.getGraphicalTrendData(benRegID, "General OPD")));
+		resMap.put("GraphData",
+				new Gson().toJson(commonNurseServiceImpl.getGraphicalTrendData(benRegID, "General OPD")));
 
 		resMap.put("ArchivedVisitcodeForLabResult",
 				labTechnicianServiceImpl.getLast_3_ArchivedTestVisitList(benRegID, visitCode));
@@ -1527,7 +1539,16 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 						tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 						tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 					}
-					Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Map<String, Object> drugSaveResult = commonNurseServiceImpl
+							.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Integer r = (Integer) drugSaveResult.get("count");
+					List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+					// Store IDs in JsonObject
+					if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+						Gson gson = new Gson();
+						requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+					}
 					if (r > 0 && r != null) {
 						prescriptionSuccessFlag = r;
 					}
