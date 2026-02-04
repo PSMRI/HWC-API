@@ -1,0 +1,89 @@
+name: Sync Swagger to AMRIT-Docs
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  swagger-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout API repo
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Build API (skip tests)
+        run: mvn clean package -DskipTests
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run API in swagger profile
+        run: |
+          mvn spring-boot:run \
+            -Dspring-boot.run.profiles=swagger \
+            -Dspring-boot.run.arguments=--server.port=9090 \
+            > app.log 2>&1 &
+          echo $! > api_pid.txt
+
+      - name: Wait for API & fetch Swagger
+        run: |
+          for i in {1..30}; do
+            CODE=$(curl --connect-timeout 2 --max-time 5 -s -o swagger_raw.json -w "%{http_code}" http://localhost:9090/v3/api-docs || true)
+            if [ "$CODE" = "200" ]; then
+              if jq . swagger_raw.json > hwc-api.json; then
+                echo "Swagger generated successfully"
+                exit 0
+              else
+                echo "Failed to parse swagger_raw.json with jq"
+                exit 1
+              fi
+            fi
+            echo "Waiting for API... ($i)"
+            sleep 5
+          done
+
+          echo "Swagger not generated"
+          cat app.log || true
+          exit 1
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f api_pid.txt ]; then
+            kill $(cat api_pid.txt) || true
+          fi
+
+      - name: Checkout AMRIT-Docs
+        uses: actions/checkout@v4
+        with:
+          repository: PSMRI/AMRIT-Docs
+          token: ${{ secrets.DOCS_REPO_TOKEN }}
+          path: amrit-docs
+
+      - name: Copy Swagger JSON
+        run: |
+          mkdir -p amrit-docs/docs/swagger
+          cp hwc-api.json amrit-docs/docs/swagger/hwc-api.json
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.DOCS_REPO_TOKEN }}
+          path: amrit-docs
+          branch: auto/swagger-update-${{ github.run_id }}
+          base: main
+          commit-message: Auto-update HWC-API swagger
+          title: Auto-update HWC-API swagger
+          body: |
+            This PR automatically updates the HWC-API Swagger JSON
+            from the latest main branch build.
