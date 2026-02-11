@@ -22,34 +22,42 @@ jobs:
           cache: maven
 
       - name: Build API (skip tests)
-        run: mvn clean package -DskipTests
-
+        run: mvn -B clean package -DskipTests
+        
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Run API in swagger profile
         run: |
-          mvn spring-boot:run \
-            -Dspring-boot.run.profiles=swagger \
-            -Dspring-boot.run.arguments=--server.port=9090 \
+          nohup java -jar target/hwc-api-*.war \
+            --spring.profiles.active=swagger \
+            --server.port=9090 \
             > app.log 2>&1 &
           echo $! > api_pid.txt
 
       - name: Wait for API & fetch Swagger
         run: |
-          for i in {1..30}; do
+          for i in {1..40}; do
             CODE=$(curl --connect-timeout 2 --max-time 5 -s -o swagger_raw.json -w "%{http_code}" http://localhost:9090/v3/api-docs || true)
+
             if [ "$CODE" = "200" ]; then
-              if jq . swagger_raw.json > hwc-api.json; then
-                echo "Swagger generated successfully"
-                exit 0
-              else
-                echo "Failed to parse swagger_raw.json with jq"
+              jq . swagger_raw.json > hwc-api.json || {
+                echo "Swagger JSON invalid"
+                cat swagger_raw.json
+                exit 1
+              }
+
+              if [ "$(jq '.paths | length' hwc-api.json)" -eq 0 ]; then
+                echo "Swagger paths empty – failing"
                 exit 1
               fi
+
+              echo "Swagger generated successfully"
+              exit 0
             fi
+
             echo "Waiting for API... ($i)"
-            sleep 5
+            sleep 4
           done
 
           echo "Swagger not generated"
@@ -59,9 +67,17 @@ jobs:
       - name: Stop API
         if: always()
         run: |
+          # Graceful shutdown of the process group
+          sleep 5
+          # Force kill the process group if still running
           if [ -f api_pid.txt ]; then
-            kill $(cat api_pid.txt) || true
-          fi
+              PID=$(cat api_pid.txt)
+              kill -TERM -- -"$PID" 2>/dev/null || true
+              sleep 2
+              kill -9 -- -"$PID" 2>/dev/null || true
+            fi
+            # Fallback: kill any remaining java process on port 9090
+            fuser -k 9090/tcp 2>/dev/null || true
 
       - name: Checkout AMRIT-Docs
         uses: actions/checkout@v4
@@ -69,6 +85,7 @@ jobs:
           repository: PSMRI/AMRIT-Docs
           token: ${{ secrets.DOCS_REPO_TOKEN }}
           path: amrit-docs
+          fetch-depth: 0
 
       - name: Copy Swagger JSON
         run: |
@@ -76,14 +93,15 @@ jobs:
           cp hwc-api.json amrit-docs/docs/swagger/hwc-api.json
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.DOCS_REPO_TOKEN }}
           path: amrit-docs
-          branch: auto/swagger-update-${{ github.run_id }}
+          branch: auto/swagger-update-${{ github.run_id }}-${{ github.run_attempt }}
           base: main
-          commit-message: Auto-update HWC-API swagger
-          title: Auto-update HWC-API swagger
+          commit-message: "chore(docs): auto-update HWC-API swagger"
+          title: "chore(docs): auto-update HWC-API swagger"
+          delete-branch: true
           body: |
-            This PR automatically updates the HWC-API Swagger JSON
+            This PR automatically updates HWC-API Swagger JSON
             from the latest main branch build.
