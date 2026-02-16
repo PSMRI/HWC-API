@@ -23,13 +23,14 @@ package com.iemr.hwc.controller.version;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,22 +45,22 @@ public class VersionController {
 	private static final String UNKNOWN_VALUE = "unknown";
 
 	@Operation(summary = "Get version information")
-	@GetMapping(value = "/version")
+	@GetMapping(value = "/version", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> versionInformation() {
-		Map<String, String> response = new HashMap<>();
+		Map<String, String> response = new LinkedHashMap<>();
 		try {
 			logger.info("version Controller Start");
 			Properties gitProperties = loadGitProperties();
-			response.put("commitHash", gitProperties.getProperty("git.commit.id.abbrev", UNKNOWN_VALUE));
 			response.put("buildTimestamp", gitProperties.getProperty("git.build.time", UNKNOWN_VALUE));
 			response.put("version", gitProperties.getProperty("git.build.version", UNKNOWN_VALUE));
 			response.put("branch", gitProperties.getProperty("git.branch", UNKNOWN_VALUE));
+			response.put("commitHash", gitProperties.getProperty("git.commit.id.abbrev", UNKNOWN_VALUE));
 		} catch (Exception e) {
 			logger.error("Failed to load version information", e);
-			response.put("commitHash", UNKNOWN_VALUE);
 			response.put("buildTimestamp", UNKNOWN_VALUE);
 			response.put("version", UNKNOWN_VALUE);
 			response.put("branch", UNKNOWN_VALUE);
+			response.put("commitHash", UNKNOWN_VALUE);
 		}
 		logger.info("version Controller End");
 		return ResponseEntity.ok(response);
