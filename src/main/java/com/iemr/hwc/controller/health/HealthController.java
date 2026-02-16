@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import com.iemr.hwc.service.health.HealthService;
+import com.iemr.hwc.utils.JwtAuthenticationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,8 +26,11 @@ public class HealthController {
     private static final Logger logger = LoggerFactory.getLogger(HealthController.class);
 
     private final HealthService healthService;
-    public HealthController(HealthService healthService) {
+    private final JwtAuthenticationUtil jwtAuthenticationUtil;
+    
+    public HealthController(HealthService healthService, JwtAuthenticationUtil jwtAuthenticationUtil) {
         this.healthService = healthService;
+        this.jwtAuthenticationUtil = jwtAuthenticationUtil;
     }
     @GetMapping
     @Operation(summary = "Check infrastructure health", 
@@ -63,9 +67,24 @@ public class HealthController {
             return new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
-    
+
     private boolean isUserAuthenticated(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        return authHeader != null && !authHeader.trim().isEmpty();
+        if (authHeader == null || authHeader.trim().isEmpty()) {
+            return false;
+        }
+        
+        // Extract token from "Bearer <token>" format
+        String token = authHeader.startsWith("Bearer ") 
+            ? authHeader.substring(7) 
+            : authHeader;
+        
+        try {
+            // Validate JWT token - returns true if valid, throws exception if invalid
+            return jwtAuthenticationUtil.validateUserIdAndJwtToken(token);
+        } catch (Exception e) {
+            logger.debug("JWT token validation failed: {}", e.getMessage());
+            return false;
+        }
     }
 }
