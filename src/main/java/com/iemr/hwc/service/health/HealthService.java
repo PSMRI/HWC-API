@@ -140,6 +140,9 @@ public class HealthService {
                 return new HealthCheckResult(false, null, "Ping returned unexpected response");
             } catch (TimeoutException e) {
                 return new HealthCheckResult(false, null, "Redis ping timed out after " + REDIS_TIMEOUT_SECONDS + " seconds");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return new HealthCheckResult(false, null, "Redis health check was interrupted");
             } catch (Exception e) {
                 throw new IllegalStateException("Redis health check failed", e);
             }
@@ -226,6 +229,10 @@ public class HealthService {
                 .get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             logger.debug("Redis version retrieval timed out");
+            return null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.debug("Redis version retrieval was interrupted");
             return null;
         } catch (Exception e) {
             logger.debug("Could not retrieve Redis version with timeout", e);
