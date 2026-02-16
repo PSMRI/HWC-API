@@ -88,7 +88,10 @@ public class HTTPRequestInterceptor implements HandlerInterceptor {
 					break;
 				case "api-docs":
 					break;
-
+				case "health":
+					break;
+				case "version":
+					break;
 				case "error":
 					status = false;
 					break;
