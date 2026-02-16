@@ -74,6 +74,10 @@ public class HTTPRequestInterceptor implements HandlerInterceptor {
 				String[] requestURIParts = request.getRequestURI().split("/");
 				String requestAPI = requestURIParts[requestURIParts.length - 1];
 				switch (requestAPI) {
+				case "health":
+					break;
+				case "version":
+					break;
 				case "swagger-ui.html":
 					break;
 				case "index.html":
