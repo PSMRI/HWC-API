@@ -27,32 +27,40 @@ public class HealthService {
     private static final Logger logger = LoggerFactory.getLogger(HealthService.class);
     private static final String DB_HEALTH_CHECK_QUERY = "SELECT 1 as health_check";
     private static final String DB_VERSION_QUERY = "SELECT VERSION()";
+    private static final String STATUS_UP = "UP";
+    private static final String STATUS_DOWN = "DOWN";
+    private static final String UNKNOWN_VALUE = "unknown";
 
-    @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final String dbUrl;
+    private final String redisHost;
+    private final int redisPort;
 
-    @Autowired(required = false)
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Value("${spring.datasource.url:unknown}")
-    private String dbUrl;
-
-    @Value("${spring.redis.host:localhost}")
-    private String redisHost;
-
-    @Value("${spring.redis.port:6379}")
-    private int redisPort;
+    public HealthService(DataSource dataSource,
+                        @Autowired(required = false) RedisTemplate<String, Object> redisTemplate,
+                        @Value("${spring.datasource.url:unknown}") String dbUrl,
+                        @Value("${spring.redis.host:localhost}") String redisHost,
+                        @Value("${spring.redis.port:6379}") int redisPort) {
+        this.dataSource = dataSource;
+        this.redisTemplate = redisTemplate;
+        this.dbUrl = dbUrl;
+        this.redisHost = redisHost;
+        this.redisPort = redisPort;
+    }
 
     /**
      * Check the health of all configured infrastructure components.
+     * @param includeDetails if true, includes sensitive infrastructure details (host, port, database, version);
+     *                       if false, returns only component status for unauthenticated users
      */
-    public Map<String, Object> checkHealth() {
+    public Map<String, Object> checkHealth(boolean includeDetails) {
         Map<String, Object> healthStatus = new LinkedHashMap<>();
         Map<String, Object> components = new LinkedHashMap<>();
         boolean overallHealth = true;
 
         // Check MySQL connectivity
-        Map<String, Object> mysqlStatus = checkMySQLHealth();
+        Map<String, Object> mysqlStatus = checkMySQLHealth(includeDetails);
         components.put("mysql", mysqlStatus);
         if (!isHealthy(mysqlStatus)) {
             overallHealth = false;
@@ -60,32 +68,43 @@ public class HealthService {
 
         // Check Redis connectivity if configured
         if (redisTemplate != null) {
-            Map<String, Object> redisStatus = checkRedisHealth();
+            Map<String, Object> redisStatus = checkRedisHealth(includeDetails);
             components.put("redis", redisStatus);
             if (!isHealthy(redisStatus)) {
                 overallHealth = false;
             }
         }
 
-        healthStatus.put("status", overallHealth ? "UP" : "DOWN");
+        healthStatus.put("status", overallHealth ? STATUS_UP : STATUS_DOWN);
         healthStatus.put("timestamp", Instant.now().toString());
         healthStatus.put("components", components);
-        logger.info("Health check completed - Overall status: {}", overallHealth ? "UP" : "DOWN");
+        logger.info("Health check completed - Overall status: {}", overallHealth ? STATUS_UP : STATUS_DOWN);
 
         return healthStatus;
     }
 
     /**
+     * Check the health of all configured infrastructure components (default includes details for backward compatibility).
+     */
+    public Map<String, Object> checkHealth() {
+        return checkHealth(true);
+    }
+
+    /**
      * Check MySQL database connectivity and retrieve version information.
      */
-    private Map<String, Object> checkMySQLHealth() {
+    private Map<String, Object> checkMySQLHealth(boolean includeDetails) {
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("type", "MySQL");
-        details.put("host", extractHost(dbUrl));
-        details.put("port", extractPort(dbUrl));
-        details.put("database", extractDatabaseName(dbUrl));
+        
+        // Only include sensitive infrastructure details if requested (authenticated user)
+        if (includeDetails) {
+            details.put("host", extractHost(dbUrl));
+            details.put("port", extractPort(dbUrl));
+            details.put("database", extractDatabaseName(dbUrl));
+        }
 
-        return performHealthCheck("MySQL", details, () -> {
+        return performHealthCheck("MySQL", details, includeDetails, () -> {
             try {
                 try (Connection connection = dataSource.getConnection()) {
                     if (connection.isValid(2)) {
@@ -93,7 +112,7 @@ public class HealthService {
                             stmt.setQueryTimeout(3);
                             try (ResultSet rs = stmt.executeQuery()) {
                                 if (rs.next() && rs.getInt(1) == 1) {
-                                    String version = getMySQLVersion(connection);
+                                    String version = includeDetails ? getMySQLVersion(connection) : null;
                                     return new HealthCheckResult(true, version, null);
                                 }
                             }
@@ -102,7 +121,8 @@ public class HealthService {
                     return new HealthCheckResult(false, null, "Connection validation failed");
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                logger.error("MySQL health check error", e);
+                throw new IllegalStateException("Failed to perform MySQL health check", e);
             }
         });
     }
@@ -110,18 +130,22 @@ public class HealthService {
     /**
      * Check Redis connectivity and retrieve version information.
      */
-    private Map<String, Object> checkRedisHealth() {
+    private Map<String, Object> checkRedisHealth(boolean includeDetails) {
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("type", "Redis");
-        details.put("host", redisHost);
-        details.put("port", redisPort);
+        
+        // Only include sensitive infrastructure details if requested (authenticated user)
+        if (includeDetails) {
+            details.put("host", redisHost);
+            details.put("port", redisPort);
+        }
 
-        return performHealthCheck("Redis", details, () -> {
+        return performHealthCheck("Redis", details, includeDetails, () -> {
             String pong = redisTemplate.execute((RedisCallback<String>) connection ->
                 connection.ping()
             );
             if ("PONG".equals(pong)) {
-                String version = getRedisVersion();
+                String version = includeDetails ? getRedisVersion() : null;
                 return new HealthCheckResult(true, version, null);
             }
             return new HealthCheckResult(false, null, "Ping returned unexpected response");
@@ -137,6 +161,7 @@ public class HealthService {
      */
     private Map<String, Object> performHealthCheck(String componentName,
                                                     Map<String, Object> details,
+                                                    boolean includeDetails,
                                                     Supplier<HealthCheckResult> checker) {
         Map<String, Object> status = new LinkedHashMap<>();
         long startTime = System.currentTimeMillis();
@@ -150,7 +175,7 @@ public class HealthService {
 
             if (result.isHealthy) {
                 logger.debug("{} health check: UP ({}ms)", componentName, responseTime);
-                status.put("status", "UP");
+                status.put("status", STATUS_UP);
                 if (result.version != null) {
                     details.put("version", result.version);
                 }
@@ -158,7 +183,7 @@ public class HealthService {
                 // Sanitize error message - do not expose internal details
                 String safeError = result.error != null ? result.error : "Health check failed";
                 logger.warn("{} health check failed: {}", componentName, safeError);
-                status.put("status", "DOWN");
+                status.put("status", STATUS_DOWN);
                 details.put("error", safeError);
                 details.put("errorType", "CheckFailed");
             }
@@ -172,11 +197,11 @@ public class HealthService {
             // Log full exception internally for debugging
             logger.error("{} health check failed", componentName, e);
             
-            // Return sanitized error to caller
-            status.put("status", "DOWN");
+            // Return sanitized error to caller - never expose exception class names
+            status.put("status", STATUS_DOWN);
             details.put("responseTimeMs", responseTime);
             details.put("error", "Health check failed");
-            details.put("errorType", e.getClass().getSimpleName());
+            details.put("errorType", "InternalError");
             status.put("details", details);
             
             return status;
@@ -187,7 +212,7 @@ public class HealthService {
      * Check if a component status indicates healthy state.
      */
     private boolean isHealthy(Map<String, Object> componentStatus) {
-        return "UP".equals(componentStatus.get("status"));
+        return STATUS_UP.equals(componentStatus.get("status"));
     }
 
     /**
@@ -226,8 +251,8 @@ public class HealthService {
      * Extract hostname from JDBC URL.
      */
     private String extractHost(String jdbcUrl) {
-        if (jdbcUrl == null || "unknown".equals(jdbcUrl)) {
-            return "unknown";
+        if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
+            return UNKNOWN_VALUE;
         }
         try {
             String withoutPrefix = jdbcUrl.replaceFirst("jdbc:mysql://", "");
@@ -247,8 +272,8 @@ public class HealthService {
      * Extract port number from JDBC URL.
      */
     private String extractPort(String jdbcUrl) {
-        if (jdbcUrl == null || "unknown".equals(jdbcUrl)) {
-            return "unknown";
+        if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
+            return UNKNOWN_VALUE;
         }
         try {
             String withoutPrefix = jdbcUrl.replaceFirst("jdbc:mysql://", "");
@@ -268,8 +293,8 @@ public class HealthService {
      * Extract database name from JDBC URL.
      */
     private String extractDatabaseName(String jdbcUrl) {
-        if (jdbcUrl == null || "unknown".equals(jdbcUrl)) {
-            return "unknown";
+        if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
+            return UNKNOWN_VALUE;
         }
         try {
             int lastSlash = jdbcUrl.lastIndexOf('/');

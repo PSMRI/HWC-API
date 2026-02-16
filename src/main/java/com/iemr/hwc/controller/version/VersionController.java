@@ -40,6 +40,8 @@ import io.swagger.v3.oas.annotations.Operation;
 public class VersionController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
+	private static final String UNKNOWN_VALUE = "unknown";
 
 	@Operation(summary = "Get version information")
 	@GetMapping(value = "/version")
@@ -48,16 +50,16 @@ public class VersionController {
 		try {
 			logger.info("version Controller Start");
 			Properties gitProperties = loadGitProperties();
-			response.put("commitHash", gitProperties.getProperty("git.commit.id.abbrev", "unknown"));
-			response.put("buildTimestamp", gitProperties.getProperty("git.build.time", "unknown"));
-			response.put("version", gitProperties.getProperty("git.build.version", "unknown"));
-			response.put("branch", gitProperties.getProperty("git.branch", "unknown"));
+			response.put("commitHash", gitProperties.getProperty("git.commit.id.abbrev", UNKNOWN_VALUE));
+			response.put("buildTimestamp", gitProperties.getProperty("git.build.time", UNKNOWN_VALUE));
+			response.put("version", gitProperties.getProperty("git.build.version", UNKNOWN_VALUE));
+			response.put("branch", gitProperties.getProperty("git.branch", UNKNOWN_VALUE));
 		} catch (Exception e) {
 			logger.error("Failed to load version information", e);
-			response.put("commitHash", "unknown");
-			response.put("buildTimestamp", "unknown");
-			response.put("version", "unknown");
-			response.put("branch", "unknown");
+			response.put("commitHash", UNKNOWN_VALUE);
+			response.put("buildTimestamp", UNKNOWN_VALUE);
+			response.put("version", UNKNOWN_VALUE);
+			response.put("branch", UNKNOWN_VALUE);
 		}
 		logger.info("version Controller End");
 		return ResponseEntity.ok(response);
