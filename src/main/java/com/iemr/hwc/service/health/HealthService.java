@@ -17,14 +17,11 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-/**
- * Service to check the health of infrastructure components (MySQL, Redis).
- * Returns detailed health status with response times and version information.
- */
 @Service
 public class HealthService {
 
     private static final Logger logger = LoggerFactory.getLogger(HealthService.class);
+    private static final String STATUS_KEY = "status";
     private static final String DB_HEALTH_CHECK_QUERY = "SELECT 1 as health_check";
     private static final String DB_VERSION_QUERY = "SELECT VERSION()";
     private static final String STATUS_UP = "UP";
@@ -49,24 +46,17 @@ public class HealthService {
         this.redisPort = redisPort;
     }
 
-    /**
-     * Check the health of all configured infrastructure components.
-     * @param includeDetails if true, includes sensitive infrastructure details (host, port, database, version);
-     *                       if false, returns only component status for unauthenticated users
-     */
     public Map<String, Object> checkHealth(boolean includeDetails) {
         Map<String, Object> healthStatus = new LinkedHashMap<>();
         Map<String, Object> components = new LinkedHashMap<>();
         boolean overallHealth = true;
 
-        // Check MySQL connectivity
         Map<String, Object> mysqlStatus = checkMySQLHealth(includeDetails);
         components.put("mysql", mysqlStatus);
         if (!isHealthy(mysqlStatus)) {
             overallHealth = false;
         }
 
-        // Check Redis connectivity if configured
         if (redisTemplate != null) {
             Map<String, Object> redisStatus = checkRedisHealth(includeDetails);
             components.put("redis", redisStatus);
@@ -75,7 +65,7 @@ public class HealthService {
             }
         }
 
-        healthStatus.put("status", overallHealth ? STATUS_UP : STATUS_DOWN);
+        healthStatus.put(STATUS_KEY, overallHealth ? STATUS_UP : STATUS_DOWN);
         healthStatus.put("timestamp", Instant.now().toString());
         healthStatus.put("components", components);
         logger.info("Health check completed - Overall status: {}", overallHealth ? STATUS_UP : STATUS_DOWN);
@@ -83,28 +73,21 @@ public class HealthService {
         return healthStatus;
     }
 
-    /**
-     * Check the health of all configured infrastructure components (default includes details for backward compatibility).
-     */
     public Map<String, Object> checkHealth() {
         return checkHealth(true);
     }
 
-    /**
-     * Check MySQL database connectivity and retrieve version information.
-     */
     private Map<String, Object> checkMySQLHealth(boolean includeDetails) {
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("type", "MySQL");
         
-        // Only include sensitive infrastructure details if requested (authenticated user)
         if (includeDetails) {
             details.put("host", extractHost(dbUrl));
             details.put("port", extractPort(dbUrl));
             details.put("database", extractDatabaseName(dbUrl));
         }
 
-        return performHealthCheck("MySQL", details, includeDetails, () -> {
+        return performHealthCheck("MySQL", details, () -> {
             try {
                 try (Connection connection = dataSource.getConnection()) {
                     if (connection.isValid(2)) {
@@ -127,20 +110,16 @@ public class HealthService {
         });
     }
 
-    /**
-     * Check Redis connectivity and retrieve version information.
-     */
     private Map<String, Object> checkRedisHealth(boolean includeDetails) {
         Map<String, Object> details = new LinkedHashMap<>();
         details.put("type", "Redis");
         
-        // Only include sensitive infrastructure details if requested (authenticated user)
         if (includeDetails) {
             details.put("host", redisHost);
             details.put("port", redisPort);
         }
 
-        return performHealthCheck("Redis", details, includeDetails, () -> {
+        return performHealthCheck("Redis", details, () -> {
             String pong = redisTemplate.execute((RedisCallback<String>) connection ->
                 connection.ping()
             );
@@ -152,16 +131,8 @@ public class HealthService {
         });
     }
 
-    /**
-     * Common health check execution pattern with security improvements:
-     * - Consistent failure payloads
-     * - Sanitized error messages (no raw exceptions to callers)
-     * - Always includes responseTimeMs and errorType
-     * - Full exceptions logged internally only
-     */
     private Map<String, Object> performHealthCheck(String componentName,
                                                     Map<String, Object> details,
-                                                    boolean includeDetails,
                                                     Supplier<HealthCheckResult> checker) {
         Map<String, Object> status = new LinkedHashMap<>();
         long startTime = System.currentTimeMillis();
@@ -170,20 +141,18 @@ public class HealthService {
             HealthCheckResult result = checker.get();
             long responseTime = System.currentTimeMillis() - startTime;
             
-            // Always populate response time
             details.put("responseTimeMs", responseTime);
 
             if (result.isHealthy) {
                 logger.debug("{} health check: UP ({}ms)", componentName, responseTime);
-                status.put("status", STATUS_UP);
+                status.put(STATUS_KEY, STATUS_UP);
                 if (result.version != null) {
                     details.put("version", result.version);
                 }
             } else {
-                // Sanitize error message - do not expose internal details
                 String safeError = result.error != null ? result.error : "Health check failed";
                 logger.warn("{} health check failed: {}", componentName, safeError);
-                status.put("status", STATUS_DOWN);
+                status.put(STATUS_KEY, STATUS_DOWN);
                 details.put("error", safeError);
                 details.put("errorType", "CheckFailed");
             }
@@ -194,11 +163,9 @@ public class HealthService {
         } catch (Exception e) {
             long responseTime = System.currentTimeMillis() - startTime;
             
-            // Log full exception internally for debugging
             logger.error("{} health check failed", componentName, e);
             
-            // Return sanitized error to caller - never expose exception class names
-            status.put("status", STATUS_DOWN);
+            status.put(STATUS_KEY, STATUS_DOWN);
             details.put("responseTimeMs", responseTime);
             details.put("error", "Health check failed");
             details.put("errorType", "InternalError");
@@ -208,16 +175,10 @@ public class HealthService {
         }
     }
 
-    /**
-     * Check if a component status indicates healthy state.
-     */
     private boolean isHealthy(Map<String, Object> componentStatus) {
-        return STATUS_UP.equals(componentStatus.get("status"));
+        return STATUS_UP.equals(componentStatus.get(STATUS_KEY));
     }
 
-    /**
-     * Retrieve MySQL version information.
-     */
     private String getMySQLVersion(Connection connection) {
         try (PreparedStatement stmt = connection.prepareStatement(DB_VERSION_QUERY);
              ResultSet rs = stmt.executeQuery()) {
@@ -230,9 +191,6 @@ public class HealthService {
         return null;
     }
 
-    /**
-     * Retrieve Redis version information.
-     */
     private String getRedisVersion() {
         try {
             Properties info = redisTemplate.execute((RedisCallback<Properties>) connection ->
@@ -247,9 +205,6 @@ public class HealthService {
         return null;
     }
 
-    /**
-     * Extract hostname from JDBC URL.
-     */
     private String extractHost(String jdbcUrl) {
         if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
             return UNKNOWN_VALUE;
@@ -265,12 +220,9 @@ public class HealthService {
         } catch (Exception e) {
             logger.debug("Could not extract host from URL", e);
         }
-        return "unknown";
+        return UNKNOWN_VALUE;
     }
 
-    /**
-     * Extract port number from JDBC URL.
-     */
     private String extractPort(String jdbcUrl) {
         if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
             return UNKNOWN_VALUE;
@@ -289,9 +241,6 @@ public class HealthService {
         return "3306";
     }
 
-    /**
-     * Extract database name from JDBC URL.
-     */
     private String extractDatabaseName(String jdbcUrl) {
         if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
             return UNKNOWN_VALUE;
@@ -309,13 +258,9 @@ public class HealthService {
         } catch (Exception e) {
             logger.debug("Could not extract database name from URL", e);
         }
-        return "unknown";
+        return UNKNOWN_VALUE;
     }
 
-    /**
-     * Internal class to hold health check results.
-     * Encapsulates the outcome of a health check with optional version and error details.
-     */
     private static class HealthCheckResult {
         final boolean isHealthy;
         final String version;
