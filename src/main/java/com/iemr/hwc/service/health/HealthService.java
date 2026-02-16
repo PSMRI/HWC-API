@@ -7,6 +7,11 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
@@ -27,6 +32,8 @@ public class HealthService {
     private static final String STATUS_UP = "UP";
     private static final String STATUS_DOWN = "DOWN";
     private static final String UNKNOWN_VALUE = "unknown";
+    private static final int REDIS_TIMEOUT_SECONDS = 3;
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     private final DataSource dataSource;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -119,14 +126,23 @@ public class HealthService {
         }
 
         return performHealthCheck("Redis", details, () -> {
-            String pong = redisTemplate.execute((RedisCallback<String>) connection ->
-                connection.ping()
-            );
-            if ("PONG".equals(pong)) {
-                String version = includeDetails ? getRedisVersion() : null;
-                return new HealthCheckResult(true, version, null);
+            try {
+                // Wrap PING in CompletableFuture with timeout
+                String pong = CompletableFuture.supplyAsync(() ->
+                    redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()),
+                    executorService
+                ).get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                
+                if ("PONG".equals(pong)) {
+                    String version = includeDetails ? getRedisVersionWithTimeout() : null;
+                    return new HealthCheckResult(true, version, null);
+                }
+                return new HealthCheckResult(false, null, "Ping returned unexpected response");
+            } catch (TimeoutException e) {
+                return new HealthCheckResult(false, null, "Redis ping timed out after " + REDIS_TIMEOUT_SECONDS + " seconds");
+            } catch (Exception e) {
+                throw new IllegalStateException("Redis health check failed", e);
             }
-            return new HealthCheckResult(false, null, "Ping returned unexpected response");
         });
     }
 
@@ -202,6 +218,19 @@ public class HealthService {
             logger.debug("Could not retrieve Redis version", e);
         }
         return null;
+    }
+
+    private String getRedisVersionWithTimeout() {
+        try {
+            return CompletableFuture.supplyAsync(this::getRedisVersion, executorService)
+                .get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            logger.debug("Redis version retrieval timed out");
+            return null;
+        } catch (Exception e) {
+            logger.debug("Could not retrieve Redis version with timeout", e);
+            return null;
+        }
     }
 
     private String extractHost(String jdbcUrl) {
