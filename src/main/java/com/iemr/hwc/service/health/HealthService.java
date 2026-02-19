@@ -53,19 +53,19 @@ public class HealthService {
         this.redisPort = redisPort;
     }
 
-    public Map<String, Object> checkHealth(boolean includeDetails) {
+    public Map<String, Object> checkHealth() {
         Map<String, Object> healthStatus = new LinkedHashMap<>();
         Map<String, Object> components = new LinkedHashMap<>();
         boolean overallHealth = true;
 
-        Map<String, Object> mysqlStatus = checkMySQLHealth(includeDetails);
+        Map<String, Object> mysqlStatus = checkMySQLHealth();
         components.put("mysql", mysqlStatus);
         if (!isHealthy(mysqlStatus)) {
             overallHealth = false;
         }
 
         if (redisTemplate != null) {
-            Map<String, Object> redisStatus = checkRedisHealth(includeDetails);
+            Map<String, Object> redisStatus = checkRedisHealth();
             components.put("redis", redisStatus);
             if (!isHealthy(redisStatus)) {
                 overallHealth = false;
@@ -80,11 +80,9 @@ public class HealthService {
         return healthStatus;
     }
 
-    public Map<String, Object> checkHealth() {
-        return checkHealth(true);
-    }
 
-    private Map<String, Object> checkMySQLHealth(boolean includeDetails) {
+
+    private Map<String, Object> checkMySQLHealth() {
         Map<String, Object> status = new LinkedHashMap<>();
         
         status.put("type", "MySQL");
@@ -110,7 +108,7 @@ public class HealthService {
         });
     }
 
-    private Map<String, Object> checkRedisHealth(boolean includeDetails) {
+    private Map<String, Object> checkRedisHealth() {
         Map<String, Object> status = new LinkedHashMap<>();
         
         status.put("type", "Redis");
@@ -181,104 +179,6 @@ public class HealthService {
         return STATUS_UP.equals(componentStatus.get(STATUS_KEY));
     }
 
-    private String getMySQLVersion(Connection connection) {
-        try (PreparedStatement stmt = connection.prepareStatement(DB_VERSION_QUERY);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getString(1);
-            }
-        } catch (Exception e) {
-            logger.debug("Could not retrieve MySQL version", e);
-        }
-        return null;
-    }
-
-    private String getRedisVersion() {
-        try {
-            Properties info = redisTemplate.execute((RedisCallback<Properties>) connection ->
-                connection.serverCommands().info("server")
-            );
-            if (info != null && info.containsKey("redis_version")) {
-                return info.getProperty("redis_version");
-            }
-        } catch (Exception e) {
-            logger.debug("Could not retrieve Redis version", e);
-        }
-        return null;
-    }
-
-    private String getRedisVersionWithTimeout() {
-        try {
-            return CompletableFuture.supplyAsync(this::getRedisVersion, executorService)
-                .get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            logger.debug("Redis version retrieval timed out");
-            return null;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            logger.debug("Redis version retrieval was interrupted");
-            return null;
-        } catch (Exception e) {
-            logger.debug("Could not retrieve Redis version with timeout", e);
-            return null;
-        }
-    }
-
-    private String extractHost(String jdbcUrl) {
-        if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
-            return UNKNOWN_VALUE;
-        }
-        try {
-            String withoutPrefix = jdbcUrl.replaceFirst("jdbc:mysql://", "");
-            int slashIndex = withoutPrefix.indexOf('/');
-            String hostPort = slashIndex > 0
-                ? withoutPrefix.substring(0, slashIndex)
-                : withoutPrefix;
-            int colonIndex = hostPort.indexOf(':');
-            return colonIndex > 0 ? hostPort.substring(0, colonIndex) : hostPort;
-        } catch (Exception e) {
-            logger.debug("Could not extract host from URL", e);
-        }
-        return UNKNOWN_VALUE;
-    }
-
-    private String extractPort(String jdbcUrl) {
-        if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
-            return UNKNOWN_VALUE;
-        }
-        try {
-            String withoutPrefix = jdbcUrl.replaceFirst("jdbc:mysql://", "");
-            int slashIndex = withoutPrefix.indexOf('/');
-            String hostPort = slashIndex > 0
-                ? withoutPrefix.substring(0, slashIndex)
-                : withoutPrefix;
-            int colonIndex = hostPort.indexOf(':');
-            return colonIndex > 0 ? hostPort.substring(colonIndex + 1) : "3306";
-        } catch (Exception e) {
-            logger.debug("Could not extract port from URL", e);
-        }
-        return "3306";
-    }
-
-    private String extractDatabaseName(String jdbcUrl) {
-        if (jdbcUrl == null || UNKNOWN_VALUE.equals(jdbcUrl)) {
-            return UNKNOWN_VALUE;
-        }
-        try {
-            int lastSlash = jdbcUrl.lastIndexOf('/');
-            if (lastSlash >= 0 && lastSlash < jdbcUrl.length() - 1) {
-                String afterSlash = jdbcUrl.substring(lastSlash + 1);
-                int queryStart = afterSlash.indexOf('?');
-                if (queryStart > 0) {
-                    return afterSlash.substring(0, queryStart);
-                }
-                return afterSlash;
-            }
-        } catch (Exception e) {
-            logger.debug("Could not extract database name from URL", e);
-        }
-        return UNKNOWN_VALUE;
-    }
 
     private static class HealthCheckResult {
         final boolean isHealthy;
