@@ -85,16 +85,11 @@ public class HealthService {
     }
 
     private Map<String, Object> checkMySQLHealth(boolean includeDetails) {
-        Map<String, Object> details = new LinkedHashMap<>();
-        details.put("type", "MySQL");
+        Map<String, Object> status = new LinkedHashMap<>();
         
-        if (includeDetails) {
-            details.put("host", extractHost(dbUrl));
-            details.put("port", extractPort(dbUrl));
-            details.put("database", extractDatabaseName(dbUrl));
-        }
+        status.put("type", "MySQL");
 
-        return performHealthCheck("MySQL", details, () -> {
+        return performHealthCheck("MySQL", status, () -> {
             try {
                 try (Connection connection = dataSource.getConnection()) {
                     if (connection.isValid(2)) {
@@ -102,8 +97,7 @@ public class HealthService {
                             stmt.setQueryTimeout(3);
                             try (ResultSet rs = stmt.executeQuery()) {
                                 if (rs.next() && rs.getInt(1) == 1) {
-                                    String version = includeDetails ? getMySQLVersion(connection) : null;
-                                    return new HealthCheckResult(true, version, null);
+                                    return new HealthCheckResult(true, null, null);
                                 }
                             }
                         }
@@ -117,28 +111,23 @@ public class HealthService {
     }
 
     private Map<String, Object> checkRedisHealth(boolean includeDetails) {
-        Map<String, Object> details = new LinkedHashMap<>();
-        details.put("type", "Redis");
+        Map<String, Object> status = new LinkedHashMap<>();
         
-        if (includeDetails) {
-            details.put("host", redisHost);
-            details.put("port", redisPort);
-        }
+        status.put("type", "Redis");
 
-        return performHealthCheck("Redis", details, () -> {
+        return performHealthCheck("Redis", status, () -> {
+            CompletableFuture<String> future = CompletableFuture.supplyAsync(
+                () -> redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()),
+                executorService);
             try {
-                // Wrap PING in CompletableFuture with timeout
-                String pong = CompletableFuture.supplyAsync(() ->
-                    redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()),
-                    executorService
-                ).get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                String pong = future.get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
                 
                 if ("PONG".equals(pong)) {
-                    String version = includeDetails ? getRedisVersionWithTimeout() : null;
-                    return new HealthCheckResult(true, version, null);
+                    return new HealthCheckResult(true, null, null);
                 }
                 return new HealthCheckResult(false, null, "Ping returned unexpected response");
             } catch (TimeoutException e) {
+                future.cancel(true);
                 return new HealthCheckResult(false, null, "Redis ping timed out after " + REDIS_TIMEOUT_SECONDS + " seconds");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -150,32 +139,29 @@ public class HealthService {
     }
 
     private Map<String, Object> performHealthCheck(String componentName,
-                                                    Map<String, Object> details,
+                                                    Map<String, Object> status,
                                                     Supplier<HealthCheckResult> checker) {
-        Map<String, Object> status = new LinkedHashMap<>();
         long startTime = System.currentTimeMillis();
         
         try {
             HealthCheckResult result = checker.get();
             long responseTime = System.currentTimeMillis() - startTime;
             
-            details.put("responseTimeMs", responseTime);
+            status.put("responseTimeMs", responseTime);
 
             if (result.isHealthy) {
                 logger.debug("{} health check: UP ({}ms)", componentName, responseTime);
                 status.put(STATUS_KEY, STATUS_UP);
                 if (result.version != null) {
-                    details.put("version", result.version);
+                    status.put("version", result.version);
                 }
             } else {
                 String safeError = result.error != null ? result.error : "Health check failed";
                 logger.warn("{} health check failed: {}", componentName, safeError);
                 status.put(STATUS_KEY, STATUS_DOWN);
-                details.put("error", safeError);
-                details.put("errorType", "CheckFailed");
+                status.put("error", safeError);
             }
             
-            status.put("details", details);
             return status;
             
         } catch (Exception e) {
@@ -184,10 +170,8 @@ public class HealthService {
             logger.error("{} health check failed", componentName, e);
             
             status.put(STATUS_KEY, STATUS_DOWN);
-            details.put("responseTimeMs", responseTime);
-            details.put("error", "Health check failed");
-            details.put("errorType", "InternalError");
-            status.put("details", details);
+            status.put("responseTimeMs", responseTime);
+            status.put("error", "Health check failed with an unexpected error");
             
             return status;
         }
