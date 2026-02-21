@@ -164,6 +164,8 @@ public class HealthService {
             redisFuture.cancel(true);
         } catch (Exception e) {
             logger.warn("Health check execution error: {}", e.getMessage());
+            mysqlFuture.cancel(true);
+            redisFuture.cancel(true);
         }
         
         // Ensure timed-out or unfinished components are marked DOWN
@@ -381,11 +383,6 @@ public class HealthService {
                 hasIssues = true;
             }
             
-            if (hasDeadlocks(connection)) {
-                logger.warn(DIAGNOSTIC_LOG_TEMPLATE, DIAGNOSTIC_DEADLOCK);
-                hasIssues = true;
-            }
-            
             if (hasSlowQueries(connection)) {
                 logger.warn(DIAGNOSTIC_LOG_TEMPLATE, DIAGNOSTIC_SLOW_QUERIES);
                 hasIssues = true;
@@ -409,7 +406,7 @@ public class HealthService {
                 "WHERE (state = 'Waiting for table metadata lock' " +
                 "   OR state = 'Waiting for row lock' " +
                 "   OR state = 'Waiting for lock') " +
-                "AND user = USER()")) {
+                "AND user = SUBSTRING_INDEX(USER(), '@', 1)")) {
             stmt.setQueryTimeout(2);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -423,36 +420,6 @@ public class HealthService {
         return false;
     }
 
-    private boolean hasDeadlocks(Connection connection) {
-        // Skip deadlock check if already disabled due to permissions
-        if (deadlockCheckDisabled) {
-            return false;
-        }
-        
-        try (PreparedStatement stmt = connection.prepareStatement("SHOW ENGINE INNODB STATUS")) {
-            stmt.setQueryTimeout(2);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    String innodbStatus = rs.getString(3);
-                    return innodbStatus != null && innodbStatus.contains("LATEST DETECTED DEADLOCK");
-                }
-            }
-        } catch (java.sql.SQLException e) {
-            // Check if this is a permission error
-            if (e.getMessage() != null && 
-                (e.getMessage().contains("Access denied") || 
-                 e.getMessage().contains("permission"))) {
-                // Disable this check permanently after first permission error
-                deadlockCheckDisabled = true;
-                logger.warn("Deadlock check disabled: Insufficient privileges");
-            } else {
-                logger.debug("Could not check for deadlocks");
-            }
-        } catch (Exception e) {
-            logger.debug("Could not check for deadlocks");
-        }
-        return false;
-    }
 
     private boolean hasSlowQueries(Connection connection) {
         try (PreparedStatement stmt = connection.prepareStatement(
