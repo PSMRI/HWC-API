@@ -29,6 +29,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -102,6 +103,7 @@ public class HealthService {
     private volatile long lastAdvancedCheckTime = 0;
     private volatile AdvancedCheckResult cachedAdvancedCheckResult = null;
     private final ReentrantReadWriteLock advancedCheckLock = new ReentrantReadWriteLock();
+    private final AtomicBoolean advancedCheckInProgress = new AtomicBoolean(false);
     
     // Deadlock check resilience - disable after first permission error
     private volatile boolean deadlockCheckDisabled = false;
@@ -184,6 +186,7 @@ public class HealthService {
             cancelFutures(mysqlFuture, redisFuture);
         } catch (Exception e) {
             logger.warn("Health check execution error: {}", e.getMessage());
+            cancelFutures(mysqlFuture, redisFuture);
         }
     }
 
@@ -374,23 +377,31 @@ public class HealthService {
             advancedCheckLock.readLock().unlock();
         }
         
-        // Outside throttle window - acquire write lock and run checks
-        advancedCheckLock.writeLock().lock();
-        try {
-            // Double-check after acquiring write lock
-            if (isResultCached(currentTime)) {
-                return cachedAdvancedCheckResult.isDegraded;
+        // Only one thread may submit; others fall back to the (stale) cache
+        if (!advancedCheckInProgress.compareAndSet(false, true)) {
+            advancedCheckLock.readLock().lock();
+            try {
+                return cachedAdvancedCheckResult != null && cachedAdvancedCheckResult.isDegraded;
+            } finally {
+                advancedCheckLock.readLock().unlock();
             }
-            
+        }
+        
+        try {
+            // Outside throttle window - acquire write lock and run checks
             AdvancedCheckResult result = executeAdvancedChecksWithTimeout();
             
             // Cache the result
-            lastAdvancedCheckTime = currentTime;
-            cachedAdvancedCheckResult = result;
-            
-            return result.isDegraded;
+            advancedCheckLock.writeLock().lock();
+            try {
+                lastAdvancedCheckTime = currentTime;
+                cachedAdvancedCheckResult = result;
+                return result.isDegraded;
+            } finally {
+                advancedCheckLock.writeLock().unlock();
+            }
         } finally {
-            advancedCheckLock.writeLock().unlock();
+            advancedCheckInProgress.set(false);
         }
     }
     
