@@ -171,7 +171,7 @@ public class HealthService {
                 logger.warn("Health check was interrupted");
                 mysqlFuture.cancel(true);
                 redisFuture.cancel(true);
-                throw new RuntimeException("Health check interrupted", e);
+                // Mark components as DOWN before returning
             } catch (Exception e) {
                 logger.warn("Health check execution error: {}", e.getMessage());
                 mysqlFuture.cancel(true);
@@ -381,6 +381,19 @@ public class HealthService {
             } catch (java.util.concurrent.TimeoutException ex) {
                 logger.debug("Advanced MySQL checks timed out after {}ms", ADVANCED_CHECKS_TIMEOUT_MS);
                 result = new AdvancedCheckResult(true); // treat timeout as degraded
+            } catch (java.util.concurrent.ExecutionException ex) {
+                // Check if the cause is an InterruptedException
+                if (ex.getCause() instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                    logger.debug("Advanced MySQL checks were interrupted");
+                } else {
+                    logger.debug("Advanced MySQL checks failed: {}", ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
+                }
+                result = new AdvancedCheckResult(true);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                logger.debug("Advanced MySQL checks interrupted");
+                result = new AdvancedCheckResult(true);
             } catch (Exception ex) {
                 logger.debug("Advanced MySQL checks failed: {}", ex.getMessage());
                 result = new AdvancedCheckResult(true);
