@@ -367,9 +367,7 @@ public class HealthService {
         // Check throttle window - use read lock first for fast path
         advancedCheckLock.readLock().lock();
         try {
-            if (cachedAdvancedCheckResult != null && 
-                (currentTime - lastAdvancedCheckTime) < ADVANCED_CHECKS_THROTTLE_SECONDS * 1000) {
-                // Return cached result - within throttle window
+            if (isResultCached(currentTime)) {
                 return cachedAdvancedCheckResult.isDegraded;
             }
         } finally {
@@ -380,47 +378,11 @@ public class HealthService {
         advancedCheckLock.writeLock().lock();
         try {
             // Double-check after acquiring write lock
-            if (cachedAdvancedCheckResult != null && 
-                (currentTime - lastAdvancedCheckTime) < ADVANCED_CHECKS_THROTTLE_SECONDS * 1000) {
+            if (isResultCached(currentTime)) {
                 return cachedAdvancedCheckResult.isDegraded;
             }
             
-            AdvancedCheckResult result;
-            Future<AdvancedCheckResult> future =
-                advancedCheckExecutor.submit(() -> {
-                    try (Connection conn = dataSource.getConnection()) {
-                        return performAdvancedMySQLChecks(conn);
-                    } catch (Exception ex) {
-                        logger.debug("Could not acquire connection for advanced checks: {}", ex.getMessage());
-                        return new AdvancedCheckResult(true);
-                    }
-                });
-            try {
-                result = future.get(ADVANCED_CHECKS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException ex) {
-                logger.debug("Advanced MySQL checks timed out after {}ms", ADVANCED_CHECKS_TIMEOUT_MS);
-                future.cancel(true);
-                result = new AdvancedCheckResult(true); // treat timeout as degraded
-            } catch (ExecutionException ex) {
-                future.cancel(true);
-                // Check if the cause is an InterruptedException
-                if (ex.getCause() instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                    logger.debug("Advanced MySQL checks were interrupted");
-                } else {
-                    logger.debug("Advanced MySQL checks failed: {}", ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
-                }
-                result = new AdvancedCheckResult(true);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                logger.debug("Advanced MySQL checks interrupted");
-                future.cancel(true);
-                result = new AdvancedCheckResult(true);
-            } catch (Exception ex) {
-                logger.debug("Advanced MySQL checks failed: {}", ex.getMessage());
-                future.cancel(true);
-                result = new AdvancedCheckResult(true);
-            }
+            AdvancedCheckResult result = executeAdvancedChecksWithTimeout();
             
             // Cache the result
             lastAdvancedCheckTime = currentTime;
@@ -429,6 +391,56 @@ public class HealthService {
             return result.isDegraded;
         } finally {
             advancedCheckLock.writeLock().unlock();
+        }
+    }
+    
+    private boolean isResultCached(long currentTime) {
+        return cachedAdvancedCheckResult != null && 
+            (currentTime - lastAdvancedCheckTime) < ADVANCED_CHECKS_THROTTLE_SECONDS * 1000;
+    }
+    
+    private AdvancedCheckResult executeAdvancedChecksWithTimeout() {
+        Future<AdvancedCheckResult> future = advancedCheckExecutor.submit(() -> {
+            try (Connection conn = dataSource.getConnection()) {
+                return performAdvancedMySQLChecks(conn);
+            } catch (Exception ex) {
+                logger.debug("Could not acquire connection for advanced checks: {}", ex.getMessage());
+                return new AdvancedCheckResult(true);
+            }
+        });
+        
+        return handleAdvancedChecksFuture(future);
+    }
+    
+    private AdvancedCheckResult handleAdvancedChecksFuture(Future<AdvancedCheckResult> future) {
+        try {
+            return future.get(ADVANCED_CHECKS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException ex) {
+            logger.debug("Advanced MySQL checks timed out after {}ms", ADVANCED_CHECKS_TIMEOUT_MS);
+            future.cancel(true);
+            return new AdvancedCheckResult(true); // treat timeout as degraded
+        } catch (ExecutionException ex) {
+            handleExecutionException(future, ex);
+            return new AdvancedCheckResult(true);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            logger.debug("Advanced MySQL checks interrupted");
+            future.cancel(true);
+            return new AdvancedCheckResult(true);
+        } catch (Exception ex) {
+            logger.debug("Advanced MySQL checks failed: {}", ex.getMessage());
+            future.cancel(true);
+            return new AdvancedCheckResult(true);
+        }
+    }
+    
+    private void handleExecutionException(Future<AdvancedCheckResult> future, ExecutionException ex) {
+        future.cancel(true);
+        if (ex.getCause() instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
+            logger.debug("Advanced MySQL checks were interrupted");
+        } else {
+            logger.debug("Advanced MySQL checks failed: {}", ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
         }
     }
 
