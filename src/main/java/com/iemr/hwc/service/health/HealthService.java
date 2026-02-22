@@ -72,6 +72,10 @@ public class HealthService {
     private static final String MESSAGE_KEY = "message";
     private static final String RESPONSE_TIME_KEY = "responseTimeMs";
     
+    // Component names
+    private static final String MYSQL_COMPONENT = "MySQL";
+    private static final String REDIS_COMPONENT = "Redis";
+    
     // Timeouts (in seconds)
     private static final long MYSQL_TIMEOUT_SECONDS = 3;
     private static final long REDIS_TIMEOUT_SECONDS = 3;
@@ -137,15 +141,15 @@ public class HealthService {
         
         // Check if executor service is shutdown (during graceful shutdown)
         if (executorService.isShutdown()) {
-            ensurePopulated(mysqlStatus, "MySQL");
-            ensurePopulated(redisStatus, "Redis");
+            ensurePopulated(mysqlStatus, MYSQL_COMPONENT);
+            ensurePopulated(redisStatus, REDIS_COMPONENT);
             // Fall through to build response with DOWN status
         } else {
             // Submit both checks concurrently using executorService for proper cancellation support
             Future<?> mysqlFuture = executorService.submit(
-                () -> performHealthCheck("MySQL", mysqlStatus, this::checkMySQLHealthSync));
+                () -> performHealthCheck(MYSQL_COMPONENT, mysqlStatus, this::checkMySQLHealthSync));
             Future<?> redisFuture = executorService.submit(
-                () -> performHealthCheck("Redis", redisStatus, this::checkRedisHealthSync));
+                () -> performHealthCheck(REDIS_COMPONENT, redisStatus, this::checkRedisHealthSync));
             
             // Wait for both checks to complete with combined timeout (shared deadline)
             long maxTimeout = Math.max(MYSQL_TIMEOUT_SECONDS, REDIS_TIMEOUT_SECONDS) + 1;
@@ -167,6 +171,7 @@ public class HealthService {
                 logger.warn("Health check was interrupted");
                 mysqlFuture.cancel(true);
                 redisFuture.cancel(true);
+                throw new RuntimeException("Health check interrupted", e);
             } catch (Exception e) {
                 logger.warn("Health check execution error: {}", e.getMessage());
                 mysqlFuture.cancel(true);
@@ -175,8 +180,8 @@ public class HealthService {
         }
         
         // Ensure timed-out or unfinished components are marked DOWN
-        ensurePopulated(mysqlStatus, "MySQL");
-        ensurePopulated(redisStatus, "Redis");
+        ensurePopulated(mysqlStatus, MYSQL_COMPONENT);
+        ensurePopulated(redisStatus, REDIS_COMPONENT);
         
         Map<String, Map<String, Object>> components = new LinkedHashMap<>();
         components.put("mysql", mysqlStatus);
