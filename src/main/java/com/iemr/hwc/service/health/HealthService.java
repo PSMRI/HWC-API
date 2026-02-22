@@ -96,6 +96,7 @@ public class HealthService {
     private final DataSource dataSource;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ExecutorService executorService;
+    private final ExecutorService advancedCheckExecutor;
     
     // Advanced checks throttling (thread-safe)
     private volatile long lastAdvancedCheckTime = 0;
@@ -113,6 +114,11 @@ public class HealthService {
         this.dataSource = dataSource;
         this.redisTemplate = redisTemplate;
         this.executorService = Executors.newFixedThreadPool(2);
+        this.advancedCheckExecutor = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "health-advanced-check");
+            t.setDaemon(true);
+            return t;
+        });
     }
 
     @PreDestroy
@@ -129,6 +135,9 @@ public class HealthService {
                 Thread.currentThread().interrupt();
                 logger.warn("ExecutorService shutdown interrupted", e);
             }
+        }
+        if (advancedCheckExecutor != null && !advancedCheckExecutor.isShutdown()) {
+            advancedCheckExecutor.shutdownNow();
         }
     }
 
@@ -376,7 +385,7 @@ public class HealthService {
             AdvancedCheckResult result;
             try {
                 result = java.util.concurrent.CompletableFuture
-                    .supplyAsync(() -> performAdvancedMySQLChecks(connection), executorService)
+                    .supplyAsync(() -> performAdvancedMySQLChecks(connection), advancedCheckExecutor)
                     .get(ADVANCED_CHECKS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             } catch (java.util.concurrent.TimeoutException ex) {
                 logger.debug("Advanced MySQL checks timed out after {}ms", ADVANCED_CHECKS_TIMEOUT_MS);
