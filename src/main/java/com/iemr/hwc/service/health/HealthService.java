@@ -383,14 +383,17 @@ public class HealthService {
             }
             
             AdvancedCheckResult result;
+            java.util.concurrent.CompletableFuture<AdvancedCheckResult> future =
+                java.util.concurrent.CompletableFuture
+                    .supplyAsync(() -> performAdvancedMySQLChecks(connection), advancedCheckExecutor);
             try {
-                result = java.util.concurrent.CompletableFuture
-                    .supplyAsync(() -> performAdvancedMySQLChecks(connection), advancedCheckExecutor)
-                    .get(ADVANCED_CHECKS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+                result = future.get(ADVANCED_CHECKS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             } catch (java.util.concurrent.TimeoutException ex) {
                 logger.debug("Advanced MySQL checks timed out after {}ms", ADVANCED_CHECKS_TIMEOUT_MS);
+                future.cancel(true);
                 result = new AdvancedCheckResult(true); // treat timeout as degraded
             } catch (java.util.concurrent.ExecutionException ex) {
+                future.cancel(true);
                 // Check if the cause is an InterruptedException
                 if (ex.getCause() instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
@@ -402,9 +405,11 @@ public class HealthService {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 logger.debug("Advanced MySQL checks interrupted");
+                future.cancel(true);
                 result = new AdvancedCheckResult(true);
             } catch (Exception ex) {
                 logger.debug("Advanced MySQL checks failed: {}", ex.getMessage());
+                future.cancel(true);
                 result = new AdvancedCheckResult(true);
             }
             
