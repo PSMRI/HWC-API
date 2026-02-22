@@ -209,9 +209,6 @@ public class HealthService {
         if (mysqlFuture != null) mysqlFuture.cancel(true);
         if (redisFuture != null) redisFuture.cancel(true);
     }
-        
-        return response;
-    }
 
     private void ensurePopulated(Map<String, Object> status, String componentName) {
         if (!status.containsKey(STATUS_KEY)) {
@@ -232,12 +229,13 @@ public class HealthService {
                     return new HealthCheckResult(false, "No result from health check query", false);
                 }
             }
+            // Advanced checks run asynchronously with fresh connection
+            boolean isDegraded = performAdvancedMySQLChecksWithThrottle();
+            return new HealthCheckResult(true, null, isDegraded);
         } catch (Exception e) {
             logger.warn("MySQL health check failed: {}", e.getMessage(), e);
             return new HealthCheckResult(false, "MySQL connection failed", false);
         }
-        boolean isDegraded = performAdvancedMySQLChecksWithThrottle();
-        return new HealthCheckResult(true, null, isDegraded);
     }
 
     private HealthCheckResult checkRedisHealthSync() {
@@ -359,7 +357,7 @@ public class HealthService {
     }
 
     // Internal advanced health checks for MySQL - do not expose details in responses
-    private boolean performAdvancedMySQLChecksWithThrottle(Connection connection) {
+    private boolean performAdvancedMySQLChecksWithThrottle() {
         if (!ADVANCED_HEALTH_CHECKS_ENABLED) {
             return false; // Advanced checks disabled
         }
@@ -389,7 +387,14 @@ public class HealthService {
             
             AdvancedCheckResult result;
             Future<AdvancedCheckResult> future =
-                advancedCheckExecutor.submit(() -> performAdvancedMySQLChecks(connection));
+                advancedCheckExecutor.submit(() -> {
+                    try (Connection conn = dataSource.getConnection()) {
+                        return performAdvancedMySQLChecks(conn);
+                    } catch (Exception ex) {
+                        logger.debug("Could not acquire connection for advanced checks: {}", ex.getMessage());
+                        return new AdvancedCheckResult(true);
+                    }
+                });
             try {
                 result = future.get(ADVANCED_CHECKS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             } catch (TimeoutException ex) {
