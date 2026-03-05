@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,32 +67,29 @@ public class LabTechnicianController {
 	 */
 	@Operation(summary = "Save lab test result")
 	@PostMapping(value = { "/save/LabTestResult" })
-	public String saveLabTestResult(@RequestBody String requestObj) {
+	public ResponseEntity<String> saveLabTestResult(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for Lab Test Result saving :" + requestObj);
+		logger.info("Request object for Lab Test Result saving :" + requestObj);
 
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+		JsonObject jsnOBJ = new JsonObject();
+		JsonParser jsnParser = new JsonParser();
+		JsonElement jsnElmnt = jsnParser.parse(requestObj);
+		jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null) {
-				Integer labResultSaveRes = labTechnicianServiceImpl.saveLabTestResult(jsnOBJ);
-				if (null != labResultSaveRes && labResultSaveRes > 0) {
-					response.setResponse("Data saved successfully");
-				} else {
-					response.setResponse("Unable to save data");
-				}
-
+		if (jsnOBJ != null) {
+			Integer labResultSaveRes = labTechnicianServiceImpl.saveLabTestResult(jsnOBJ);
+			if (null != labResultSaveRes && labResultSaveRes > 0) {
+				response.setResponse("Data saved successfully");
 			} else {
-				response.setResponse("Invalid request");
+				response.setError(500, "Unable to save data");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 			}
-		} catch (Exception e) {
-			logger.error("Error while saving lab test results  :" + e);
-			response.setError(5000, "Unable to save data");
+
+		} else {
+			response.setError(400, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -100,87 +99,83 @@ public class LabTechnicianController {
 	 */
 	@Operation(summary = "Get beneficiary lab test prescription")
 	@PostMapping(value = { "/get/prescribedProceduresList" })
-	public String getBeneficiaryPrescribedProcedure(@RequestBody String requestOBJ) {
+	public ResponseEntity<String> getBeneficiaryPrescribedProcedure(@RequestBody String requestOBJ) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request obj to fetch lab tests :" + requestOBJ);
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+		logger.info("Request obj to fetch lab tests :" + requestOBJ);
+		JsonObject jsnOBJ = new JsonObject();
+		JsonParser jsnParser = new JsonParser();
+		JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
+		jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("beneficiaryRegID") && jsnOBJ.has("visitCode")) {
+		if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("beneficiaryRegID") && jsnOBJ.has("visitCode")) {
 
-				String s = labTechnicianServiceImpl.getBenePrescribedProcedureDetails(
-						jsnOBJ.get("beneficiaryRegID").getAsLong(), jsnOBJ.get("visitCode").getAsLong());
-				if (s != null)
-					response.setResponse(s);
-				else
-					response.setError(5000, "Error in prescribed procedure details");
-			} else {
-				response.setError(5000, "Invalid request");
+			String s = labTechnicianServiceImpl.getBenePrescribedProcedureDetails(
+					jsnOBJ.get("beneficiaryRegID").getAsLong(), jsnOBJ.get("visitCode").getAsLong());
+			if (s != null)
+				response.setResponse(s);
+			else {
+				response.setError(5000, "Error in prescribed procedure details");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 			}
-		} catch (Exception e) {
-			logger.error("Error while getting prescribed procedure data:" + e);
-			response.setError(5000, "Error while getting prescribed procedure data");
+		} else {
+			response.setError(400, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	// API for getting lab result based on beneficiaryRegID and visitCode
 	@Operation(summary = "Get lab test result for a beneficiary visit")
 	@PostMapping(value = { "/get/labResultForVisitcode" })
-	public String getLabResultForVisitCode(@RequestBody String requestOBJ) {
+	public ResponseEntity<String> getLabResultForVisitCode(@RequestBody String requestOBJ) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+		JsonObject jsnOBJ = new JsonObject();
+		JsonParser jsnParser = new JsonParser();
+		JsonElement jsnElmnt = jsnParser.parse(requestOBJ);
+		jsnOBJ = jsnElmnt.getAsJsonObject();
 
-			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("beneficiaryRegID") && jsnOBJ.has("visitCode")) {
-				String s = labTechnicianServiceImpl.getLabResultForVisitcode(jsnOBJ.get("beneficiaryRegID").getAsLong(),
-						jsnOBJ.get("visitCode").getAsLong());
+		if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("beneficiaryRegID") && jsnOBJ.has("visitCode")) {
+			String s = labTechnicianServiceImpl.getLabResultForVisitcode(jsnOBJ.get("beneficiaryRegID").getAsLong(),
+					jsnOBJ.get("visitCode").getAsLong());
 
-				if (s != null)
-					response.setResponse(s);
-				else
-					response.setError(5000, "Error while getting lab report");
-			} else
-				response.setError(5000, "Invalid request");
-		} catch (Exception e) {
-			logger.error("Error while getting lab result for requested data:" + requestOBJ);
-			response.setError(5000, "Error while getting lab report");
+			if (s != null)
+				response.setResponse(s);
+			else {
+				response.setError(5000, "Error while getting lab report");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
+			}
+		} else {
+			response.setError(400, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	@Operation(summary = "Get procedure component mapped master data")
 	@PostMapping(value = { "/get/fetchProcCompMapMasterData" })
-	public String getProcedureComponentMappedMasterData(@RequestBody String requestOBJ) {
+	public ResponseEntity<String> getProcedureComponentMappedMasterData(@RequestBody String requestOBJ)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request obj to fetch procedure component mapped master data ");
-			JsonObject jsnOBJ = new JsonObject();
-			JsonElement jsnElement = JsonParser.parseString(requestOBJ);
-			jsnOBJ = jsnElement.getAsJsonObject();
+		logger.info("Request obj to fetch procedure component mapped master data ");
+		JsonObject jsnOBJ = new JsonObject();
+		JsonElement jsnElement = JsonParser.parseString(requestOBJ);
+		jsnOBJ = jsnElement.getAsJsonObject();
 
-			if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("providerServiceMapID")) {
+		if (jsnOBJ != null && !jsnOBJ.isJsonNull() && jsnOBJ.has("providerServiceMapID")) {
 
-				String s = labTechnicianServiceImpl.getProcedureComponentMappedMasterData(
-						jsnOBJ.get("providerServiceMapID").getAsLong());
-				if (s != null)
-					response.setResponse(s);
-				else
-					response.setError(5000, "Error in fetching procedure component mapped master data");
-			} else {
-				response.setError(5000, "Invalid request");
+			String s = labTechnicianServiceImpl.getProcedureComponentMappedMasterData(
+					jsnOBJ.get("providerServiceMapID").getAsLong());
+			if (s != null)
+				response.setResponse(s);
+			else {
+				response.setError(5000, "Error in fetching procedure component mapped master data");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 			}
-		} catch (Exception e) {
-			logger.error("Error while fetching procedure component mapped master data:" + e);
-			response.setError(5000, "Error while fetching procedure component mapped master data");
+		} else {
+			response.setError(400, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 }

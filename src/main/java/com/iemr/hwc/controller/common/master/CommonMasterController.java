@@ -31,11 +31,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iemr.hwc.service.common.master.CommonMasterServiceImpl;
-import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.ws.rs.core.MediaType;
 
 @RestController
 @RequestMapping(value = "/master", headers = "Authorization", consumes = "application/json", produces = "application/json")
@@ -56,13 +57,13 @@ public class CommonMasterController {
 	 * @return list of visit reasons and visit categories
 	 */
 	@Operation(summary = "Get visit reasons and categories")
-	@GetMapping(value = "/get/visitReasonAndCategories", produces = MediaType.APPLICATION_JSON)
-	public String getVisitReasonAndCategories() {
+	@GetMapping(value = "/get/visitReasonAndCategories", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getVisitReasonAndCategories() throws Exception {
 		logger.info("getVisitReasonAndCategories ...");
 		OutputResponse response = new OutputResponse();
 		response.setResponse(commonMasterServiceImpl.getVisitReasonAndCategories());
 		logger.info("visitReasonAndCategories" + response.toString());
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -71,23 +72,17 @@ public class CommonMasterController {
 	 * @return nurse master data for the provided visitCategoryID
 	 */
 	@Operation(summary = "Get master data for selected beneficiary for nurse")
-	@GetMapping(value = "/nurse/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}", produces = MediaType.APPLICATION_JSON)
-	public String NurseMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
-			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender) {
-
+	@GetMapping(value = "/nurse/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> NurseMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
+			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender)
+			throws Exception {
 		logger.info("Nurse master Data for categoryID:" + visitCategoryID + " and providerServiceMapID:"
 				+ providerServiceMapID);
 		OutputResponse response = new OutputResponse();
-
-		try {
-			response.setResponse(
-					commonMasterServiceImpl.getMasterDataForNurse(visitCategoryID, providerServiceMapID, gender));
-			logger.info("Nurse master Data for categoryID:" + response.toString());
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage());
-			response.setError(5000, "error in getting nurse master data : " + e.getLocalizedMessage());
-		}
-		return response.toString();
+		response.setResponse(
+				commonMasterServiceImpl.getMasterDataForNurse(visitCategoryID, providerServiceMapID, gender));
+		logger.info("Nurse master Data for categoryID:" + response.toString());
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -96,17 +91,17 @@ public class CommonMasterController {
 	 * @return doctor master data for the provided visitCategoryID
 	 */
 	@Operation(summary = "Get master data for selected beneficiary for doctor")
-	@GetMapping(value = "/doctor/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}/{facilityID}/{vanID}", produces = MediaType.APPLICATION_JSON)
-	public String DoctorMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
+	@GetMapping(value = "/doctor/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}/{facilityID}/{vanID}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> DoctorMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender,
-			@PathVariable("facilityID") Integer facilityID, @PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID, @PathVariable("vanID") Integer vanID) throws Exception {
 		logger.info("Doctor master Data for categoryID:" + visitCategoryID + " and providerServiceMapID:"
 				+ providerServiceMapID);
 		OutputResponse response = new OutputResponse();
 		response.setResponse(commonMasterServiceImpl.getMasterDataForDoctor(visitCategoryID, providerServiceMapID,
 				gender, facilityID, vanID));
 		logger.info("Doctor master Data for categoryID:" + response.toString());
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -116,25 +111,21 @@ public class CommonMasterController {
 	 *         cisId
 	 */
 	@Operation(summary = "Get current immunization data for selected beneficiary for doctor")
-	@GetMapping(value = "/common/masterData/getVaccine/{currentImmunizationServiceID}/{visitCategoryID}", produces = MediaType.APPLICATION_JSON)
-	public String getVaccineDetailsForCISID(
+	@GetMapping(value = "/common/masterData/getVaccine/{currentImmunizationServiceID}/{visitCategoryID}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getVaccineDetailsForCISID(
 			@PathVariable("currentImmunizationServiceID") Integer currentImmunizationServiceID,
-			@PathVariable("visitCategoryID") Integer visitCategoryID) {
+			@PathVariable("visitCategoryID") Integer visitCategoryID) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			if (currentImmunizationServiceID == null)
-				throw new IEMRException("invalid request / NULL");
-			logger.info("current-immunization-service-id:" + currentImmunizationServiceID);
-
-			response.setResponse(
-					commonMasterServiceImpl.getVaccineDetailsForCISID(currentImmunizationServiceID, visitCategoryID));
-			logger.info("response data for : " + currentImmunizationServiceID + response.toString());
-
-		} catch (IEMRException e) {
-			logger.error(e.getLocalizedMessage());
-			response.setError(5000, e.getLocalizedMessage());
+		if (currentImmunizationServiceID == null) {
+			response.setError(5000, "invalid request / NULL");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("current-immunization-service-id:" + currentImmunizationServiceID);
+
+		response.setResponse(
+				commonMasterServiceImpl.getVaccineDetailsForCISID(currentImmunizationServiceID, visitCategoryID));
+		logger.info("response data for : " + currentImmunizationServiceID + response.toString());
+		return ResponseEntity.ok(response.toString());
 	}
 
 }

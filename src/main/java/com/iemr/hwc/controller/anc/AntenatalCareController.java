@@ -35,17 +35,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.data.anc.HrpStatusAndReasonsRequestModel;
 import com.iemr.hwc.data.anc.SysObstetricExamination;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.service.anc.ANCService;
-import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * 
@@ -68,34 +68,19 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Save ANC nurse data")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenANCNurseData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenANCNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		if (null != requestObj) {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			try {
-
-				logger.info("Request object for ANC nurse data saving :" + requestObj);
-
-				if (jsnOBJ != null) {
-					String ancRes = ancService.saveANCNurseData(jsnOBJ, Authorization);
-					response.setResponse(ancRes);
-				} else {
-					response.setError(5000, "Invalid request");
-				}
-
-			} catch (Exception e) {
-				logger.error("Error while saving nurse data:" + e.getMessage());
-				ancService.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, e.getMessage());
-			}
+			JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+			logger.info("Request object for ANC nurse data saving :" + requestObj);
+			String ancRes = ancService.saveANCNurseData(jsnOBJ, Authorization);
+			response.setResponse(ancRes);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -105,32 +90,24 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Save ANC doctor data")
 	@PostMapping(value = { "/save/doctorData" })
-	public String saveBenANCDoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+	public ResponseEntity<String> saveBenANCDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for ANC doctor data saving :" + requestObj);
-
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-			if (jsnOBJ != null) {
-				Long r = ancService.saveANCDoctorData(jsnOBJ, Authorization);
-				if (r != null && r > 0) {
-					response.setResponse("Data saved successfully");
-				} else {
-					response.setError(5000, "Unable to save data");
-				}
+		logger.info("Request object for ANC doctor data saving :" + requestObj);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		if (jsnOBJ != null) {
+			Long r = ancService.saveANCDoctorData(jsnOBJ, Authorization);
+			if (r != null && r > 0) {
+				response.setResponse("Data saved successfully");
 			} else {
-				response.setError(5000, "Invalid request");
+				response.setError(5000, "Unable to save data");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 			}
-
-		} catch (Exception e) {
-			logger.error("Error while saving doctor data:" + e.getMessage());
-			response.setError(5000, e.getMessage());
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -141,28 +118,24 @@ public class AntenatalCareController {
 	@Operation(summary = "Get ANC beneficiary visit details from nurse")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseANC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenVisitDetailsFrmNurseANC(
-			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVisitDetailsFrmNurseANC(
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for ANC visit data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.length() > 1) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-				String res = ancService.getBenVisitDetailsFrmNurseANC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("ANC visit data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary visit data");
-			logger.error("Error while getting beneficiary visit data:" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = ancService.getBenVisitDetailsFrmNurseANC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("ANC visit data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -173,32 +146,28 @@ public class AntenatalCareController {
 	@Operation(summary = "Get ANC beneficiary details from nurse")
 	@PostMapping(value = { "/getBenANCDetailsFrmNurseANC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenANCDetailsFrmNurseANC(
-			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenANCDetailsFrmNurseANC(
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for ANC Care data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			Long visitCode = null;
-			if (obj.has("benRegID")) {
-				Long benRegID = obj.getLong("benRegID");
+		JSONObject obj = new JSONObject(comingRequest);
+		Long visitCode = null;
+		if (obj.has("benRegID") && !obj.isNull("benRegID")) {
+			Long benRegID = obj.getLong("benRegID");
 
-				if (obj.has("visitCode") && !obj.isNull("visitCode") && obj.get("visitCode") != null)
-					visitCode = obj.getLong("visitCode");
+			if (obj.has("visitCode") && !obj.isNull("visitCode") && obj.get("visitCode") != null)
+				visitCode = obj.getLong("visitCode");
 
-				String res = ancService.getBenANCDetailsFrmNurseANC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request, Beneficiary information is NULL");
-			}
-			logger.info("ANC Care data fetching response :" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary ANC care data");
-			logger.error("Error while getting beneficiary ANC care data:" + e);
+			String res = ancService.getBenANCDetailsFrmNurseANC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request, Beneficiary information is NULL");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("ANC Care data fetching response :" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -208,29 +177,23 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Get ANC beneficiary history from nurse")
 	@PostMapping(value = { "/getBenANCHistoryDetails" })
-
-	public String getBenANCHistoryDetails(
-			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenANCHistoryDetails(
+			@Param(value = "{\"benRegID\":\"Long\", \"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for ANC history data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String s = ancService.getBenANCHistoryDetails(benRegID, visitCode);
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("ANC history data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary history data");
-			logger.error("Error while getting beneficiary history data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String s = ancService.getBenANCHistoryDetails(benRegID, visitCode);
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("ANC history data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -240,29 +203,24 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Get ANC beneficiary vitals from nurse")
 	@PostMapping(value = { "/getBenANCVitalDetailsFrmNurseANC" })
-	public String getBenANCVitalDetailsFrmNurseANC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenANCVitalDetailsFrmNurseANC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for ANC vital data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = ancService.getBeneficiaryVitalDetails(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("ANC vital data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary vital data");
-			logger.error("Error while getting beneficiary vital data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = ancService.getBeneficiaryVitalDetails(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("ANC vital data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -272,29 +230,23 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Get ANC beneficiary examination details from nurse")
 	@PostMapping(value = { "/getBenExaminationDetailsANC" })
-
-	public String getBenExaminationDetailsANC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenExaminationDetailsANC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for ANC examination data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String s = ancService.getANCExaminationDetailsData(benRegID, visitCode);
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("ANC examination data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary examination data");
-			logger.error("Error while getting beneficiary examination data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String s = ancService.getANCExaminationDetailsData(benRegID, visitCode);
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("ANC examination data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -305,48 +257,36 @@ public class AntenatalCareController {
 	@Operation(summary = "Get ANC beneficiary case record")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorANC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenCaseRecordFromDoctorANC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenCaseRecordFromDoctorANC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for doctor data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = ancService.getBenCaseRecordFromDoctorANC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("ANC doctor data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary doctor data");
-			logger.error("Error while getting beneficiary doctor data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = ancService.getBenCaseRecordFromDoctorANC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("ANC doctor data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	@Operation(summary = "Check high risk pregnancy status for ANC beneficiary")
 	@PostMapping(value = { "/getHRPStatus" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getHRPStatus(@RequestBody HrpStatusAndReasonsRequestModel hrpStatusAndReasonsRequestModel) {
+	public ResponseEntity<String> getHRPStatus(
+			@RequestBody HrpStatusAndReasonsRequestModel hrpStatusAndReasonsRequestModel) throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for doctor data fetching :" + hrpStatusAndReasonsRequestModel.toString());
-		try {
-
-			String res = ancService.getHRPStatus(hrpStatusAndReasonsRequestModel);
-			response.setResponse(res);
-
-		} catch (Exception e) {
-			response.setError(5000, "error in getting HRP status");
-			logger.error("error in getting HRP status : " + e);
-		}
-		return response.toString();
+		String res = ancService.getHRPStatus(hrpStatusAndReasonsRequestModel);
+		response.setResponse(res);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	// changes for get HRP information - follow-up, can be used at other places also
@@ -357,24 +297,18 @@ public class AntenatalCareController {
 			+ "as per the latest visit")
 	@PostMapping(value = { "/getHrpInformation" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getHrpInformation(
-			@Param(value = "{\"beneficiaryRegId\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+	public ResponseEntity<String> getHrpInformation(
+			@Param(value = "{\"beneficiaryRegId\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request object for getHrpInformation :" + commonUtilityClass.toString());
-		try {
-
-			SysObstetricExamination sysObstetricExamination = aNCService
-					.getHRPInformation(commonUtilityClass.getBeneficiaryRegId());
-			if (sysObstetricExamination != null)
-				response.setResponse(new Gson().toJson(sysObstetricExamination));
-			else
-				response.setResponse("no information found");
-		} catch (IEMRException e) {
-			response.setError(5000, "error in getting HRP information : " + e.getLocalizedMessage());
-			logger.error("error in getting HRP information : " + e);
-		}
-		return response.toString();
+		SysObstetricExamination sysObstetricExamination = aNCService
+				.getHRPInformation(commonUtilityClass.getBeneficiaryRegId());
+		if (sysObstetricExamination != null)
+			response.setResponse(new Gson().toJson(sysObstetricExamination));
+		else
+			response.setResponse("no information found");
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -386,30 +320,19 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Update ANC beneficiary data")
 	@PostMapping(value = { "/update/ANCScreen" })
-	public String updateANCCareNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateANCCareNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for ANC Care data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = ancService.updateBenANCDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("ANC Care data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating beneficiary ANC care data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = ancService.updateBenANCDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("ANC Care data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -421,30 +344,19 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Update ANC beneficiary history")
 	@PostMapping(value = { "/update/historyScreen" })
-	public String updateANCHistoryNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateANCHistoryNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for ANC history data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = ancService.updateBenANCHistoryDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("ANC history data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating beneficiary history data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = ancService.updateBenANCHistoryDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("ANC history data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -456,30 +368,19 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Update ANC beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
-	public String updateANCVitalNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateANCVitalNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for ANC Vital data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = ancService.updateBenANCVitalDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("ANC vital data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating beneficiary vital data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = ancService.updateBenANCVitalDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("ANC vital data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -491,30 +392,19 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Update ANC examination data")
 	@PostMapping(value = { "/update/examinationScreen" })
-	public String updateANCExaminationNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateANCExaminationNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for ANC examination data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = ancService.updateBenANCExaminationDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("ANC examination data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating beneficiary examination data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = ancService.updateBenANCExaminationDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("ANC examination data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -526,31 +416,20 @@ public class AntenatalCareController {
 	 */
 	@Operation(summary = "Update ANC doctor data")
 	@PostMapping(value = { "/update/doctorData" })
-	public String updateANCDoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
-
+	public ResponseEntity<String> updateANCDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for ANC doctor data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			Long result = ancService.updateANCDoctorData(jsnOBJ, Authorization);
-			if (null != result && result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("ANC doctor data update Response:" + response);
-		} catch (Exception e) {
-			logger.error("Unable to modify data. " + e.getMessage());
-			response.setError(5000, e.getMessage());
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		Long result = ancService.updateANCDoctorData(jsnOBJ, Authorization);
+		if (null != result && result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("ANC doctor data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 }

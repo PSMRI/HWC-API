@@ -47,7 +47,7 @@ public class HTTPRequestInterceptor implements HandlerInterceptor {
 
 	@Value("${cors.allowed-origins}")
 	private String allowedOrigins;
-	
+
 	@Autowired
 	private SessionObject sessionObject;
 
@@ -61,52 +61,54 @@ public class HTTPRequestInterceptor implements HandlerInterceptor {
 
 		String authorization = null;
 		String preAuth = request.getHeader("Authorization");
-		if(null != preAuth && preAuth.contains("Bearer "))
-			authorization=preAuth.replace("Bearer ", "");
+		if (null != preAuth && preAuth.contains("Bearer "))
+			authorization = preAuth.replace("Bearer ", "");
 		else
 			authorization = preAuth;
 		if (authorization == null || authorization.isEmpty()) {
-	        logger.info("Authorization header is null or empty. Skipping HTTPRequestInterceptor.");
-	        return true; // Allow the request to proceed without validation
-	    }
+			logger.info("Authorization header is null or empty. Skipping HTTPRequestInterceptor.");
+			return true; // Allow the request to proceed without validation
+		}
 		if (!request.getMethod().equalsIgnoreCase("OPTIONS")) {
 			try {
 				String[] requestURIParts = request.getRequestURI().split("/");
 				String requestAPI = requestURIParts[requestURIParts.length - 1];
 				switch (requestAPI) {
-				case "swagger-ui.html":
-					break;
-				case "index.html":
-					break;
-				case "swagger-initializer.js":
-					break;
-				case "swagger-config":
-					break;
-				case "ui":
-					break;
-				case "swagger-resources":
-					break;
-				case "api-docs":
-					break;
+					case "swagger-ui.html":
+						break;
+					case "index.html":
+						break;
+					case "swagger-initializer.js":
+						break;
+					case "swagger-config":
+						break;
+					case "ui":
+						break;
+					case "swagger-resources":
+						break;
+					case "api-docs":
+						break;
 
-				case "error":
-					status = false;
-					break;
-				default:
-					logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
-					if (authorization == null)
-						throw new Exception(
-								"Authorization key is NULL, please pass valid session key to proceed further. ");
-					String userRespFromRedis = sessionObject.getSessionObject(authorization);
-					if (userRespFromRedis == null)
-						throw new Exception("invalid Authorization key, please pass a valid key to proceed further. ");
-					break;
+					case "error":
+						status = false;
+						break;
+					default:
+						logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
+						if (authorization == null)
+							throw new Exception(
+									"Authorization key is NULL, please pass valid session key to proceed further. ");
+						String userRespFromRedis = sessionObject.getSessionObject(authorization);
+						if (userRespFromRedis == null)
+							throw new Exception(
+									"invalid Authorization key, please pass a valid key to proceed further. ");
+						break;
 				}
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage());
 
 				OutputResponse output = new OutputResponse();
 				output.setError(e);
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				response.getOutputStream().print(output.toString());
 				response.setContentType(MediaType.APPLICATION_JSON);
 				response.setContentLength(output.toString().length());
@@ -131,8 +133,8 @@ public class HTTPRequestInterceptor implements HandlerInterceptor {
 			logger.debug("In postHandle we are Intercepting the Request");
 			String authorization = null;
 			String postAuth = request.getHeader("Authorization");
-			if(null != postAuth && postAuth.contains("Bearer "))
-				authorization=postAuth.replace("Bearer ", "");
+			if (null != postAuth && postAuth.contains("Bearer "))
+				authorization = postAuth.replace("Bearer ", "");
 			else
 				authorization = postAuth;
 			logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);

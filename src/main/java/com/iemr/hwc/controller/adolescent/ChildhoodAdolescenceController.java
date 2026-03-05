@@ -21,8 +21,6 @@
 */
 package com.iemr.hwc.controller.adolescent;
 
-import java.sql.SQLException;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +34,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
 import com.iemr.hwc.service.adolescent.AdolescentAndChildCareService;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.response.OutputResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -62,62 +61,37 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Save child adolescent care (CAC) nurse data")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenNurseDataCAC(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenNurseDataCAC(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		if (null != requestObj) {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-			try {
-				logger.info("Request object for child-adolescent-care nurse data saving :" + requestObj);
-
-				if (jsnOBJ != null) {
-					String genOPDRes = adolescentAndChildCareService.saveNurseData(jsnOBJ, Authorization);
-					response.setResponse(genOPDRes);
-
-				} else {
-					response.setResponse("Invalid request");
-				}
-			} catch (SQLException e) {
-				logger.error("Error in nurse data saving :" + e);
-				response.setError(5000, "Unable to save data : " + e.getLocalizedMessage());
-			} catch (Exception e) {
-				logger.error("Error in nurse data saving :" + e.getMessage());
-				adolescentAndChildCareService.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, e.getMessage());
-			}
+			JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+			logger.info("Request object for child-adolescent-care nurse data saving :" + requestObj);
+			String genOPDRes = adolescentAndChildCareService.saveNurseData(jsnOBJ, Authorization);
+			response.setResponse(genOPDRes);
+		} else {
+			response.setResponse("Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	@Operation(summary = "Save child adolescent care doctor data")
 	@PostMapping(value = { "save/doctorData" })
-	public String saveDoctorDataCAC(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+	public ResponseEntity<String> saveDoctorDataCAC(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for child-adolescent-care doctor data saving :" + requestObj);
-
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			JsonObject jsnOBJ = jsnElmnt.getAsJsonObject();
-			if (jsnOBJ != null) {
-				int i = adolescentAndChildCareService.saveDoctorDataCAC(jsnOBJ, Authorization);
-
-				if (i == 1)
-					response.setResponse("Data saved successfully");
-			} else {
-
-				response.setError(5000, "Invalid request object : NULL");
-			}
-
-		} catch (Exception e) {
-			logger.error("Error while saving doctor data:" + e.getMessage());
-			response.setError(5000, e.getMessage());
+		logger.info("Request object for child-adolescent-care doctor data saving :" + requestObj);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		if (jsnOBJ != null) {
+			int i = adolescentAndChildCareService.saveDoctorDataCAC(jsnOBJ, Authorization);
+			if (i == 1)
+				response.setResponse("Data saved successfully");
+		} else {
+			response.setError(5000, "Invalid request object : NULL");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -128,29 +102,24 @@ public class ChildhoodAdolescenceController {
 	@Operation(summary = "Get beneficiary visit details from nurse for child adolescent care")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseCAC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenVisitDetailsFrmNurseCAC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVisitDetailsFrmNurseCAC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("Request obj to fetch CAC visit details :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.length() > 1) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = adolescentAndChildCareService.getBenVisitDetailsFrmNurseCAC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid Request Data.");
-				response.setError(5000, "Invalid request : missing visit information");
-			}
-			logger.info("getBenVisitDetailsFrmNurseCAC response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary visit data : " + e.getLocalizedMessage());
-			logger.error("Error in getBenVisitDetailsFrmNurseCAC:" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = adolescentAndChildCareService.getBenVisitDetailsFrmNurseCAC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid Request Data.");
+			response.setError(5000, "Invalid request : missing visit information");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("getBenVisitDetailsFrmNurseCAC response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -160,28 +129,21 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Get child adolescent care beneficiary history")
 	@PostMapping(value = { "/getBenHistoryDetails" })
-
-	public String getBenHistoryDetails(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+	public ResponseEntity<String> getBenHistoryDetails(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("getBenHistoryDetails request:" + commonUtilityClass.toString());
-		try {
-
-			if (commonUtilityClass.getBenRegID() != null) {
-
-				String s = adolescentAndChildCareService.getBirthAndImmuniHistory(commonUtilityClass.getBenRegID(),
-						commonUtilityClass.getVisitCode());
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request : missing ben information");
-			}
-			logger.info("getBenHistoryDetails response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary history data : " + e.getLocalizedMessage());
-			logger.error("Error in getBenHistoryDetails:" + e);
+		if (commonUtilityClass.getBenRegID() != null) {
+			String s = adolescentAndChildCareService.getBirthAndImmuniHistory(commonUtilityClass.getBenRegID(),
+					commonUtilityClass.getVisitCode());
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request : missing ben information");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("getBenHistoryDetails response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -191,29 +153,24 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Get child adolescent care beneficiary vitals from nurse")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
-	public String getBenVitalDetailsFrmNurse(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVitalDetailsFrmNurse(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("getBenVitalDetailsFrmNurse request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = adolescentAndChildCareService.getBeneficiaryVitalDetails(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid Request Data.");
-				response.setError(5000, "Invalid request : visit information missing");
-			}
-			logger.info("getBenVitalDetailsFrmNurse response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary vital data : " + e.getLocalizedMessage());
-			logger.error("Error in getBenVitalDetailsFrmNurse:" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = adolescentAndChildCareService.getBeneficiaryVitalDetails(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid Request Data.");
+			response.setError(5000, "Invalid request : visit information missing");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("getBenVitalDetailsFrmNurse response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -224,29 +181,21 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Get child adolescent care beneficiary immunization details")
 	@PostMapping(value = { "/getBenImmunizationServiceDetails" })
-
-	public String getBenImmunizationServiceDetails(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass) {
+	public ResponseEntity<String> getBenImmunizationServiceDetails(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody CommonUtilityClass commonUtilityClass)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("getBenImmunizationServiceDetails request:" + commonUtilityClass.toString());
-		try {
-
-			if (commonUtilityClass.getBenRegID() != null && commonUtilityClass.getVisitCode() != null) {
-
-				String s = adolescentAndChildCareService.getBeneficiaryImmunizationServiceDetails(
-						commonUtilityClass.getBenRegID(), commonUtilityClass.getVisitCode());
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request : missing ben information");
-			}
-			logger.info("getBenImmunizationServiceDetails response:" + response);
-		} catch (Exception e) {
-			response.setError(5000,
-					"Error while getting beneficiary immunization service data : " + e.getLocalizedMessage());
-			logger.error("Error in getBenImmunizationServiceDetails:" + e);
+		if (commonUtilityClass.getBenRegID() != null && commonUtilityClass.getVisitCode() != null) {
+			String s = adolescentAndChildCareService.getBeneficiaryImmunizationServiceDetails(
+					commonUtilityClass.getBenRegID(), commonUtilityClass.getVisitCode());
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request : missing ben information");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("getBenImmunizationServiceDetails response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -257,29 +206,24 @@ public class ChildhoodAdolescenceController {
 	@Operation(summary = "Get child adolescent care beneficiary details entered by doctor")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctor" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenCaseRecordFromDoctor(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenCaseRecordFromDoctor(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("getBenCaseRecordFromDoctor CAC request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = adolescentAndChildCareService.getBenCaseRecordFromDoctorCAC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid Request Data.");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("getBenCaseRecordFromDoctor CAC  response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary doctor data : " + e.getLocalizedMessage());
-			logger.error("Error in getBenCaseRecordFromDoctor CAC :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = adolescentAndChildCareService.getBenCaseRecordFromDoctorCAC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid Request Data.");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("getBenCaseRecordFromDoctor CAC  response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -289,30 +233,19 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Update child adolescent care beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
-	public String updateVitalNurseCAC(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateVitalNurseCAC(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for CAC Vital data updating :" + requestObj);
-
-		try {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			int i = adolescentAndChildCareService.updateBenVitalDetailsCAC(jsnOBJ);
-			if (i == 1)
-				response.setResponse("Data updated successfully");
-			else
-				response.setError(500, "Unable to modify data, please contact administrator");
-
-			logger.info("CAC vital data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data : " + e.getLocalizedMessage());
-			logger.error("Error while updating beneficiary vital data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int i = adolescentAndChildCareService.updateBenVitalDetailsCAC(jsnOBJ);
+		if (i == 1) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data, please contact administrator");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("CAC vital data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -322,30 +255,17 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Update birth and immunization history")
 	@PostMapping(value = { "/update/BirthAndImmunizationHistoryScreen" })
-	public String updateBirthAndImmunizationHistoryNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateBirthAndImmunizationHistoryNurse(@RequestBody String requestObj)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for CAC data updating :" + requestObj);
-
-		try {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			int i = adolescentAndChildCareService.updateBenHistoryDetails(jsnOBJ);
-
-			if (i > 0)
-				response.setResponse("data updated successfully");
-			else
-				throw new IEMRException("error in updating data. please contact administrator");
-
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data : " + e.getLocalizedMessage());
-			logger.error("Error while updating beneficiary CAC data :" + e);
-		}
-
-		return response.toString();
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int i = adolescentAndChildCareService.updateBenHistoryDetails(jsnOBJ);
+		if (i > 0)
+			response.setResponse("data updated successfully");
+		else
+			throw new IEMRException("error in updating data. please contact administrator");
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -356,30 +276,16 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Update immunization service data")
 	@PostMapping(value = { "/update/ImmunizationServicesScreen" })
-	public String updateImmunizationServicesNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateImmunizationServicesNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for CAC data updating :" + requestObj);
-
-		try {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			int i = adolescentAndChildCareService.updateBenImmunServiceDetailsCAC(jsnOBJ);
-
-			if (i > 0)
-				response.setResponse("data updated successfully");
-			else
-				throw new IEMRException("error in updating data, please contact administrator");
-
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data : " + e.getLocalizedMessage());
-			logger.error("Error while updating beneficiary CAC data :" + e);
-		}
-
-		return response.toString();
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int i = adolescentAndChildCareService.updateBenImmunServiceDetailsCAC(jsnOBJ);
+		if (i > 0)
+			response.setResponse("data updated successfully");
+		else
+			throw new IEMRException("error in updating data, please contact administrator");
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -389,31 +295,18 @@ public class ChildhoodAdolescenceController {
 	 */
 	@Operation(summary = "Update child adolescent care doctor data")
 	@PostMapping(value = { "/update/doctorData" })
-	public String updateCACDoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
-
+	public ResponseEntity<String> updateCACDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for doctor data updating :" + requestObj);
-		try {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			Long result = adolescentAndChildCareService.updateDoctorDataCAC(jsnOBJ, Authorization);
-
-			if (null != result && result > 0) {
-				response.setResponse("Data updated successfully");
-			} else
-				throw new IEMRException("error in updating data - NULL");
-
-			logger.info("Doctor data update response:" + response);
-		} catch (Exception e) {
-			logger.error("Unable to modify data. " + e.getLocalizedMessage());
-			response.setError(5000, e.getMessage());
-		}
-
-		return response.toString();
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		Long result = adolescentAndChildCareService.updateDoctorDataCAC(jsnOBJ, Authorization);
+		if (null != result && result > 0) {
+			response.setResponse("Data updated successfully");
+		} else
+			throw new IEMRException("error in updating data - NULL");
+		logger.info("Doctor data update response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 }

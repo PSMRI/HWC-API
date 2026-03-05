@@ -21,9 +21,6 @@
 */
 package com.iemr.hwc.controller.covid19;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +34,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.service.covid19.Covid19ServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -59,69 +57,45 @@ public class CovidController {
 
 	@Operation(summary = "Save COVID nurse data")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenNCDCareNurseData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenNCDCareNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-
-		if (null != requestObj) {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			try {
-				logger.info("Request object for COVID 19 nurse data saving :" + requestObj);
-
-				if (jsnOBJ != null) {
-					String ncdCareRes = covid19ServiceImpl.saveCovid19NurseData(jsnOBJ, Authorization);
-					response.setResponse(ncdCareRes);
-				} else {
-					response.setError(5000, "Invalid Request !!!");
-				}
-
-			} catch (Exception e) {
-				logger.error("Error while saving Pandemic nurse data :" + e.getMessage());
-				covid19ServiceImpl.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, e.getMessage());
-			}
+		if (null == requestObj || requestObj.isEmpty()) {
+			response.setError(5000, "Invalid Request !!!");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		try {
+			logger.info("Request object for COVID 19 nurse data saving :" + requestObj);
+			String ncdCareRes = covid19ServiceImpl.saveCovid19NurseData(jsnOBJ, Authorization);
+			response.setResponse(ncdCareRes);
+		} catch (Exception e) {
+			logger.error("Error while saving Pandemic nurse data :" + e.getMessage());
+			covid19ServiceImpl.deleteVisitDetails(jsnOBJ);
+			throw e;
+		}
+		return ResponseEntity.ok(response.toString());
 	}
 
-	/**
-	 * @Objective Save Covid data for doctor.
-	 * @param JSON requestObj
-	 * @return success or failure response
-	 */
 	@Operation(summary = "Save COVID doctor data")
 	@PostMapping(value = { "/save/doctorData" })
-	public String saveBenCovidDoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+	public ResponseEntity<String> saveBenCovidDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for Covid doctor data saving :" + requestObj);
-
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			if (jsnOBJ != null) {
-				Long ncdCareRes = covid19ServiceImpl.saveDoctorData(jsnOBJ, Authorization);
-				if (null != ncdCareRes && ncdCareRes > 0) {
-					response.setResponse("Data saved successfully");
-				} else {
-					response.setResponse("Unable to save data");
-				}
-
-			} else {
-				response.setResponse("Invalid request");
-			}
-		} catch (Exception e) {
-			logger.error("Error while saving Covid doctor data :" + e.getMessage());
-			response.setError(5000, e.getMessage());
+		logger.info("Request object for Covid doctor data saving :" + requestObj);
+		if (null == requestObj || requestObj.isEmpty()) {
+			response.setResponse("Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		Long ncdCareRes = covid19ServiceImpl.saveDoctorData(jsnOBJ, Authorization);
+		if (null != ncdCareRes && ncdCareRes > 0) {
+			response.setResponse("Data saved successfully");
+		} else {
+			response.setResponse("Unable to save data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
+		}
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -132,29 +106,26 @@ public class CovidController {
 	@Operation(summary = "Get COVID beneficiary visit details")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseCovid" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenVisitDetailsFrmNurseCovid19(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVisitDetailsFrmNurseCovid19(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for Covid 19 visit data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.length() > 1) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.length() > 1) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
 
-				String res = covid19ServiceImpl.getBenVisitDetailsFrmNurseCovid19(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("Covid 19 visit data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary visit data");
-			logger.error("Error while getting beneficiary visit data :" + e);
+			String res = covid19ServiceImpl.getBenVisitDetailsFrmNurseCovid19(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("Covid 19 visit data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -164,29 +135,25 @@ public class CovidController {
 	 */
 	@Operation(summary = "Get COVID beneficiary history")
 	@PostMapping(value = { "/getBenCovid19HistoryDetails" })
-
-	public String getBenCovid19HistoryDetails(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenCovid19HistoryDetails(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for NCD Care history data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
 
-				String s = covid19ServiceImpl.getBenCovid19HistoryDetails(benRegID, visitCode);
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("NCD Care history data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary history data");
-			logger.error("Error while getting beneficiary history data :" + e);
+			String s = covid19ServiceImpl.getBenCovid19HistoryDetails(benRegID, visitCode);
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("NCD Care history data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -196,62 +163,51 @@ public class CovidController {
 	 */
 	@Operation(summary = "Get COVID beneficiary vitals")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurseCovid" })
-	public String getBenVitalDetailsFrmNurseNCDCare(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVitalDetailsFrmNurseNCDCare(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for Covid 19 vital data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
 
-				String res = covid19ServiceImpl.getBeneficiaryVitalDetails(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("Covid 19 vital data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary vital data");
-			logger.error("Error while getting beneficiary vital data :" + e);
+			String res = covid19ServiceImpl.getBeneficiaryVitalDetails(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("Covid 19 vital data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
-	/**
-	 * @Objective Fetching beneficiary doctor details.
-	 * @param comingRequest
-	 * @return visit details in JSON format
-	 */
 	@Operation(summary = "Get COVID beneficiary case-record and referral details")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorCovid" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenCaseRecordFromDoctorCovid19(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenCaseRecordFromDoctorCovid19(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
 
 		logger.info("Request object for Covid 19 doctor data fetching :" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
+		JSONObject obj = new JSONObject(comingRequest);
+		if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
 
-				String res = covid19ServiceImpl.getBenCaseRecordFromDoctorCovid19(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("Covid 19 doctor data fetching Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary doctor data");
-			logger.error("Error while getting beneficiary doctor data :" + e);
+			String res = covid19ServiceImpl.getBenCaseRecordFromDoctorCovid19(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("Covid 19 doctor data fetching Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -263,32 +219,19 @@ public class CovidController {
 	 */
 	@Operation(summary = "Update COVID beneficiary history")
 	@PostMapping(value = { "/update/historyScreen" })
-	public String updateHistoryNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateHistoryNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for history data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = covid19ServiceImpl.updateBenHistoryDetails(jsnOBJ);
-			if (result > 0) {
-				Map<String, Integer> resMap = new HashMap<String, Integer>();
-				resMap.put("result", result);
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("History data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating history data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = covid19ServiceImpl.updateBenHistoryDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("History data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -300,30 +243,19 @@ public class CovidController {
 	 */
 	@Operation(summary = "Update COVID beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
-	public String updateVitalNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateVitalNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for vital data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = covid19ServiceImpl.updateBenVitalDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("Vital data update Response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating vital data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = covid19ServiceImpl.updateBenVitalDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("Vital data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -334,30 +266,19 @@ public class CovidController {
 	 */
 	@Operation(summary = "Update COVID beneficiary case-record and referral details")
 	@PostMapping(value = { "/update/doctorData" })
-	public String updateCovid19DoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
-
+	public ResponseEntity<String> updateCovid19DoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Request object for doctor data updating :" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			Long result = covid19ServiceImpl.updateCovid19DoctorData(jsnOBJ, Authorization);
-			if (null != result && result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("Doctor data update Response:" + response);
-		} catch (Exception e) {
-			logger.error("Unable to modify data. " + e.getMessage());
-			response.setError(5000, e.getMessage());
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		Long result = covid19ServiceImpl.updateCovid19DoctorData(jsnOBJ, Authorization);
+		if (null != result && result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("Doctor data update Response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 }

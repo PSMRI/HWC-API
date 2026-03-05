@@ -32,14 +32,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.service.pnc.PNCServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -67,33 +67,19 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Save PNC nurse data")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenPNCNurseData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenPNCNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		if (null != requestObj) {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-
-			try {
-				logger.info("Request object for PNC nurse data saving :" + requestObj);
-
-				if (jsnOBJ != null) {
-					String ancRes = pncServiceImpl.savePNCNurseData(jsnOBJ, Authorization);
-					response.setResponse(ancRes);
-				} else {
-					response.setError(5000, "Invalid request");
-				}
-
-			} catch (Exception e) {
-				logger.error("Error while saving nurse data :" + e.getMessage());
-				pncServiceImpl.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, e.getMessage());
-			}
+			JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+			logger.info("Request object for PNC nurse data saving :" + requestObj);
+			String ancRes = pncServiceImpl.savePNCNurseData(jsnOBJ, Authorization);
+			response.setResponse(ancRes);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -103,32 +89,24 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Save PNC doctor data")
 	@PostMapping(value = { "/save/doctorData" })
-	public String saveBenPNCDoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
+	public ResponseEntity<String> saveBenPNCDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
-		try {
-			logger.info("Request object for PNC doctor data saving :" + requestObj);
-
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
-			if (jsnOBJ != null) {
-				Long r = pncServiceImpl.savePNCDoctorData(jsnOBJ, Authorization);
-				if (r != null && r > 0) {
-					response.setResponse("Data saved successfully");
-				} else {
-					response.setError(5000, "Unable to save data");
-				}
+		logger.info("Request object for PNC doctor data saving :" + requestObj);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		if (jsnOBJ != null) {
+			Long r = pncServiceImpl.savePNCDoctorData(jsnOBJ, Authorization);
+			if (r != null && r > 0) {
+				response.setResponse("Data saved successfully");
 			} else {
-				response.setError(5000, "Invalid request");
+				response.setError(5000, "Unable to save data");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 			}
-
-		} catch (Exception e) {
-			logger.error("Error while saving doctor data :" + e.getMessage());
-			response.setError(5000, e.getMessage());
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -139,29 +117,24 @@ public class PostnatalCareController {
 	@Operation(summary = "Get PNC beneficiary visit details from nurse")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNursePNC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenVisitDetailsFrmNursePNC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVisitDetailsFrmNursePNC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("PNC visit data fetch request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.length() > 1) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = pncServiceImpl.getBenVisitDetailsFrmNursePNC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("PNC visit data fetch response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary visit data");
-			logger.error("Error while getting beneficiary visit data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = pncServiceImpl.getBenVisitDetailsFrmNursePNC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("PNC visit data fetch response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -172,32 +145,26 @@ public class PostnatalCareController {
 	@Operation(summary = "Get PNC beneficiary details from nurse")
 	@PostMapping(value = { "/getBenPNCDetailsFrmNursePNC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenPNCDetailsFrmNursePNC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenPNCDetailsFrmNursePNC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("PNC Care data fetch request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			Long visitCode = null;
-			if (obj.has("benRegID")) {
-				Long benRegID = obj.getLong("benRegID");
-
-				if (obj.has("visitCode") && !obj.isNull("visitCode") && obj.get("visitCode") != null)
-					visitCode = obj.getLong("visitCode");
-
-				String res = pncServiceImpl.getBenPNCDetailsFrmNursePNC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("PNC Care data fetch response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary PNC Care data");
-			logger.error("Error while getting beneficiary PNC Care data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		Long visitCode = null;
+		if (obj.has("benRegID")) {
+			Long benRegID = obj.getLong("benRegID");
+			if (obj.has("visitCode") && !obj.isNull("visitCode") && obj.get("visitCode") != null)
+				visitCode = obj.getLong("visitCode");
+			String res = pncServiceImpl.getBenPNCDetailsFrmNursePNC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("PNC Care data fetch response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -207,29 +174,23 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Get PNC bneficiary history from nurse")
 	@PostMapping(value = { "/getBenHistoryDetails" })
-
-	public String getBenHistoryDetails(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenHistoryDetails(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("History data fetch request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String s = pncServiceImpl.getBenHistoryDetails(benRegID, visitCode);
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("History data fetch response :" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary history data");
-			logger.error("Error while getting beneficiary history data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String s = pncServiceImpl.getBenHistoryDetails(benRegID, visitCode);
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("History data fetch response :" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -239,29 +200,24 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Get PNC beneficiary vitals from nurse")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
-	public String getBenVitalDetailsFrmNurse(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenVitalDetailsFrmNurse(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("vital data fetch request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = pncServiceImpl.getBeneficiaryVitalDetails(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("Vital data fetch response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary vital data");
-			logger.error("Error while getting beneficiary vital data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = pncServiceImpl.getBeneficiaryVitalDetails(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("Vital data fetch response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -271,29 +227,23 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Get PNC beneficiary examination details from nurse")
 	@PostMapping(value = { "/getBenExaminationDetailsPNC" })
-
-	public String getBenExaminationDetailsPNC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenExaminationDetailsPNC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("PNC examination data fetch request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String s = pncServiceImpl.getPNCExaminationDetailsData(benRegID, visitCode);
-				response.setResponse(s);
-			} else {
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("Examination data fetch response :" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary examination data");
-			logger.error("Error while getting beneficiary examination data :" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String s = pncServiceImpl.getPNCExaminationDetailsData(benRegID, visitCode);
+			response.setResponse(s);
+		} else {
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("Examination data fetch response :" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -304,29 +254,24 @@ public class PostnatalCareController {
 	@Operation(summary = "Get PNC beneficiary case record")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorPNC" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenCaseRecordFromDoctorPNC(
-			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
+	public ResponseEntity<String> getBenCaseRecordFromDoctorPNC(
+			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest)
+			throws Exception {
 		OutputResponse response = new OutputResponse();
-
 		logger.info("PNC doctor data fetch request:" + comingRequest);
-		try {
-			JSONObject obj = new JSONObject(comingRequest);
-			if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
-				Long benRegID = obj.getLong("benRegID");
-				Long visitCode = obj.getLong("visitCode");
-
-				String res = pncServiceImpl.getBenCaseRecordFromDoctorPNC(benRegID, visitCode);
-				response.setResponse(res);
-			} else {
-				logger.info("Invalid request");
-				response.setError(5000, "Invalid request");
-			}
-			logger.info("Doctor data fetch response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary doctor data");
-			logger.error("Error while getting beneficiary doctor data:" + e);
+		JSONObject obj = new JSONObject(comingRequest);
+		if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
+			Long benRegID = obj.getLong("benRegID");
+			Long visitCode = obj.getLong("visitCode");
+			String res = pncServiceImpl.getBenCaseRecordFromDoctorPNC(benRegID, visitCode);
+			response.setResponse(res);
+		} else {
+			logger.info("Invalid request");
+			response.setError(5000, "Invalid request");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.toString());
 		}
-		return response.toString();
+		logger.info("Doctor data fetch response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -338,30 +283,19 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Update PNC doctor data")
 	@PostMapping(value = { "/update/PNCScreen" })
-	public String updatePNCCareNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updatePNCCareNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("PNC Care data update request:" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = pncServiceImpl.updateBenPNCDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("PNC Care data update response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating PNC Care :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = pncServiceImpl.updateBenPNCDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("PNC Care data update response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -373,30 +307,19 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Update PNC beneficiary history")
 	@PostMapping(value = { "/update/historyScreen" })
-	public String updateHistoryNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateHistoryNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("History data update request:" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = pncServiceImpl.updateBenHistoryDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("History data update response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating history data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = pncServiceImpl.updateBenHistoryDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("History data update response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -408,30 +331,19 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Update PNC beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
-	public String updateVitalNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateVitalNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Vital data update request:" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = pncServiceImpl.updateBenVitalDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("Vital data update response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating vital data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = pncServiceImpl.updateBenVitalDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("Vital data update response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	/**
@@ -443,58 +355,36 @@ public class PostnatalCareController {
 	 */
 	@Operation(summary = "Update PNC examination data")
 	@PostMapping(value = { "/update/examinationScreen" })
-	public String updateGeneralOPDExaminationNurse(@RequestBody String requestObj) {
-
+	public ResponseEntity<String> updateGeneralOPDExaminationNurse(@RequestBody String requestObj) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Examination data update request:" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			int result = pncServiceImpl.updateBenExaminationDetails(jsnOBJ);
-			if (result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("Examination data update response:" + response);
-		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating examination data :" + e);
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		int result = pncServiceImpl.updateBenExaminationDetails(jsnOBJ);
+		if (result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("Examination data update response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 
 	@Operation(summary = "Update PNC doctor data")
 	@PostMapping(value = { "/update/doctorData" })
-	public String updatePNCDoctorData(@RequestBody String requestObj,
-			@RequestHeader(value = "Authorization") String Authorization) {
-
+	public ResponseEntity<String> updatePNCDoctorData(@RequestBody String requestObj,
+			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 		logger.info("Doctor data update request:" + requestObj);
-
-		JsonObject jsnOBJ = new JsonObject();
-		JsonParser jsnParser = new JsonParser();
-		JsonElement jsnElmnt = jsnParser.parse(requestObj);
-		jsnOBJ = jsnElmnt.getAsJsonObject();
-
-		try {
-			Long result = pncServiceImpl.updatePNCDoctorData(jsnOBJ, Authorization);
-			if (null != result && result > 0) {
-				response.setResponse("Data updated successfully");
-			} else {
-				response.setError(500, "Unable to modify data");
-			}
-			logger.info("Doctor data update response:" + response);
-		} catch (Exception e) {
-			logger.error("Unable to modify data. " + e.getMessage());
-			response.setError(5000, e.getMessage());
+		JsonObject jsnOBJ = JsonParser.parseString(requestObj).getAsJsonObject();
+		Long result = pncServiceImpl.updatePNCDoctorData(jsnOBJ, Authorization);
+		if (null != result && result > 0) {
+			response.setResponse("Data updated successfully");
+		} else {
+			response.setError(500, "Unable to modify data");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
 		}
-
-		return response.toString();
+		logger.info("Doctor data update response:" + response);
+		return ResponseEntity.ok(response.toString());
 	}
 }
