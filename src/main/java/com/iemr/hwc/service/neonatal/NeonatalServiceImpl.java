@@ -96,7 +96,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 	private GeneralOPDDoctorServiceImpl generalOPDDoctorServiceImpl;
 	@Autowired
 	private LabTechnicianServiceImpl labTechnicianServiceImpl;
-	
+
 	@Autowired
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	@Autowired
@@ -236,7 +236,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 
 		return new Gson().toJson(responseMap);
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -261,6 +261,13 @@ public class NeonatalServiceImpl implements NeonatalService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int saveDoctorDataNNI(JsonObject requestOBJ, String Authorization) throws Exception {
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		int saveSuccessFlag = 1;
 		Long prescriptionID = null;
 
@@ -384,7 +391,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = 1;
@@ -702,14 +709,16 @@ public class NeonatalServiceImpl implements NeonatalService {
 		return resMap.toString();
 	}
 
-//	@Override
-//	public String getBenImmunizationServiceHistory(Long beneficiaryRegID) throws Exception {
-//
-//		List<ImmunizationServices> rsList = immunizationServicesRepo.findByBeneficiaryRegIDAndDeleted(beneficiaryRegID,
-//				false);
-//
-//		return new Gson().toJson(rsList);
-//	}
+	// @Override
+	// public String getBenImmunizationServiceHistory(Long beneficiaryRegID) throws
+	// Exception {
+	//
+	// List<ImmunizationServices> rsList =
+	// immunizationServicesRepo.findByBeneficiaryRegIDAndDeleted(beneficiaryRegID,
+	// false);
+	//
+	// return new Gson().toJson(rsList);
+	// }
 
 	@Override
 	public String getBenCaseRecordFromDoctorNNI(Long benRegID, Long visitCode) throws IEMRException {
@@ -766,7 +775,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 		return resMap.toString();
 	}
 
-/// *****************  update nurse data *****************************
+	/// ***************** update nurse data *****************************
 
 	// update vitals & anthro
 	/**
@@ -919,6 +928,12 @@ public class NeonatalServiceImpl implements NeonatalService {
 		Long updateSuccessFlag = null;
 		Long prescriptionID = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 
@@ -1041,7 +1056,16 @@ public class NeonatalServiceImpl implements NeonatalService {
 						tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 						tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 					}
-					Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Map<String, Object> drugSaveResult = commonNurseServiceImpl
+							.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Integer r = (Integer) drugSaveResult.get("count");
+					List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+					// Store IDs in JsonObject
+					if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+						Gson gson = new Gson();
+						requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+					}
 
 				}
 
@@ -1055,7 +1079,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 			commonUtilityClass.setAuthorization(Authorization);
 
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0)
 				updateSuccessFlag = (long) 1;

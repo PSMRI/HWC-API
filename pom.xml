@@ -6,7 +6,7 @@
 
 	<groupId>com.iemr.hwc</groupId>
 	<artifactId>hwc-api</artifactId>
-	<version>3.6.0</version>
+	<version>3.6.1</version>
 	<packaging>war</packaging>
 
 	<name>HWC-API</name>
@@ -480,6 +480,36 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<version>7.0.0</version>
+				<executions>
+					<execution>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>initialize</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<includeOnlyProperties>
+						<property>^git.branch$</property>
+						<property>^git.commit.id.abbrev$</property>
+						<property>^git.build.version$</property>
+						<property>^git.build.time$</property>
+						<property>^git.commit.message.short$</property>
+						<property>^git.commit.user.name$</property>
+						<property>^git.dirty$</property>
+						<property>^git.total.commit.count$</property>
+					</includeOnlyProperties>
+					<failOnNoGitDirectory>false</failOnNoGitDirectory>
+					<failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

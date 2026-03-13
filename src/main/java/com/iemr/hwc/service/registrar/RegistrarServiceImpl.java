@@ -78,12 +78,18 @@ public class RegistrarServiceImpl implements RegistrarService {
 	@Value("${registrarQuickSearchByPhoneNoUrl}")
 	private String registrarQuickSearchByPhoneNoUrl;
 
+	@Value("${registrarQuickSearchByESUrl}")
+	private String registrarQuickSearchByESUrl;
+	
 	@Value("${beneficiaryEditUrl}")
 	private String beneficiaryEditUrl;
 
 	@Value("${registrarAdvanceSearchUrl}")
 	private String registrarAdvanceSearchUrl;
 
+	@Value("${registrarAdvanceSearchESUrl}")
+	private String registrarAdvanceSearchESUrl;
+	
 	@Value("${syncSearchByLocation}")
 	private String syncSearchByLocation;
 
@@ -810,6 +816,26 @@ public class RegistrarServiceImpl implements RegistrarService {
 		return returnOBJ;
 	}
 
+	// beneficiary quick search new integrated with common and identity with elasticsearch
+	public String beneficiaryQuickSearchES(String requestObj, String Authorization) {
+		String returnOBJ = null;
+		RestTemplate restTemplate = new RestTemplate();
+		JSONObject obj = new JSONObject(requestObj);
+		System.out.println("obj="+obj);
+		HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
+		System.out.println("test create request="+request);
+
+		if ((obj.has("search") && !obj.isNull("search"))) {
+			ResponseEntity<String> response = restTemplate.exchange(registrarQuickSearchByESUrl, HttpMethod.POST,
+					request, String.class);
+			if (response.hasBody())
+				returnOBJ = response.getBody();
+
+		} 
+		return returnOBJ;
+	}
+
+
 	// beneficiary advance search new integrated with common and identity
 	public String beneficiaryAdvanceSearch(String requestObj, String Authorization) {
 		String returnOBJ = null;
@@ -824,6 +850,30 @@ public class RegistrarServiceImpl implements RegistrarService {
 		return returnOBJ;
 
 	}
+
+	/**
+ * Elasticsearch-based beneficiary advanced search
+ */
+public String beneficiaryAdvancedSearchES(String requestObj, String Authorization) {
+    
+    String returnOBJ = null;
+    RestTemplate restTemplate = new RestTemplate();
+    
+    HttpEntity<Object> request = RestTemplateUtil.createRequestEntity(requestObj, Authorization);
+    
+    ResponseEntity<String> response = restTemplate.exchange(
+        registrarAdvanceSearchESUrl,
+        HttpMethod.POST, 
+        request,
+        String.class
+    );
+
+    if (response.hasBody()) {
+        returnOBJ = response.getBody();
+    }
+	
+    return returnOBJ;
+}
 
 	public int searchAndSubmitBeneficiaryToNurse(String requestOBJ) throws Exception {
 		int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(requestOBJ, null, null);

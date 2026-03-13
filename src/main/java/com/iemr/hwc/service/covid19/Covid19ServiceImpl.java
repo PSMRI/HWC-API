@@ -98,7 +98,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 	private Covid19BenFeedbackRepo covid19BenFeedbackRepo;
 	@Autowired
 	private PrescriptionDetailRepo prescriptionDetailRepo;
-	
+
 	@Autowired
 	private BenVisitDetailRepo benVisitDetailRepo;
 
@@ -210,7 +210,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 		}
 		return new Gson().toJson(responseMap);
 	}
-	
+
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
 
@@ -665,9 +665,11 @@ public class Covid19ServiceImpl implements Covid19Service {
 		resMap.put("covidDetails", new Gson().toJson(covid19BenFeedback));
 		resMap.put("Cdss", commonNurseServiceImpl.getBenCdss(benRegID, visitCode));
 
-//		resMap.put("BenAdherence", commonNurseServiceImpl.getBenAdherence(benRegID, visitCode));
-//
-//		resMap.put("Investigation", commonNurseServiceImpl.getLabTestOrders(benRegID, visitCode));
+		// resMap.put("BenAdherence", commonNurseServiceImpl.getBenAdherence(benRegID,
+		// visitCode));
+		//
+		// resMap.put("Investigation", commonNurseServiceImpl.getLabTestOrders(benRegID,
+		// visitCode));
 
 		return resMap.toString();
 	}
@@ -1072,6 +1074,12 @@ public class Covid19ServiceImpl implements Covid19Service {
 		Long referSaveSuccessFlag = null;
 		Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
@@ -1145,15 +1153,18 @@ public class Covid19ServiceImpl implements Covid19Service {
 
 			// save diagnosis
 			// not required in covid diagnosis
-//			if (requestOBJ.has("diagnosis") && !requestOBJ.get("diagnosis").isJsonNull()) {
-//				NCDCareDiagnosis ncdDiagnosis = InputMapper.gson().fromJson(requestOBJ.get("diagnosis"),
-//						NCDCareDiagnosis.class);
-//				ncdDiagnosis.setPrescriptionID(prescriptionID);
-//				diagnosisSuccessFlag = ncdCareDoctorServiceImpl.saveNCDDiagnosisData(ncdDiagnosis);
-//
-//			} else {
-//				diagnosisSuccessFlag = new Long(1);
-//			}
+			// if (requestOBJ.has("diagnosis") && !requestOBJ.get("diagnosis").isJsonNull())
+			// {
+			// NCDCareDiagnosis ncdDiagnosis =
+			// InputMapper.gson().fromJson(requestOBJ.get("diagnosis"),
+			// NCDCareDiagnosis.class);
+			// ncdDiagnosis.setPrescriptionID(prescriptionID);
+			// diagnosisSuccessFlag =
+			// ncdCareDoctorServiceImpl.saveNCDDiagnosisData(ncdDiagnosis);
+			//
+			// } else {
+			// diagnosisSuccessFlag = new Long(1);
+			// }
 
 			// save prescribed lab test
 			if (isTestPrescribed) {
@@ -1176,7 +1187,17 @@ public class Covid19ServiceImpl implements Covid19Service {
 					tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 					tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 				}
-				Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Map<String, Object> drugSaveResult = commonNurseServiceImpl
+						.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Integer r = (Integer) drugSaveResult.get("count");
+				List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+				// Store IDs in JsonObject
+				if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+					Gson gson = new Gson();
+					requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+				}
+
 				if (r > 0 && r != null) {
 					prescriptionSuccessFlag = r;
 				}
@@ -1207,7 +1228,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = referSaveSuccessFlag;
@@ -1309,6 +1330,12 @@ public class Covid19ServiceImpl implements Covid19Service {
 		Integer findingSuccessFlag = null;
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -1416,7 +1443,16 @@ public class Covid19ServiceImpl implements Covid19Service {
 					tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 					tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 				}
-				Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Map<String, Object> drugSaveResult = commonNurseServiceImpl
+						.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+				Integer r = (Integer) drugSaveResult.get("count");
+				List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+				// Store IDs in JsonObject
+				if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+					Gson gson = new Gson();
+					requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+				}
 				if (r > 0 && r != null) {
 					prescriptionSuccessFlag = r;
 				}
@@ -1446,7 +1482,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass,
-						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ);
+						isTestPrescribed, isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					updateSuccessFlag = investigationSuccessFlag;
