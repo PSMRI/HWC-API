@@ -173,6 +173,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
         headers.add("AUTHORIZATION", Authorization);
         HttpEntity<Object> registrationRequest = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
+         logger.info("HWC Beneficiary request " + comingRequest);
 
         try {
             ResponseEntity<String> registrationResponse = restTemplate.exchange(registrationUrl, HttpMethod.POST, registrationRequest,
@@ -180,6 +181,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 String registrationResponseStr = registrationResponse.getBody();
                 JSONObject registrationResponseObj = new JSONObject(registrationResponseStr);
+             logger.info("HWC Beneficiary registrationResponseObj " + registrationResponseObj);
 
                 if (registrationResponseObj.getInt("statusCode") == 200) {
 
