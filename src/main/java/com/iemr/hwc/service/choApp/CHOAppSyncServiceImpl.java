@@ -201,17 +201,25 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
                     beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
                     beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
-                    logger.info("beneficiaryDetailsRmnch json :" + beneficiaryDetailsRmnch);
+
+                    String jsonBody = beneficiaryDetailsRmnch.toString();
+
+                    logger.info("beneficiaryDetailsRmnch json :" + jsonBody);
+
 
                     if(beneficiaryDetailsRmnch!=null){
                         headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
                         headers.add("AUTHORIZATION", Authorization);
-                        HttpEntity<Object> beneficiaryDetailsRmnchRequest = RestTemplateUtil.createRequestEntity(beneficiaryDetailsRmnch, Authorization);
-                        logger.info("beneficiaryDetailsRmnch hwc :" + beneficiaryDetailsRmnchRequest);
+                        HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
+                        logger.info("beneficiaryDetailsRmnch request :" + request);
 
-                        ResponseEntity<String> identityResponse = restTemplate.exchange(syncDataToAmrit, HttpMethod.POST, beneficiaryDetailsRmnchRequest,
-                                String.class);
-                        logger.info("identityResponse" +identityResponse );
+                        ResponseEntity<String> response = restTemplate.exchange(
+                                syncDataToAmrit,
+                                HttpMethod.POST,
+                                request,
+                                String.class
+                        );
+                        logger.info("identityResponse" +response );
 
                     }
 
