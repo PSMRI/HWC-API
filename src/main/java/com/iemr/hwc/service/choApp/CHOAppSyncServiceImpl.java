@@ -28,7 +28,6 @@ import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
-import com.iemr.hwc.data.rmnch.RMNCHBeneficiaryDetailsRmnch;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.choApp.OutreachActivityRepo;
 import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
@@ -50,7 +49,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,34 +201,15 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
                             JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
 
-                            RMNCHBeneficiaryDetailsRmnch beneficiaryDetailsRmnch = new RMNCHBeneficiaryDetailsRmnch();
+                            JsonObject beneficiaryDetailsRmnch = new JsonObject();
 
+                            beneficiaryDetailsRmnch.addProperty("benficieryid", beneficiaryID);
+                            beneficiaryDetailsRmnch.addProperty("benRegId", beneficiaryRegID);
+                            beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
+                            beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
+                            beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
 
-                            beneficiaryDetailsRmnch.setBenficieryid(BigInteger.valueOf(beneficiaryID));
-                            beneficiaryDetailsRmnch.setBenRegId(BigInteger.valueOf(beneficiaryRegID));
-                            beneficiaryDetailsRmnch.setCreatedBy(requestObj.get("createdBy").getAsString());
-                            beneficiaryDetailsRmnch.setVanID(requestObj.get("vanID").getAsInt());
-                            beneficiaryDetailsRmnch.setParkingPlaceID(requestObj.get("parkingPlaceID").getAsInt());
-                            beneficiaryDetailsRmnch.setProviderServiceMapID(
-                                    requestObj.get("providerServiceMapID").getAsInt()
-                            );
-
-                            int genderID = requestObj.get("genderID").getAsInt();
-                            int maritalStatusID = requestObj.get("maritalStatusID").getAsInt();
-
-                            beneficiaryDetailsRmnch.setReproductiveStatusId(maritalStatusID);
-                            beneficiaryDetailsRmnch.setReproductiveStatusId(
-                                    requestObj.get("reproductiveStatusId") != null
-                                            ? requestObj.get("reproductiveStatusId").getAsInt()
-                                            : maritalStatusID
-                            );
-                            beneficiaryDetailsRmnch.setReproductiveStatus(
-                                    requestObj.get("reproductiveStatus") != null
-                                            ? requestObj.get("reproductiveStatus").getAsString()
-                                            : null
-                            );
-                            beneficiaryDetailsRmnch.setGenderId(genderID);
-                             if(beneficiaryDetailsRmnch!=null){
+                            if(beneficiaryDetailsRmnch!=null){
                                  headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
                                  headers.add("AUTHORIZATION", Authorization);
                                  HttpEntity<Object> beneficiaryDetailsRmnchResponse = RestTemplateUtil.createRequestEntity(beneficiaryDetailsRmnch, Authorization);
@@ -238,8 +217,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                                  ResponseEntity<String> identityResponse = restTemplate.exchange(syncDataToAmrit, HttpMethod.POST, beneficiaryDetailsRmnchResponse,
                                          String.class);
                                  logger.info("identityResponse" +identityResponse );
-
-
 
                              }
 
