@@ -100,7 +100,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 	private BenVisitDetailRepo benVisitDetailRepo;
 	@Autowired
 	private CDSSRepo cdssRepo;
-	
+
 	@Autowired
 	private BenAdherenceRepo benAdherenceRepo;
 
@@ -209,91 +209,94 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(jsnOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
-			int i=commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),benVisitDetailsOBJ.getVisitReason(),benVisitDetailsOBJ.getVisitCategory());
-			if(i<1) {
-			Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ, nurseUtilityClass.getSessionID());
+			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
+					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
+			if (i < 1) {
+				Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ,
+						nurseUtilityClass.getSessionID());
 
-			// 11-06-2018 visit code
-			benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-					nurseUtilityClass.getSessionID());
-			// Getting benflowID for ben status update
-			Long benFlowID = null;
-			// if (jsnOBJ.has("benFlowID")) {
-			// benFlowID = jsnOBJ.get("benFlowID").getAsLong();
-			// }
+				// 11-06-2018 visit code
+				benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
+						nurseUtilityClass.getSessionID());
+				// Getting benflowID for ben status update
+				Long benFlowID = null;
+				// if (jsnOBJ.has("benFlowID")) {
+				// benFlowID = jsnOBJ.get("benFlowID").getAsLong();
+				// }
 
-			// Above if block code replaced by below line
-			benFlowID = nurseUtilityClass.getBenFlowID();
+				// Above if block code replaced by below line
+				benFlowID = nurseUtilityClass.getBenFlowID();
 
-			if (benVisitID != null && benVisitID > 0) {
+				if (benVisitID != null && benVisitID > 0) {
 
-				nurseUtilityClass.setVisitCode(benVisitCode);
-				nurseUtilityClass.setBenVisitID(benVisitID);
+					nurseUtilityClass.setVisitCode(benVisitCode);
+					nurseUtilityClass.setBenVisitID(benVisitID);
 
-				tcRequestOBJ = commonServiceImpl.createTcRequest(jsnOBJ, nurseUtilityClass, Authorization);
+					tcRequestOBJ = commonServiceImpl.createTcRequest(jsnOBJ, nurseUtilityClass, Authorization);
 
-				BenAnthropometryDetail benAnthropometryDetail = InputMapper.gson().fromJson(jsnOBJ.get("vitalsDetails"),
-						BenAnthropometryDetail.class);
-				benAnthropometryDetail.setBenVisitID(benVisitID);
-				benAnthropometryDetail.setVisitCode(benVisitCode);
-				Long benAnthropometryID = commonNurseServiceImpl
-						.saveBeneficiaryPhysicalAnthropometryDetails(benAnthropometryDetail);
-				BenPhysicalVitalDetail benPhysicalVitalDetail = InputMapper.gson().fromJson(jsnOBJ.get("vitalsDetails"),
-						BenPhysicalVitalDetail.class);
-				benPhysicalVitalDetail.setBenVisitID(benVisitID);
-				benPhysicalVitalDetail.setVisitCode(benVisitCode);
-				Long benPhysicalVitalID = commonNurseServiceImpl
-						.saveBeneficiaryPhysicalVitalDetails(benPhysicalVitalDetail);
+					BenAnthropometryDetail benAnthropometryDetail = InputMapper.gson().fromJson(
+							jsnOBJ.get("vitalsDetails"),
+							BenAnthropometryDetail.class);
+					benAnthropometryDetail.setBenVisitID(benVisitID);
+					benAnthropometryDetail.setVisitCode(benVisitCode);
+					Long benAnthropometryID = commonNurseServiceImpl
+							.saveBeneficiaryPhysicalAnthropometryDetails(benAnthropometryDetail);
+					BenPhysicalVitalDetail benPhysicalVitalDetail = InputMapper.gson().fromJson(
+							jsnOBJ.get("vitalsDetails"),
+							BenPhysicalVitalDetail.class);
+					benPhysicalVitalDetail.setBenVisitID(benVisitID);
+					benPhysicalVitalDetail.setVisitCode(benVisitCode);
+					Long benPhysicalVitalID = commonNurseServiceImpl
+							.saveBeneficiaryPhysicalVitalDetails(benPhysicalVitalDetail);
 
+					// Chief Complaint QC update
+					Long benChiefComplaintID = null;
+					JsonArray chiefComplaintArray = jsnOBJ.getAsJsonArray("chiefComplaintList");
 
-			//Chief Complaint QC update
-			Long benChiefComplaintID = null;
-			JsonArray chiefComplaintArray = jsnOBJ.getAsJsonArray("chiefComplaintList");
-			
-			for (JsonElement element : chiefComplaintArray) {
-    			JsonObject complaint = element.getAsJsonObject();
-    			complaint.addProperty("benVisitID", benVisitID);
-    			complaint.addProperty("visitCode", benVisitCode);
-			}
-
-			benChiefComplaintID = saveBeneficiaryChiefComplaint(jsnOBJ);
-
-				if (benAnthropometryID != null && benAnthropometryID > 0 && benPhysicalVitalID != null
-						&& benPhysicalVitalID > 0 && benChiefComplaintID != null && benChiefComplaintID > 0) {
-					// Integer i = commonNurseServiceImpl.updateBeneficiaryStatus('N',
-					// benVisitDetailsOBJ.getBeneficiaryRegID());
-
-					returnOBJ = 1;
-					/**
-					 * We have to write new code to update ben status flow new logic
-					 */
-
-					int j = updateBenStatusFlagAfterNurseSaveSuccess(benVisitDetailsOBJ, benVisitID, benFlowID,
-							benVisitCode, nurseUtilityClass.getVanID(), tcRequestOBJ);
-
-					if (j > 0)
-						returnOBJ = 1;
-					else
-						throw new RuntimeException(
-								"Error occurred while saving data. Beneficiary status update failed");
-
-					if (j > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
-						int k = sMSGatewayServiceImpl.smsSenderGateway("schedule",
-								nurseUtilityClass.getBeneficiaryRegID(), tcRequestOBJ.getSpecializationID(),
-								tcRequestOBJ.getTmRequestID(), null, nurseUtilityClass.getCreatedBy(),
-								tcRequestOBJ.getAllocationDate() != null
-										? String.valueOf(tcRequestOBJ.getAllocationDate())
-										: "",
-								null, Authorization);
+					for (JsonElement element : chiefComplaintArray) {
+						JsonObject complaint = element.getAsJsonObject();
+						complaint.addProperty("benVisitID", benVisitID);
+						complaint.addProperty("visitCode", benVisitCode);
 					}
 
+					benChiefComplaintID = saveBeneficiaryChiefComplaint(jsnOBJ);
+
+					if (benAnthropometryID != null && benAnthropometryID > 0 && benPhysicalVitalID != null
+							&& benPhysicalVitalID > 0 && benChiefComplaintID != null && benChiefComplaintID > 0) {
+						// Integer i = commonNurseServiceImpl.updateBeneficiaryStatus('N',
+						// benVisitDetailsOBJ.getBeneficiaryRegID());
+
+						returnOBJ = 1;
+						/**
+						 * We have to write new code to update ben status flow new logic
+						 */
+
+						int j = updateBenStatusFlagAfterNurseSaveSuccess(benVisitDetailsOBJ, benVisitID, benFlowID,
+								benVisitCode, nurseUtilityClass.getVanID(), tcRequestOBJ);
+
+						if (j > 0)
+							returnOBJ = 1;
+						else
+							throw new RuntimeException(
+									"Error occurred while saving data. Beneficiary status update failed");
+
+						if (j > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
+							int k = sMSGatewayServiceImpl.smsSenderGateway("schedule",
+									nurseUtilityClass.getBeneficiaryRegID(), tcRequestOBJ.getSpecializationID(),
+									tcRequestOBJ.getTmRequestID(), null, nurseUtilityClass.getCreatedBy(),
+									tcRequestOBJ.getAllocationDate() != null
+											? String.valueOf(tcRequestOBJ.getAllocationDate())
+											: "",
+									null, Authorization);
+						}
+
+					} else {
+						throw new RuntimeException("Error occurred while saving data");
+					}
 				} else {
-					throw new RuntimeException("Error occurred while saving data");
+					throw new RuntimeException("Error occurred while creating beneficiary visit");
 				}
 			} else {
-				throw new RuntimeException("Error occurred while creating beneficiary visit");
-			}
-		} else {
 				Map<String, String> responseMap = new HashMap<String, String>();
 				responseMap.put("response", "Data already saved");
 				return new Gson().toJson(responseMap);
@@ -313,7 +316,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		return new Gson().toJson(responseMap);
 		// return returnOBJ;
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -370,6 +373,12 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Long referSaveSuccessFlag = null;
 		// Integer tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (quickConsultDoctorOBJ.has("doctorSignatureFlag")
+				&& !quickConsultDoctorOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = quickConsultDoctorOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
 		CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(quickConsultDoctorOBJ,
@@ -379,7 +388,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 		Long benChiefComplaintID = saveBeneficiaryChiefComplaint(quickConsultDoctorOBJ);
 		Long clinicalObservationID = saveBeneficiaryClinicalObservations(quickConsultDoctorOBJ);
-		
+
 		// generate prescription
 		Long prescriptionID = commonNurseServiceImpl.saveBeneficiaryPrescription(quickConsultDoctorOBJ);
 
@@ -408,14 +417,24 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 				tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 			}
-			Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+			// Use the modified method to get both count and IDs
+			Map<String, Object> drugSaveResult = commonNurseServiceImpl
+					.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+			Integer r = (Integer) drugSaveResult.get("count");
+			List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+			// Store the drug IDs in the JsonObject for later retrieval in controller
+			if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+				Gson gson = new Gson();
+				quickConsultDoctorOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+			}
 			if (r > 0 && r != null) {
 				prescriptionSuccessFlag = r;
 			}
 		} else {
 			prescriptionSuccessFlag = 1;
 		}
-		
+
 		// save prescribed lab test
 		if (isTestPrescribed) {
 			Long i = commonNurseServiceImpl.saveBeneficiaryLabTestOrderDetails(quickConsultDoctorOBJ, prescriptionID);
@@ -465,7 +484,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 			}
 			// call method to update beneficiary flow table
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0)
 				returnOBJ = 1;
@@ -496,18 +515,17 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		CDSS cdssObj = commonNurseServiceImpl.getCdssDetails(benRegID, visitCode);
 
 		String benChiefComplaintsJson = commonNurseServiceImpl.getBenChiefComplaints(benRegID, visitCode);
-    	BenChiefComplaint[] complaintsArray = gson.fromJson(benChiefComplaintsJson, BenChiefComplaint[].class);
-    	List<BenChiefComplaint> benChiefComplaints = Arrays.asList(complaintsArray);
-	
+		BenChiefComplaint[] complaintsArray = gson.fromJson(benChiefComplaintsJson, BenChiefComplaint[].class);
+		List<BenChiefComplaint> benChiefComplaints = Arrays.asList(complaintsArray);
 
 		if (null != benVisitDetailsOBJ) {
 			resMap.put("benVisitDetails", benVisitDetailsOBJ);
 		}
 
-		 if (benChiefComplaints != null && !benChiefComplaints.isEmpty()) {
-	        resMap.put("BenChiefComplaints", benChiefComplaints);
-    	}
-		if(cdssObj != null) {
+		if (benChiefComplaints != null && !benChiefComplaints.isEmpty()) {
+			resMap.put("BenChiefComplaints", benChiefComplaints);
+		}
+		if (cdssObj != null) {
 			resMap.put("cdss", cdssObj);
 		}
 
@@ -524,7 +542,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 		return resMap.toString();
 	}
-	
+
 	public String getBeneficiaryCdssDetails(Long beneficiaryRegID, Long benVisitID) {
 		Map<String, Object> resMap = new HashMap<>();
 
@@ -539,7 +557,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Map<String, Object> resMap = new HashMap<>();
 
 		resMap.put("vitals", getBeneficiaryVitalDetails(benRegID, visitCode));
-		
+
 		resMap.put("cdss", getBeneficiaryCdssDetails(benRegID, visitCode));
 
 		return resMap.toString();
@@ -579,6 +597,12 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		Long referupdateSuccessFlag = null;
 
 		Integer tcRequestStatusFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (quickConsultDoctorOBJ.has("doctorSignatureFlag")
+				&& !quickConsultDoctorOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = quickConsultDoctorOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		TeleconsultationRequestOBJ tcRequestOBJ = null;
 		// TcSpecialistSlotBookingRequestOBJ tcSpecialistSlotBookingRequestOBJ = null;
@@ -633,7 +657,17 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 				tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 				tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 			}
-			Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+			// Use the modified method to get both count and IDs
+			Map<String, Object> drugSaveResult = commonNurseServiceImpl
+					.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+			Integer r = (Integer) drugSaveResult.get("count");
+			List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+			// Store the drug IDs in the JsonObject for later retrieval in controller
+			if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+				Gson gson = new Gson();
+				quickConsultDoctorOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+			}
 			if (r > 0 && r != null) {
 				prescribedDrugSuccessFlag = new Long(1);
 			}
@@ -688,7 +722,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 			}
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0)
 				updateSuccessFlag = benChiefComplaintID;

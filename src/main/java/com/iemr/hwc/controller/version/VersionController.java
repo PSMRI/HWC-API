@@ -21,59 +21,59 @@
 */
 package com.iemr.hwc.controller.version;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.iemr.hwc.utils.response.OutputResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 public class VersionController {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	
+	private static final String UNKNOWN_VALUE = "unknown";
 
 	@Operation(summary = "Get version information")
-	@GetMapping(value = "/version")
-	public String versionInformation() {
-		OutputResponse output = new OutputResponse();
+	@GetMapping(value = "/version", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, String>> versionInformation() {
+		Map<String, String> response = new LinkedHashMap<>();
 		try {
 			logger.info("version Controller Start");
-			output.setResponse(readGitProperties());
+			Properties gitProperties = loadGitProperties();
+			response.put("buildTimestamp", gitProperties.getProperty("git.build.time", UNKNOWN_VALUE));
+			response.put("version", gitProperties.getProperty("git.build.version", UNKNOWN_VALUE));
+			response.put("branch", gitProperties.getProperty("git.branch", UNKNOWN_VALUE));
+			response.put("commitHash", gitProperties.getProperty("git.commit.id.abbrev", UNKNOWN_VALUE));
 		} catch (Exception e) {
-			output.setError(e);
+			logger.error("Failed to load version information", e);
+			response.put("buildTimestamp", UNKNOWN_VALUE);
+			response.put("version", UNKNOWN_VALUE);
+			response.put("branch", UNKNOWN_VALUE);
+			response.put("commitHash", UNKNOWN_VALUE);
 		}
-
 		logger.info("version Controller End");
-		return output.toString();
+		return ResponseEntity.ok(response);
 	}
 
-	private String readGitProperties() throws Exception {
-		ClassLoader classLoader = getClass().getClassLoader();
-		InputStream inputStream = classLoader.getResourceAsStream("git.properties");
-
-		return readFromInputStream(inputStream);
-	}
-
-	private String readFromInputStream(InputStream inputStream)
-			throws IOException {
-		StringBuilder resultStringBuilder = new StringBuilder();
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				resultStringBuilder.append(line).append("\n");
+	private Properties loadGitProperties() throws IOException {
+		Properties properties = new Properties();
+		try (InputStream input = getClass().getClassLoader()
+				.getResourceAsStream("git.properties")) {
+			if (input != null) {
+				properties.load(input);
 			}
 		}
-		return resultStringBuilder.toString();
+		return properties;
 	}
 }
