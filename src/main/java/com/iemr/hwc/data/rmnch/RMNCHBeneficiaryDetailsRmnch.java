@@ -43,7 +43,7 @@ import lombok.Data;
  *
  */
 @Entity
-@Table(name = "i_beneficiarydetails_rmnch")
+@Table(name = "i_beneficiarydetails_rmnch",schema = "db_identity")
 @Data
 public class RMNCHBeneficiaryDetailsRmnch {
 	@Id
