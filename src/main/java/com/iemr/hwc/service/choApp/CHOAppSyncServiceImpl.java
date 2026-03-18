@@ -55,10 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -222,7 +219,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                     beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
                     beneficiaryDetailsRmnch.addProperty("vanID", requestObj.get("vanID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsString());
+                    beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsInt());
 
                     if (requestObj.has("i_bendemographics")) {
                         beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
@@ -245,8 +242,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
 
                     if(beneficiaryDetailsRmnch!=null){
-                        headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-                        headers.add("AUTHORIZATION", Authorization);
+
                         HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
                         logger.info("beneficiaryDetailsRmnch request :" + request);
 
