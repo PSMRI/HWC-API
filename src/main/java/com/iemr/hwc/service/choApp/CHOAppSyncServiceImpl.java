@@ -187,11 +187,33 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 String registrationResponseStr = registrationResponse.getBody();
                 JSONObject registrationResponseObj = new JSONObject(registrationResponseStr);
              logger.info("HWC Beneficiary registrationResponseObj " + registrationResponseObj);
+            JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
 
                 if (registrationResponseObj.getInt("statusCode") == 200) {
 
                     beneficiaryRegID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryRegID");
                     beneficiaryID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryID");
+
+                    JsonObject beneficiaryDetailsRmnch = new JsonObject();
+
+                    beneficiaryDetailsRmnch.addProperty("benficieryid", beneficiaryID);
+                    beneficiaryDetailsRmnch.addProperty("benRegId", beneficiaryRegID);
+                    beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
+                    beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
+                    beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
+                    logger.info("beneficiaryDetailsRmnch json :" + beneficiaryDetailsRmnch);
+
+                    if(beneficiaryDetailsRmnch!=null){
+                        headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
+                        headers.add("AUTHORIZATION", Authorization);
+                        HttpEntity<Object> beneficiaryDetailsRmnchRequest = RestTemplateUtil.createRequestEntity(beneficiaryDetailsRmnch, Authorization);
+                        logger.info("beneficiaryDetailsRmnch hwc :" + beneficiaryDetailsRmnchRequest);
+
+                        ResponseEntity<String> identityResponse = restTemplate.exchange(syncDataToAmrit, HttpMethod.POST, beneficiaryDetailsRmnchRequest,
+                                String.class);
+                        logger.info("identityResponse" +identityResponse );
+
+                    }
 
                     int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
 
@@ -199,26 +221,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         if (i == 1) {
                             responseObj.addProperty("beneficiaryID", beneficiaryID);
                             responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
-                            JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
 
-                            JsonObject beneficiaryDetailsRmnch = new JsonObject();
 
-                            beneficiaryDetailsRmnch.addProperty("benficieryid", beneficiaryID);
-                            beneficiaryDetailsRmnch.addProperty("benRegId", beneficiaryRegID);
-                            beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
-                            beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
-                            beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
-
-                            if(beneficiaryDetailsRmnch!=null){
-                                 headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-                                 headers.add("AUTHORIZATION", Authorization);
-                                 HttpEntity<Object> beneficiaryDetailsRmnchResponse = RestTemplateUtil.createRequestEntity(beneficiaryDetailsRmnch, Authorization);
-
-                                 ResponseEntity<String> identityResponse = restTemplate.exchange(syncDataToAmrit, HttpMethod.POST, beneficiaryDetailsRmnchResponse,
-                                         String.class);
-                                 logger.info("identityResponse" +identityResponse );
-
-                             }
 
 
                             outputResponse.setResponse(responseObj.toString());
