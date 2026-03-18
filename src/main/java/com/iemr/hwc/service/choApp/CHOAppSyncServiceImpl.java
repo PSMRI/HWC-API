@@ -28,6 +28,7 @@ import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
+import com.iemr.hwc.data.rmnch.RMNCHBeneficiaryDetailsRmnch;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.choApp.OutreachActivityRepo;
 import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
@@ -36,6 +37,7 @@ import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
+import com.iemr.hwc.repo.rmnch.BeneficiaryDetailsRmnchRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
@@ -65,6 +67,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.*;
 import jakarta.ws.rs.core.MediaType;
+
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -104,6 +108,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private PrescriptionTemplatesRepo prescriptionTemplatesRepo;
 
     private OutreachActivityRepo outreachActivityRepo;
+
+    @Autowired
+    private BeneficiaryDetailsRmnchRepo beneficiaryDetailsRmnchRepo;
 
     @Autowired
     public void setOutreachActivityRepo(OutreachActivityRepo outreachActivityRepo){
@@ -194,6 +201,43 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         if (i == 1) {
                             responseObj.addProperty("beneficiaryID", beneficiaryID);
                             responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
+                            JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
+
+                            RMNCHBeneficiaryDetailsRmnch beneficiaryDetailsRmnch =
+                                    beneficiaryDetailsRmnchRepo.findByBenRegId(BigInteger.valueOf(beneficiaryRegID));
+
+                            if (beneficiaryDetailsRmnch == null) {
+                                beneficiaryDetailsRmnch = new RMNCHBeneficiaryDetailsRmnch();
+                            }
+
+                            beneficiaryDetailsRmnch.setBenficieryid(BigInteger.valueOf(beneficiaryID));
+                            beneficiaryDetailsRmnch.setBenRegId(BigInteger.valueOf(beneficiaryRegID));
+                            beneficiaryDetailsRmnch.setCreatedBy(requestObj.get("createdBy").getAsString());
+                            beneficiaryDetailsRmnch.setVanID(requestObj.get("vanID").getAsInt());
+                            beneficiaryDetailsRmnch.setParkingPlaceID(requestObj.get("parkingPlaceID").getAsInt());
+                            beneficiaryDetailsRmnch.setProviderServiceMapID(
+                                    requestObj.get("providerServiceMapID").getAsInt()
+                            );
+
+                            int genderID = requestObj.get("genderID").getAsInt();
+                            int maritalStatusID = requestObj.get("maritalStatusID").getAsInt();
+
+                            beneficiaryDetailsRmnch.setReproductiveStatusId(maritalStatusID);
+                            beneficiaryDetailsRmnch.setReproductiveStatusId(
+                                    requestObj.get("reproductiveStatusId") != null
+                                            ? requestObj.get("reproductiveStatusId").getAsInt()
+                                            : maritalStatusID
+                            );
+                            beneficiaryDetailsRmnch.setReproductiveStatus(
+                                    requestObj.get("reproductiveStatus") != null
+                                            ? requestObj.get("reproductiveStatus").getAsString()
+                                            : null
+                            );
+                            beneficiaryDetailsRmnch.setGenderId(genderID);
+
+                            beneficiaryDetailsRmnchRepo.save(beneficiaryDetailsRmnch);
+
+
                             outputResponse.setResponse(responseObj.toString());
                             status = HttpStatus.OK;
                         }
