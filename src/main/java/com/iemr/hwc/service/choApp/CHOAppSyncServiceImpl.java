@@ -37,7 +37,6 @@ import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
-import com.iemr.hwc.repo.rmnch.BeneficiaryDetailsRmnchRepo;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
@@ -87,6 +86,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Value("${getBenCountToSync}")
     private String getBenCountToSync;
 
+    private String syncDataToAmrit = "https://amritdemo.piramalswasthya.org/identity-api/rmnch/syncDataToAmritByHwc";
+
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
     private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
@@ -109,8 +110,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     private OutreachActivityRepo outreachActivityRepo;
 
-    @Autowired
-    private BeneficiaryDetailsRmnchRepo beneficiaryDetailsRmnchRepo;
+
 
     @Autowired
     public void setOutreachActivityRepo(OutreachActivityRepo outreachActivityRepo){
@@ -203,12 +203,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
                             JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
 
-                            RMNCHBeneficiaryDetailsRmnch beneficiaryDetailsRmnch =
-                                    beneficiaryDetailsRmnchRepo.findByBenRegId(BigInteger.valueOf(beneficiaryRegID));
+                            RMNCHBeneficiaryDetailsRmnch beneficiaryDetailsRmnch = new RMNCHBeneficiaryDetailsRmnch();
 
-                            if (beneficiaryDetailsRmnch == null) {
-                                beneficiaryDetailsRmnch = new RMNCHBeneficiaryDetailsRmnch();
-                            }
 
                             beneficiaryDetailsRmnch.setBenficieryid(BigInteger.valueOf(beneficiaryID));
                             beneficiaryDetailsRmnch.setBenRegId(BigInteger.valueOf(beneficiaryRegID));
@@ -234,8 +230,18 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                                             : null
                             );
                             beneficiaryDetailsRmnch.setGenderId(genderID);
+                             if(beneficiaryDetailsRmnch!=null){
+                                 headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
+                                 headers.add("AUTHORIZATION", Authorization);
+                                 HttpEntity<Object> beneficiaryDetailsRmnchResponse = RestTemplateUtil.createRequestEntity(beneficiaryDetailsRmnch, Authorization);
 
-                            beneficiaryDetailsRmnchRepo.save(beneficiaryDetailsRmnch);
+                                 ResponseEntity<String> identityResponse = restTemplate.exchange(syncDataToAmrit, HttpMethod.POST, beneficiaryDetailsRmnchResponse,
+                                         String.class);
+                                 logger.info("identityResponse" +identityResponse );
+
+
+
+                             }
 
 
                             outputResponse.setResponse(responseObj.toString());
