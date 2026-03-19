@@ -265,7 +265,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 		return new Gson().toJson(responseMap);
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -681,6 +681,12 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 	@Transactional(rollbackFor = Exception.class)
 	public Long updateDoctorDataFP(JsonObject requestOBJ, String Authorization) throws Exception {
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null) {
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
 			CommonUtilityClass commonUtilityClass = InputMapper.gson().fromJson(requestOBJ, CommonUtilityClass.class);
@@ -773,7 +779,16 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 						tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 						tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 					}
-					Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Map<String, Object> drugSaveResult = commonNurseServiceImpl
+							.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Integer r = (Integer) drugSaveResult.get("count");
+					List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+					// Store IDs in JsonObject
+					if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+						Gson gson = new Gson();
+						requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+					}
 
 				}
 
@@ -792,7 +807,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 			commonUtilityClass.setAuthorization(Authorization);
 
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0) {
 				if (tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
@@ -823,6 +838,12 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 		Integer findingSuccessFlag = null;
 		Integer prescriptionSuccessFlag = null;
 		Long referSaveSuccessFlag = null;
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
 
 		// Integer tcRequestStatusFlag = null;
 
@@ -917,7 +938,16 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 						tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 					}
 
-					Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Map<String, Object> drugSaveResult = commonNurseServiceImpl
+							.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Integer r = (Integer) drugSaveResult.get("count");
+					List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+					// Store IDs in JsonObject
+					if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+						Gson gson = new Gson();
+						requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+					}
 					if (r > 0 && r != null) {
 						prescriptionSuccessFlag = r;
 					}
@@ -951,7 +981,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = 1;

@@ -242,7 +242,7 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 
 		return new Gson().toJson(responseMap);
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -433,6 +433,12 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 		int saveSuccessFlag = 1;
 		Long prescriptionID = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		// Integer tcRequestStatusFlag = null;
 
 		if (requestOBJ != null) {
@@ -553,7 +559,7 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 
 				}
 				int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataSave(commonUtilityClass, isTestPrescribed,
-						isMedicinePrescribed, tcRequestOBJ);
+						isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 				if (i > 0)
 					saveSuccessFlag = 1;
@@ -917,6 +923,13 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Long updateDoctorDataCAC(JsonObject requestOBJ, String Authorization) throws Exception {
+
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		Long updateSuccessFlag = null;
 		Long prescriptionID = null;
 
@@ -1042,7 +1055,16 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 						tmpObj.setVisitCode(commonUtilityClass.getVisitCode());
 						tmpObj.setProviderServiceMapID(commonUtilityClass.getProviderServiceMapID());
 					}
-					Integer r = commonNurseServiceImpl.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Map<String, Object> drugSaveResult = commonNurseServiceImpl
+							.saveBenPrescribedDrugsList(prescribedDrugDetailList);
+					Integer r = (Integer) drugSaveResult.get("count");
+					List<Long> prescribedDrugIDs = (List<Long>) drugSaveResult.get("prescribedDrugIDs");
+
+					// Store IDs in JsonObject
+					if (prescribedDrugIDs != null && !prescribedDrugIDs.isEmpty()) {
+						Gson gson = new Gson();
+						requestOBJ.add("savedDrugIDs", gson.toJsonTree(prescribedDrugIDs));
+					}
 
 				}
 
@@ -1055,7 +1077,7 @@ public class AdolescentAndChildCareServiceImpl implements AdolescentAndChildCare
 			commonUtilityClass.setAuthorization(Authorization);
 
 			int i = commonDoctorServiceImpl.updateBenFlowtableAfterDocDataUpdate(commonUtilityClass, isTestPrescribed,
-					isMedicinePrescribed, tcRequestOBJ);
+					isMedicinePrescribed, tcRequestOBJ, doctorSignatureFlag);
 
 			if (i > 0)
 				updateSuccessFlag = (long) 1;

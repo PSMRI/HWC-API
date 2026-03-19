@@ -100,7 +100,7 @@ public class CSServiceImpl implements CSService {
 	private CommonServiceImpl commonServiceImpl;
 	@Autowired
 	private TCRequestModelRepo tCRequestModelRepo;
-	
+
 	private BenVisitDetailRepo benVisitDetailRepo;
 	@Autowired
 	private BenChiefComplaintRepo benChiefComplaintRepo;
@@ -183,7 +183,7 @@ public class CSServiceImpl implements CSService {
 
 				nurseUtilityClass.setVisitCode(benVisitCode);
 				nurseUtilityClass.setBenVisitID(benVisitID);
-			}else {
+			} else {
 				Map<String, String> responseMap = new HashMap<String, String>();
 				responseMap.put("response", "Data already saved");
 				return new Gson().toJson(responseMap);
@@ -295,7 +295,7 @@ public class CSServiceImpl implements CSService {
 		}
 		return new Gson().toJson(responseMap);
 	}
-	
+
 	@Override
 	public void deleteVisitDetails(JsonObject requestOBJ) throws Exception {
 		if (requestOBJ != null && requestOBJ.has("visitDetails") && !requestOBJ.get("visitDetails").isJsonNull()) {
@@ -370,16 +370,17 @@ public class CSServiceImpl implements CSService {
 	public Map<String, Long> saveBenVisitDetails(BeneficiaryVisitDetail benVisitDetailsOBJ,
 			CommonUtilityClass nurseUtilityClass) throws Exception {
 		Map<String, Long> visitIdAndCodeMap = new HashMap<>();
-		int i=commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),benVisitDetailsOBJ.getVisitReason(),benVisitDetailsOBJ.getVisitCategory());
-		if(i<1) {
-		Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
+		int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
+				benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
+		if (i < 1) {
+			Long benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
-		// 11-06-2018 visit code
-		Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-				nurseUtilityClass.getSessionID());
+			// 11-06-2018 visit code
+			Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
+					nurseUtilityClass.getSessionID());
 
-		visitIdAndCodeMap.put("visitID", benVisitID);
-		visitIdAndCodeMap.put("visitCode", benVisitCode);
+			visitIdAndCodeMap.put("visitID", benVisitID);
+			visitIdAndCodeMap.put("visitCode", benVisitCode);
 		}
 		return visitIdAndCodeMap;
 	}
@@ -816,6 +817,12 @@ public class CSServiceImpl implements CSService {
 		Long docDataSuccessFlag = null;
 		Long tcRequestStatusFlag = null;
 
+		Boolean doctorSignatureFlag = false;
+		if (requestOBJ.has("doctorSignatureFlag")
+				&& !requestOBJ.get("doctorSignatureFlag").isJsonNull()) {
+			doctorSignatureFlag = requestOBJ.get("doctorSignatureFlag").getAsBoolean();
+		}
+
 		if (requestOBJ != null && requestOBJ.has("diagnosis") && !requestOBJ.get("diagnosis").isJsonNull()) {
 
 			TeleconsultationRequestOBJ tcRequestOBJ = null;
@@ -921,7 +928,7 @@ public class CSServiceImpl implements CSService {
 				} else {
 					l2 = commonBenStatusFlowServiceImpl.updateBenFlowAfterDocData(tmpBenFlowID, tmpbeneficiaryRegID,
 							tmpBeneficiaryID, tmpBenVisitID, docFlag, pharmaFalg, oncologistFlag, tcSpecialistFlag,
-							tcUserID, tcDate, (short) 0);
+							tcUserID, tcDate, (short) 0, doctorSignatureFlag);
 				}
 
 				if (l1 > 0 || l2 > 0)
@@ -1308,7 +1315,8 @@ public class CSServiceImpl implements CSService {
 	}
 
 	private int createCareStreamOrder(long benRegID, long benVisitID, String Authorization, Long benFlowID) {
-//		ArrayList<Object[]> benDataForCareStream = registrarRepoBenData.getBenDataForCareStream(benRegID);
+		// ArrayList<Object[]> benDataForCareStream =
+		// registrarRepoBenData.getBenDataForCareStream(benRegID);
 		ArrayList<Object[]> benDataForCareStream = beneficiaryFlowStatusRepo.getBenDataForCareStream(benFlowID);
 
 		int r = cSCarestreamServiceImpl.createMamographyRequest(benDataForCareStream, benRegID, benVisitID,

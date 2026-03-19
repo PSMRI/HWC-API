@@ -21,6 +21,9 @@
 */
 package com.iemr.hwc.controller.generalOPD;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +38,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -118,7 +129,23 @@ public class GeneralOPDController {
 			if (jsnOBJ != null) {
 				Long genOPDRes = generalOPDServiceImpl.saveDoctorData(jsnOBJ, Authorization);
 				if (null != genOPDRes && genOPDRes > 0) {
-					response.setResponse("Data saved successfully");
+					// Extract drug IDs from JsonObject
+					List<Long> prescribedDrugIDs = new ArrayList<>();
+					if (jsnOBJ.has("savedDrugIDs") && !jsnOBJ.get("savedDrugIDs").isJsonNull()) {
+						JsonArray drugIDsArray = jsnOBJ.getAsJsonArray("savedDrugIDs");
+						for (int j = 0; j < drugIDsArray.size(); j++) {
+							prescribedDrugIDs.add(drugIDsArray.get(j).getAsLong());
+						}
+					}
+
+					// Create response with message and IDs
+					Map<String, Object> responseData = new HashMap<>();
+					responseData.put("message", "Data saved successfully");
+					responseData.put("prescribedDrugIDs", prescribedDrugIDs);
+
+					Gson gson = new Gson();
+					String responseJson = gson.toJson(responseData);
+					response.setResponse(responseJson);
 				} else {
 					response.setResponse("Unable to save data");
 				}
@@ -422,7 +449,23 @@ public class GeneralOPDController {
 		try {
 			Long result = generalOPDServiceImpl.updateGeneralOPDDoctorData(jsnOBJ, Authorization);
 			if (null != result && result > 0) {
-				response.setResponse("Data updated successfully");
+				// Extract drug IDs from JsonObject
+				List<Long> prescribedDrugIDs = new ArrayList<>();
+				if (jsnOBJ.has("savedDrugIDs") && !jsnOBJ.get("savedDrugIDs").isJsonNull()) {
+					JsonArray drugIDsArray = jsnOBJ.getAsJsonArray("savedDrugIDs");
+					for (int j = 0; j < drugIDsArray.size(); j++) {
+						prescribedDrugIDs.add(drugIDsArray.get(j).getAsLong());
+					}
+				}
+
+				// Create response with message and IDs
+				Map<String, Object> responseData = new HashMap<>();
+				responseData.put("message", "Data updated successfully");
+				responseData.put("prescribedDrugIDs", prescribedDrugIDs);
+
+				Gson gson = new Gson();
+				String responseJson = gson.toJson(responseData);
+				response.setResponse(responseJson);
 			} else {
 				response.setError(500, "Unable to modify data");
 			}
