@@ -44,6 +44,8 @@ This microservice is built on Java, Spring boot framework and MySQL DB.
 5. Set goals to clean install `-DENV_VAR=local(your choice of desired environment)` and click on Apply. 
 6. It is advisable have a personal environment properties file under src/main/environment filling out all the placeholders to avoid repetitive manual work each time you run locally.
 7. Click Run to run the build configuration.
+8. Enable git hooks (run once after cloning):
+   - Run the command `git config core.hooksPath .git-hooks`.
 
 ### Creating a run configuration in STS / Eclipse
 
@@ -80,52 +82,6 @@ This microservice is built on Java, Spring boot framework and MySQL DB.
 
 ## Usage
 All features have been exposed as REST endpoints. Refer to the SWAGGER API specification for details.
-
-## Setting Up Commit Hooks
-
-This project uses Git hooks to enforce consistent code quality and commit message standards. Even though this is a Java project, the hooks are powered by Node.js. Follow these steps to set up the hooks locally:
-
-### Setup Steps
-
-1. **Install Node.js and npm**
-   - Download and install from [nodejs.org](https://nodejs.org/)
-   - Verify installation with:
-     ```
-     node --version
-     npm --version
-     ```
-
-2. **Install dependencies**
-   - From the project root directory, run:
-     ```
-     npm install
-     npm ci
-     ```
-   - This will install all required dependencies including Husky and commitlint
-
-3. **Verify hooks installation**
-   - The hooks should be automatically installed by Husky
-   - You can verify by checking if the `.husky` directory contains executable hooks
-
-### Commit Message Convention
-
-This project follows a specific commit message format:
-- Format: `type(scope): subject`
-- Example: `feat(login): add remember me functionality`
-
-Types include:
-- `feat`: A new feature
-- `fix`: A bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting, etc.)
-- `refactor`: Code changes that neither fix bugs nor add features
-- `perf`: Performance improvements
-- `test`: Adding or fixing tests
-- `build`: Changes to build process or tools
-- `ci`: Changes to CI configuration
-- `chore`: Other changes (e.g., maintenance tasks, dependencies)
-
-Your commit messages will be automatically validated when you commit, ensuring project consistency.
 
 ## Filing Issues
 
