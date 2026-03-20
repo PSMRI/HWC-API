@@ -201,7 +201,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                     beneficiaryDetailsRmnch.addProperty("firstName", requestObj.get("firstName").getAsString());
                     beneficiaryDetailsRmnch.addProperty("lastName", requestObj.get("lastName").getAsString());
-                    beneficiaryDetailsRmnch.addProperty("fatherName", requestObj.get("fatherName").getAsString());
+                    JsonElement fatherElement = requestObj.get("fatherName");
+
+                    String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
+                            ? fatherElement.getAsString()
+                            : "";
+                    beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
                     beneficiaryDetailsRmnch.addProperty("spouseName", requestObj.get("spouseName").getAsString());
 
                     beneficiaryDetailsRmnch.addProperty("genderID", requestObj.get("genderID").getAsInt());
@@ -262,8 +267,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         if (i == 1) {
                             responseObj.addProperty("beneficiaryID", beneficiaryID);
                             responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
-
-
 
 
                             outputResponse.setResponse(responseObj.toString());
