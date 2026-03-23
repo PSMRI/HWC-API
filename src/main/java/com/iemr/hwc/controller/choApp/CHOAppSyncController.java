@@ -61,6 +61,14 @@ public class CHOAppSyncController {
         return choappSyncService.registerCHOAPPBeneficiary(comingReq, Authorization);
     }
 
+    @Operation(summary = "Sync new beneficiaries to AMRIT server")
+    @PostMapping(value = { "update/beneficiariesToServer" })
+    public ResponseEntity<String> beneficiaryUpdateSyncToServer(@RequestBody String comingReq,
+                                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+
+        return choappSyncService.choAppUpdateBeneficiary(comingReq, Authorization);
+    }
+
     // beneficiary registration sync from AMRIT server to CHO app with identity new
     @Operation(summary = "Sync beneficiaries from AMRIT server to CHO App")
     @PostMapping(value = { "/beneficiariesToApp" })

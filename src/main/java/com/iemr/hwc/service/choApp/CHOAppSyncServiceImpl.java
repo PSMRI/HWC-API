@@ -75,13 +75,17 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Value("${registrationUrl}")
     private String registrationUrl;
 
+    @Value("${updateBenUrl}")
+    private String updateBenregistrationUrl;
+
     @Value("${syncSearchByLocation}")
     private String syncSearchByLocation;
 
     @Value("${getBenCountToSync}")
     private String getBenCountToSync;
 
-    private String syncDataToAmrit = "https://amritdemo.piramalswasthya.org/identity-api/rmnch/syncDataToAmritByHwc";
+    @Value("${update_rmnch_data}")
+    private String syncDataToAmrit;
 
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
@@ -284,6 +288,140 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     outputResponse.setError(registrationResponseObj.getInt("statusCode"), "Error encountered in Common-API service while registering beneficiary. "
                             + registrationResponseObj.getString("status"));
                 }
+
+        } catch(ResourceAccessException e){
+            logger.error("Error establishing connection with Common-API service. " + e);
+            outputResponse.setError(503, "Error establishing connection with Common-API service. ");
+            status = HttpStatus.SERVICE_UNAVAILABLE;
+        } catch(RestClientResponseException e){
+            logger.error("Error encountered in Common-API service while registering beneficiary. " + e);
+            outputResponse.setError(e.getRawStatusCode(), "Error encountered in Common-API service while registering beneficiary. " + e);
+            status = HttpStatus.valueOf(e.getRawStatusCode());
+        } catch (JSONException e){
+            logger.error("Encountered JSON exception " + e);
+            outputResponse.setError(502, "Error registering the beneficiary.Encountered JSON exception " + e);
+            status = HttpStatus.BAD_GATEWAY;
+        } catch (Exception e){
+            logger.error("Encountered exception " + e);
+            outputResponse.setError(500, "Error registering the beneficiary.Encountered exception " + e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        headers.remove("AUTHORIZATION");
+
+        return new ResponseEntity<> (outputResponse.toString(),headers,status);
+    }
+
+
+    @Override
+    public ResponseEntity<String> choAppUpdateBeneficiary(String comingRequest, String Authorization){
+
+        OutputResponse outputResponse = new OutputResponse();
+        JsonObject responseObj = new JsonObject();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        Long beneficiaryRegID = null;
+        Long beneficiaryID = null;
+        RestTemplate restTemplate = new RestTemplate();
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
+        headers.add("AUTHORIZATION", Authorization);
+//        HttpEntity<Object> registrationRequest = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
+        logger.info("HWC Beneficiary request " + comingRequest);
+
+        try {
+//            ResponseEntity<String> registrationResponse = restTemplate.exchange(registrationUrl, HttpMethod.POST, registrationRequest,
+                  //  String.class);
+
+//            String registrationResponseStr = registrationResponse.getBody();
+//            JSONObject registrationResponseObj = new JSONObject(registrationResponseStr);
+//            logger.info("HWC Beneficiary registrationResponseObj " + registrationResponseObj);
+            JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
+
+            if (!comingRequest.isEmpty()) {
+
+//                beneficiaryRegID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryRegID");
+//                beneficiaryID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryID");
+
+                JsonObject beneficiaryDetailsRmnch = new JsonObject();
+
+
+                beneficiaryDetailsRmnch.addProperty("benficieryid", requestObj.get("beneficiaryRegID").getAsString());
+                beneficiaryDetailsRmnch.addProperty("benRegId",  requestObj.get("beneficiaryRegID").getAsLong());
+
+                beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("firstName", requestObj.get("firstName").getAsString());
+                beneficiaryDetailsRmnch.addProperty("lastName", requestObj.get("lastName").getAsString());
+                JsonElement fatherElement = requestObj.get("fatherName");
+
+                String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
+                        ? fatherElement.getAsString()
+                        : "";
+                beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
+                beneficiaryDetailsRmnch.addProperty("spouseName", requestObj.get("spouseName").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("genderID", requestObj.get("genderID").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("genderName", requestObj.get("genderName").getAsString());
+                beneficiaryDetailsRmnch.addProperty("maritalStatusID", requestObj.get("maritalStatusID").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("maritalStatusName", requestObj.get("maritalStatusName").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
+                beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
+
+                beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("vanID", requestObj.get("vanID").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsInt());
+
+                if (requestObj.has("i_bendemographics")) {
+                    beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
+                }
+
+                if (requestObj.has("benPhoneMaps")) {
+                    beneficiaryDetailsRmnch.add("benPhoneMaps", requestObj.getAsJsonArray("benPhoneMaps"));
+                }
+
+                if (requestObj.has("beneficiaryIdentities")) {
+                    beneficiaryDetailsRmnch.add("beneficiaryIdentities", requestObj.getAsJsonArray("beneficiaryIdentities"));
+                }
+
+                if (requestObj.has("faceEmbedding")) {
+                    beneficiaryDetailsRmnch.add("faceEmbedding", requestObj.getAsJsonArray("faceEmbedding"));
+                }
+                String jsonBody = beneficiaryDetailsRmnch.toString();
+
+                logger.info("beneficiaryDetailsRmnch json :" + jsonBody);
+
+
+
+                int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
+
+                if (i > 0) {
+                    if (i == 1) {
+                        responseObj.addProperty("beneficiaryID", beneficiaryID);
+                        responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
+
+
+                        outputResponse.setResponse(responseObj.toString());
+                        status = HttpStatus.OK;
+                    }
+                } else {
+                    logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
+                    outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
+                    status = HttpStatus.INTERNAL_SERVER_ERROR;
+                }
+
+            } else {
+//                logger.error("Error encountered in Common-API service while registering beneficiary. "
+//                        + status.getString("status"));
+//                outputResponse.setError(registrationResponseObj.getInt("statusCode"), "Error encountered in Common-API service while registering beneficiary. "
+//                        + registrationResponseObj.getString("status"));
+            }
 
         } catch(ResourceAccessException e){
             logger.error("Error establishing connection with Common-API service. " + e);

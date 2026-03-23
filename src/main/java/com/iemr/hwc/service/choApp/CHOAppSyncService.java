@@ -30,6 +30,7 @@ import java.util.List;
 
 public interface CHOAppSyncService {
     ResponseEntity<String> registerCHOAPPBeneficiary(String comingReq, String authorization);
+    ResponseEntity<String> choAppUpdateBeneficiary(String comingReq, String authorization);
 
     ResponseEntity<String> getBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 
