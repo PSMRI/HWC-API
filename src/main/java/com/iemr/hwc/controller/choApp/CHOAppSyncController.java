@@ -62,7 +62,7 @@ public class CHOAppSyncController {
     }
 
     @Operation(summary = "Sync new beneficiaries to AMRIT server")
-    @PostMapping(value = { "update/beneficiariesToServer" })
+    @PostMapping(value = { "/update/beneficiariesToServer" })
     public ResponseEntity<String> beneficiaryUpdateSyncToServer(@RequestBody String comingReq,
                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
