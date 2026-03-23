@@ -75,8 +75,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Value("${registrationUrl}")
     private String registrationUrl;
 
-    @Value("${updateBenUrl}")
-    private String updateBenregistrationUrl;
 
     @Value("${syncSearchByLocation}")
     private String syncSearchByLocation;
