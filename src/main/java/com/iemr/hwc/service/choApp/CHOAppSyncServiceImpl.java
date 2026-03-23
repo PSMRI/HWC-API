@@ -478,6 +478,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                     JSONObject responseJSON = new JSONObject(response.getBody());
                     JSONArray jsonArray = new JSONArray(responseJSON.getJSONObject("response").getString("data"));
+                    logger.info("Get RMNC data: "+ jsonArray);
 
                     outputResponse.setResponse(jsonArray.toString());
                 }
