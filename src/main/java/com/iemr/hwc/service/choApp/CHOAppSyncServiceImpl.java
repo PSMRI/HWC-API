@@ -337,8 +337,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
             if (!comingRequest.isEmpty()) {
 
-//                beneficiaryRegID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryRegID");
-//                beneficiaryID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryID");
+                beneficiaryRegID = Long.valueOf(requestObj.get("beneficiaryRegID").getAsString());
+                beneficiaryID = requestObj.get("beneficiaryRegID").getAsLong();
 
                 JsonObject beneficiaryDetailsRmnch = new JsonObject();
 
@@ -403,6 +403,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
 
+
                 if (i > 0) {
                     if (i == 1) {
                         responseObj.addProperty("beneficiaryID", beneficiaryID);
@@ -419,10 +420,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 }
 
             } else {
-//                logger.error("Error encountered in Common-API service while registering beneficiary. "
-//                        + status.getString("status"));
-//                outputResponse.setError(registrationResponseObj.getInt("statusCode"), "Error encountered in Common-API service while registering beneficiary. "
-//                        + registrationResponseObj.getString("status"));
+                logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
+                outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
 
         } catch(ResourceAccessException e){
