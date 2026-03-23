@@ -84,8 +84,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Value("${getBenCountToSync}")
     private String getBenCountToSync;
 
-    @Value("${update_rmnch_data}")
-    private String syncDataToAmrit;
+    private String syncDataToAmrit = "https://amritdemo.piramalswasthya.org/identity-api/rmnch/syncDataToAmritByHwc";
 
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
