@@ -45,6 +45,7 @@ import com.google.gson.annotations.Expose;
 import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
 import com.iemr.hwc.data.login.MasterVan;
 import com.iemr.hwc.data.masterdata.registrar.GenderMaster;
+import lombok.Data;
 
 /***
  * 
@@ -53,6 +54,7 @@ import com.iemr.hwc.data.masterdata.registrar.GenderMaster;
  */
 @Entity
 @Table(name = "i_ben_flow_outreach")
+@Data
 public class BeneficiaryFlowStatus {
 
 	@Id
@@ -344,6 +346,14 @@ public class BeneficiaryFlowStatus {
 	private String bloodGroup;
 	@Transient
 	private String subVisitCategory;
+
+	@Transient
+	private Integer reproductiveStatusId;
+
+	@Transient
+	private String  reproductiveStatus;
+
+
 	
 
 	// new variable added for patient app

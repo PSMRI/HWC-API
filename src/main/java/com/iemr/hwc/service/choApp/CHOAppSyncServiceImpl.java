@@ -21,6 +21,8 @@
  */
 package com.iemr.hwc.service.choApp;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import com.iemr.hwc.data.benFlowStatus.BeneficiaryFlowStatus;
 import com.iemr.hwc.data.choApp.OutreachActivity;
@@ -81,6 +83,10 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     @Value("${getBenCountToSync}")
     private String getBenCountToSync;
+
+
+    @Value("${getBenCountToSync}")
+    private String getRmnchGetBYRegid = "https://amritdemo.piramalswasthya.org/identity-api/id/getRmnchDataByBenRedID";
 
     private String syncDataToAmrit = "https://amritdemo.piramalswasthya.org/identity-api/rmnch/syncDataToAmritByHwc";
 
@@ -630,6 +636,34 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 benFlowList = beneficiaryFlowStatusRepo.getFlowRecordsToSync(villageIDAndLastSyncDate.getVillageID(),
                         new Timestamp(dt.toDate().getTime()));
+                ObjectMapper mapper = new ObjectMapper();
+
+                for (BeneficiaryFlowStatus in : benFlowList) {
+
+                    String jsonResponse = getRmnchData(BigInteger.valueOf(in.getBeneficiaryRegID()), Authorization);
+
+                    if (jsonResponse != null) {
+                        try {
+                            JsonNode jsonNode = mapper.readTree(jsonResponse);
+
+                            // 👇 yaha se value nikaal
+                            String reproductiveStatus = jsonNode.get("reproductiveStatus") != null
+                                    ? jsonNode.get("reproductiveStatus").asText()
+                                    : null;
+
+                            Integer reproductiveStatusId = jsonNode.get("reproductiveStatusId") != null
+                                    ? jsonNode.get("reproductiveStatusId").asInt()
+                                    : null;
+
+                            // 👇 object me set kar
+                            in.setReproductiveStatus(reproductiveStatus);
+                            in.setReproductiveStatusId(reproductiveStatusId);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList));
             }else{
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
@@ -647,6 +681,29 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         }
         return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
 
+    }
+
+    public String getRmnchData(BigInteger benId,String Authorization) {
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = getRmnchGetBYRegid;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
+        headers.add("AUTHORIZATION", Authorization);
+
+        HttpEntity<BigInteger> request = new HttpEntity<>(benId, headers);
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.POST,
+                        request,
+                        String.class
+                );
+
+        return response.getBody();
     }
 
     @Override
