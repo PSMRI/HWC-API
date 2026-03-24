@@ -417,10 +417,11 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     );
                     logger.info("identityResponse" +response );
                     JsonObject json = new JsonObject();
-                    json.addProperty("status", "success");
-                    json.addProperty("message", response.toString());
+                    responseObj.addProperty("beneficiaryID", beneficiaryID);
+                    responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
 
-                    outputResponse.setResponse(json.toString());
+
+                    outputResponse.setResponse(responseObj.toString());
 
                 }
                 status = HttpStatus.OK;
