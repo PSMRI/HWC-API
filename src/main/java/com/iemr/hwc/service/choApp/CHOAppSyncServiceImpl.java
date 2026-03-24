@@ -416,6 +416,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             String.class
                     );
                     logger.info("identityResponse" +response );
+                    outputResponse.setResponse(response.toString());
+
 
                 }
                 status = HttpStatus.OK;
