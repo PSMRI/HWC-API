@@ -692,13 +692,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         HttpEntity<BigInteger> request = new HttpEntity<>(benId, headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(
-                        url,
-                        HttpMethod.POST,
-                        request,
-                        String.class
-                );
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+
 
         logger.info("RNMCH Ben flow:"+response);
 
