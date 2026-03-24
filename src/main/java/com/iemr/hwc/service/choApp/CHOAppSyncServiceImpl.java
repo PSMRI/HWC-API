@@ -662,6 +662,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         }
                     }
                 }
+                logger.info("Ben FLow data"+
+                        new GsonBuilder()
+                                .excludeFieldsWithoutExposeAnnotation()
+                                .serializeNulls()
+                                .create()
+                                .toJson(benFlowList));
                 outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList));
             }else{
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
