@@ -418,6 +418,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     logger.info("identityResponse" +response );
 
                 }
+                status = HttpStatus.OK;
 
             } else {
                 logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
@@ -481,6 +482,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     logger.info("Get RMNC data: "+ jsonArray);
 
                     outputResponse.setResponse(jsonArray.toString());
+
                 }
             }else{
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
@@ -544,7 +546,10 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     String count = responseJSON.getJSONObject("response").getString("data");
 
                     outputResponse.setResponse(count);
+
+
                 }
+
             }else{
                 logger.error("Unable to get count of beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
