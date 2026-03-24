@@ -404,7 +404,20 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 logger.info("beneficiaryDetailsRmnch json :" + jsonBody);
 
+                if(beneficiaryDetailsRmnch!=null){
 
+                    HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
+                    logger.info("beneficiaryDetailsRmnch request :" + request);
+
+                    ResponseEntity<String> response = restTemplate.exchange(
+                            syncDataToAmrit,
+                            HttpMethod.POST,
+                            request,
+                            String.class
+                    );
+                    logger.info("identityResponse" +response );
+
+                }
 
                 int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
 
