@@ -419,24 +419,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 }
 
-                int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
-
-
-                if (i > 0) {
-                    if (i == 1) {
-                        responseObj.addProperty("beneficiaryID", beneficiaryID);
-                        responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
-
-
-                        outputResponse.setResponse(responseObj.toString());
-                        status = HttpStatus.OK;
-                    }
-                } else {
-                    logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
-                    outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
-                    status = HttpStatus.INTERNAL_SERVER_ERROR;
-                }
-
             } else {
                 logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
                 outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
