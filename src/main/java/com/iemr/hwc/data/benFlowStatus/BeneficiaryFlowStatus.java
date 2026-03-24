@@ -347,14 +347,29 @@ public class BeneficiaryFlowStatus {
 	@Transient
 	private String subVisitCategory;
 
-	@Transient
-	private Integer reproductiveStatusId;
+		@Transient
+		@Expose
+		private Integer reproductiveStatusId;
 
-	@Transient
-	private String  reproductiveStatus;
+		@Transient
+		@Expose
+		private String  reproductiveStatus;
 
+	public Integer getReproductiveStatusId() {
+		return reproductiveStatusId;
+	}
 
-	
+	public void setReproductiveStatusId(Integer reproductiveStatusId) {
+		this.reproductiveStatusId = reproductiveStatusId;
+	}
+
+	public String getReproductiveStatus() {
+		return reproductiveStatus;
+	}
+
+	public void setReproductiveStatus(String reproductiveStatus) {
+		this.reproductiveStatus = reproductiveStatus;
+	}
 
 	// new variable added for patient app
 	@Transient
