@@ -652,7 +652,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             Integer reproductiveStatusId = jsonNode.get("reproductiveStatusId") != null
                                     ? jsonNode.get("reproductiveStatusId").asInt()
                                     : null;
-
+                             logger.info("reproductiveStatus:" + reproductiveStatus);
+                             logger.info("benFlow id:" + in.getBenFlowID());
                             in.setReproductiveStatus(reproductiveStatus);
                             in.setReproductiveStatusId(reproductiveStatusId);
 
