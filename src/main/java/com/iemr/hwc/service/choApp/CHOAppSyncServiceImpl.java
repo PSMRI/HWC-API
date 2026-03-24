@@ -343,12 +343,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             if (!comingRequest.isEmpty()) {
 
                 beneficiaryRegID = Long.valueOf(requestObj.get("beneficiaryRegID").getAsString());
-                beneficiaryID = requestObj.get("beneficiaryRegID").getAsLong();
+                beneficiaryID = requestObj.get("beneficiaryID").getAsLong();
 
                 JsonObject beneficiaryDetailsRmnch = new JsonObject();
 
 
-                beneficiaryDetailsRmnch.addProperty("benficieryid", requestObj.get("beneficiaryRegID").getAsString());
+                beneficiaryDetailsRmnch.addProperty("benficieryid", requestObj.get("beneficiaryID").getAsString());
                 beneficiaryDetailsRmnch.addProperty("benRegId",  requestObj.get("beneficiaryRegID").getAsLong());
 
                 beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
