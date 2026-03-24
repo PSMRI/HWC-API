@@ -85,7 +85,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private String getBenCountToSync;
 
 
-    @Value("${getBenCountToSync}")
     private String getRmnchGetBYRegid = "https://amritdemo.piramalswasthya.org/identity-api/id/getRmnchDataByBenRedID";
 
     private String syncDataToAmrit = "https://amritdemo.piramalswasthya.org/identity-api/rmnch/syncDataToAmritByHwc";
@@ -646,7 +645,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         try {
                             JsonNode jsonNode = mapper.readTree(jsonResponse);
 
-                            // 👇 yaha se value nikaal
                             String reproductiveStatus = jsonNode.get("reproductiveStatus") != null
                                     ? jsonNode.get("reproductiveStatus").asText()
                                     : null;
@@ -655,7 +653,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                                     ? jsonNode.get("reproductiveStatusId").asInt()
                                     : null;
 
-                            // 👇 object me set kar
                             in.setReproductiveStatus(reproductiveStatus);
                             in.setReproductiveStatusId(reproductiveStatusId);
 
@@ -702,6 +699,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         request,
                         String.class
                 );
+
+        logger.info("RNMCH Ben flow:"+response);
 
         return response.getBody();
     }
