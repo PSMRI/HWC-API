@@ -30,6 +30,7 @@ import com.iemr.hwc.data.choApp.UserActivityLogs;
 import com.iemr.hwc.data.doctor.PrescriptionTemplates;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.data.quickConsultation.BenChiefComplaint;
+import com.iemr.hwc.data.registrar.BeneficiaryData;
 import com.iemr.hwc.repo.benFlowStatus.BeneficiaryFlowStatusRepo;
 import com.iemr.hwc.repo.choApp.OutreachActivityRepo;
 import com.iemr.hwc.repo.choApp.UserActivityLogsRepo;
@@ -38,6 +39,7 @@ import com.iemr.hwc.repo.nurse.BenAnthropometryRepo;
 import com.iemr.hwc.repo.nurse.BenPhysicalVitalRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
+import com.iemr.hwc.repo.registrar.RegistrarRepoBenData;
 import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
 import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
@@ -66,6 +68,8 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -93,6 +97,9 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
     private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
+
+    private RegistrarRepoBenData registrarRepoBenData;
+
 
     private UserActivityLogsRepo userActivityLogsRepo;
 
@@ -422,8 +429,14 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     json.addProperty("beneficiaryRegID", beneficiaryRegID);
 
 
-                    outputResponse.setResponse(json.toString());
+                    BeneficiaryData beneficiaryData = getBenOBJ(requestObj);
+                    int updareBenResponse = registrarRepoBenData.updateBeneficiaryData(beneficiaryData.getFirstName(),
+                            beneficiaryData.getLastName(), beneficiaryData.getGenderID(), beneficiaryData.getDob(),
+                            beneficiaryData.getMaritalStatusID(), beneficiaryData.getFatherName(), beneficiaryData.getSpouseName(),
+                            beneficiaryData.getAadharNo(), beneficiaryData.getModifiedBy(), beneficiaryData.getBeneficiaryRegID());
+                    logger.info("Update tResponse :" + updareBenResponse);
 
+                    outputResponse.setResponse(json.toString());
 
                 }
                 logger.info("outputResponse :" + outputResponse);
@@ -457,6 +470,59 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         return new ResponseEntity<> (outputResponse.toString(),headers,status);
     }
+    public BeneficiaryData getBenOBJ(JsonObject benD) {
+        // Initializing BeneficiaryData Class Object...
+
+        BeneficiaryData benData = new BeneficiaryData();
+        if (benD.has("firstName") && !benD.get("firstName").isJsonNull())
+            benData.setFirstName(benD.get("firstName").getAsString());
+        if (benD.has("lastName") && !benD.get("lastName").isJsonNull())
+            benData.setLastName(benD.get("lastName").getAsString());
+        if (benD.has("gender") && !benD.get("gender").isJsonNull())
+            benData.setGenderID(benD.get("gender").getAsShort());
+        if (benD.has("dob") && !benD.get("dob").isJsonNull()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+            java.util.Date parsedDate;
+            try {
+                parsedDate = dateFormat.parse(benD.get("dob").getAsString());
+                Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+                benData.setDob(timestamp);
+                // System.out.println("hello");
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                logger.error(e.getMessage());
+            }
+
+        }
+        if (benD.has("maritalStatus") && !benD.get("maritalStatus").isJsonNull())
+            benData.setMaritalStatusID(benD.get("maritalStatus").getAsShort());
+        if (benD.has("createdBy") && !benD.get("createdBy").isJsonNull())
+            benData.setCreatedBy(benD.get("createdBy").getAsString());
+        if (benD.has("fatherName") && !benD.get("fatherName").isJsonNull())
+            benData.setFatherName(benD.get("fatherName").getAsString());
+        if (benD.has("husbandName")) {
+            if (!benD.get("husbandName").isJsonNull())
+                benData.setSpouseName(benD.get("husbandName").getAsString());
+        }
+
+        if (benD.has("aadharNo") && !benD.get("aadharNo").isJsonNull())
+            benData.setAadharNo(benD.get("aadharNo").getAsString());
+        // System.out.println(benData);
+        // Following values will get only in update request
+        if (benD.has("beneficiaryRegID")) {
+            if (!benD.get("beneficiaryRegID").isJsonNull()) {
+                benData.setBeneficiaryRegID(benD.get("beneficiaryRegID").getAsLong());
+            }
+        }
+        if (benD.has("modifiedBy")) {
+            if (!benD.get("modifiedBy").isJsonNull()) {
+                benData.setModifiedBy(benD.get("modifiedBy").getAsString());
+            }
+        }
+        // System.out.println(benData);
+        return benData;
+    }
+
 
     public ResponseEntity<String> getBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String Authorization) {
 
