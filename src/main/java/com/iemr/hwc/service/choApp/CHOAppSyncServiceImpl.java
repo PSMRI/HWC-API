@@ -463,6 +463,8 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     Long beneficiaryRegIDVal = requestObj.has("beneficiaryRegID") && !requestObj.get("beneficiaryRegID").isJsonNull()
                             ? requestObj.get("beneficiaryRegID").getAsLong()
                             : null;
+
+
                     Timestamp dobTimestamp = null;
 
                     if (dob != null && !dob.isEmpty()) {
@@ -470,13 +472,23 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                         dobTimestamp = Timestamp.valueOf(ldt);
                     }
+
+                    System.out.println("firstName: " + firstName);
+                    System.out.println("lastName: " + lastName);
+                    System.out.println("genderID: " + genderID);
+                    System.out.println("dobTimestamp: " + dobTimestamp);
+                    System.out.println("maritalStatusID: " + maritalStatusID);
+                    System.out.println("fatherName: " + fatherName);
+                    System.out.println("spouseName: " + spouseName);
+                    System.out.println("beneficiaryRegIDVal: " + beneficiaryRegIDVal);
+                    System.out.println("repo: " + registrarRepoBenData);
+
                     int updareBenResponse = registrarRepoBenData.updateBeneficiaryData(
                             firstName,
                             lastName,
                             Short.parseShort(genderID.toString()),
                             dobTimestamp,
                             Short.parseShort(maritalStatusID.toString()),
-                            fatherName,
                             spouseName,
                             beneficiaryRegIDVal
                     );

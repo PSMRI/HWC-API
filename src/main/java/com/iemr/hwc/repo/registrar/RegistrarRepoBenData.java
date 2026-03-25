@@ -88,14 +88,17 @@ public interface RegistrarRepoBenData extends CrudRepository<BeneficiaryData, Lo
 
 	@Transactional
 	@Modifying
-	@Query("UPDATE BeneficiaryData set firstName = :firstName,lastName = :lastName,genderID = :genderID,dob = :dob,maritalStatusID = :maritalStatusID,"
-			+ " fatherName = :fatherName,spouseName = :spouseName,aadharNo = :aadharNo,modifiedBy = :modifiedBy where beneficiaryRegID = :beneficiaryRegID ")
-	public Integer updateBeneficiaryData(@Param("firstName") String firstName, @Param("lastName") String lastName,
-										 @Param("genderID") Short genderID, @Param("dob") Timestamp dob,
-										 @Param("maritalStatusID") Short maritalStatusID, @Param("fatherName") String fatherName,
-										 @Param("spouseName") String spouseName,
-										 @Param("beneficiaryRegID") Long beneficiaryRegID);
-
+	@Query("UPDATE BeneficiaryData set firstName = :firstName, lastName = :lastName, genderID = :genderID, dob = :dob, maritalStatusID = :maritalStatusID, spouseName = :spouseName "
+			+ "where beneficiaryRegID = :beneficiaryRegID")
+	public Integer updateBeneficiaryData(
+			@Param("firstName") String firstName,
+			@Param("lastName") String lastName,
+			@Param("genderID") Short genderID,
+			@Param("dob") Timestamp dob,
+			@Param("maritalStatusID") Short maritalStatusID,
+			@Param("spouseName") String spouseName,   // ✅ included
+			@Param("beneficiaryRegID") Long beneficiaryRegID
+	);
 	@Query(" SELECT firstName, lastName, Date(dob), genderID FROM BeneficiaryData WHERE beneficiaryRegID = :benRegID ")
 	public ArrayList<Object[]> getBenDataForCareStream(@Param("benRegID") Long benRegID);
 }
