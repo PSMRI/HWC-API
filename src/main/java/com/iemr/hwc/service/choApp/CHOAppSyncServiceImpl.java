@@ -429,7 +429,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     json.addProperty("beneficiaryRegID", beneficiaryRegID);
 
 
-                    BeneficiaryData beneficiaryData = getBenOBJ(requestObj);
                     String firstName = requestObj.has("firstName") && !requestObj.get("firstName").isJsonNull()
                             ? requestObj.get("firstName").getAsString()
                             : null;
