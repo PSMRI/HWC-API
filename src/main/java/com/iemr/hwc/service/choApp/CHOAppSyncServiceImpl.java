@@ -472,7 +472,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     }
     public BeneficiaryData getBenOBJ(JsonObject benD) {
         // Initializing BeneficiaryData Class Object...
-
+          logger.info("Ben Obj"+ benD);
         BeneficiaryData benData = new BeneficiaryData();
         if (benD.has("firstName") && !benD.get("firstName").isJsonNull())
             benData.setFirstName(benD.get("firstName").getAsString());
