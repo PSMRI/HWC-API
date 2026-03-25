@@ -416,6 +416,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
                     logger.info("beneficiaryDetailsRmnch request :" + request);
+                    logger.info("beneficiaryDetailsRmnch url :" + syncDataToAmrit);
 
                     ResponseEntity<String> response = restTemplate.exchange(
                             syncDataToAmrit,
