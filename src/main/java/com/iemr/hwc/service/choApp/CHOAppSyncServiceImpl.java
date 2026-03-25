@@ -70,6 +70,9 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -467,12 +470,18 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     Long beneficiaryRegIDVal = requestObj.has("beneficiaryRegID") && !requestObj.get("beneficiaryRegID").isJsonNull()
                             ? requestObj.get("beneficiaryRegID").getAsLong()
                             : null;
+                    Timestamp dobTimestamp = null;
 
+                    if (dob != null && !dob.isEmpty()) {
+                        Instant instant = Instant.parse(dob);
+                        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                        dobTimestamp = Timestamp.valueOf(ldt);
+                    }
                     int updareBenResponse = registrarRepoBenData.updateBeneficiaryData(
                             firstName,
                             lastName,
                             Short.parseShort(genderID.toString()),
-                            Timestamp.valueOf(dob),
+                            dobTimestamp,
                             Short.parseShort(maritalStatusID.toString()),
                             fatherName,
                             spouseName,
