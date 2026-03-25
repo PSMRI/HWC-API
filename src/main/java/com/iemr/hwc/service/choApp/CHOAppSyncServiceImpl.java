@@ -47,6 +47,7 @@ import com.iemr.hwc.utils.RestTemplateUtil;
 import com.iemr.hwc.utils.exception.IEMRException;
 import com.iemr.hwc.utils.request.SyncSearchRequest;
 import com.iemr.hwc.utils.response.OutputResponse;
+import org.hibernate.annotations.Array;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -100,7 +101,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
     private BeneficiaryFlowStatusRepo beneficiaryFlowStatusRepo;
-
+    @Autowired
     private RegistrarRepoBenData registrarRepoBenData;
 
 
