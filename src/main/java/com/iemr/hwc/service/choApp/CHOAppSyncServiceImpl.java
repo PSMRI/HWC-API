@@ -84,12 +84,11 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Value("${getBenCountToSync}")
     private String getBenCountToSync;
 
-   @Value("${rmnch_data_byID}")
-   private String getRmnchGetBYRegid ;
 
 
-   @Value("${update_rmnch_data}")
-    private String syncDataToAmrit;
+
+   @Value("${project_url}")
+    private String projectUrl;
 
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
@@ -260,7 +259,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         logger.info("beneficiaryDetailsRmnch request :" + request);
 
                         ResponseEntity<String> response = restTemplate.exchange(
-                                syncDataToAmrit,
+                                "id/getRmnchDataByBenRedID",
                                 HttpMethod.POST,
                                 request,
                                 String.class
@@ -412,7 +411,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     logger.info("beneficiaryDetailsRmnch request :" + request);
 
                     ResponseEntity<String> response = restTemplate.exchange(
-                            syncDataToAmrit,
+                            projectUrl+"/syncDataToAmritByHwc",
                             HttpMethod.POST,
                             request,
                             String.class
@@ -699,7 +698,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        String url = getRmnchGetBYRegid;
+        String url = projectUrl;
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
         headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
@@ -708,7 +707,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         HttpEntity<BigInteger> request = new HttpEntity<>(benId, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                url,
+                url+"/id/getRmnchDataByBenRedID",
                 HttpMethod.POST,
                 request,
                 String.class
