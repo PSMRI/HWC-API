@@ -555,6 +555,12 @@ public class RegistrarServiceImpl implements RegistrarService {
 		return response;
 	}
 
+	private void  updateStatusOfWomen(JsonObject benD){
+		BeneficiaryData beneficiaryData = getBenOBJ(benD);
+
+
+	}
+
 	@Override
 	public int updateBeneficiaryDemographic(JsonObject benD, Long benRegID) {
 		Long tmpBenDemoID = null;
@@ -787,6 +793,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 		}
 		return returnOBJ;
 	}
+
 
 	// beneficiary quick search new integrated with common and identity
 	public String beneficiaryQuickSearch(String requestObj, String Authorization) {

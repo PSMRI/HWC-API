@@ -166,6 +166,16 @@ public class BeneficiaryData {
 	@Transient
 	@Expose
 	private String districtName;
+
+
+	@Transient
+	@Expose
+	private String reproductiveStatus;
+
+	@Transient
+	@Expose
+	private Integer reproductiveStatusId;
+
 	
 	@Transient
 	@Expose 
