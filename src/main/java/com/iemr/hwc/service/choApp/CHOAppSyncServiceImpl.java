@@ -459,13 +459,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             ? requestObj.get("spouseName").getAsString()
                             : null;
 
-                    String aadharNo = requestObj.has("aadharNo") && !requestObj.get("aadharNo").isJsonNull()
-                            ? requestObj.get("aadharNo").getAsString()
-                            : null;
-
-                    String modifiedBy = requestObj.has("modifiedBy") && !requestObj.get("modifiedBy").isJsonNull()
-                            ? requestObj.get("modifiedBy").getAsString()
-                            : null;
 
                     Long beneficiaryRegIDVal = requestObj.has("beneficiaryRegID") && !requestObj.get("beneficiaryRegID").isJsonNull()
                             ? requestObj.get("beneficiaryRegID").getAsLong()
@@ -485,8 +478,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             Short.parseShort(maritalStatusID.toString()),
                             fatherName,
                             spouseName,
-                            aadharNo,
-                            modifiedBy,
                             beneficiaryRegIDVal
                     );
                     logger.info("Update tResponse :" + updareBenResponse);
