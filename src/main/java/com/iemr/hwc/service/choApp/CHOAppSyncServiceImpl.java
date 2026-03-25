@@ -430,10 +430,56 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
 
                     BeneficiaryData beneficiaryData = getBenOBJ(requestObj);
-                    int updareBenResponse = registrarRepoBenData.updateBeneficiaryData(beneficiaryData.getFirstName(),
-                            beneficiaryData.getLastName(), beneficiaryData.getGenderID(), beneficiaryData.getDob(),
-                            beneficiaryData.getMaritalStatusID(), beneficiaryData.getFatherName(), beneficiaryData.getSpouseName(),
-                            beneficiaryData.getAadharNo(), beneficiaryData.getModifiedBy(), beneficiaryData.getBeneficiaryRegID());
+                    String firstName = requestObj.has("firstName") && !requestObj.get("firstName").isJsonNull()
+                            ? requestObj.get("firstName").getAsString()
+                            : null;
+
+                    String lastName = requestObj.has("lastName") && !requestObj.get("lastName").isJsonNull()
+                            ? requestObj.get("lastName").getAsString()
+                            : null;
+
+                    Integer genderID = requestObj.has("genderID") && !requestObj.get("genderID").isJsonNull()
+                            ? requestObj.get("genderID").getAsInt()
+                            : null;
+
+                    String dob = requestObj.has("dOB") && !requestObj.get("dOB").isJsonNull()
+                            ? requestObj.get("dOB").getAsString()
+                            : null;
+
+                    Integer maritalStatusID = requestObj.has("maritalStatusID") && !requestObj.get("maritalStatusID").isJsonNull()
+                            ? requestObj.get("maritalStatusID").getAsInt()
+                            : null;
+
+
+
+                    String spouseName = requestObj.has("spouseName") && !requestObj.get("spouseName").isJsonNull()
+                            ? requestObj.get("spouseName").getAsString()
+                            : null;
+
+                    String aadharNo = requestObj.has("aadharNo") && !requestObj.get("aadharNo").isJsonNull()
+                            ? requestObj.get("aadharNo").getAsString()
+                            : null;
+
+                    String modifiedBy = requestObj.has("modifiedBy") && !requestObj.get("modifiedBy").isJsonNull()
+                            ? requestObj.get("modifiedBy").getAsString()
+                            : null;
+
+                    Long beneficiaryRegIDVal = requestObj.has("beneficiaryRegID") && !requestObj.get("beneficiaryRegID").isJsonNull()
+                            ? requestObj.get("beneficiaryRegID").getAsLong()
+                            : null;
+
+                    int updareBenResponse = registrarRepoBenData.updateBeneficiaryData(
+                            firstName,
+                            lastName,
+                            Short.parseShort(genderID.toString()),
+                            Timestamp.valueOf(dob),
+                            Short.parseShort(maritalStatusID.toString()),
+                            fatherName,
+                            spouseName,
+                            aadharNo,
+                            modifiedBy,
+                            beneficiaryRegIDVal
+                    );
                     logger.info("Update tResponse :" + updareBenResponse);
 
                     outputResponse.setResponse(json.toString());
