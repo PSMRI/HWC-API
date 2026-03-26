@@ -37,4 +37,11 @@ public interface DistrictMasterRepo extends CrudRepository<Districts, Integer> {
 	@Query(" SELECT d.districtID, d.districtName,d.govtLGDStateID,d.govtLGDDistrictID FROM Districts d " + " WHERE d.stateID = :stateID AND d.deleted != true ")
 	public ArrayList<Object[]> getDistrictMaster(@Param("stateID") Integer stateID);
 
+	@Query(value = "SELECT f.StateID, f.DistrictID, d.DistrictName, f.BlockID, b.BlockName "
+			+ "FROM m_facility f "
+			+ "LEFT JOIN m_district d ON f.DistrictID = d.DistrictID "
+			+ "LEFT JOIN m_districtblock b ON f.BlockID = b.BlockID "
+			+ "WHERE f.FacilityID = :facilityID AND f.Deleted = false", nativeQuery = true)
+	public Object[] getFacilityLocation(@Param("facilityID") Integer facilityID);
+
 }

@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.iemr.hwc.data.login.MasterVan;
 import com.iemr.hwc.data.login.ServicePointVillageMapping;
 import com.iemr.hwc.data.login.UserVanSpDetails_View;
+import com.iemr.hwc.repo.login.FacilityLoginRepo;
 import com.iemr.hwc.repo.login.MasterVanRepo;
 import com.iemr.hwc.repo.login.ServicePointVillageMappingRepo;
 import com.iemr.hwc.repo.login.UserParkingplaceMappingRepo;
@@ -50,6 +51,12 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 	private VanServicepointMappingRepo vanServicepointMappingRepo;
 	private ServicePointVillageMappingRepo servicePointVillageMappingRepo;
 	private UserVanSpDetails_View_Repo userVanSpDetails_View_Repo;
+	private FacilityLoginRepo facilityLoginRepo;
+
+	@Autowired
+	public void setFacilityLoginRepo(FacilityLoginRepo facilityLoginRepo) {
+		this.facilityLoginRepo = facilityLoginRepo;
+	}
 
 	@Autowired
 	public void setUserVanSpDetails_View_Repo(UserVanSpDetails_View_Repo userVanSpDetails_View_Repo) {
@@ -168,10 +175,23 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 				userVanSpDetails_ViewList.add(userVanSpDetails_ViewOBJ);
 			}
 		}
+
+		// Facility fallback: if no Van mapping, check m_UserServiceRoleMapping for facilityID
+		if (userVanSpDetails_ViewList.isEmpty()) {
+			Object[] facilityDetails = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
+			if (facilityDetails != null && facilityDetails.length > 0) {
+				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
+				facilityEntry.setUserID(userID);
+				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+				// vanID stays null — no Van for facility-based users
+				facilityEntry.setVanSession((short) 3);
+				userVanSpDetails_ViewList.add(facilityEntry);
+			}
+		}
+
 		resMap.put("UserVanSpDetails", userVanSpDetails_ViewList);
-		// System.out.println("helloo bhai---" + new Gson().toJson(resMap));
-		// Later will remove below part till 1.1 new api is getting called on
-		// continue button
+
+		// Location details
 		List<Object[]> parkingPlaceList = userParkingplaceMappingRepo.getUserParkingPlce(userID);
 		Map<String, Object> parkingPlaceLocationMap = new HashMap<>();
 		if (parkingPlaceList.size() > 0) {
@@ -185,7 +205,7 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 			parkingPlaceLocationMap.put("blockName", obj1[6]);
 		}
 		resMap.put("UserLocDetails", parkingPlaceLocationMap);
-		// 1.1
+
 		return new Gson().toJson(resMap);
 	}
 	
