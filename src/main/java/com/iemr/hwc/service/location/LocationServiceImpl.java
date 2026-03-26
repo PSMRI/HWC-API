@@ -350,6 +350,39 @@ public class LocationServiceImpl implements LocationService {
 		return new Gson().toJson(resMap);
 	}
 
+	// Facility-based location — no Van dependency
+	public String getLocDetailsByFacilityID(Integer facilityID, Integer spPSMID) {
+		Map<String, Object> resMap = new HashMap<String, Object>();
+
+		// Get location from m_facility directly
+		Map<String, Object> otherLoc = new HashMap<>();
+		Object[] facilityLoc = districtMasterRepo.getFacilityLocation(facilityID);
+		if (facilityLoc != null) {
+			otherLoc.put("stateID", facilityLoc[0]);
+			Map<String, Object> distMap = new HashMap<>();
+			distMap.put("districtID", facilityLoc[1]);
+			distMap.put("districtName", facilityLoc[2]);
+			distMap.put("blockId", facilityLoc[3]);
+			distMap.put("blockName", facilityLoc[4]);
+			otherLoc.put("districtList", new Object[]{distMap});
+		}
+
+		// State master
+		ArrayList<States> stateList = new ArrayList<>();
+		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
+		if (stateMasterList != null && stateMasterList.size() > 0) {
+			for (Object[] objArr : stateMasterList) {
+				States states = new States((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2]);
+				stateList.add(states);
+			}
+		}
+
+		resMap.put("otherLoc", otherLoc);
+		resMap.put("stateMaster", stateList);
+
+		return new Gson().toJson(resMap);
+	}
+
 	private Map<String, Object> getDefaultLocDetails(ArrayList<Object[]> objList) {
 		Map<String, Object> returnObj = new HashMap<>();
 		Map<String, Object> distMap = new HashMap<>();
