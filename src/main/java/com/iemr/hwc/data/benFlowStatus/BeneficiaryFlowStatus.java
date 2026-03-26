@@ -237,6 +237,10 @@ public class BeneficiaryFlowStatus {
 	private Integer vanID;
 
 	@Expose
+	@Column(name = "facilityID")
+	private Integer facilityID;
+
+	@Expose
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "vanID", referencedColumnName = "vanID", insertable = false, updatable = false)
 	private MasterVan masterVan;
@@ -487,6 +491,14 @@ public class BeneficiaryFlowStatus {
 
 	public void setVanID(Integer vanID) {
 		this.vanID = vanID;
+	}
+
+	public Integer getFacilityID() {
+		return facilityID;
+	}
+
+	public void setFacilityID(Integer facilityID) {
+		this.facilityID = facilityID;
 	}
 
 	public String getVanNo() {

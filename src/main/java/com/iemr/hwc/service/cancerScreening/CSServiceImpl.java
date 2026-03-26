@@ -250,7 +250,7 @@ public class CSServiceImpl implements CSService {
 					 * We have to write new code to update ben status flow new logic
 					 */
 					int j = updateBenStatusFlagAfterNurseSaveSuccess(benVisitDetailsOBJ, benVisitID, benFlowID,
-							isReferedToMammogram, docVisitReq, benVisitCode, nurseUtilityClass.getVanID(),
+							isReferedToMammogram, docVisitReq, benVisitCode, nurseUtilityClass.getFacilityID(),
 							tcRequestOBJ);
 
 					if (j > 0)
@@ -318,7 +318,7 @@ public class CSServiceImpl implements CSService {
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenStatusFlagAfterNurseSaveSuccess(BeneficiaryVisitDetail benVisitDetailsOBJ, Long benVisitID,
-			Long benFlowID, Boolean isReferedToMammogram, Boolean docVisitReq, Long benVisitCode, Integer vanID,
+			Long benFlowID, Boolean isReferedToMammogram, Boolean docVisitReq, Long benVisitCode, Integer facilityID,
 			TeleconsultationRequestOBJ tcRequestOBJ) {
 		short nurseFlag = (short) 9;
 		short docFlag = (short) 0;
@@ -351,7 +351,7 @@ public class CSServiceImpl implements CSService {
 		int i = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID,
 				benVisitDetailsOBJ.getBeneficiaryRegID(), benVisitID, benVisitDetailsOBJ.getVisitReason(),
 				benVisitDetailsOBJ.getVisitCategory(), nurseFlag, docFlag, labIteration, radiologistFlag,
-				oncologistFlag, benVisitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+				oncologistFlag, benVisitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 
 		return i;
 	}
@@ -377,7 +377,7 @@ public class CSServiceImpl implements CSService {
 
 			// 11-06-2018 visit code
 			Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-					nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 
 			visitIdAndCodeMap.put("visitID", benVisitID);
 			visitIdAndCodeMap.put("visitCode", benVisitCode);

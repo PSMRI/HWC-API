@@ -156,12 +156,12 @@ public class CommonPatientAppMasterServiceImpl implements CommonPatientAppMaster
 		benDetailsOBJ.setVisitReason("New Chief Complaint");
 		benDetailsOBJ.setVisitCategory("COVID-19 Screening");
 
-		if (benDetailsOBJ != null && benDetailsOBJ.getVanID() != null && benDetailsOBJ.getBeneficiaryRegID() != null
+		if (benDetailsOBJ != null && (benDetailsOBJ.getVanID() != null || nurseUtilityClass.getFacilityID() != null) && benDetailsOBJ.getBeneficiaryRegID() != null
 				&& benDetailsOBJ.getProviderServiceMapID() != null) {
 			Long visitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benDetailsOBJ);
 			Long visitCode = null;
 			if (visitID != null) {
-				visitCode = commonNurseServiceImpl.generateVisitCode(visitID, nurseUtilityClass.getVanID(), 3);
+				visitCode = commonNurseServiceImpl.generateVisitCode(visitID, nurseUtilityClass.getVanID(), 3, nurseUtilityClass.getFacilityID());
 				if (visitCode != null) {
 					Covid19BenFeedback covid19BenFeedbackOBJ = InputMapper.gson()
 							.fromJson(jsonOBJ.getJSONObject("covidDetails").toString(), Covid19BenFeedback.class);
@@ -194,7 +194,7 @@ public class CommonPatientAppMasterServiceImpl implements CommonPatientAppMaster
 		CommonUtilityClass nurseUtilityClass = InputMapper.gson().fromJson(requestObj, CommonUtilityClass.class);
 		Long visitCode = null;
 		if (nurseUtilityClass != null && nurseUtilityClass.getBeneficiaryRegID() != null
-				&& nurseUtilityClass.getVanID() != null && nurseUtilityClass.getProviderServiceMapID() != null
+				&& (nurseUtilityClass.getVanID() != null || nurseUtilityClass.getFacilityID() != null) && nurseUtilityClass.getProviderServiceMapID() != null
 				&& nurseUtilityClass.getCreatedBy() != null) {
 			ChiefComplaintsPatientAPP[] benChiefComplaintArray = InputMapper.gson().fromJson(
 					jsonOBJ.getJSONObject("chiefComplaints").getJSONArray("pastIllness").toString(),
@@ -217,7 +217,7 @@ public class CommonPatientAppMasterServiceImpl implements CommonPatientAppMaster
 				Long visitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benDetailsOBJ);
 
 				if (visitID != null) {
-					visitCode = commonNurseServiceImpl.generateVisitCode(visitID, nurseUtilityClass.getVanID(), 3);
+					visitCode = commonNurseServiceImpl.generateVisitCode(visitID, nurseUtilityClass.getVanID(), 3, nurseUtilityClass.getFacilityID());
 					if (visitCode != null) {
 					} else
 						throw new RuntimeException(" Error in episode creation - visit code");
@@ -360,6 +360,7 @@ public class CommonPatientAppMasterServiceImpl implements CommonPatientAppMaster
 		benFlowOBJ.setVillageName(nurseUtilityClass.getVillageName());
 		benFlowOBJ.setProviderServiceMapId(nurseUtilityClass.getProviderServiceMapID());
 		benFlowOBJ.setVanID(nurseUtilityClass.getVanID());
+		benFlowOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 		benFlowOBJ.setParkingPlaceID(nurseUtilityClass.getParkingPlaceID());
 
 		benFlowOBJ.settCSpecialistUserID(tcRequestOBJ.getUserID());
@@ -482,7 +483,7 @@ public class CommonPatientAppMasterServiceImpl implements CommonPatientAppMaster
 
 		PrescriptionDetail prescriptionDetail = new PrescriptionDetail();
 		if (nurseUtilityClass != null && nurseUtilityClass.getBeneficiaryRegID() != null
-				&& nurseUtilityClass.getVisitCode() != null && nurseUtilityClass.getVanID() != null
+				&& nurseUtilityClass.getVisitCode() != null && (nurseUtilityClass.getVanID() != null || nurseUtilityClass.getFacilityID() != null)
 				&& nurseUtilityClass.getCreatedBy() != null) {
 			prescriptionDetail.setBeneficiaryRegID(nurseUtilityClass.getBeneficiaryRegID());
 			prescriptionDetail.setVisitCode(nurseUtilityClass.getVisitCode());

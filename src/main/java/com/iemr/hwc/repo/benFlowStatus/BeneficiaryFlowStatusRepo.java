@@ -50,34 +50,34 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	// null) AND t.deleted = false "
 	// + " AND Date(t.visitDate) = curdate() AND t.providerServiceMapId =
 	// :providerServiceMapId "
-	// + " AND t.vanID = :vanID ORDER BY t.visitDate DESC ")
+	// + " AND t.facilityID = :facilityID ORDER BY t.visitDate DESC ")
 	// public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
 	// @Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID")
 	// Integer vanID);
 
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.nurseFlag = 1 OR t.nurseFlag = 100) AND (t.specialist_flag <> 100 OR t.specialist_flag is null) AND t.deleted = false "
 			+ " AND Date(t.visitDate)  >= Date(:fromDate) AND t.providerServiceMapId = :providerServiceMapId "
-			+ " AND t.vanID = :vanID  ORDER BY t.visitDate DESC ")
+			+ " AND t.facilityID = :facilityID  ORDER BY t.visitDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistNew(
-			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID,
+			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("facilityID") Integer facilityID,
 			@Param("fromDate") Timestamp fromDate);
 	// nurse worklist TC current date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.specialist_flag != 0 AND t.specialist_flag != 100 AND t.specialist_flag is not null)"
 			+ " AND t.deleted = false AND DATE(t.benVisitDate) >= DATE(:fromDate) "
 			+ " AND (Date(t.tCRequestDate)  <= curdate() OR Date(t.tCRequestDate) = null) "
 			+ " AND t.providerServiceMapId = :providerServiceMapId "
-			+ " AND t.vanID = :vanID ORDER BY t.visitDate DESC ")
+			+ " AND t.facilityID = :facilityID ORDER BY t.visitDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistCurrentDate(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("fromDate") Timestamp fromDate,
-			@Param("vanID") Integer vanID);
+			@Param("facilityID") Integer facilityID);
 
 	// nurse worklist future date
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE (t.specialist_flag = 1)"
 			+ " AND t.deleted = false AND (Date(t.tCRequestDate)  > curdate()) "
 			+ " AND t.providerServiceMapId = :providerServiceMapId "
-			+ " AND t.vanID = :vanID ORDER BY t.tCRequestDate  ")
+			+ " AND t.facilityID = :facilityID ORDER BY t.tCRequestDate  ")
 	public ArrayList<BeneficiaryFlowStatus> getNurseWorklistFutureDate(
-			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID);
+			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("facilityID") Integer facilityID);
 
 	@Transactional
 	@Modifying
@@ -86,7 +86,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			+ " t.labIteration = :labIteration, t.radiologist_flag = :radiologistFlag, "
 			+ " t.oncologist_flag = :oncologistFlag, t.specialist_flag = :specialistFlag, t.benVisitDate = now(), "
 			+ " t.tCRequestDate = :tcDate, t.tCSpecialistUserID = :specialistID, "
-			+ " t.visitCode = :benVisitCode, t.processed = 'U', t.vanID =:vanID,t.lab_technician_flag = 0 "
+			+ " t.visitCode = :benVisitCode, t.processed = 'U', t.facilityID =:facilityID,t.lab_technician_flag = 0 "
 			+ "  WHERE t.benFlowID = :benFlowID AND t.beneficiaryRegID = :benRegID " + " AND nurseFlag = 1  ")
 	public int updateBenFlowStatusAfterNurseActivity(@Param("benFlowID") Long benFlowID,
 			@Param("benRegID") Long benRegID, @Param("benVisitID") Long benVisitID,
@@ -94,7 +94,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("nurseFlag") Short nurseFlag, @Param("docFlag") Short docFlag,
 			@Param("labIteration") Short labIteration, @Param("radiologistFlag") Short radiologistFlag,
 			@Param("oncologistFlag") Short oncologistFlag, @Param("benVisitCode") Long benVisitCode,
-			@Param("vanID") Integer vanID, @Param("specialistFlag") Short specialistFlag,
+			@Param("facilityID") Integer facilityID, @Param("specialistFlag") Short specialistFlag,
 			@Param("tcDate") Timestamp tcDate, @Param("specialistID") Integer specialistID);
 
 	/***
@@ -108,7 +108,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			+ " t.labIteration = :labIteration, t.radiologist_flag = :radiologistFlag, "
 			+ " t.oncologist_flag = :oncologistFlag, t.specialist_flag = :specialistFlag, t.benVisitDate = now(), "
 			+ " t.tCRequestDate = :tcDate, t.tCSpecialistUserID = :specialistID, "
-			+ " t.visitCode = :benVisitCode, t.processed = 'U', t.vanID =:vanID,t.lab_technician_flag = :labTechnician "
+			+ " t.visitCode = :benVisitCode, t.processed = 'U', t.facilityID =:facilityID,t.lab_technician_flag = :labTechnician "
 			+ "  WHERE t.benFlowID = :benFlowID AND t.beneficiaryRegID = :benRegID " + " AND nurseFlag = 1  ")
 	public int updateBenFlowStatusAfterNurseActivityANC(@Param("benFlowID") Long benFlowID,
 			@Param("benRegID") Long benRegID, @Param("benVisitID") Long benVisitID,
@@ -116,7 +116,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("nurseFlag") Short nurseFlag, @Param("docFlag") Short docFlag,
 			@Param("labIteration") Short labIteration, @Param("radiologistFlag") Short radiologistFlag,
 			@Param("oncologistFlag") Short oncologistFlag, @Param("benVisitCode") Long benVisitCode,
-			@Param("vanID") Integer vanID, @Param("specialistFlag") Short specialistFlag,
+			@Param("facilityID") Integer facilityID, @Param("specialistFlag") Short specialistFlag,
 			@Param("tcDate") Timestamp tcDate, @Param("specialistID") Integer specialistID,
 			@Param("labTechnician") Short labTechnician);
 
@@ -144,23 +144,23 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 
 	// TC doc work-list, 04-12-2018
 	@Query("SELECT t from BeneficiaryFlowStatus t WHERE (t.doctorFlag = 1 OR t.doctorFlag = 2 OR "
-			+ " t.doctorFlag = 3 OR t.nurseFlag = 2 OR t.doctorFlag = 9 ) AND t.vanID = :vanID "
+			+ " t.doctorFlag = 3 OR t.nurseFlag = 2 OR t.doctorFlag = 9 ) AND t.facilityID = :facilityID "
 			+ " AND t.benVisitDate >= Date(:fromDate) "
 			+ " AND (t.tCRequestDate is null OR DATE(t.tCRequestDate) <= curdate() ) "
 			+ " AND t.deleted = false AND t.providerServiceMapId = :providerServiceMapId "
 			+ " ORDER BY t.benVisitDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getDocWorkListNewTC(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("fromDate") Timestamp fromDate,
-			@Param("vanID") Integer vanID);
+			@Param("facilityID") Integer facilityID);
 
 	// TC doc work-list, future scheduled 13-12-2018
 	@Query("SELECT t from BeneficiaryFlowStatus t "
 			+ " WHERE t.specialist_flag = 1 AND t.tCRequestDate is not null AND t.tCSpecialistUserID is not null "
-			+ " AND t.vanID = :vanID AND DATE(t.tCRequestDate) > curdate() "
+			+ " AND t.facilityID = :facilityID AND DATE(t.tCRequestDate) > curdate() "
 			+ " AND t.deleted = false AND t.providerServiceMapId = :providerServiceMapId "
 			+ " ORDER BY t.tCRequestDate ")
 	public ArrayList<BeneficiaryFlowStatus> getDocWorkListNewFutureScheduledTC(
-			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID);
+			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("facilityID") Integer facilityID);
 
 	// TC Specialist work-list, 13-12-2018
 	@Query("SELECT t from BeneficiaryFlowStatus t WHERE Date(t.benVisitDate) >= DATE(:fromDate) "
@@ -173,6 +173,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("tCSpecialistUserID") Integer tCSpecialistUserID, @Param("fromDate") Timestamp fromDate);
 
 	// TC Specialist work-list, patient app, 14-08-2020
+	// Keep vanID filter — TM specialist queries by their Van, not facility
 	@Query("SELECT t from BeneficiaryFlowStatus t WHERE  Date(t.benVisitDate) >= DATE(:fromDate) "
 			+ " AND t.specialist_flag NOT IN (0,4) AND t.tCRequestDate is not null AND t.tCSpecialistUserID is not null "
 			+ " AND t.tCSpecialistUserID =:tCSpecialistUserID AND DATE(t.tCRequestDate) <= curdate() "
@@ -195,7 +196,7 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 
 	// @Query("SELECT t.benFlowID from BeneficiaryFlowStatus t WHERE
 	// t.beneficiaryRegID = :benRegID "
-	// + "AND t.providerServiceMapId = :provoderSerMapID AND t.vanID = :vanID AND "
+	// + "AND t.providerServiceMapId = :provoderSerMapID AND t.facilityID = :facilityID AND "
 	// + " (t.nurseFlag = 1 OR t.nurseFlag = 100) AND Date(t.visitDate) = curdate()
 	// AND t.deleted = false")
 	// public ArrayList<Long> checkBenAlreadyInNurseWorkList(@Param("benRegID") Long
@@ -203,18 +204,18 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	// @Param("provoderSerMapID") Integer provoderSerMapID, @Param("vanID") Integer
 	// vanID);
 	@Query("SELECT  t.benFlowID from BeneficiaryFlowStatus t WHERE t.beneficiaryRegID = :benRegID "
-			+ "AND t.providerServiceMapId = :provoderSerMapID AND t.vanID = :vanID AND "
+			+ "AND t.providerServiceMapId = :provoderSerMapID AND t.facilityID = :facilityID AND "
 			+ " (t.nurseFlag = 1 OR t.nurseFlag = 100) AND Date(t.visitDate) >= Date(:fromDate) AND t.deleted = false")
 	public ArrayList<Long> checkBenAlreadyInNurseWorkList(@Param("benRegID") Long benRegID,
-			@Param("provoderSerMapID") Integer provoderSerMapID, @Param("vanID") Integer vanID,
+			@Param("provoderSerMapID") Integer provoderSerMapID, @Param("facilityID") Integer facilityID,
 			@Param("fromDate") Timestamp fromDate);
 
-	@Query("SELECT t from BeneficiaryFlowStatus t " + " WHERE t.benVisitDate >= Date(:fromDate) AND t.vanID = :vanID "
+	@Query("SELECT t from BeneficiaryFlowStatus t " + " WHERE t.benVisitDate >= Date(:fromDate) AND t.facilityID = :facilityID "
 			+ " AND (t.nurseFlag = 2 OR t.doctorFlag = 2 OR t.specialist_flag = 2)  AND t.deleted = false "
 			+ " AND t.providerServiceMapId = :providerServiceMapId ORDER BY consultationDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getLabWorklistNew(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("fromDate") Timestamp fromDate,
-			@Param("vanID") Integer vanID);
+			@Param("facilityID") Integer facilityID);
 
 	/***
 	 * @author DU20091017 updating lab technician flag as well after feto sense.
@@ -285,26 +286,26 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 			@Param("pharmaFlag") Short pharmaFlag, @Param("oncologistFlag") Short oncologistFlag);
 
 	@Query("SELECT t from BeneficiaryFlowStatus t "
-			+ " WHERE t.benVisitDate >= Date(:fromDate) AND t.vanID = :vanID AND t.radiologist_flag = 1 "
+			+ " WHERE t.benVisitDate >= Date(:fromDate) AND t.facilityID = :facilityID AND t.radiologist_flag = 1 "
 			+ " AND t.providerServiceMapId= :providerServiceMapId ORDER BY t.benVisitDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getRadiologistWorkListNew(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("fromDate") Timestamp fromDate,
-			@Param("vanID") Integer vanID);
+			@Param("facilityID") Integer facilityID);
 
 	@Query("SELECT t from BeneficiaryFlowStatus t "
-			+ "  WHERE t.benVisitDate >= Date(:fromDate) AND t.vanID = :vanID AND t.oncologist_flag = 1 "
+			+ "  WHERE t.benVisitDate >= Date(:fromDate) AND t.facilityID = :facilityID AND t.oncologist_flag = 1 "
 			+ " AND t.providerServiceMapId= :providerServiceMapId ORDER BY t.benVisitDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getOncologistWorkListNew(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("fromDate") Timestamp fromDate,
-			@Param("vanID") Integer vanID);
+			@Param("facilityID") Integer facilityID);
 
 	@Query("SELECT t from BeneficiaryFlowStatus t "
-			+ " WHERE t.benVisitDate >= Date(:fromDate) AND t.vanID = :vanID AND t.pharmacist_flag = 1 "
+			+ " WHERE t.benVisitDate >= Date(:fromDate) AND t.facilityID = :facilityID AND t.pharmacist_flag = 1 "
 			+ "  AND t.providerServiceMapId= :providerServiceMapId AND (doctorFlag = 9 OR specialist_flag = 9) "
 			+ "  ORDER BY consultationDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getPharmaWorkListNew(
 			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("fromDate") Timestamp fromDate,
-			@Param("vanID") Integer vanID);
+			@Param("facilityID") Integer facilityID);
 
 	@Query("SELECT t.pharmacist_flag from BeneficiaryFlowStatus t WHERE t.benFlowID = :benFlowID")
 	public Short getPharmaFlag(@Param("benFlowID") Long benFlowID);
@@ -421,9 +422,9 @@ public interface BeneficiaryFlowStatusRepo extends CrudRepository<BeneficiaryFlo
 	// nurse worklist coming from MMU
 	@Query("SELECT  t from BeneficiaryFlowStatus t WHERE t.specialist_flag = 100 AND t.deleted = false AND t.referredVisitCode IS NOT NULL "
 			+ " AND t.processed = 'M' AND t.providerServiceMapId = :providerServiceMapId AND t.visitDate >= Date(:fromDate) "
-			+ " AND t.vanID = :vanID  ORDER BY t.visitDate DESC ")
+			+ " AND t.facilityID = :facilityID  ORDER BY t.visitDate DESC ")
 	public ArrayList<BeneficiaryFlowStatus> getMmuNurseWorklistNew(
-			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("vanID") Integer vanID,
+			@Param("providerServiceMapId") Integer providerServiceMapId, @Param("facilityID") Integer facilityID,
 			@Param("fromDate") Timestamp fromDate);
 
 	/**

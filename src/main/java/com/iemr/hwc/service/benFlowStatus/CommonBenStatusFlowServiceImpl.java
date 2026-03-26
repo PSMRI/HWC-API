@@ -79,7 +79,7 @@ public class CommonBenStatusFlowServiceImpl implements CommonBenStatusFlowServic
 					cal.add(Calendar.DAY_OF_YEAR, -7);
 				long sevenDaysAgo = cal.getTimeInMillis();
 				ArrayList<Long> benFlowIDList = beneficiaryFlowStatusRepo.checkBenAlreadyInNurseWorkList(
-						obj.getBeneficiaryRegID(), obj.getProviderServiceMapID(), obj.getVanID(),
+						obj.getBeneficiaryRegID(), obj.getProviderServiceMapID(), obj.getFacilityID(),
 						new Timestamp(sevenDaysAgo));
 				if (benFlowIDList != null && benFlowIDList.size() > 0) {
 					// update i_ben_flow table for updated beneficiary id
@@ -102,13 +102,13 @@ public class CommonBenStatusFlowServiceImpl implements CommonBenStatusFlowServic
 
 	public int updateBenFlowNurseAfterNurseActivity(Long benFlowID, Long benRegID, Long benVisitID, String visitReason,
 			String visitCategory, Short nurseFlag, Short docFlag, Short labIteration, Short radiologistFlag,
-			Short oncologistFlag, Long visitCode, Integer vanID, Short specialistFlag, Timestamp tcDate,
+			Short oncologistFlag, Long visitCode, Integer facilityID, Short specialistFlag, Timestamp tcDate,
 			Integer tcSpecialistUserID) {
 		int i = 0;
 		try {
 			i = beneficiaryFlowStatusRepo.updateBenFlowStatusAfterNurseActivity(benFlowID, benRegID, benVisitID,
 					visitReason, visitCategory, nurseFlag, docFlag, labIteration, radiologistFlag, oncologistFlag,
-					visitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+					visitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 			// System.out.println("hello");
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -120,13 +120,13 @@ public class CommonBenStatusFlowServiceImpl implements CommonBenStatusFlowServic
 	public int updateBenFlowNurseAfterNurseActivityANC(Long benFlowID, Long benRegID, Long benVisitID,
 			String visitReason,
 			String visitCategory, Short nurseFlag, Short docFlag, Short labIteration, Short radiologistFlag,
-			Short oncologistFlag, Long visitCode, Integer vanID, Short specialistFlag, Timestamp tcDate,
+			Short oncologistFlag, Long visitCode, Integer facilityID, Short specialistFlag, Timestamp tcDate,
 			Integer tcSpecialistUserID, Short labTechnician) {
 		int i = 0;
 		try {
 			i = beneficiaryFlowStatusRepo.updateBenFlowStatusAfterNurseActivityANC(benFlowID, benRegID, benVisitID,
 					visitReason, visitCategory, nurseFlag, docFlag, labIteration, radiologistFlag, oncologistFlag,
-					visitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID, labTechnician);
+					visitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID, labTechnician);
 			// System.out.println("hello");
 		} catch (Exception e) {
 			// e.printStackTrace();
