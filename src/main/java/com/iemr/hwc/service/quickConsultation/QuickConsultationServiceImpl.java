@@ -217,7 +217,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 				// 11-06-2018 visit code
 				benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-						nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 				// Getting benflowID for ben status update
 				Long benFlowID = null;
 				// if (jsnOBJ.has("benFlowID")) {
@@ -272,7 +272,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 						 */
 
 						int j = updateBenStatusFlagAfterNurseSaveSuccess(benVisitDetailsOBJ, benVisitID, benFlowID,
-								benVisitCode, nurseUtilityClass.getVanID(), tcRequestOBJ);
+								benVisitCode, nurseUtilityClass.getFacilityID(), tcRequestOBJ);
 
 						if (j > 0)
 							returnOBJ = 1;
@@ -339,7 +339,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenStatusFlagAfterNurseSaveSuccess(BeneficiaryVisitDetail benVisitDetailsOBJ, Long benVisitID,
-			Long benFlowID, Long benVisitCode, Integer vanID, TeleconsultationRequestOBJ tcRequestOBJ) {
+			Long benFlowID, Long benVisitCode, Integer facilityID, TeleconsultationRequestOBJ tcRequestOBJ) {
 		short nurseFlag = (short) 9;
 		short docFlag = (short) 1;
 		short labIteration = (short) 0;
@@ -358,7 +358,7 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 		int i = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID,
 				benVisitDetailsOBJ.getBeneficiaryRegID(), benVisitID, benVisitDetailsOBJ.getVisitReason(),
 				benVisitDetailsOBJ.getVisitCategory(), nurseFlag, docFlag, labIteration, (short) 0, (short) 0,
-				benVisitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+				benVisitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 
 		return i;
 	}

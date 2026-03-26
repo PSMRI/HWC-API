@@ -386,7 +386,7 @@ public class CommonDoctorServiceImpl {
 	}
 
 	// New doc work-list service
-	public String getDocWorkListNew(Integer providerServiceMapId, Integer serviceID, Integer vanID) {
+	public String getDocWorkListNew(Integer providerServiceMapId, Integer serviceID, Integer facilityID) {
 
 		Calendar cal = Calendar.getInstance();
 		if (docWL != null && docWL > 0 && docWL <= 30)
@@ -403,7 +403,7 @@ public class CommonDoctorServiceImpl {
 		// TC doc work-list
 		else if (serviceID != null && serviceID == 9) {
 			docWorkList = beneficiaryFlowStatusRepo.getDocWorkListNewTC(providerServiceMapId,
-					new Timestamp(cutoffTime), vanID);
+					new Timestamp(cutoffTime), facilityID);
 			for (BeneficiaryFlowStatus beneficiaryFlowStatus : docWorkList) {
 				Boolean isHighrisk = beneficiaryFlowStatusRepo.getIsHighrisk(beneficiaryFlowStatus.getBeneficiaryID());
 				if(null != isHighrisk)
@@ -416,12 +416,12 @@ public class CommonDoctorServiceImpl {
 
 	// New doc work-list service (Future scheduled beneficiary for TM)
 	public String getDocWorkListNewFutureScheduledForTM(Integer providerServiceMapId, Integer serviceID,
-			Integer vanID) {
+			Integer facilityID) {
 
 		ArrayList<BeneficiaryFlowStatus> docWorkListFutureScheduled = new ArrayList<>();
 		if (serviceID != null && serviceID == 9) {
 			docWorkListFutureScheduled = beneficiaryFlowStatusRepo
-					.getDocWorkListNewFutureScheduledTC(providerServiceMapId, vanID);
+					.getDocWorkListNewFutureScheduledTC(providerServiceMapId, facilityID);
 		}
 		return new Gson().toJson(docWorkListFutureScheduled);
 	}

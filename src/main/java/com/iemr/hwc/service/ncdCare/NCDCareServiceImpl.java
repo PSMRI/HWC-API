@@ -195,7 +195,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 				 */
 				int J = updateBenFlowNurseAfterNurseActivityANC(
 						requestOBJ.getAsJsonObject("visitDetails").getAsJsonObject("investigation"), tmpOBJ, benVisitID,
-						benFlowID, benVisitCode, nurseUtilityClass.getVanID(), tcRequestOBJ);
+						benFlowID, benVisitCode, nurseUtilityClass.getFacilityID(), tcRequestOBJ);
 
 				if (J > 0)
 					saveSuccessFlag = historySaveSuccessFlag;
@@ -253,7 +253,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenFlowNurseAfterNurseActivityANC(JsonObject investigationDataCheck, JsonObject tmpOBJ,
-			Long benVisitID, Long benFlowID, Long benVisitCode, Integer vanID,
+			Long benVisitID, Long benFlowID, Long benVisitCode, Integer facilityID,
 			TeleconsultationRequestOBJ tcRequestOBJ) {
 		short nurseFlag;
 		short docFlag;
@@ -287,7 +287,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 		int rs = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID,
 				tmpOBJ.get("beneficiaryRegID").getAsLong(), benVisitID, tmpOBJ.get("visitReason").getAsString(),
 				tmpOBJ.get("visitCategory").getAsString(), nurseFlag, docFlag, labIteration, (short) 0, (short) 0,
-				benVisitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+				benVisitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 
 		return rs;
 	}
@@ -315,7 +315,7 @@ public class NCDCareServiceImpl implements NCDCareService {
 
 				// 11-06-2018 visit code
 				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-						nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 
 				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
 					if (visitDetailsOBJ.has("adherence") && !visitDetailsOBJ.get("adherence").isJsonNull()) {
