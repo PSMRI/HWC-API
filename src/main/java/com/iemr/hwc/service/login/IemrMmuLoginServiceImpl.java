@@ -183,6 +183,8 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
 				facilityEntry.setUserID(userID);
 				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+				facilityEntry.setProviderServiceMapID(providerServiceMapID);
+				facilityEntry.setVanNoAndType((String) facilityDetails[1]); // facilityName
 				// vanID stays null — no Van for facility-based users
 				facilityEntry.setVanSession((short) 3);
 				userVanSpDetails_ViewList.add(facilityEntry);
