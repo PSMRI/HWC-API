@@ -85,6 +85,20 @@ public interface RegistrarRepoBenData extends CrudRepository<BeneficiaryData, Lo
 			@Param("spouseName") String spouseName, @Param("aadharNo") String aadharNo,
 			@Param("modifiedBy") String modifiedBy, @Param("beneficiaryRegID") Long beneficiaryRegID);
 
+
+	@Transactional
+	@Modifying
+	@Query("UPDATE BeneficiaryData set firstName = :firstName, lastName = :lastName, genderID = :genderID, dob = :dob, maritalStatusID = :maritalStatusID, spouseName = :spouseName "
+			+ "where beneficiaryRegID = :beneficiaryRegID")
+	public Integer updateBeneficiaryData(
+			@Param("firstName") String firstName,
+			@Param("lastName") String lastName,
+			@Param("genderID") Short genderID,
+			@Param("dob") Timestamp dob,
+			@Param("maritalStatusID") Short maritalStatusID,
+			@Param("spouseName") String spouseName,   // ✅ included
+			@Param("beneficiaryRegID") Long beneficiaryRegID
+	);
 	@Query(" SELECT firstName, lastName, Date(dob), genderID FROM BeneficiaryData WHERE beneficiaryRegID = :benRegID ")
 	public ArrayList<Object[]> getBenDataForCareStream(@Param("benRegID") Long benRegID);
 }
