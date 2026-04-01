@@ -165,38 +165,39 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 	@Override
 	public String getUserVanSpDetails(Integer userID, Integer providerServiceMapID) {
 		Map<String, Object> resMap = new HashMap<>();
-		ArrayList<Object[]> objList = userVanSpDetails_View_Repo.getUserVanSpDetails_View(userID, providerServiceMapID);
 		ArrayList<UserVanSpDetails_View> userVanSpDetails_ViewList = new ArrayList<>();
-		if (objList.size() > 0) {
-			for (Object[] objArray : objList) {
-				UserVanSpDetails_View userVanSpDetails_ViewOBJ = new UserVanSpDetails_View((Integer) objArray[0],
-						(Integer) objArray[1], (String) objArray[2], (Short) objArray[3], (Integer) objArray[4],
-						(String) objArray[5], (Integer) objArray[6], (Integer) objArray[7], 0);
-				userVanSpDetails_ViewList.add(userVanSpDetails_ViewOBJ);
-			}
+
+		// First: check m_UserServiceRoleMapping for facilityID (facility-based users)
+		Object[] facilityDetails = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
+		if (facilityDetails != null && facilityDetails.length > 0 && facilityDetails[0] != null) {
+			UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
+			facilityEntry.setUserID(userID);
+			facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+			facilityEntry.setProviderServiceMapID(providerServiceMapID);
+			facilityEntry.setVanNoAndType((String) facilityDetails[1]); // facilityName
+			facilityEntry.setVanSession((short) 3);
+			userVanSpDetails_ViewList.add(facilityEntry);
 		}
 
-		// Facility fallback: if no Van mapping, check m_UserServiceRoleMapping for facilityID
+		// Fallback: if no facilityID in role mapping, try Van view (old users)
 		if (userVanSpDetails_ViewList.isEmpty()) {
-			Object[] facilityDetails = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
-			if (facilityDetails != null && facilityDetails.length > 0) {
-				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
-				facilityEntry.setUserID(userID);
-				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
-				facilityEntry.setProviderServiceMapID(providerServiceMapID);
-				facilityEntry.setVanNoAndType((String) facilityDetails[1]); // facilityName
-				// vanID stays null — no Van for facility-based users
-				facilityEntry.setVanSession((short) 3);
-				userVanSpDetails_ViewList.add(facilityEntry);
+			ArrayList<Object[]> objList = userVanSpDetails_View_Repo.getUserVanSpDetails_View(userID, providerServiceMapID);
+			if (objList != null && objList.size() > 0) {
+				for (Object[] objArray : objList) {
+					UserVanSpDetails_View userVanSpDetails_ViewOBJ = new UserVanSpDetails_View((Integer) objArray[0],
+							(Integer) objArray[1], (String) objArray[2], (Short) objArray[3], (Integer) objArray[4],
+							(String) objArray[5], (Integer) objArray[6], (Integer) objArray[7], 0);
+					userVanSpDetails_ViewList.add(userVanSpDetails_ViewOBJ);
+				}
 			}
 		}
 
 		resMap.put("UserVanSpDetails", userVanSpDetails_ViewList);
 
-		// Location details
-		List<Object[]> parkingPlaceList = userParkingplaceMappingRepo.getUserParkingPlce(userID);
+		// Location details from parking place (for old Van-based users)
 		Map<String, Object> parkingPlaceLocationMap = new HashMap<>();
-		if (parkingPlaceList.size() > 0) {
+		List<Object[]> parkingPlaceList = userParkingplaceMappingRepo.getUserParkingPlce(userID);
+		if (parkingPlaceList != null && parkingPlaceList.size() > 0) {
 			Object[] obj1 = parkingPlaceList.get(0);
 			parkingPlaceLocationMap.put("parkingPlaceID", obj1[0]);
 			parkingPlaceLocationMap.put("stateID", obj1[1]);

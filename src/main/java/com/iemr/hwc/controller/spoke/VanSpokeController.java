@@ -92,9 +92,9 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@Operation(summary = "Get user van details")
-	@PostMapping(value = "/getUserVanSpDetails", produces = { "application/json" })
-	public String getUserVanSpDetails(@RequestBody String comingRequest) {
+	@Operation(summary = "Get user facility details")
+	@PostMapping(value = "/getUserFacilityDetails", produces = { "application/json" })
+	public String getUserFacilityDetails(@RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 		try {
 
