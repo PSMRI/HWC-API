@@ -110,6 +110,14 @@ public class CHOAppSyncController {
         return choappSyncService.getFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
     }
 
+    @Operation(summary = "Sync beneficiaries flow status records ")
+    @PostMapping(value = { "/couple/getAll" })
+    public ResponseEntity<String> getCoupleTracking(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
+                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+
+        return choappSyncService.getCoupleRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+    }
+
     // Login logout logs sync from CHO app to AMRIT server
     @Operation(summary = "Sync user activity logs to AMRIT server")
     @PostMapping(value = { "/userActivityLogsToServer" })

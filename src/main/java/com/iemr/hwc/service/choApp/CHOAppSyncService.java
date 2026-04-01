@@ -35,6 +35,7 @@ public interface CHOAppSyncService {
     ResponseEntity<String> getBeneficiaryByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 
     ResponseEntity<String> getFlowRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
+    ResponseEntity<String> getCoupleRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization);
 
     ResponseEntity<String> saveUserActivityLogs(List<UserActivityLogs> logsList, String authorization);
 
