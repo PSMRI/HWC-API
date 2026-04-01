@@ -66,13 +66,13 @@ public class UPTechnicalSupportUnitController {
 	}
 
 	@Operation(summary = "Fetch 104 work list data")
-	@GetMapping("/getWorklistByVanID/{vanId}")
-	public String getWolklist104Data(@PathVariable Integer vanId) {
+	@GetMapping({"/getWorklistByFacilityID/{facilityID}", "/getWorklistByVanID/{facilityID}"})
+	public String getWolklist104Data(@PathVariable Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		String resp = null;
-		logger.info("Entered into getWorklist method with vanId : " + vanId);
+		logger.info("Entered into getWorklist method with facilityID : " + facilityID);
 		try {
-			resp = uptsuService.getWorklist(vanId);
+			resp = uptsuService.getWorklistByFacilityID(facilityID);
 			if (null != resp) {
 				response.setResponse(resp.toString());
 			}
