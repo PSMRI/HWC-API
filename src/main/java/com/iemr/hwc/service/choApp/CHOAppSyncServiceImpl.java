@@ -819,7 +819,74 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
     }
 
-    public String getRmnchData(BigInteger benId,String Authorization) {
+    @Override
+    public ResponseEntity<String> getCoupleRecordsByVillageIDAndLastModifiedDate(SyncSearchRequest villageIDAndLastSyncDate, String authorization) {
+        HttpStatus statusCode = HttpStatus.OK;
+        OutputResponse outputResponse = new OutputResponse();
+        ArrayList<BeneficiaryFlowStatus> benFlowList;
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+
+        try {
+            if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+                    && villageIDAndLastSyncDate.getLastSyncDate() != null) {
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+                DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
+
+                benFlowList = beneficiaryFlowStatusRepo.getFlowRecordsToSync(villageIDAndLastSyncDate.getVillageID(),
+                        new Timestamp(dt.toDate().getTime()));
+                ObjectMapper mapper = new ObjectMapper();
+
+                for (BeneficiaryFlowStatus in : benFlowList) {
+
+                    String jsonResponse = getRmnchData(BigInteger.valueOf(in.getBeneficiaryRegID()), authorization);
+
+                    if (jsonResponse != null) {
+                        try {
+                            JsonNode jsonNode = mapper.readTree(jsonResponse);
+
+                            String reproductiveStatus = jsonNode.get("reproductiveStatus") != null
+                                    ? jsonNode.get("reproductiveStatus").asText()
+                                    : null;
+
+                            Integer reproductiveStatusId = jsonNode.get("reproductiveStatusId") != null
+                                    ? jsonNode.get("reproductiveStatusId").asInt()
+                                    : null;
+                            in.setReproductiveStatus(reproductiveStatus);
+                            in.setReproductiveStatusId(reproductiveStatusId);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                logger.info("Ben FLow data"+
+                        new GsonBuilder()
+                                .excludeFieldsWithoutExposeAnnotation()
+                                .serializeNulls()
+                                .create()
+                                .toJson(benFlowList));
+                outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList.stream().filter(beneficiaryFlowStatus -> beneficiaryFlowStatus.getReproductiveStatus()
+                        .equals("Eligible Couple"))));
+            }else{
+                logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                statusCode = HttpStatus.BAD_REQUEST;
+            }
+        } catch (IllegalArgumentException e){
+            logger.error("Encountered exception. " + e);
+            outputResponse.setError(400, "Encountered exception. Exception " + e);
+            statusCode = HttpStatus.BAD_REQUEST;
+        } catch (Exception e){
+            logger.error("Encountered exception while fetching ben flow status records to sync " + e);
+            outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+    }
+
+    public String getRmnchData(BigInteger benId, String Authorization) {
 
         RestTemplate restTemplate = new RestTemplate();
 
