@@ -32,6 +32,8 @@ public interface UptsuService {
 	
 	String getWorklist(Integer vanId);
 
+	String getWorklistByFacilityID(Integer facilityID);
+
 	Referred104Details saveReferredDetails(Referred104Details requestObj);
 
 }
