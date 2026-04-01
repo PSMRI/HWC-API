@@ -356,15 +356,23 @@ public class LocationServiceImpl implements LocationService {
 
 		// Get location from m_facility directly
 		Map<String, Object> otherLoc = new HashMap<>();
-		Object[] facilityLoc = districtMasterRepo.getFacilityLocation(facilityID);
-		if (facilityLoc != null) {
-			otherLoc.put("stateID", facilityLoc[0]);
-			Map<String, Object> distMap = new HashMap<>();
-			distMap.put("districtID", facilityLoc[1]);
-			distMap.put("districtName", facilityLoc[2]);
-			distMap.put("blockId", facilityLoc[3]);
-			distMap.put("blockName", facilityLoc[4]);
-			otherLoc.put("districtList", new Object[]{distMap});
+		Object[] facilityResult = districtMasterRepo.getFacilityLocation(facilityID);
+		if (facilityResult != null && facilityResult.length > 0) {
+			Object[] facilityLoc;
+			if (facilityResult[0] instanceof Object[]) {
+				facilityLoc = (Object[]) facilityResult[0];
+			} else {
+				facilityLoc = facilityResult;
+			}
+			if (facilityLoc != null && facilityLoc.length > 0) {
+				otherLoc.put("stateID", facilityLoc[0]);
+				Map<String, Object> distMap = new HashMap<>();
+				distMap.put("districtID", facilityLoc[1]);
+				distMap.put("districtName", facilityLoc[2]);
+				distMap.put("blockId", facilityLoc[3]);
+				distMap.put("blockName", facilityLoc[4]);
+				otherLoc.put("districtList", new Object[]{distMap});
+			}
 		}
 
 		// State master
