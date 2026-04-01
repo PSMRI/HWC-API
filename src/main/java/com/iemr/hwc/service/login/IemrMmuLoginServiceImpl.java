@@ -168,15 +168,24 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 		ArrayList<UserVanSpDetails_View> userVanSpDetails_ViewList = new ArrayList<>();
 
 		// First: check m_UserServiceRoleMapping for facilityID (facility-based users)
-		Object[] facilityDetails = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
-		if (facilityDetails != null && facilityDetails.length > 0 && facilityDetails[0] != null) {
-			UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
-			facilityEntry.setUserID(userID);
-			facilityEntry.setFacilityID((Integer) facilityDetails[0]);
-			facilityEntry.setProviderServiceMapID(providerServiceMapID);
-			facilityEntry.setVanNoAndType((String) facilityDetails[1]); // facilityName
-			facilityEntry.setVanSession((short) 3);
-			userVanSpDetails_ViewList.add(facilityEntry);
+		Object[] facilityResult = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
+		if (facilityResult != null && facilityResult.length > 0 && facilityResult[0] != null) {
+			// Native query with LIMIT 1 may return Object[] where first element is the row
+			Object[] facilityDetails;
+			if (facilityResult[0] instanceof Object[]) {
+				facilityDetails = (Object[]) facilityResult[0];
+			} else {
+				facilityDetails = facilityResult;
+			}
+			if (facilityDetails != null && facilityDetails.length > 0 && facilityDetails[0] != null) {
+				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
+				facilityEntry.setUserID(userID);
+				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+				facilityEntry.setProviderServiceMapID(providerServiceMapID);
+				facilityEntry.setVanNoAndType((String) facilityDetails[1]); // facilityName
+				facilityEntry.setVanSession((short) 3);
+				userVanSpDetails_ViewList.add(facilityEntry);
+			}
 		}
 
 		// Fallback: if no facilityID in role mapping, try Van view (old users)
