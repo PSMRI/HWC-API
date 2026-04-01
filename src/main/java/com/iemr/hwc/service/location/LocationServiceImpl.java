@@ -354,7 +354,7 @@ public class LocationServiceImpl implements LocationService {
 	public String getLocDetailsByFacilityID(Integer facilityID, Integer spPSMID) {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 
-		// Get location from m_facility directly
+		// Get location from m_facility directly — matches old getLocDetailsNew response format
 		Map<String, Object> otherLoc = new HashMap<>();
 		Object[] facilityResult = districtMasterRepo.getFacilityLocation(facilityID);
 		if (facilityResult != null && facilityResult.length > 0) {
@@ -366,12 +366,30 @@ public class LocationServiceImpl implements LocationService {
 			}
 			if (facilityLoc != null && facilityLoc.length > 0) {
 				otherLoc.put("stateID", facilityLoc[0]);
+				otherLoc.put("parkingPlaceID", null);
+
 				Map<String, Object> distMap = new HashMap<>();
 				distMap.put("districtID", facilityLoc[1]);
 				distMap.put("districtName", facilityLoc[2]);
 				distMap.put("blockId", facilityLoc[3]);
 				distMap.put("blockName", facilityLoc[4]);
-				otherLoc.put("districtList", new Object[]{distMap});
+
+				// Villages from facility_village_mapping
+				ArrayList<Map<String, Object>> villageList = new ArrayList<>();
+				ArrayList<Object[]> villages = districtMasterRepo.getFacilityVillages(facilityID);
+				if (villages != null) {
+					for (Object[] village : villages) {
+						Map<String, Object> villageMap = new HashMap<>();
+						villageMap.put("districtBranchID", String.valueOf(village[0]));
+						villageMap.put("villageName", village[1]);
+						villageList.add(villageMap);
+					}
+				}
+				distMap.put("villageList", villageList);
+
+				ArrayList<Map<String, Object>> distList = new ArrayList<>();
+				distList.add(distMap);
+				otherLoc.put("districtList", distList);
 			}
 		}
 

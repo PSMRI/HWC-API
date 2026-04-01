@@ -44,4 +44,10 @@ public interface DistrictMasterRepo extends CrudRepository<Districts, Integer> {
 			+ "WHERE f.FacilityID = :facilityID AND f.Deleted = false", nativeQuery = true)
 	public Object[] getFacilityLocation(@Param("facilityID") Integer facilityID);
 
+	@Query(value = "SELECT fvm.DistrictBranchID, dbm.VillageName "
+			+ "FROM facility_village_mapping fvm "
+			+ "JOIN m_DistrictBranchMapping dbm ON fvm.DistrictBranchID = dbm.DistrictBranchID "
+			+ "WHERE fvm.FacilityID = :facilityID AND fvm.Deleted = false", nativeQuery = true)
+	public ArrayList<Object[]> getFacilityVillages(@Param("facilityID") Integer facilityID);
+
 }
