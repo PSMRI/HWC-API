@@ -2,6 +2,7 @@ package com.iemr.hwc.service.EligibleCouple;
 
 
 import com.iemr.hwc.data.eligibleCouple.EligibleCoupleDTO;
+import com.iemr.hwc.data.eligibleCouple.EligibleCoupleTrackingDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,5 +16,7 @@ public interface CoupleService {
     String getEligibleCoupleRegRecords(GetBenRequestHandler dto);
 
 
+    List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(GetBenRequestHandler requestDTO);
 
+    String registerEligibleCoupleTracking(List<EligibleCoupleTrackingDTO> eligibleCoupleTrackingDTOs);
 }

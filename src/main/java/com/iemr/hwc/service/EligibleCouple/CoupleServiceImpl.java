@@ -6,8 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.iemr.hwc.data.eligibleCouple.EligibleCoupleDTO;
 import com.iemr.hwc.data.eligibleCouple.EligibleCoupleRegister;
+import com.iemr.hwc.data.eligibleCouple.EligibleCoupleTracking;
+import com.iemr.hwc.data.eligibleCouple.EligibleCoupleTrackingDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.repo.couple.EligibleCoupleRegisterRepo;
+import com.iemr.hwc.repo.eligibleCouple.EligibleCoupleTrackingRepo;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +36,8 @@ public class CoupleServiceImpl implements CoupleService {
     private EligibleCoupleRegisterRepo eligibleCoupleRegisterRepo;
 
 
-
+    @Autowired
+    private EligibleCoupleTrackingRepo eligibleCoupleTrackingRepo;
     private final Logger logger = LoggerFactory.getLogger(CoupleServiceImpl.class);
 
 
@@ -104,6 +108,49 @@ public class CoupleServiceImpl implements CoupleService {
         }
         return null;
     }
+    @Override
+    public String registerEligibleCoupleTracking(List<EligibleCoupleTrackingDTO> eligibleCoupleTrackingDTOs) {
+        try {
+            List<EligibleCoupleTracking> ectList = new ArrayList<>();
+            eligibleCoupleTrackingDTOs.forEach(it -> {
+                EligibleCoupleTracking ect =
+                        eligibleCoupleTrackingRepo.findActiveEligibleCoupleTrackingByBenId(it.getBenId(), it.getVisitDate());
+
+                if (ect != null) {
+                    Long id = ect.getId();
+                    modelMapper.map(it, ect);
+                    ect.setId(id);
+                } else {
+                    ect = new EligibleCoupleTracking();
+                    modelMapper.map(it, ect);
+                    ect.setId(null);
+                }
+                ectList.add(ect);
+            });
+            eligibleCoupleTrackingRepo.saveAll(ectList);
+            return "no of ect details saved: " + ectList.size();
+        } catch (Exception e) {
+            return "error while saving ect details: " + e.getMessage();
+        }
+    }
+    @Override
+    public List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(GetBenRequestHandler dto) {
+
+        try {
+            String user = dto.getUserName();
+
+            List<EligibleCoupleTracking> eligibleCoupleTrackingList =
+                    eligibleCoupleTrackingRepo.getECTrackRecords(user, dto.getFromDate(), dto.getToDate());
+
+            return eligibleCoupleTrackingList.stream()
+                    .map(ect -> mapper.convertValue(ect, EligibleCoupleTrackingDTO.class))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
 
 
 }
