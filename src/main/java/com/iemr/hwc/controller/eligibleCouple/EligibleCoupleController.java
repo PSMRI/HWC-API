@@ -29,11 +29,12 @@ public class EligibleCoupleController {
     public String saveEligibleCouple(@RequestPart("data") List<EligibleCoupleDTO> eligibleCoupleDTOs,
                                      @RequestPart(value = "kitPhoto1", required = false) MultipartFile kitPhoto1,
                                      @RequestPart(value = "kitPhoto2", required = false) MultipartFile kitPhoto2,
-                                     @RequestHeader(value = "Authorization") String Authorization) {
+                                     @RequestHeader(value = "jwtToken") String Authorization) {
         OutputResponse response = new OutputResponse();
         try {
             logger.info("Saving All Eligible Couple Details");
             if (eligibleCoupleDTOs != null) {
+
                 String s = coupleService.registerEligibleCouple(eligibleCoupleDTOs,kitPhoto1,kitPhoto2);
                 if (s != null)
                     response.setResponse(s);
@@ -97,11 +98,12 @@ public class EligibleCoupleController {
     @Operation(summary = "get List of eligible couple tracking details")
     @RequestMapping(value = { "/tracking/getAll" }, method = { RequestMethod.POST })
     public String getEligibleCoupleTracking(@RequestBody GetBenRequestHandler requestDTO,
-                                            @RequestHeader(value = "Authorization") String Authorization) {
+                                            @RequestHeader(value = "jwtToken") String Authorization) {
         OutputResponse response = new OutputResponse();
         try {
             if (requestDTO != null) {
                 logger.info("fetching All Eligible Couple Tracking Details for user: " + requestDTO.getAshaId());
+
                 List<EligibleCoupleTrackingDTO> result = coupleService.getEligibleCoupleTracking(requestDTO);
                 Gson gson = new GsonBuilder()
                         .setDateFormat("MMM dd, yyyy h:mm:ss a") // Set the desired date format

@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/procedureFields")
+@RequestMapping(value= "/procedureFields")
 public class ProcedureController {
 
     @Autowired
@@ -23,18 +25,31 @@ public class ProcedureController {
     public ResponseEntity<?> getProcedureFields() {
 
         try {
-            List<ProcedureField> response = service.getProcedureField();
+            List<ProcedureField> list = service.getProcedureField();
 
-            if (response.isEmpty()) {
-                return ResponseEntity.ok("No data found");
+            Map<String, Object> response = new HashMap<>();
+
+            if (list.isEmpty()) {
+                response.put("statusCode", 200);
+                response.put("message", "No data found");
+                response.put("data", list);
+                return ResponseEntity.ok(response);
             }
+
+            response.put("statusCode", 200);
+            response.put("message", "Data fetched successfully");
+            response.put("data", list);
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body("Error: " + e.getMessage());
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("statusCode", 500);
+            error.put("message", "Error: " + e.getMessage());
+            error.put("data", null);
+
+            return ResponseEntity.internalServerError().body(error);
         }
     }
 }
