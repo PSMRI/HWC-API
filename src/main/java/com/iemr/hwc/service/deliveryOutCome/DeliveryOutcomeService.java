@@ -9,5 +9,5 @@ public interface DeliveryOutcomeService {
 
     String registerDeliveryOutcome(List<DeliveryOutcomeDTO> deliveryOutcomeDTOS);
 
-    List<DeliveryOutcomeDTO> getDeliveryOutcome(GetBenRequestHandler dto);
+    List<DeliveryOutcomeDTO> getDeliveryOutcome(String userName);
 }

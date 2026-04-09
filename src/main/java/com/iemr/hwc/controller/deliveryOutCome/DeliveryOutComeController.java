@@ -74,14 +74,12 @@ public class DeliveryOutComeController {
 
     @Operation(summary = "get Delivery Outcome details")
     @RequestMapping(value = { "/getAll" }, method = { RequestMethod.POST })
-    public String getDeliveryOutcome(@RequestBody GetBenRequestHandler requestDTO,
-                                     @RequestHeader(value = "Authorization") String Authorization) {
+    public String getDeliveryOutcome(@RequestHeader(value = "jwttoken") String jwttoken) {
         OutputResponse response = new OutputResponse();
         try {
-            if (requestDTO != null) {
-                logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
-                        + requestDTO);
-                List<DeliveryOutcomeDTO> result = deliveryOutcomeService.getDeliveryOutcome(requestDTO);
+            if (jwttoken != null) {
+
+                List<DeliveryOutcomeDTO> result = deliveryOutcomeService.getDeliveryOutcome(jwtUtil.extractUsername(toString()));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
                 String s = gson.toJson(result);
                 if (result != null && !result.isEmpty()) {

@@ -66,10 +66,9 @@ public class DeliveryOutcomeServiceImpl implements DeliveryOutcomeService {
     }
 
     @Override
-    public List<DeliveryOutcomeDTO> getDeliveryOutcome(GetBenRequestHandler dto) {
+    public List<DeliveryOutcomeDTO> getDeliveryOutcome(String userName) {
         try {
-            String user = dto.getUserName();
-            List<DeliveryOutcome> deliveryOutcomeList = deliveryOutcomeRepo.getDeliveryOutcomeByAshaId(user,dto.getFromDate(),dto.getToDate());
+            List<DeliveryOutcome> deliveryOutcomeList = deliveryOutcomeRepo.getDeliveryOutcomeByAshaId(userName);
             logger.info("DeliveryOutcome Response{}",deliveryOutcomeList);
             return deliveryOutcomeList.stream()
                     .map(deliveryOutcome -> mapper.convertValue(deliveryOutcome, DeliveryOutcomeDTO.class))
