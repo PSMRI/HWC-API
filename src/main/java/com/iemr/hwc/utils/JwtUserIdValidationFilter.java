@@ -117,7 +117,7 @@ public class JwtUserIdValidationFilter implements Filter {
 				|| path.equalsIgnoreCase(contextPath + "/user/logOutUserFromConcurrentSession")
 				|| path.startsWith(contextPath + "/swagger-ui") || path.startsWith(contextPath + "/v3/api-docs" )
 				|| path.startsWith(contextPath + "/user/refreshToken") || path.startsWith(contextPath + "/public")
-				|| path.equals(contextPath + "/health") || path.equals(contextPath + "/version") || path.startsWith(contextPath + "/procedureFields/fields")) {
+				|| path.equals(contextPath + "/health") || path.equals(contextPath + "/version")) {
 			logger.info("Skipping filter for path: " + path);
 			filterChain.doFilter(servletRequest, servletResponse);
 			return;
