@@ -70,10 +70,9 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
             Arrays.asList("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day");
 
     @Override
-    public List<ANCVisitDTO> getANCVisits(GetBenRequestHandler dto) {
+    public List<ANCVisitDTO> getANCVisits(String userName) {
         try {
-            String user = dto.getUserName();
-            List<ANCVisit> ancVisits = ancVisitRepo.getANCForPW(user, dto.getFromDate(), dto.getToDate());
+            List<ANCVisit> ancVisits = ancVisitRepo.getANCForPW(userName);
             return ancVisits.stream()
                     .map(anc -> mapper.convertValue(anc, ANCVisitDTO.class))
                     .collect(Collectors.toList());
@@ -236,11 +235,10 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     }
 
     @Override
-    public List<PregnantWomanDTO> getPregnantWoman(GetBenRequestHandler dto) {
+    public List<PregnantWomanDTO> getPregnantWoman(String userName) {
         try {
-            String user = dto.getUserName();
             List<PregnantWomanRegister> pregnantWomanRegisterList =
-                    pregnantWomanRegisterRepo.getPWRWithBen(user, dto.getFromDate(), dto.getToDate());
+                    pregnantWomanRegisterRepo.getPWRWithBen(userName);
 
             return pregnantWomanRegisterList.stream()
                     .map(pregnantWomanRegister -> mapper.convertValue(pregnantWomanRegister, PregnantWomanDTO.class))

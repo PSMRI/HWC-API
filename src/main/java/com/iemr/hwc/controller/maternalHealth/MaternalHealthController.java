@@ -64,14 +64,11 @@ public class MaternalHealthController {
 
     @Operation(summary = "get anc visit details")
     @RequestMapping(value = { "/ancVisit/getAll" }, method = { RequestMethod.POST })
-    public String getANCVisitDetails(@RequestBody GetBenRequestHandler requestDTO,
-                                     @RequestHeader(value = "Authorization") String Authorization) {
+    public String getANCVisitDetails(@RequestHeader(value = "jwttoken") String jwtToken) {
         OutputResponse response = new OutputResponse();
         try {
-            if (requestDTO != null) {
-                logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
-                        + requestDTO);
-                List<ANCVisitDTO> result = maternalHealthService.getANCVisits(requestDTO);
+            if (jwtToken != null) {
+                List<ANCVisitDTO> result = maternalHealthService.getANCVisits(jwtUtil.extractUsername(jwtToken));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
                 String s = gson.toJson(result);
                 if (s != null)
@@ -113,14 +110,12 @@ public class MaternalHealthController {
 
     @Operation(summary = "get List of pregnant woman registration details")
     @RequestMapping(value = { "/pregnantWoman/getAll" }, method = { RequestMethod.POST })
-    public String getPregnantWomanList(@RequestBody GetBenRequestHandler requestDTO,
-                                       @RequestHeader(value = "Authorization") String Authorization) {
+    public String getPregnantWomanList(@RequestHeader(value = "jwttoken") String jwtToken) {
         OutputResponse response = new OutputResponse();
         try {
-            if (requestDTO != null) {
-                logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
-                        + requestDTO);
-                List<PregnantWomanDTO> result = maternalHealthService.getPregnantWoman(requestDTO);
+            if (jwtToken != null) {
+
+                List<PregnantWomanDTO> result = maternalHealthService.getPregnantWoman(jwtUtil.extractUsername(jwtToken));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
                 String s = gson.toJson(result);
                 if (s != null)

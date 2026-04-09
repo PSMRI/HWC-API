@@ -11,11 +11,11 @@ import java.util.List;
 public interface MaternalHealthService {
 
 
-    List<ANCVisitDTO> getANCVisits(GetBenRequestHandler dto);
+    List<ANCVisitDTO> getANCVisits(String userName);
 
     String saveANCVisit(List<ANCVisitDTO> ancVisitDTOs, Integer useId);
 
     String registerPregnantWoman(List<PregnantWomanDTO> pregnantWomanDTOs);
 
-    List<PregnantWomanDTO> getPregnantWoman(GetBenRequestHandler dto);
+    List<PregnantWomanDTO> getPregnantWoman(String  userName);
 }
