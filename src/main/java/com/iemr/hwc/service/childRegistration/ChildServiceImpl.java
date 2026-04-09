@@ -24,10 +24,9 @@ public class ChildServiceImpl implements ChildService {
     @Autowired
     private ChildRegisterRepo childRepo;
 
-    public String getByUserId(GetBenRequestHandler dto) {
+    public String getChildDataByUserName(String  userName) {
         try {
-            String user = dto.getUserName();
-            List<ChildRegister> childRegisterList = childRepo.getChildDetailsForUser(user, dto.getFromDate(), dto.getToDate());
+            List<ChildRegister> childRegisterList = childRepo.getChildDetailsForUser(userName);
 
 //            List<ChildRegisterDTO> result = new ArrayList<>();
 //            childRegisterList.forEach(childRegister -> {

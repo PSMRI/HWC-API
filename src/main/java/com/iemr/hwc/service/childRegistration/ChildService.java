@@ -9,5 +9,5 @@ public interface ChildService {
 
     String save(List<ChildRegisterDTO> childRegisterDTOList) throws Exception;
 
-    String getByUserId(GetBenRequestHandler requestDTO);
+    String getChildDataByUserName( String  userName);
 }

@@ -32,14 +32,12 @@ public class ChildRegistrationController {
 
     @Operation(summary = "get child register data of all beneficiaries registered with given user id")
     @RequestMapping(value = { "/getAll" }, method = { RequestMethod.POST })
-    public String getAllChildRegisterDetails(@RequestBody GetBenRequestHandler requestDTO,
-                                             @RequestHeader(value = "Authorization") String Authorization) {
+    public String getAllChildRegisterDetails(@RequestHeader(value = "jwttoken") String jwttoken) {
         OutputResponse response = new OutputResponse();
         try {
-            if (requestDTO != null) {
-                logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
-                        + requestDTO);
-                String s = childService.getByUserId(requestDTO);
+            if (jwttoken != null) {
+
+                String s = childService.getChildDataByUserName(jwtUtil.extractUsername(jwttoken));
                 if (s != null)
                     response.setResponse(s);
                 else

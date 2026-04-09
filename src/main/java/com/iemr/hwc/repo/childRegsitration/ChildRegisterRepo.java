@@ -12,9 +12,8 @@ import java.util.List;
 @Repository
 public interface ChildRegisterRepo extends JpaRepository<ChildRegister, Long> {
 
-    @Query(" SELECT cr FROM ChildRegister cr WHERE cr.createdBy = :userId and cr.createdDate >= :fromDate and cr.createdDate <= :toDate")
-    List<ChildRegister> getChildDetailsForUser(@Param("userId") String userId,
-                                               @Param("fromDate") Timestamp fromDate, @Param("toDate") Timestamp toDate);
+    @Query(" SELECT cr FROM ChildRegister cr WHERE cr.createdBy = :userId")
+    List<ChildRegister> getChildDetailsForUser(@Param("userId") String userId);
 
 //    @Query(value = "Select * from db_identity.i_cbacdetails where beneficiaryRegId = :benRegId and createdDate = :createdDate limit 1", nativeQuery = true)
     ChildRegister findChildRegisterByBenIdAndCreatedDate(Long benRegId, Timestamp createdDate);
