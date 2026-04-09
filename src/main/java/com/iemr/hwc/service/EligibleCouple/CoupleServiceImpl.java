@@ -134,13 +134,12 @@ public class CoupleServiceImpl implements CoupleService {
         }
     }
     @Override
-    public List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(GetBenRequestHandler dto) {
+    public List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(String userName) {
 
         try {
-            String user = dto.getUserName();
 
             List<EligibleCoupleTracking> eligibleCoupleTrackingList =
-                    eligibleCoupleTrackingRepo.getECTrackRecords(user, dto.getFromDate(), dto.getToDate());
+                    eligibleCoupleTrackingRepo.getECTrackRecords(userName);
 
             return eligibleCoupleTrackingList.stream()
                     .map(ect -> mapper.convertValue(ect, EligibleCoupleTrackingDTO.class))

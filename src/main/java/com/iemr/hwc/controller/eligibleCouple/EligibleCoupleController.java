@@ -6,6 +6,7 @@ import com.iemr.hwc.data.eligibleCouple.EligibleCoupleDTO;
 import com.iemr.hwc.data.eligibleCouple.EligibleCoupleTrackingDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.service.EligibleCouple.CoupleService;
+import com.iemr.hwc.utils.JwtUtil;
 import com.iemr.hwc.utils.response.OutputResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
@@ -23,6 +24,8 @@ public class EligibleCoupleController {
     private final Logger logger = LoggerFactory.getLogger(EligibleCoupleController.class);
     @Autowired
     private CoupleService coupleService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Operation(summary = "save eligible couple registration details")
     @RequestMapping(value = { "/register/saveAll" }, method = { RequestMethod.POST },consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -97,23 +100,23 @@ public class EligibleCoupleController {
 
     @Operation(summary = "get List of eligible couple tracking details")
     @RequestMapping(value = { "/tracking/getAll" }, method = { RequestMethod.POST })
-    public String getEligibleCoupleTracking(@RequestBody GetBenRequestHandler requestDTO,
-                                            @RequestHeader(value = "jwtToken") String Authorization) {
+    public String getEligibleCoupleTracking(@RequestHeader(value = "jwttoken") String jwttoken) {
         OutputResponse response = new OutputResponse();
         try {
-            if (requestDTO != null) {
-                logger.info("fetching All Eligible Couple Tracking Details for user: " + requestDTO.getAshaId());
+            if (jwttoken != null) {
+                  if(jwttoken!=null){
+                      List<EligibleCoupleTrackingDTO> result = coupleService.getEligibleCoupleTracking(jwtUtil.extractUsername(jwttoken));
+                      Gson gson = new GsonBuilder()
+                              .setDateFormat("MMM dd, yyyy h:mm:ss a") // Set the desired date format
+                              .create();
+                      String s = gson.toJson(result);
+                      logger.info("tracking data:"+s);
+                      if (s != null)
+                          response.setResponse(s);
+                      else
+                          response.setError(5000, "No record found");
+                  }
 
-                List<EligibleCoupleTrackingDTO> result = coupleService.getEligibleCoupleTracking(requestDTO);
-                Gson gson = new GsonBuilder()
-                        .setDateFormat("MMM dd, yyyy h:mm:ss a") // Set the desired date format
-                        .create();
-                String s = gson.toJson(result);
-                logger.info("tracking data:"+s);
-                if (s != null)
-                    response.setResponse(s);
-                else
-                    response.setError(5000, "No record found");
             } else
                 response.setError(5000, "Invalid/NULL request obj");
 

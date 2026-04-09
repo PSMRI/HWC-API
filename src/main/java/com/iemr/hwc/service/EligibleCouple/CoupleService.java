@@ -16,7 +16,7 @@ public interface CoupleService {
     String getEligibleCoupleRegRecords(GetBenRequestHandler dto);
 
 
-    List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(GetBenRequestHandler requestDTO);
+    List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(String userName);
 
     String registerEligibleCoupleTracking(List<EligibleCoupleTrackingDTO> eligibleCoupleTrackingDTOs);
 }
