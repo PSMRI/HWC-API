@@ -231,10 +231,26 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     beneficiaryDetailsRmnch.addProperty("genderName", requestObj.get("genderName").getAsString());
                     beneficiaryDetailsRmnch.addProperty("maritalStatusID", requestObj.get("maritalStatusID").getAsInt());
                     beneficiaryDetailsRmnch.addProperty("maritalStatusName", requestObj.get("maritalStatusName").getAsString());
+                    if (requestObj.has("genderID")
+                            && !requestObj.get("genderID").isJsonNull()
+                            && requestObj.get("genderID").getAsInt() == 2) {
 
-                    beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
+                        if (requestObj.has("reproductiveStatusId")
+                                && !requestObj.get("reproductiveStatusId").isJsonNull()) {
+                            beneficiaryDetailsRmnch.addProperty(
+                                    "reproductiveStatusId",
+                                    requestObj.get("reproductiveStatusId").getAsInt()
+                            );
+                        }
 
+                        if (requestObj.has("reproductiveStatus")
+                                && !requestObj.get("reproductiveStatus").isJsonNull()) {
+                            beneficiaryDetailsRmnch.addProperty(
+                                    "reproductiveStatus",
+                                    requestObj.get("reproductiveStatus").getAsString()
+                            );
+                        }
+                    }
                     beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
 
                     beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
@@ -380,9 +396,23 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 beneficiaryDetailsRmnch.addProperty("maritalStatusID", requestObj.get("maritalStatusID").getAsInt());
                 beneficiaryDetailsRmnch.addProperty("maritalStatusName", requestObj.get("maritalStatusName").getAsString());
 
-                beneficiaryDetailsRmnch.addProperty("reproductiveStatusId", requestObj.get("reproductiveStatusId").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("reproductiveStatus", requestObj.get("reproductiveStatus").getAsString());
+                if (requestObj.has("reproductiveStatusId")
+                        && !requestObj.get("reproductiveStatusId").isJsonNull()) {
 
+                    beneficiaryDetailsRmnch.addProperty(
+                            "reproductiveStatusId",
+                            requestObj.get("reproductiveStatusId").getAsInt()
+                    );
+                }
+
+                if (requestObj.has("reproductiveStatus")
+                        && !requestObj.get("reproductiveStatus").isJsonNull()) {
+
+                    beneficiaryDetailsRmnch.addProperty(
+                            "reproductiveStatus",
+                            requestObj.get("reproductiveStatus").getAsString()
+                    );
+                }
                 beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
 
                 beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
