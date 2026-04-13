@@ -22,15 +22,16 @@ public class DeliveryOutcomeDTO {
     private Integer deliveryOutcome;
     private Integer liveBirth;
     private Integer stillBirth;
-    @JsonFormat(pattern = "MMM d yyyy h:mm:ss a")
     private Timestamp dateOfDischarge;
     private String timeOfDischarge;
     private Boolean isJSYBenificiary;
     private Boolean isActive;
-    @JsonFormat(pattern = "MMM d yyyy h:mm:ss a")
     private Timestamp createdDate;
+    private String gestationalAgeAtDelivery;
+    private String deliveryConductedBy;
+    private String modeOfDelivery;
+    private String motherCondition;
     private String createdBy;
-    @JsonFormat(pattern = "MMM d yyyy h:mm:ss a")
     private Timestamp updatedDate;
     private String updatedBy;
 }
