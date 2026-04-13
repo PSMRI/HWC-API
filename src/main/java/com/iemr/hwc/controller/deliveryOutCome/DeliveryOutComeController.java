@@ -79,7 +79,7 @@ public class DeliveryOutComeController {
         try {
             if (jwttoken != null) {
 
-                List<DeliveryOutcomeDTO> result = deliveryOutcomeService.getDeliveryOutcome(jwtUtil.extractUsername(toString()));
+                List<DeliveryOutcomeDTO> result = deliveryOutcomeService.getDeliveryOutcome(jwtUtil.extractUsername(jwttoken));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
                 String s = gson.toJson(result);
                 if (result != null && !result.isEmpty()) {
