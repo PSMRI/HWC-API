@@ -61,7 +61,7 @@ public class InfantServiceImpl implements InfantService {
 
 
     @Override
-    public List<InfantRegisterDTO> getInfantDetails(GetBenRequestHandler dto,String userName) {
+    public List<InfantRegisterDTO> getInfantDetails(String userName) {
         try{
             List<InfantRegister> infantRegisterList =
                     infantRegisterRepo.getInfantDetailsForUser(userName);
