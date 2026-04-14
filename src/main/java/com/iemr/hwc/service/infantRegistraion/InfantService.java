@@ -9,5 +9,5 @@ public interface InfantService {
 
     String registerInfant(List<InfantRegisterDTO> infantRegisterDTOs);
 
-    List<InfantRegisterDTO> getInfantDetails(GetBenRequestHandler dto);
+    List<InfantRegisterDTO> getInfantDetails(GetBenRequestHandler dto,String userName);
 }

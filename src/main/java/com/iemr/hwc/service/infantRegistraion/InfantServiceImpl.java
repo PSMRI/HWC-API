@@ -61,11 +61,10 @@ public class InfantServiceImpl implements InfantService {
 
 
     @Override
-    public List<InfantRegisterDTO> getInfantDetails(GetBenRequestHandler dto) {
+    public List<InfantRegisterDTO> getInfantDetails(GetBenRequestHandler dto,String userName) {
         try{
-            String user = dto.getUserName();
             List<InfantRegister> infantRegisterList =
-                    infantRegisterRepo.getInfantDetailsForUser(user, dto.getFromDate(), dto.getToDate());
+                    infantRegisterRepo.getInfantDetailsForUser(userName);
 
             return infantRegisterList.stream()
                     .map(infantRegister -> mapper.convertValue(infantRegister, InfantRegisterDTO.class))

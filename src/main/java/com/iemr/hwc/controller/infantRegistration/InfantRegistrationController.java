@@ -57,13 +57,13 @@ public class InfantRegistrationController {
     @Operation(summary = "get infant registration details")
     @RequestMapping(value = { "/getAll" }, method = { RequestMethod.POST })
     public String getInfantList(@RequestBody GetBenRequestHandler requestDTO,
-                                @RequestHeader(value = "Authorization") String Authorization) {
+                                @RequestHeader(value = "jwttoken") String jwttoken) {
         OutputResponse response = new OutputResponse();
         try {
             if (requestDTO != null) {
                 logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
                         + requestDTO);
-                List<InfantRegisterDTO> result = infantService.getInfantDetails(requestDTO);
+                List<InfantRegisterDTO> result = infantService.getInfantDetails(requestDTO,jwtUtil.extractUsername(jwttoken));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
                 String s = gson.toJson(result);
                 if (s != null)
