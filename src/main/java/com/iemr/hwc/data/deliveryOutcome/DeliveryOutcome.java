@@ -77,4 +77,16 @@ public class DeliveryOutcome {
     @Column(name = "updated_date")
     private Timestamp updatedDate;
 
+    @Column(name = "gestational_age_at_delivery")
+    private Integer gestationalAgeAtDelivery;
+
+    @Column(name = "delivery_conducted_by")
+    private String deliveryConductedBy;
+
+    @Column(name = "modeOf_delivery")
+    private String modeOfDelivery;
+
+    @Column(name = "mother_condition")
+    private String motherCondition;
+
 }
