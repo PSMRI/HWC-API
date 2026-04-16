@@ -5,30 +5,24 @@ import com.iemr.hwc.data.anc.ANCVisit;
 import com.iemr.hwc.data.anc.ANCVisitDTO;
 import com.iemr.hwc.data.anc.AncCare;
 import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
+import com.iemr.hwc.data.pncMother.PNCVisit;
+import com.iemr.hwc.data.pncMother.PNCVisitDTO;
 import com.iemr.hwc.data.pregnantWomen.PregnantWomanDTO;
 import com.iemr.hwc.data.pregnantWomen.PregnantWomanRegister;
-import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.repo.ancVisit.ANCVisitRepo;
 import com.iemr.hwc.repo.ancVisit.AncCareRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.nurse.pnc.PNCCareRepo;
+import com.iemr.hwc.repo.pncRepo.PNCVisitRepo;
 import com.iemr.hwc.repo.pragnemtWomen.PregnantWomanRegisterRepo;
 import com.iemr.hwc.utils.JwtUtil;
-import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +52,8 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private PNCVisitRepo pncVisitRepo;
 
 
     ObjectMapper mapper = new ObjectMapper();
@@ -245,6 +241,47 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
                     .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public List<PNCVisitDTO> getPNCVisits(String userName) {
+        try {
+            List<PNCVisit> pncVisits = pncVisitRepo.getPNCForPW(userName);
+            return pncVisits.stream()
+                    .map(pnc -> mapper.convertValue(pnc, PNCVisitDTO.class))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public String savePNCVisit(List<PNCVisitDTO> pncVisitDTOs) {
+        try {
+            List<PNCVisit> pncList = new ArrayList<>();
+            pncVisitDTOs.forEach(it -> {
+                PNCVisit pncVisit =
+                        pncVisitRepo.findPNCVisitByBenIdAndPncPeriodAndIsActive(it.getBenId(), it.getPncPeriod(), true);
+
+                if (pncVisit != null) {
+                    Long id = pncVisit.getId();
+                    modelMapper.map(it, pncVisit);
+                    pncVisit.setId(id);
+                } else {
+                    pncVisit = new PNCVisit();
+                    modelMapper.map(it, pncVisit);
+                    pncVisit.setId(null);
+                }
+                pncList.add(pncVisit);
+            });
+            pncVisitRepo.saveAll(pncList);
+            logger.info("PNC visit details saved");
+            return "no of pnc details saved: " + pncList.size();
+        } catch (Exception e) {
+            logger.info("Saving PNC visit details failed with error : " + e.getMessage());
         }
         return null;
     }
