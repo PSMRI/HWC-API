@@ -78,7 +78,7 @@ public class DeliveryOutcome {
     private Timestamp updatedDate;
 
     @Column(name = "gestational_age_at_delivery")
-    private Integer gestationalAgeAtDelivery;
+    private String  gestationalAgeAtDelivery;
 
     @Column(name = "delivery_conducted_by")
     private String deliveryConductedBy;
