@@ -27,7 +27,7 @@ public class DeliveryOutcomeDTO {
     private Boolean isJSYBenificiary;
     private Boolean isActive;
     private Timestamp createdDate;
-    private String gestationalAgeAtDelivery;
+    private Integer gestationalAgeAtDelivery;
     private String deliveryConductedBy;
     private String modeOfDelivery;
     private String motherCondition;
