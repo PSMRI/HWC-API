@@ -22,4 +22,8 @@ public class OralHealthDTO {
     private String createdBy;
     private Long updatedDate;
     private String updatedBy;
+    private Integer userId;
+    private Long beneficiaryID;
+
+    private Long beneficiaryRegID;
 }

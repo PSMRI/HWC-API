@@ -16,7 +16,7 @@ public class OralHealthServiceImpl implements OralHealthService {
     private OralHealthRepository repo;
 
     @Override
-    public String saveAll(List<OralHealthDTO> dtos, String user) {
+    public List<OralHealthData> saveAll(List<OralHealthDTO> dtos, Integer userId,String userName) {
 
         List<OralHealthData> list = dtos.stream().map(dto -> {
             OralHealthData e = new OralHealthData();
@@ -34,10 +34,12 @@ public class OralHealthServiceImpl implements OralHealthService {
             e.setDentalFluorosis(dto.getDentalFluorosis());
             e.setDentalEmergency(dto.getDentalEmergency());
 
-            // 🔥 Audit fields
-            e.setCreatedBy(user);
+            e.setCreatedBy(userName);
             e.setCreatedDate(System.currentTimeMillis());
-            e.setUpdatedBy(user);
+            e.setUpdatedBy(userName);
+            e.setUserId(userId);
+            e.setBeneficiaryID(dto.getBeneficiaryID());
+            e.setBeneficiaryRegID(dto.getBeneficiaryRegID());
             e.setUpdatedDate(System.currentTimeMillis());
 
             return e;
@@ -45,13 +47,13 @@ public class OralHealthServiceImpl implements OralHealthService {
 
         repo.saveAll(list);
 
-        return "Saved Successfully";
+        return list;
     }
 
     @Override
-    public List<OralHealthDTO> getAll(String user) {
+    public List<OralHealthDTO> getAll(Integer userId) {
 
-        return repo.findAll().stream().map(e -> {
+        return repo.findByUserId(userId).stream().map(e -> {
             OralHealthDTO dto = new OralHealthDTO();
 
             dto.setId(e.getId());

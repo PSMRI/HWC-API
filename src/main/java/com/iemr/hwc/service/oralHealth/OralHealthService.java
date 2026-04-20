@@ -1,11 +1,13 @@
 package com.iemr.hwc.service.oralHealth;
 
 import com.iemr.hwc.data.oralHealth.OralHealthDTO;
+import com.iemr.hwc.data.oralHealth.OralHealthData;
+
 import java.util.List;
 
 public interface OralHealthService {
 
-    String saveAll(List<OralHealthDTO> dtos, String user);
+    List<OralHealthData> saveAll(List<OralHealthDTO> dtos, Integer userId,String userName);
 
-    List<OralHealthDTO> getAll(String user);
+    List<OralHealthDTO> getAll(Integer userId);
 }
