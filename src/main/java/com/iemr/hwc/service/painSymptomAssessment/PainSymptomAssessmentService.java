@@ -6,7 +6,7 @@ import com.iemr.hwc.data.painSymptom.PainSymptomData;
 import java.util.List;
 
 public interface PainSymptomAssessmentService {
-    String saveAll(List<PainSymptomAssessmentDTO> painList);
+    String saveAll(List<PainSymptomAssessmentDTO> painList,String token);
 
-    List<PainSymptomAssessmentDTO> getPain(String user);
+    List<PainSymptomAssessmentDTO> getPain(Integer userId);
 }

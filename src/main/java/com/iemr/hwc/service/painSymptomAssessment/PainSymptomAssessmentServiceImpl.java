@@ -3,6 +3,7 @@ package com.iemr.hwc.service.painSymptomAssessment;
 import com.iemr.hwc.data.painSymptom.PainSymptomAssessmentDTO;
 import com.iemr.hwc.data.painSymptom.PainSymptomData;
 import com.iemr.hwc.repo.painSymptomAssessment.PainSymptomAssessmentRepository;
+import com.iemr.hwc.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,29 +15,45 @@ public class PainSymptomAssessmentServiceImpl implements PainSymptomAssessmentSe
     @Autowired
     private PainSymptomAssessmentRepository painRepo;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
 
 
 
     @Override
-    public String saveAll(List<PainSymptomAssessmentDTO> painList) {
-       try {
-           if (painList != null) {
-               List<PainSymptomData> list = painList.stream().map(this::mapPain).toList();
-               painRepo.saveAll(list);
-               return "Data save successfully";
-           }
-       }catch (Exception e){
-           return e.getMessage();
-       }
+    public String saveAll(List<PainSymptomAssessmentDTO> painList, String token) {
 
+        try {
+            if (painList != null && !painList.isEmpty()) {
 
-      return null;
+                Integer userId = jwtUtil.extractUserId(token);
+                String username = jwtUtil.extractUsername(token);
 
+                List<PainSymptomData> list = painList.stream()
+                        .map(dto -> {
+                            dto.setUserId(userId);
+                            dto.setCreatedBy(username);
+                            dto.setUpdatedBy(username);
+                            return mapPain(dto);
+                        })
+                        .toList();
+
+                painRepo.saveAll(list);
+
+                return "Data save successfully";
+            }
+
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+
+        return null;
     }
 
     @Override
-    public List<PainSymptomAssessmentDTO> getPain (String user){
-        return painRepo.findAll()
+    public List<PainSymptomAssessmentDTO> getPain (Integer userId){
+        return painRepo.findByUserId(userId)
                 .stream()
                 .map(this::mapPainToDTO)
                 .toList();

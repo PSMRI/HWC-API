@@ -9,10 +9,13 @@ import com.iemr.hwc.service.painSymptomAssessment.PainSymptomAssessmentServiceIm
 import com.iemr.hwc.utils.JwtUtil;
 import com.iemr.hwc.utils.response.OutputResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/painSymptom")
@@ -25,54 +28,68 @@ public class PainSymptomController {
     private PainSymptomAssessmentService painSymptomAssessmentService;
 
     @PostMapping("/saveAll")
-    public String saveAll(@RequestBody List<PainSymptomAssessmentDTO> request,
-                          @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Map<String, Object>> saveAll(
+            @RequestBody List<PainSymptomAssessmentDTO> request,
+            @RequestHeader("jwtToken") String token) {
 
-        OutputResponse response = new OutputResponse();
+        Map<String, Object> response = new HashMap<>();
 
         try {
-            if(request!=null){
-                painSymptomAssessmentService.saveAll(request);
-                response.setResponse("Saved Successfully");
+            if (request != null && !request.isEmpty()) {
 
-            }else {
-                response.setError(5000, "Invalid request found");
+                painSymptomAssessmentService.saveAll(request,token);
 
+                response.put("status", "Success");
+                response.put("statusCode", 200);
+                response.put("message", "Saved Successfully");
+
+            } else {
+                response.put("statusCode", 5000);
+                response.put("message", "Invalid request found");
             }
+
         } catch (Exception e) {
-            response.setError(5000, e.getMessage());
+            response.put("statusCode", 5000);
+            response.put("message", e.getMessage());
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/getAll")
-    public String getAll(@RequestHeader("jwttoken") String token) {
+    public ResponseEntity<Map<String, Object>> getAll(
+            @RequestHeader("jwttoken") String token) {
 
-        OutputResponse response = new OutputResponse();
+        Map<String, Object> response = new HashMap<>();
 
         try {
-            String user = jwtUtil.extractUsername(token);
-            if (user != null) {
-                List<PainSymptomAssessmentDTO> res = painSymptomAssessmentService.getPain(user);
-                if (res != null) {
-                    Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
-                    response.setResponse(gson.toJson(res));
+            Integer userId = jwtUtil.extractUserId(token);
+
+            if (userId != null) {
+
+                List<PainSymptomAssessmentDTO> res =
+                        painSymptomAssessmentService.getPain(userId);
+
+                if (res != null && !res.isEmpty()) {
+                    response.put("status", "Success");
+                    response.put("statusCode", 200);
+                    response.put("data", res);
                 } else {
-                    response.setError(5000, "No record found");
-
+                    response.put("statusCode", 5000);
+                    response.put("message", "No record found");
                 }
-            } else {
-                response.setError(5000, "No record found");
 
+            } else {
+                response.put("statusCode", 401);
+                response.put("message", "Invalid token");
             }
 
-
         } catch (Exception e) {
-            response.setError(5000, e.getMessage());
+            response.put("statusCode", 5000);
+            response.put("message", e.getMessage());
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
 }
