@@ -62,7 +62,7 @@ public class PainSymptomAssessmentServiceImpl implements PainSymptomAssessmentSe
         PainSymptomAssessmentDTO dto = new PainSymptomAssessmentDTO();
 
         dto.setId(e.getId());
-        dto.setPatientId(e.getPatientId());
+        dto.setPatientID(e.getPatientID());
         dto.setBenVisitNo(e.getBenVisitNo());
         dto.setPainSeverity(e.getPainSeverity());
         dto.setPainDuration(e.getPainDuration());
@@ -96,7 +96,7 @@ public class PainSymptomAssessmentServiceImpl implements PainSymptomAssessmentSe
         PainSymptomData e = new PainSymptomData();
 
         e.setId(dto.getId());
-        e.setPatientId(dto.getPatientId());
+        e.setPatientID(dto.getPatientID());
         e.setBenVisitNo(dto.getBenVisitNo());
         e.setPainSeverity(dto.getPainSeverity());
         e.setPainDuration(dto.getPainDuration());

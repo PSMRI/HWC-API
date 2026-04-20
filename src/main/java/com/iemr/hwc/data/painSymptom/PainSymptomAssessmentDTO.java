@@ -6,7 +6,7 @@ import lombok.Data;
 public class PainSymptomAssessmentDTO {
 
     private Long id;
-    private String patientId;
+    private String patientID;
     private Integer benVisitNo;
     private String painSeverity;
     private String painDuration;
