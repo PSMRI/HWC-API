@@ -46,4 +46,10 @@ public class EarDiagnosisAssessment {
 
     @Column(name = "user_id")
     private Integer userId;
+
+    @Column(name = "beneficiary_id")
+    private Long beneficiaryID;
+
+    @Column(name = "beneficiary_reg_id")
+    private Long beneficiaryRegID;
 }

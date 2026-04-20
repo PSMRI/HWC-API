@@ -18,4 +18,6 @@ public class EarDiagnosisAssessmentDTO {
     private Boolean congenitalEarMalformation;
     private Integer userId;
     private Integer createdBY;
+    private Long beneficiaryID;
+    private Long beneficiaryRegID;
 }
