@@ -85,4 +85,13 @@ public class OphthalmicVisit {
 
     @Column(name = "syncState", nullable = false)
     private Integer syncState = 0;
+
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "beneficiary_id")
+    private Long beneficiaryID;
+
+    @Column(name = "beneficiary_reg_id")
+    private Long beneficiaryRegID;
 }

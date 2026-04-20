@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OphthalmicVisitService {
 
-    List<OphthalmicVisitDTO> saveAll(List<OphthalmicVisitDTO> dtos);
+    List<OphthalmicVisitDTO> saveAll(List<OphthalmicVisitDTO> dtos,Integer userId);
 
-    List<OphthalmicVisitDTO> getAll(String userName);
+    List<OphthalmicVisitDTO> getAll(Integer userName);
 }

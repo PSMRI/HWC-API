@@ -1,5 +1,6 @@
 package com.iemr.hwc.data.opthalmic;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
@@ -37,5 +38,9 @@ public class OphthalmicVisitDTO {
     private Long createdDate;
     private String updatedBy;
     private Long updatedDate;
+    private Integer userId;
+    private Long beneficiaryID;
+
+    private Long beneficiaryRegID;
 
 }

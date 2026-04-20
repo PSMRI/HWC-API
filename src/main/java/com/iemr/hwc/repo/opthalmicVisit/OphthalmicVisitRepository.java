@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 @RestResource(exported = false)
 public interface OphthalmicVisitRepository extends JpaRepository<OphthalmicVisit, String> {
-    List<OphthalmicVisit> findByCreatedBy(String createdBy);
+    List<OphthalmicVisit> findByUserId(Integer userId);
 
 
 }

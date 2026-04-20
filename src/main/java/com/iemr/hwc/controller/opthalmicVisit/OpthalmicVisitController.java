@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/opthalmicVisit")
@@ -25,59 +27,77 @@ public class OpthalmicVisitController {
 
     @Operation(summary = "Save all ophthalmic visit data")
     @RequestMapping(value = { "/saveAll" }, method = { RequestMethod.POST })
-    public String saveAllOphthalmicVisit(
+    public ResponseEntity<Map<String, Object>> saveAllOphthalmicVisit(
             @RequestBody List<OphthalmicVisitDTO> dtos,
-            @RequestHeader(value = "Authorization") String Authorization) {
+            @RequestHeader(value = "jwtToken") String token) {
 
-        OutputResponse response = new OutputResponse();
+        Map<String, Object> response = new HashMap<>();
 
         try {
 
             if (dtos != null && !dtos.isEmpty()) {
+                if(token!=null){
+                    Integer userId = jwtUtil.extractUserId(token);
+                    List<OphthalmicVisitDTO> savedData = service.saveAll(dtos,userId);
 
-                List<OphthalmicVisitDTO> savedData = service.saveAll(dtos);
+                    if (savedData != null){
+                        response.put("message","Record save successfully");
+                        response.put("statusCode",200);
+                        response.put("data",savedData);
+                    }else {
+                        response.put("statusCode",5000);
+                        response.put("message","Saving data failed");
+                    }
+                }
 
-                if (savedData != null)
-                    response.setResponse(savedData.toString());
-                else
-                    response.setError(5000, "Saving data failed");
+
+
 
             } else {
-                response.setError(5000, "Invalid/NULL request body");
+                response.put("statusCode",5000);
+                response.put("message","Invalid/NULL request body");
             }
 
         } catch (Exception e) {
-            response.setError(5000, "Error in saving ophthalmic visit data : " + e);
+            response.put("statusCode",5000);
+            response.put("message","Error in saving ophthalmic visit data : " + e);
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get all ophthalmic visit data")
     @RequestMapping(value = { "/getAll" }, method = { RequestMethod.POST })
-    public String getAllOphthalmicVisit(@RequestHeader(value = "jwttoken") String jwttoken) {
+    public ResponseEntity<Map<String, Object>> getAllOphthalmicVisit(@RequestHeader(value = "jwttoken") String jwttoken) {
 
-        OutputResponse response = new OutputResponse();
+        Map<String, Object> response = new HashMap<>();
 
         try {
             if (jwttoken != null) {
 
-                List<OphthalmicVisitDTO> data = service.getAll(jwtUtil.extractUsername(jwttoken));
+                List<OphthalmicVisitDTO> data = service.getAll(jwtUtil.extractUserId(jwttoken));
 
-                if (data != null && !data.isEmpty())
-                    response.setResponse(data.toString());
-                else
-                    response.setError(5000, "No record found");
+                if (data != null && !data.isEmpty()){
+                    response.put("statusCode",200);
+                    response.put("data",data);
+                }else {
+                    response.put("statusCode",5000);
+                    response.put("message", "No record found");
+
+                }
+
 
             } else {
-                response.setError(5000, "Invalid/NULL token");
+                response.put("statusCode",5000);
+                response.put("message", "Invalid/NULL token");
             }
 
         } catch (Exception e) {
-            response.setError(5000, "Error in getting ophthalmic visit data : " + e);
+            response.put("statusCode",5000);
+            response.put("message", "Error in getting ophthalmic visit data : " + e);
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
 

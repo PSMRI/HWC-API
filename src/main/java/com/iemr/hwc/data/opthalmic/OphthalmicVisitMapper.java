@@ -8,7 +8,9 @@ public class OphthalmicVisitMapper {
         entity.setVisitId(dto.getVisitId());
         entity.setPatientID(dto.getPatientID());
         entity.setBenVisitNo(dto.getBenVisitNo());
-
+        entity.setUserId(dto.getUserId());
+        entity.setBeneficiaryID(dto.getBeneficiaryID());
+        entity.setBeneficiaryRegID(dto.getBeneficiaryRegID());
         entity.setIsDiabetic(dto.getIsDiabetic());
         entity.setScreeningPerformed(dto.getScreeningPerformed());
 
@@ -47,7 +49,8 @@ public class OphthalmicVisitMapper {
         dto.setVisitId(entity.getVisitId());
         dto.setPatientID(entity.getPatientID());
         dto.setBenVisitNo(entity.getBenVisitNo());
-
+        dto.setBeneficiaryID(entity.getBeneficiaryID());
+        dto.setBeneficiaryRegID(entity.getBeneficiaryRegID());
         dto.setIsDiabetic(entity.getIsDiabetic());
         dto.setScreeningPerformed(entity.getScreeningPerformed());
 
@@ -55,7 +58,7 @@ public class OphthalmicVisitMapper {
         dto.setDistVARight(entity.getDistVARight());
         dto.setDistVALeft(entity.getDistVALeft());
         dto.setNearVA(entity.getNearVA());
-
+        dto.setUserId(entity.getUserId());
         dto.setCaseIdConditions(entity.getCaseIdConditions());
 
         dto.setCataractSymptoms(entity.getCataractSymptoms());

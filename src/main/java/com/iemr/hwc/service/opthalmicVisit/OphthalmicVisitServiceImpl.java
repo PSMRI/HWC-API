@@ -19,10 +19,14 @@ public class OphthalmicVisitServiceImpl implements OphthalmicVisitService {
     private  OphthalmicVisitRepository repository;
 
     @Override
-    public List<OphthalmicVisitDTO> saveAll(List<OphthalmicVisitDTO> dtos) {
+    public List<OphthalmicVisitDTO> saveAll(List<OphthalmicVisitDTO> dtos, Integer userId) {
 
         List<OphthalmicVisit> entities = dtos.stream()
-                .map(OphthalmicVisitMapper::toEntity)
+                .map(dto -> {
+                    OphthalmicVisit entity = OphthalmicVisitMapper.toEntity(dto);
+                    entity.setUserId(userId);
+                    return entity;
+                })
                 .collect(Collectors.toList());
 
         List<OphthalmicVisit> saved = repository.saveAll(entities);
@@ -33,9 +37,9 @@ public class OphthalmicVisitServiceImpl implements OphthalmicVisitService {
     }
 
     @Override
-    public List<OphthalmicVisitDTO> getAll(String userName) {
+    public List<OphthalmicVisitDTO> getAll(Integer userId) {
 
-        return repository.findByCreatedBy(userName).stream()
+        return repository.findByUserId(userId).stream()
                 .map(OphthalmicVisitMapper::toDTO)
                 .collect(Collectors.toList());
     }
