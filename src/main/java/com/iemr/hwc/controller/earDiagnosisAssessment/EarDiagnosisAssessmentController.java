@@ -7,6 +7,7 @@ import com.iemr.hwc.utils.response.OutputResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class EarDiagnosisAssessmentController {
 
     @Operation(summary = "Save all ear diagnosis assessment data")
     @RequestMapping(value = {"/saveAll"}, method = {RequestMethod.POST})
-    public String saveAllEarDiagnosis(
+    public ResponseEntity<Map<String, Object>>  saveAllEarDiagnosis(
             @RequestBody List<EarDiagnosisAssessmentDTO> dtos,
             @RequestHeader(value = "jwtToken") String token) {
 
@@ -58,12 +59,12 @@ public class EarDiagnosisAssessmentController {
             response.put("statusCode", 5000);
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get all ear diagnosis assessment data")
     @RequestMapping(value = {"/getAll"}, method = {RequestMethod.POST})
-    public String getAllEarDiagnosis(
+    public ResponseEntity<Map<String, Object>> getAllEarDiagnosis(
             @RequestHeader(value = "jwttoken") String jwttoken) {
 
         Map<String, Object> response = new HashMap<>();
@@ -94,6 +95,6 @@ public class EarDiagnosisAssessmentController {
             response.put("statusCode", 5000);
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 }
