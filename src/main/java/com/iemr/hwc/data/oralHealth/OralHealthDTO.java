@@ -6,7 +6,7 @@ import lombok.Data;
 public class OralHealthDTO {
 
     private Long id;
-    private String patientId;
+    private String patientID;
     private Integer benVisitNo;
     private Boolean toothDecayPresent;
     private String toothDecaySymptoms;

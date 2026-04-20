@@ -22,7 +22,7 @@ public class OralHealthServiceImpl implements OralHealthService {
             OralHealthData e = new OralHealthData();
 
             e.setId(dto.getId());
-            e.setPatientId(dto.getPatientId());
+            e.setPatientID(dto.getPatientID());
             e.setBenVisitNo(dto.getBenVisitNo());
             e.setToothDecayPresent(dto.getToothDecayPresent());
             e.setToothDecaySymptoms(dto.getToothDecaySymptoms());
@@ -57,7 +57,7 @@ public class OralHealthServiceImpl implements OralHealthService {
             OralHealthDTO dto = new OralHealthDTO();
 
             dto.setId(e.getId());
-            dto.setPatientId(e.getPatientId());
+            dto.setPatientID(e.getPatientID());
             dto.setBenVisitNo(e.getBenVisitNo());
             dto.setToothDecayPresent(e.getToothDecayPresent());
             dto.setToothDecaySymptoms(e.getToothDecaySymptoms());
