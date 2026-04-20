@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface EarDiagnosisAssessmentService {
 
-    List<EarDiagnosisAssessmentDTO> saveAll(List<EarDiagnosisAssessmentDTO> dtos);
+    List<EarDiagnosisAssessmentDTO> saveAll(List<EarDiagnosisAssessmentDTO> dtos,Integer userId);
 
-    List<EarDiagnosisAssessmentDTO> getAll(String userName);
+    List<EarDiagnosisAssessmentDTO> getAll(Integer userId);
 }

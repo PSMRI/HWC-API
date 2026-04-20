@@ -43,4 +43,7 @@ public class EarDiagnosisAssessment {
 
     @Column(name = "congenital_ear_malformation")
     private Boolean congenitalEarMalformation;
+
+    @Column(name = "user_id")
+    private Integer userId;
 }

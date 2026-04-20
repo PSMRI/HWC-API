@@ -16,4 +16,6 @@ public class EarDiagnosisAssessmentDTO {
     private String foreignBodyInEar;
     private String earConditionType;
     private Boolean congenitalEarMalformation;
+    private Integer userId;
+    private Integer createdBY;
 }

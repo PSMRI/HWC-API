@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EarDiagnosisAssessmentServiceImpl implements EarDiagnosisAssessmentService {
@@ -17,11 +18,12 @@ public class EarDiagnosisAssessmentServiceImpl implements EarDiagnosisAssessment
     private EarDiagnosisAssessmentRepository repository;
 
     @Override
-    public List<EarDiagnosisAssessmentDTO> saveAll(List<EarDiagnosisAssessmentDTO> dtos) {
+    public List<EarDiagnosisAssessmentDTO> saveAll(List<EarDiagnosisAssessmentDTO> dtos,Integer userId) {
 
         List<EarDiagnosisAssessment> entities = new ArrayList<>();
 
         for (EarDiagnosisAssessmentDTO dto : dtos) {
+             dto.setUserId(userId);
             EarDiagnosisAssessment entity = new EarDiagnosisAssessment();
             BeanUtils.copyProperties(dto, entity);
             entities.add(entity);
@@ -41,9 +43,9 @@ public class EarDiagnosisAssessmentServiceImpl implements EarDiagnosisAssessment
     }
 
     @Override
-    public List<EarDiagnosisAssessmentDTO> getAll(String userName) {
+    public List<EarDiagnosisAssessmentDTO> getAll(Integer userId) {
 
-        List<EarDiagnosisAssessment> list = repository.findAll();
+        List<EarDiagnosisAssessment> list = repository.findByUserId(userId);
 
         List<EarDiagnosisAssessmentDTO> result = new ArrayList<>();
 
