@@ -8,6 +8,9 @@ public class PsychosocialCaregiverSupportDTO {
     private Long id;
     private String patientId;
     private Integer benVisitNo;
+    private Integer userId;
+    private Long beneficiaryID;
+    private Long beneficiaryRegID;
     private Boolean psychosocialCounsellingProvided;
     private Boolean caregiverCounsellingProvided;
     private Boolean caregiverDistressIdentified;
@@ -20,9 +23,4 @@ public class PsychosocialCaregiverSupportDTO {
     private String caseStatus;
     private String dateOfDeath;
     private String remarks;
-
-    private Long createdDate;
-    private String createdBy;
-    private Long updatedDate;
-    private String updatedBy;
 }

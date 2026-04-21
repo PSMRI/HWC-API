@@ -3,9 +3,11 @@ package com.iemr.hwc.service.noiseDignosisAssessgment;
 import com.iemr.hwc.data.noiseDiagnosis.NoseDiagnosisAssessment;
 import com.iemr.hwc.data.noiseDiagnosis.NoseDiagnosisAssessmentDTO;
 import com.iemr.hwc.repo.noiseDiagnosisAssessment.NoseDiagnosisAssessmentRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,58 +17,38 @@ public class NoseDiagnosisAssessmentServiceImpl implements NoseDiagnosisAssessme
     private NoseDiagnosisAssessmentRepository repo;
 
     @Override
-    public String saveAll(List<NoseDiagnosisAssessmentDTO> dtos, String user) {
+    public List<NoseDiagnosisAssessmentDTO> saveAll(List<NoseDiagnosisAssessmentDTO> dtos, Integer userId) {
+        List<NoseDiagnosisAssessment> entities = new ArrayList<>();
 
-        List<NoseDiagnosisAssessment> list = dtos.stream().map(dto -> {
-            NoseDiagnosisAssessment e = new NoseDiagnosisAssessment();
+        for (NoseDiagnosisAssessmentDTO dto : dtos) {
+            dto.setUserId(userId);
+            NoseDiagnosisAssessment entity = new NoseDiagnosisAssessment();
+            BeanUtils.copyProperties(dto, entity);
+            entities.add(entity);
+        }
 
-            e.setId(dto.getId());
-            e.setPatientId(dto.getPatientId());
-            e.setBenVisitNo(dto.getBenVisitNo());
-            e.setDifficultyBreathing(dto.getDifficultyBreathing());
-            e.setOpenMouthBreathing(dto.getOpenMouthBreathing());
-            e.setNoseBleed(dto.getNoseBleed());
-            e.setSystolicBp(dto.getSystolicBp());
-            e.setDiastolicBp(dto.getDiastolicBp());
-            e.setForeignBodyNose(dto.getForeignBodyNose());
-            e.setSinusitis(dto.getSinusitis());
+        List<NoseDiagnosisAssessment> savedEntities = repo.saveAll(entities);
+        List<NoseDiagnosisAssessmentDTO> result = new ArrayList<>();
 
-            e.setCreatedBy(user);
-            e.setCreatedDate(System.currentTimeMillis());
-            e.setUpdatedBy(user);
-            e.setUpdatedDate(System.currentTimeMillis());
+        for (NoseDiagnosisAssessment entity : savedEntities) {
+            NoseDiagnosisAssessmentDTO dto = new NoseDiagnosisAssessmentDTO();
+            BeanUtils.copyProperties(entity, dto);
+            result.add(dto);
+        }
 
-            return e;
-        }).toList();
-
-        repo.saveAll(list);
-
-        return "Saved Successfully";
+        return result;
     }
 
     @Override
-    public List<NoseDiagnosisAssessmentDTO> getAll(String user) {
+    public List<NoseDiagnosisAssessmentDTO> getAll(Integer userId) {
+        List<NoseDiagnosisAssessmentDTO> result = new ArrayList<>();
 
-        return repo.findAll().stream().map(e -> {
+        for (NoseDiagnosisAssessment entity : repo.findByUserId(userId)) {
             NoseDiagnosisAssessmentDTO dto = new NoseDiagnosisAssessmentDTO();
+            BeanUtils.copyProperties(entity, dto);
+            result.add(dto);
+        }
 
-            dto.setId(e.getId());
-            dto.setPatientId(e.getPatientId());
-            dto.setBenVisitNo(e.getBenVisitNo());
-            dto.setDifficultyBreathing(e.getDifficultyBreathing());
-            dto.setOpenMouthBreathing(e.getOpenMouthBreathing());
-            dto.setNoseBleed(e.getNoseBleed());
-            dto.setSystolicBp(e.getSystolicBp());
-            dto.setDiastolicBp(e.getDiastolicBp());
-            dto.setForeignBodyNose(e.getForeignBodyNose());
-            dto.setSinusitis(e.getSinusitis());
-
-            dto.setCreatedBy(e.getCreatedBy());
-            dto.setCreatedDate(e.getCreatedDate());
-            dto.setUpdatedBy(e.getUpdatedBy());
-            dto.setUpdatedDate(e.getUpdatedDate());
-
-            return dto;
-        }).toList();
+        return result;
     }
 }

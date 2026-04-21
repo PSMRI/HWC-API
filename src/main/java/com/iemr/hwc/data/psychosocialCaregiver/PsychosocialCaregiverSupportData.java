@@ -18,6 +18,15 @@ public class PsychosocialCaregiverSupportData {
     @Column(name = "ben_visit_no")
     private Integer benVisitNo;
 
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "beneficiary_id")
+    private Long beneficiaryID;
+
+    @Column(name = "beneficiary_reg_id")
+    private Long beneficiaryRegID;
+
     @Column(name = "psychosocial_counselling_provided")
     private Boolean psychosocialCounsellingProvided;
 
@@ -53,16 +62,4 @@ public class PsychosocialCaregiverSupportData {
 
     @Column(name = "remarks", columnDefinition = "TEXT")
     private String remarks;
-
-    @Column(name = "created_date")
-    private Long createdDate;
-
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "updated_date")
-    private Long updatedDate;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
 }

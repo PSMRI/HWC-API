@@ -10,7 +10,5 @@ import java.util.List;
 public interface NoseDiagnosisAssessmentRepository 
         extends JpaRepository<NoseDiagnosisAssessment, Long> {
 
-    List<NoseDiagnosisAssessment> findByPatientId(String patientId);
-
-    List<NoseDiagnosisAssessment> findByPatientIdAndBenVisitNo(String patientId, Integer benVisitNo);
+    List<NoseDiagnosisAssessment> findByUserId(Integer userId);
 }

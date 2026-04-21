@@ -6,7 +6,7 @@ import java.util.List;
 
 
 public  interface  PsychosocialCaregiverSupportService {
-    String saveAll(List<PsychosocialCaregiverSupportDTO> dtos, String user);
+    List<PsychosocialCaregiverSupportDTO> saveAll(List<PsychosocialCaregiverSupportDTO> dtos, Integer userId);
 
-    List<PsychosocialCaregiverSupportDTO> getAll(String user);
+    List<PsychosocialCaregiverSupportDTO> getAll(Integer userId);
 }

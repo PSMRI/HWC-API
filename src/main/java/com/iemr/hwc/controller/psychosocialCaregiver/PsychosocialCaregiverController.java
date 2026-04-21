@@ -1,65 +1,86 @@
 package com.iemr.hwc.controller.psychosocialCaregiver;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.iemr.hwc.data.psychosocialCaregiver.PsychosocialCaregiverSupportDTO;
 import com.iemr.hwc.service.psychosocialCaregiverSupport.PsychosocialCaregiverSupportService;
 import com.iemr.hwc.utils.JwtUtil;
-import com.iemr.hwc.utils.response.OutputResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/psychosocialCaregiver")
 public class PsychosocialCaregiverController {
 
+    @Autowired
     private PsychosocialCaregiverSupportService service;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("/saveAll")
-    public String saveAll(@RequestBody List<PsychosocialCaregiverSupportDTO> dtos,
-                          @RequestHeader("jwttoken") String token) {
+    public ResponseEntity<Map<String, Object>> saveAll(
+            @RequestBody List<PsychosocialCaregiverSupportDTO> dtos,
+            @RequestHeader("jwtToken") String token) {
 
-        OutputResponse response = new OutputResponse();
+        Map<String, Object> response = new HashMap<>();
 
         try {
-            String user = jwtUtil.extractUsername(token);
-
             if (dtos != null && !dtos.isEmpty()) {
-                String res = service.saveAll(dtos, user);
-                response.setResponse(res);
-            } else {
-                response.setError(5000, "Invalid request");
-            }
+                Integer userId = jwtUtil.extractUserId(token);
+                service.saveAll(dtos, userId);
 
+                response.put("status", "Success");
+                response.put("statusCode", 200);
+                response.put("message", "Saved Successfully");
+            } else {
+                response.put("statusCode", 5000);
+                response.put("message", "Invalid request found");
+            }
         } catch (Exception e) {
-            response.setError(5000, e.getMessage());
+            response.put("statusCode", 5000);
+            response.put("message", e.getMessage());
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/getAll")
-    public String getAll(@RequestHeader("jwttoken") String token) {
+    public ResponseEntity<Map<String, Object>> getAll(
+            @RequestHeader("jwttoken") String token) {
 
-        OutputResponse response = new OutputResponse();
+        Map<String, Object> response = new HashMap<>();
 
         try {
-            String user = jwtUtil.extractUsername(token);
+            Integer userId = jwtUtil.extractUserId(token);
 
-            List<PsychosocialCaregiverSupportDTO> list = service.getAll(user);
+            if (userId != null) {
+                List<PsychosocialCaregiverSupportDTO> res = service.getAll(userId);
 
-            Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
-            response.setResponse(gson.toJson(list));
-
+                if (res != null && !res.isEmpty()) {
+                    response.put("status", "Success");
+                    response.put("statusCode", 200);
+                    response.put("data", res);
+                } else {
+                    response.put("statusCode", 5000);
+                    response.put("message", "No record found");
+                }
+            } else {
+                response.put("statusCode", 401);
+                response.put("message", "Invalid token");
+            }
         } catch (Exception e) {
-            response.setError(5000, e.getMessage());
+            response.put("statusCode", 5000);
+            response.put("message", e.getMessage());
         }
 
-        return response.toString();
+        return ResponseEntity.ok(response);
     }
 }

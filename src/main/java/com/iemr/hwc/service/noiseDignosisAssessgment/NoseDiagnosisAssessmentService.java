@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface NoseDiagnosisAssessmentService {
 
-    String saveAll(List<NoseDiagnosisAssessmentDTO> dtos, String user);
+    List<NoseDiagnosisAssessmentDTO> saveAll(List<NoseDiagnosisAssessmentDTO> dtos, Integer userId);
 
-    List<NoseDiagnosisAssessmentDTO> getAll(String user);
+    List<NoseDiagnosisAssessmentDTO> getAll(Integer userId);
 }

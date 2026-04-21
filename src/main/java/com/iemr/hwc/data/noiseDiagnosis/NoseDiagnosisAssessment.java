@@ -19,6 +19,15 @@ public class NoseDiagnosisAssessment {
     @Column(name = "ben_visit_no")
     private Integer benVisitNo;
 
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "beneficiary_id")
+    private Long beneficiaryID;
+
+    @Column(name = "beneficiary_reg_id")
+    private Long beneficiaryRegID;
+
     @Column(name = "difficulty_breathing")
     private Boolean difficultyBreathing;
 
@@ -39,16 +48,4 @@ public class NoseDiagnosisAssessment {
 
     @Column(name = "sinusitis")
     private Boolean sinusitis;
-
-    @Column(name = "created_date")
-    private Long createdDate;
-
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "updated_date")
-    private Long updatedDate;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
 }
