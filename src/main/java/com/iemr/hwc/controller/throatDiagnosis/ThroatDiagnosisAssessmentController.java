@@ -28,7 +28,7 @@ public class ThroatDiagnosisAssessmentController {
     @PostMapping("/saveAll")
     public ResponseEntity<Map<String, Object>> saveAll(
             @RequestBody List<ThroatDiagnosisAssessmentDTO> dtos,
-            @RequestHeader("jwtToken") String token) {
+            @RequestHeader("jwttoken") String token) {
 
         Map<String, Object> response = new HashMap<>();
 
