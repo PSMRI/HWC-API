@@ -28,7 +28,7 @@ public class ElderlyHealthAssessmentServiceImpl implements ElderlyHealthAssessme
 
             if (entity.getAssessmentId() == null && dto.getPatientId() != null && dto.getBenVisitNo() != null) {
                 Optional<ElderlyHealthAssessment> existing =
-                        repository.findByPatientIdAndBenVisitNo(dto.getPatientId(), dto.getBenVisitNo());
+                        repository.findByPatientIDAndBenVisitNo(dto.getPatientId(), dto.getBenVisitNo());
                 existing.ifPresent(value -> entity.setAssessmentId(value.getAssessmentId()));
             }
 

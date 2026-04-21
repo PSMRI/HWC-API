@@ -10,7 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ElderlyHealthAssessmentRepository extends JpaRepository<ElderlyHealthAssessment, Integer> {
 
-    Optional<ElderlyHealthAssessment> findByPatientIdAndBenVisitNo(String patientId, Integer benVisitNo);
 
     List<ElderlyHealthAssessment> findByUserId(Integer userId);
+
+    Optional<ElderlyHealthAssessment> findByPatientIDAndBenVisitNo(String patientId, Integer benVisitNo);
 }
