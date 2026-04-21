@@ -14,7 +14,7 @@ public class ThroatDiagnosisAssessment {
     private Long assessmentId;
 
     @Column(name = "patient_id", nullable = false)
-    private String patientId;
+    private String patientID;
 
     @Column(name = "ben_visit_no")
     private Integer benVisitNo;
