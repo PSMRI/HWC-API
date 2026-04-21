@@ -16,6 +16,8 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.StringType;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +43,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class PatientExtProvider implements IResourceProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(PatientExtProvider.class);
 
     @Override
     public Class<? extends IBaseResource> getResourceType() {
@@ -171,7 +175,7 @@ public class PatientExtProvider implements IResourceProvider {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            logger.error("Error while fetching patient records by location and date", e);
         }
 
         return listRes;
@@ -236,7 +240,7 @@ public class PatientExtProvider implements IResourceProvider {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            logger.error("Error while fetching visits by village and last modified date", e);
         }
 
         return listRes;
