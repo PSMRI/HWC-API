@@ -6,7 +6,7 @@ import lombok.Data;
 public class ElderlyHealthAssessmentDTO {
 
     private Integer assessmentId;
-    private String patientId;
+    private String patientID;
     private Integer benVisitNo;
     private Integer userId;
     private Long beneficiaryID;

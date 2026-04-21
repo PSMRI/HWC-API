@@ -26,9 +26,9 @@ public class ElderlyHealthAssessmentServiceImpl implements ElderlyHealthAssessme
             ElderlyHealthAssessment entity = new ElderlyHealthAssessment();
             BeanUtils.copyProperties(dto, entity);
 
-            if (entity.getAssessmentId() == null && dto.getPatientId() != null && dto.getBenVisitNo() != null) {
+            if (entity.getAssessmentId() == null && dto.getPatientID() != null && dto.getBenVisitNo() != null) {
                 Optional<ElderlyHealthAssessment> existing =
-                        repository.findByPatientIDAndBenVisitNo(dto.getPatientId(), dto.getBenVisitNo());
+                        repository.findByPatientIDAndBenVisitNo(dto.getPatientID(), dto.getBenVisitNo());
                 existing.ifPresent(value -> entity.setAssessmentId(value.getAssessmentId()));
             }
 
