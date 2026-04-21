@@ -15,11 +15,11 @@ public class MentalHealthScreening {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "screening_id")
-    private Integer screeningId;
+    @Column(name = "id")
+    private Long screeningId;
 
     @Column(name = "patient_id", nullable = false)
-    private String patientId;
+    private String patientID;
 
     @Column(name = "ben_visit_no")
     private Integer benVisitNo;

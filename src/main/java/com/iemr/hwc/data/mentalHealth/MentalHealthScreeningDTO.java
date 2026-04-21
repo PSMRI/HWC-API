@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class MentalHealthScreeningDTO {
 
-    private Integer screeningId;
-    private String patientId;
+    private Long screeningId;
+    private String patientID;
     private Integer benVisitNo;
     private Integer userId;
     private Long beneficiaryID;

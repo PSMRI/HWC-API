@@ -15,11 +15,11 @@ public class ElderlyHealthAssessment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "assessment_id")
-    private Integer assessmentId;
+    @Column(name = "id")
+    private Long assessmentId;
 
     @Column(name = "patient_id", nullable = false)
-    private String patientId;
+    private String patientID;
 
     @Column(name = "ben_visit_no", nullable = false)
     private Integer benVisitNo;
