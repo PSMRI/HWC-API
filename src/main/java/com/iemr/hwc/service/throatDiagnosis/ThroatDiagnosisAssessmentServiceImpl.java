@@ -3,9 +3,11 @@ package com.iemr.hwc.service.throatDiagnosis;
 import com.iemr.hwc.data.throatDiagnosis.ThroatDiagnosisAssessment;
 import com.iemr.hwc.data.throatDiagnosis.ThroatDiagnosisAssessmentDTO;
 import com.iemr.hwc.repo.throatDiagnosis.ThroatDiagnosisAssessmentRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,63 +17,38 @@ public class ThroatDiagnosisAssessmentServiceImpl implements ThroatDiagnosisAsse
     private ThroatDiagnosisAssessmentRepository repo;
 
     @Override
-    public String saveAll(List<ThroatDiagnosisAssessmentDTO> dtos, String user) {
+    public List<ThroatDiagnosisAssessmentDTO> saveAll(List<ThroatDiagnosisAssessmentDTO> dtos, Integer userId) {
+        List<ThroatDiagnosisAssessment> entities = new ArrayList<>();
 
-        List<ThroatDiagnosisAssessment> list = dtos.stream().map(dto -> {
-            ThroatDiagnosisAssessment e = new ThroatDiagnosisAssessment();
+        for (ThroatDiagnosisAssessmentDTO dto : dtos) {
+            dto.setUserId(userId);
+            ThroatDiagnosisAssessment entity = new ThroatDiagnosisAssessment();
+            BeanUtils.copyProperties(dto, entity);
+            entities.add(entity);
+        }
 
-            e.setId(dto.getId());
-            e.setPatientId(dto.getPatientId());
-            e.setBenVisitNo(dto.getBenVisitNo());
-            e.setSymptoms(dto.getSymptoms());
-            e.setNeckSwelling(dto.getNeckSwelling());
-            e.setDifficultySwallowing(dto.getDifficultySwallowing());
-            e.setTonsillitis(dto.getTonsillitis());
-            e.setPharyngitis(dto.getPharyngitis());
-            e.setLaryngitis(dto.getLaryngitis());
-            e.setSinusitis(dto.getSinusitis());
-            e.setCleftLip(dto.getCleftLip());
-            e.setCleftPalate(dto.getCleftPalate());
+        List<ThroatDiagnosisAssessment> savedEntities = repo.saveAll(entities);
+        List<ThroatDiagnosisAssessmentDTO> result = new ArrayList<>();
 
-            // 🔥 audit
-            e.setCreatedBy(user);
-            e.setCreatedDate(System.currentTimeMillis());
-            e.setUpdatedBy(user);
-            e.setUpdatedDate(System.currentTimeMillis());
+        for (ThroatDiagnosisAssessment entity : savedEntities) {
+            ThroatDiagnosisAssessmentDTO dto = new ThroatDiagnosisAssessmentDTO();
+            BeanUtils.copyProperties(entity, dto);
+            result.add(dto);
+        }
 
-            return e;
-        }).toList();
-
-        repo.saveAll(list);
-
-        return "Saved Successfully";
+        return result;
     }
 
     @Override
-    public List<ThroatDiagnosisAssessmentDTO> getAll(String user) {
+    public List<ThroatDiagnosisAssessmentDTO> getAll(Integer userId) {
+        List<ThroatDiagnosisAssessmentDTO> result = new ArrayList<>();
 
-        return repo.findAll().stream().map(e -> {
+        for (ThroatDiagnosisAssessment entity : repo.findByUserId(userId)) {
             ThroatDiagnosisAssessmentDTO dto = new ThroatDiagnosisAssessmentDTO();
+            BeanUtils.copyProperties(entity, dto);
+            result.add(dto);
+        }
 
-            dto.setId(e.getId());
-            dto.setPatientId(e.getPatientId());
-            dto.setBenVisitNo(e.getBenVisitNo());
-            dto.setSymptoms(e.getSymptoms());
-            dto.setNeckSwelling(e.getNeckSwelling());
-            dto.setDifficultySwallowing(e.getDifficultySwallowing());
-            dto.setTonsillitis(e.getTonsillitis());
-            dto.setPharyngitis(e.getPharyngitis());
-            dto.setLaryngitis(e.getLaryngitis());
-            dto.setSinusitis(e.getSinusitis());
-            dto.setCleftLip(e.getCleftLip());
-            dto.setCleftPalate(e.getCleftPalate());
-
-            dto.setCreatedBy(e.getCreatedBy());
-            dto.setCreatedDate(e.getCreatedDate());
-            dto.setUpdatedBy(e.getUpdatedBy());
-            dto.setUpdatedDate(e.getUpdatedDate());
-
-            return dto;
-        }).toList();
+        return result;
     }
 }

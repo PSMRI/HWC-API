@@ -11,13 +11,22 @@ public class ThroatDiagnosisAssessment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Long assessmentId;
 
-    @Column(name = "patient_id")
+    @Column(name = "patient_id", nullable = false)
     private String patientId;
 
     @Column(name = "ben_visit_no")
     private Integer benVisitNo;
+
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "beneficiary_id")
+    private Long beneficiaryID;
+
+    @Column(name = "beneficiary_reg_id")
+    private Long beneficiaryRegID;
 
     @Column(name = "symptoms", columnDefinition = "TEXT")
     private String symptoms; // JSON string
@@ -45,16 +54,4 @@ public class ThroatDiagnosisAssessment {
 
     @Column(name = "cleft_palate")
     private Boolean cleftPalate;
-
-    @Column(name = "created_date")
-    private Long createdDate;
-
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "updated_date")
-    private Long updatedDate;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
 }

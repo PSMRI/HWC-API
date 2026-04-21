@@ -5,9 +5,12 @@ import lombok.Data;
 @Data
 public class ThroatDiagnosisAssessmentDTO {
 
-    private Long id;
+    private Integer assessmentId;
     private String patientId;
     private Integer benVisitNo;
+    private Integer userId;
+    private Long beneficiaryID;
+    private Long beneficiaryRegID;
     private String symptoms;
     private Boolean neckSwelling;
     private Boolean difficultySwallowing;
@@ -17,9 +20,4 @@ public class ThroatDiagnosisAssessmentDTO {
     private Boolean sinusitis;
     private Boolean cleftLip;
     private Boolean cleftPalate;
-
-    private Long createdDate;
-    private String createdBy;
-    private Long updatedDate;
-    private String updatedBy;
 }

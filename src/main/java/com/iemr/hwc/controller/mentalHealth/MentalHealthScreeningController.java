@@ -1,7 +1,7 @@
-package com.iemr.hwc.controller.throatDiagnosis;
+package com.iemr.hwc.controller.mentalHealth;
 
-import com.iemr.hwc.data.throatDiagnosis.ThroatDiagnosisAssessmentDTO;
-import com.iemr.hwc.service.throatDiagnosis.ThroatDiagnosisAssessmentService;
+import com.iemr.hwc.data.mentalHealth.MentalHealthScreeningDTO;
+import com.iemr.hwc.service.mentalHealth.MentalHealthScreeningService;
 import com.iemr.hwc.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +16,18 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/throatDiagnosis")
-public class ThroatDiagnosisAssessmentController {
+@RequestMapping(value = "/mentalHealth")
+public class MentalHealthScreeningController {
 
     @Autowired
-    private ThroatDiagnosisAssessmentService service;
+    private MentalHealthScreeningService service;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("/saveAll")
     public ResponseEntity<Map<String, Object>> saveAll(
-            @RequestBody List<ThroatDiagnosisAssessmentDTO> dtos,
+            @RequestBody List<MentalHealthScreeningDTO> dtos,
             @RequestHeader("jwtToken") String token) {
 
         Map<String, Object> response = new HashMap<>();
@@ -62,7 +62,7 @@ public class ThroatDiagnosisAssessmentController {
             Integer userId = jwtUtil.extractUserId(token);
 
             if (userId != null) {
-                List<ThroatDiagnosisAssessmentDTO> res = service.getAll(userId);
+                List<MentalHealthScreeningDTO> res = service.getAll(userId);
 
                 if (res != null && !res.isEmpty()) {
                     response.put("status", "Success");
