@@ -2,6 +2,8 @@ package com.iemr.hwc.data.throatDiagnosis;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ThroatDiagnosisAssessmentDTO {
 
@@ -11,7 +13,7 @@ public class ThroatDiagnosisAssessmentDTO {
     private Integer userId;
     private Long beneficiaryID;
     private Long beneficiaryRegID;
-    private String symptoms;
+    private List<String> symptoms;
     private Boolean neckSwelling;
     private Boolean difficultySwallowing;
     private Boolean tonsillitis;

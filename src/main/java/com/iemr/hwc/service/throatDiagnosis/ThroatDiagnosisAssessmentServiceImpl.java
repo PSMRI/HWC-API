@@ -6,8 +6,8 @@ import com.iemr.hwc.repo.throatDiagnosis.ThroatDiagnosisAssessmentRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,6 +24,12 @@ public class ThroatDiagnosisAssessmentServiceImpl implements ThroatDiagnosisAsse
             dto.setUserId(userId);
             ThroatDiagnosisAssessment entity = new ThroatDiagnosisAssessment();
             BeanUtils.copyProperties(dto, entity);
+
+            // List<String> -> comma-separated String
+            if (dto.getSymptoms() != null) {
+                entity.setSymptoms(String.join(", ", dto.getSymptoms()));
+            }
+
             entities.add(entity);
         }
 
@@ -33,6 +39,12 @@ public class ThroatDiagnosisAssessmentServiceImpl implements ThroatDiagnosisAsse
         for (ThroatDiagnosisAssessment entity : savedEntities) {
             ThroatDiagnosisAssessmentDTO dto = new ThroatDiagnosisAssessmentDTO();
             BeanUtils.copyProperties(entity, dto);
+
+            // comma-separated String -> List<String> wapas
+            if (entity.getSymptoms() != null) {
+                dto.setSymptoms(Arrays.asList(entity.getSymptoms().split(",\\s*")));
+            }
+
             result.add(dto);
         }
 
@@ -46,6 +58,14 @@ public class ThroatDiagnosisAssessmentServiceImpl implements ThroatDiagnosisAsse
         for (ThroatDiagnosisAssessment entity : repo.findByUserId(userId)) {
             ThroatDiagnosisAssessmentDTO dto = new ThroatDiagnosisAssessmentDTO();
             BeanUtils.copyProperties(entity, dto);
+
+            // comma-separated String -> List<String>
+            if (entity.getSymptoms() != null && !entity.getSymptoms().isEmpty()) {
+                dto.setSymptoms(Arrays.asList(entity.getSymptoms().split(",\\s*")));
+            } else {
+                dto.setSymptoms(new ArrayList<>());
+            }
+
             result.add(dto);
         }
 
