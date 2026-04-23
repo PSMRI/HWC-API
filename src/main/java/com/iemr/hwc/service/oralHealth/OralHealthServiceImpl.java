@@ -68,7 +68,8 @@ public class OralHealthServiceImpl implements OralHealthService {
             dto.setCleftLipPalate(e.getCleftLipPalate());
             dto.setDentalFluorosis(e.getDentalFluorosis());
             dto.setDentalEmergency(e.getDentalEmergency());
-
+            dto.setBeneficiaryRegID(e.getBeneficiaryRegID());
+            dto.setBeneficiaryID(e.getBeneficiaryID());
             dto.setCreatedBy(e.getCreatedBy());
             dto.setCreatedDate(e.getCreatedDate());
             dto.setUpdatedBy(e.getUpdatedBy());
