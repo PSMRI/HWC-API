@@ -95,4 +95,31 @@ public class ElderlyHealthAssessment {
 
     @Column(name = "remarks")
     private String remarks;
+
+    @Column(name = "bathing")
+    private Integer bathing;
+
+    @Column(name = "dressing")
+    private Integer dressing;
+
+    @Column(name = "toileting")
+    private Integer toileting;
+
+    @Column(name = "transferring")
+    private Integer transferring;
+
+    @Column(name = "continence")
+    private Integer continence;
+
+    @Column(name = "feeding")
+    private Integer feeding;
+
+    @Column(name = "total_score")
+    private Integer totalScore;
+
+    @Column(name = "functional_status")
+    private String functionalStatus;
+
+    @Column(name = "functional_decline_flag")
+    private Boolean functionalDeclineFlag;
 }

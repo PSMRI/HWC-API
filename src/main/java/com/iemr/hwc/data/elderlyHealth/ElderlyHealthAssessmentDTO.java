@@ -32,4 +32,13 @@ public class ElderlyHealthAssessmentDTO {
     private String caseStatus;
     private String dateOfDeath;
     private String remarks;
+    private Integer bathing;
+    private Integer dressing;
+    private Integer toileting;
+    private Integer transferring;
+    private Integer continence;
+    private Integer feeding;
+    private Integer totalScore;
+    private String functionalStatus;
+    private Boolean functionalDeclineFlag;
 }
