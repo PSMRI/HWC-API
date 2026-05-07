@@ -124,7 +124,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 	/// --------------- start of saving nurse data ------------------------
 	@Override
 	// @Transactional(rollbackFor = Exception.class)
-	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
+	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception {
 		Long historySaveSuccessFlag = null;
 		Long vitalSaveSuccessFlag = null;
 		Long examtnSaveSuccessFlag = null;
@@ -177,7 +177,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 					examtnSaveSuccessFlag = saveBenExaminationDetails(requestOBJ.getAsJsonObject("examinationDetails"),
 							benVisitID, benVisitCode);
 			} else {
-				throw new RuntimeException("Error occurred while creating beneficiary visit");
+				throw new IEMRException("Error occurred while creating beneficiary visit");
 			}
 
 			if ((null != historySaveSuccessFlag && historySaveSuccessFlag > 0)
@@ -207,10 +207,10 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				}
 
 			} else {
-				throw new RuntimeException("Error occurred while saving data");
+				throw new IEMRException("Error occurred while saving data");
 			}
 		} else {
-			throw new Exception("Invalid input");
+			throw new IEMRException("Invalid input");
 		}
 		Map<String, String> responseMap = new HashMap<String, String>();
 		if (benVisitCode != null) {
@@ -811,7 +811,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 	/// --------------- start of saving doctor data ------------------------
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Long saveDoctorData(JsonObject requestOBJ, String Authorization) throws Exception {
+	public Long saveDoctorData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception {
 
 		Boolean doctorSignatureFlag = false;
 		if (requestOBJ.has("doctorSignatureFlag")
@@ -993,7 +993,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				if (i > 0)
 					saveSuccessFlag = investigationSuccessFlag;
 				else
-					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+					throw new IEMRException("Error occurred while saving data. Beneficiary status update failed");
 
 				if (i > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
 					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", commonUtilityClass.getBeneficiaryRegID(),
@@ -1005,7 +1005,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				}
 
 			} else {
-				throw new RuntimeException();
+				throw new IEMRException("Error occurred while saving doctor data");
 			}
 		} else {
 			// request OBJ is null.
@@ -1447,7 +1447,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 	// update doctor data
 	@Transactional(rollbackFor = Exception.class)
-	public Long updateGeneralOPDDoctorData(JsonObject requestOBJ, String Authorization) throws Exception {
+	public Long updateGeneralOPDDoctorData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception {
 
 		Boolean doctorSignatureFlag = false;
 		if (requestOBJ.has("doctorSignatureFlag")
@@ -1643,7 +1643,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				if (i > 0)
 					updateSuccessFlag = investigationSuccessFlag;
 				else
-					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+					throw new IEMRException("Error occurred while updating data. Beneficiary status update failed");
 
 				if (i > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
 					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", commonUtilityClass.getBeneficiaryRegID(),
@@ -1655,7 +1655,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				}
 
 			} else {
-				throw new RuntimeException();
+				throw new IEMRException("Error occurred while updating doctor data");
 			}
 		} else {
 			// request OBJ is null.

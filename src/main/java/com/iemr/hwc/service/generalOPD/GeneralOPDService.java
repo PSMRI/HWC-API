@@ -25,17 +25,18 @@ import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.iemr.hwc.data.nurse.CommonUtilityClass;
+import com.iemr.hwc.utils.exception.IEMRException;
 
 public interface GeneralOPDService {
 
-	String saveNurseData(JsonObject requestOBJ, String Authorization) throws Exception;
-	
+	String saveNurseData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception;
+
 	void deleteVisitDetails(JsonObject requestOBJ) throws Exception;
 
 	Map<String, Long> saveBenVisitDetails(JsonObject visitDetailsOBJ, CommonUtilityClass nurseUtilityClass)
 			throws Exception;
 
-	Long saveDoctorData(JsonObject requestOBJ, String Authorization) throws Exception;
+	Long saveDoctorData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception;
 
 	Long saveBenGeneralOPDHistoryDetails(JsonObject generalOPDHistoryOBJ, Long benVisitID, Long benVisitCode)
 			throws Exception;
