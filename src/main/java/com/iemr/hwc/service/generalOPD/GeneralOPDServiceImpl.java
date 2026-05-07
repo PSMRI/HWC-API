@@ -124,7 +124,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 	/// --------------- start of saving nurse data ------------------------
 	@Override
 	// @Transactional(rollbackFor = Exception.class)
-	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception {
+	public String saveNurseData(JsonObject requestOBJ, String Authorization) throws Exception {
 		Long historySaveSuccessFlag = null;
 		Long vitalSaveSuccessFlag = null;
 		Long examtnSaveSuccessFlag = null;
@@ -811,7 +811,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 	/// --------------- start of saving doctor data ------------------------
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Long saveDoctorData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception {
+	public Long saveDoctorData(JsonObject requestOBJ, String Authorization) throws Exception {
 
 		Boolean doctorSignatureFlag = false;
 		if (requestOBJ.has("doctorSignatureFlag")
@@ -1447,7 +1447,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 	// update doctor data
 	@Transactional(rollbackFor = Exception.class)
-	public Long updateGeneralOPDDoctorData(JsonObject requestOBJ, String Authorization) throws IEMRException, Exception {
+	public Long updateGeneralOPDDoctorData(JsonObject requestOBJ, String Authorization) throws Exception {
 
 		Boolean doctorSignatureFlag = false;
 		if (requestOBJ.has("doctorSignatureFlag")
