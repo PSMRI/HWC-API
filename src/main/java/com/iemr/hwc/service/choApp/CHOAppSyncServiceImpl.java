@@ -356,7 +356,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         try {
 //            ResponseEntity<String> registrationResponse = restTemplate.exchange(registrationUrl, HttpMethod.POST, registrationRequest,
-                  //  String.class);
+            //  String.class);
 
 //            String registrationResponseStr = registrationResponse.getBody();
 //            JSONObject registrationResponseObj = new JSONObject(registrationResponseStr);
@@ -376,20 +376,68 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
 
-                beneficiaryDetailsRmnch.addProperty("firstName", requestObj.get("firstName").getAsString());
-                beneficiaryDetailsRmnch.addProperty("lastName", requestObj.get("lastName").getAsString());
-                JsonElement fatherElement = requestObj.get("fatherName");
+                beneficiaryDetailsRmnch.addProperty("firstName",
+                        requestObj.has("firstName") && !requestObj.get("firstName").isJsonNull()
+                                ? requestObj.get("firstName").getAsString()
+                                : null);
 
-                String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
-                        ? fatherElement.getAsString()
-                        : "";
-                beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
-                beneficiaryDetailsRmnch.addProperty("spouseName", requestObj.get("spouseName").getAsString());
+                beneficiaryDetailsRmnch.addProperty("lastName",
+                        requestObj.has("lastName") && !requestObj.get("lastName").isJsonNull()
+                                ? requestObj.get("lastName").getAsString()
+                                : null);
 
-                beneficiaryDetailsRmnch.addProperty("genderID", requestObj.get("genderID").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("genderName", requestObj.get("genderName").getAsString());
-                beneficiaryDetailsRmnch.addProperty("maritalStatusID", requestObj.get("maritalStatusID").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("maritalStatusName", requestObj.get("maritalStatusName").getAsString());
+                beneficiaryDetailsRmnch.addProperty("fatherName",
+                        requestObj.has("fatherName") && !requestObj.get("fatherName").isJsonNull()
+                                ? requestObj.get("fatherName").getAsString()
+                                : "");
+
+                beneficiaryDetailsRmnch.addProperty("spouseName",
+                        requestObj.has("spouseName") && !requestObj.get("spouseName").isJsonNull()
+                                ? requestObj.get("spouseName").getAsString()
+                                : "");
+
+                beneficiaryDetailsRmnch.addProperty("genderID",
+                        requestObj.has("genderID") && !requestObj.get("genderID").isJsonNull()
+                                ? requestObj.get("genderID").getAsInt()
+                                : 0);
+
+                beneficiaryDetailsRmnch.addProperty("genderName",
+                        requestObj.has("genderName") && !requestObj.get("genderName").isJsonNull()
+                                ? requestObj.get("genderName").getAsString()
+                                : null);
+
+                beneficiaryDetailsRmnch.addProperty("maritalStatusID",
+                        requestObj.has("maritalStatusID") && !requestObj.get("maritalStatusID").isJsonNull()
+                                ? requestObj.get("maritalStatusID").getAsInt()
+                                : 0);
+
+                beneficiaryDetailsRmnch.addProperty("maritalStatusName",
+                        requestObj.has("maritalStatusName") && !requestObj.get("maritalStatusName").isJsonNull()
+                                ? requestObj.get("maritalStatusName").getAsString()
+                                : null);
+
+                beneficiaryDetailsRmnch.addProperty("dOB",
+                        requestObj.has("dOB") && !requestObj.get("dOB").isJsonNull()
+                                ? requestObj.get("dOB").getAsString()
+                                : null);
+
+                beneficiaryDetailsRmnch.addProperty("beneficiaryConsent",
+                        requestObj.has("beneficiaryConsent") && !requestObj.get("beneficiaryConsent").isJsonNull()
+                                && requestObj.get("beneficiaryConsent").getAsBoolean());
+
+                beneficiaryDetailsRmnch.addProperty("emergencyRegistration",
+                        requestObj.has("emergencyRegistration") && !requestObj.get("emergencyRegistration").isJsonNull()
+                                && requestObj.get("emergencyRegistration").getAsBoolean());
+
+                beneficiaryDetailsRmnch.addProperty("parkingPlaceID",
+                        requestObj.has("parkingPlaceID") && !requestObj.get("parkingPlaceID").isJsonNull()
+                                ? requestObj.get("parkingPlaceID").getAsInt()
+                                : 0);
+
+                beneficiaryDetailsRmnch.addProperty("vanID",
+                        requestObj.has("vanID") && !requestObj.get("vanID").isJsonNull()
+                                ? requestObj.get("vanID").getAsInt()
+                                : 0);
 
                 if (requestObj.has("reproductiveStatusId")
                         && !requestObj.get("reproductiveStatusId").isJsonNull()) {
@@ -408,34 +456,34 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             requestObj.get("reproductiveStatus").getAsString()
                     );
                 }
-                beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
-
-                beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
-                beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
-
-                beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("vanID", requestObj.get("vanID").getAsInt());
 
                 JsonElement psmID = requestObj.has("providerServiceMapID")
                         ? requestObj.get("providerServiceMapID")
                         : requestObj.get("providerServiceMapId");  // fallback lowercase
                 beneficiaryDetailsRmnch.addProperty("providerServiceMapID",
                         (psmID != null && !psmID.isJsonNull()) ? psmID.getAsString() : null);
-                if (requestObj.has("i_bendemographics")) {
-                    beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
+                if (requestObj.has("i_bendemographics")
+                        && !requestObj.get("i_bendemographics").isJsonNull()) {
+                    beneficiaryDetailsRmnch.add("i_bendemographics",
+                            requestObj.getAsJsonObject("i_bendemographics"));
                 }
 
-
-                if (requestObj.has("benPhoneMaps")) {
-                    beneficiaryDetailsRmnch.add("benPhoneMaps", requestObj.getAsJsonArray("benPhoneMaps"));
+                if (requestObj.has("benPhoneMaps")
+                        && requestObj.get("benPhoneMaps").isJsonArray()) {
+                    beneficiaryDetailsRmnch.add("benPhoneMaps",
+                            requestObj.getAsJsonArray("benPhoneMaps"));
                 }
 
-                if (requestObj.has("beneficiaryIdentities")) {
-                    beneficiaryDetailsRmnch.add("beneficiaryIdentities", requestObj.getAsJsonArray("beneficiaryIdentities"));
+                if (requestObj.has("beneficiaryIdentities")
+                        && requestObj.get("beneficiaryIdentities").isJsonArray()) {
+                    beneficiaryDetailsRmnch.add("beneficiaryIdentities",
+                            requestObj.getAsJsonArray("beneficiaryIdentities"));
                 }
 
-                if (requestObj.has("faceEmbedding")) {
-                    beneficiaryDetailsRmnch.add("faceEmbedding", requestObj.getAsJsonArray("faceEmbedding"));
+                if (requestObj.has("faceEmbedding")
+                        && requestObj.get("faceEmbedding").isJsonArray()) {
+                    beneficiaryDetailsRmnch.add("faceEmbedding",
+                            requestObj.getAsJsonArray("faceEmbedding"));
                 }
                 String jsonBody = beneficiaryDetailsRmnch.toString();
 
