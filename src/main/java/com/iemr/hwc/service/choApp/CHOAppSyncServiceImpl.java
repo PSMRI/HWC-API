@@ -92,10 +92,10 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     @Value("${getBenCountToSync}")
     private String getBenCountToSync;
 
-   @Value("${rmnch_data_byID}")
-    private String getRmnchGetBYRegid ;
+    @Value("${rmnch_data_byID}")
+    private String getRmnchGetBYRegid;
 
-   @Value("${update_rmnch_data}")
+    @Value("${update_rmnch_data}")
     private String syncDataToAmrit;
 
     private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
@@ -124,14 +124,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     private OutreachActivityRepo outreachActivityRepo;
 
 
-
     @Autowired
-    public void setOutreachActivityRepo(OutreachActivityRepo outreachActivityRepo){
+    public void setOutreachActivityRepo(OutreachActivityRepo outreachActivityRepo) {
         this.outreachActivityRepo = outreachActivityRepo;
     }
 
     @Autowired
-    public void setPrescriptionTemplatesRepo(PrescriptionTemplatesRepo prescriptionTemplatesRepo){
+    public void setPrescriptionTemplatesRepo(PrescriptionTemplatesRepo prescriptionTemplatesRepo) {
         this.prescriptionTemplatesRepo = prescriptionTemplatesRepo;
     }
 
@@ -146,41 +145,41 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
     }
 
     @Autowired
-    public void setUserActivityLogsRepo(UserActivityLogsRepo userActivityLogsRepo){
+    public void setUserActivityLogsRepo(UserActivityLogsRepo userActivityLogsRepo) {
         this.userActivityLogsRepo = userActivityLogsRepo;
     }
 
     @Autowired
-    public void setCommonNurseServiceImpl(CommonNurseServiceImpl commonNurseServiceImpl){
+    public void setCommonNurseServiceImpl(CommonNurseServiceImpl commonNurseServiceImpl) {
         this.commonNurseServiceImpl = commonNurseServiceImpl;
     }
 
     @Autowired
-    public void setBenAnthropometryRepo(BenAnthropometryRepo benAnthropometryRepo){
+    public void setBenAnthropometryRepo(BenAnthropometryRepo benAnthropometryRepo) {
         this.benAnthropometryRepo = benAnthropometryRepo;
     }
 
     @Autowired
-    public void setBenPhysicalVitalRepo(BenPhysicalVitalRepo benPhysicalVitalRepo){
+    public void setBenPhysicalVitalRepo(BenPhysicalVitalRepo benPhysicalVitalRepo) {
         this.benPhysicalVitalRepo = benPhysicalVitalRepo;
     }
 
     @Autowired
-    public void setBenChiefComplaintRepo(BenChiefComplaintRepo benChiefComplaintRepo){
+    public void setBenChiefComplaintRepo(BenChiefComplaintRepo benChiefComplaintRepo) {
         this.benChiefComplaintRepo = benChiefComplaintRepo;
     }
 
     @Autowired
-    public void setGeneralOPDServiceImpl(GeneralOPDServiceImpl generalOPDServiceImpl){
+    public void setGeneralOPDServiceImpl(GeneralOPDServiceImpl generalOPDServiceImpl) {
         this.generalOPDServiceImpl = generalOPDServiceImpl;
     }
 
     @Autowired
-    public void setBenVisitDetailRepo(BenVisitDetailRepo benVisitDetailRepo){
+    public void setBenVisitDetailRepo(BenVisitDetailRepo benVisitDetailRepo) {
         this.benVisitDetailRepo = benVisitDetailRepo;
     }
 
-    public ResponseEntity<String> registerCHOAPPBeneficiary(String comingRequest, String Authorization){
+    public ResponseEntity<String> registerCHOAPPBeneficiary(String comingRequest, String Authorization) {
 
         OutputResponse outputResponse = new OutputResponse();
         JsonObject responseObj = new JsonObject();
@@ -193,140 +192,193 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
         headers.add("AUTHORIZATION", Authorization);
         HttpEntity<Object> registrationRequest = RestTemplateUtil.createRequestEntity(comingRequest, Authorization);
-         logger.info("HWC Beneficiary request " + comingRequest);
+        logger.info("HWC Beneficiary request " + comingRequest);
 
         try {
             ResponseEntity<String> registrationResponse = restTemplate.exchange(registrationUrl, HttpMethod.POST, registrationRequest,
                     String.class);
 
-                String registrationResponseStr = registrationResponse.getBody();
-                JSONObject registrationResponseObj = new JSONObject(registrationResponseStr);
-             logger.info("HWC Beneficiary registrationResponseObj " + registrationResponseObj);
+            String registrationResponseStr = registrationResponse.getBody();
+            JSONObject registrationResponseObj = new JSONObject(registrationResponseStr);
+            logger.info("HWC Beneficiary registrationResponseObj " + registrationResponseObj);
             JsonObject requestObj = new Gson().fromJson(comingRequest, JsonObject.class);
 
-                if (registrationResponseObj.getInt("statusCode") == 200) {
+            if (registrationResponseObj.getInt("statusCode") == 200) {
 
-                    beneficiaryRegID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryRegID");
-                    beneficiaryID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryID");
+                beneficiaryRegID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryRegID");
+                beneficiaryID = registrationResponseObj.getJSONObject("data").getLong("beneficiaryID");
 
-                    JsonObject beneficiaryDetailsRmnch = new JsonObject();
-
-
-                    beneficiaryDetailsRmnch.addProperty("benficieryid", beneficiaryID);
-                    beneficiaryDetailsRmnch.addProperty("benRegId", beneficiaryRegID);
-
-                    beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
-
-                    beneficiaryDetailsRmnch.addProperty("firstName", requestObj.get("firstName").getAsString());
-                    beneficiaryDetailsRmnch.addProperty("lastName", requestObj.get("lastName").getAsString());
-                    JsonElement fatherElement = requestObj.get("fatherName");
-
-                    String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
-                            ? fatherElement.getAsString()
-                            : "";
-                    beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
-                    beneficiaryDetailsRmnch.addProperty("spouseName", requestObj.get("spouseName").getAsString());
-
-                    beneficiaryDetailsRmnch.addProperty("genderID", requestObj.get("genderID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("genderName", requestObj.get("genderName").getAsString());
-                    beneficiaryDetailsRmnch.addProperty("maritalStatusID", requestObj.get("maritalStatusID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("maritalStatusName", requestObj.get("maritalStatusName").getAsString());
-                    if (requestObj.has("reproductiveStatusId")
-                            && !requestObj.get("reproductiveStatusId").isJsonNull()) {
-                        beneficiaryDetailsRmnch.addProperty(
-                                "reproductiveStatusId",
-                                requestObj.get("reproductiveStatusId").getAsInt()
-                        );
-                    }
-
-                    if (requestObj.has("reproductiveStatus")
-                            && !requestObj.get("reproductiveStatus").isJsonNull()) {
-                        beneficiaryDetailsRmnch.addProperty(
-                                "reproductiveStatus",
-                                requestObj.get("reproductiveStatus").getAsString()
-                        );
-                    }
-                    beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
-
-                    beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
-                    beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
-
-                    beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("vanID", requestObj.get("vanID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsInt());
-
-                    if (requestObj.has("i_bendemographics")) {
-                        beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
-                    }
-
-                    if (requestObj.has("benPhoneMaps")) {
-                        beneficiaryDetailsRmnch.add("benPhoneMaps", requestObj.getAsJsonArray("benPhoneMaps"));
-                    }
-
-                    if (requestObj.has("beneficiaryIdentities")) {
-                        beneficiaryDetailsRmnch.add("beneficiaryIdentities", requestObj.getAsJsonArray("beneficiaryIdentities"));
-                    }
-
-                    if (requestObj.has("faceEmbedding")) {
-                        beneficiaryDetailsRmnch.add("faceEmbedding", requestObj.getAsJsonArray("faceEmbedding"));
-                    }
-                    String jsonBody = beneficiaryDetailsRmnch.toString();
-
-                    logger.info("beneficiaryDetailsRmnch json :" + jsonBody);
+                JsonObject beneficiaryDetailsRmnch = new JsonObject();
 
 
-                    if(beneficiaryDetailsRmnch!=null){
+                beneficiaryDetailsRmnch.addProperty("benficieryid", beneficiaryID);
+                beneficiaryDetailsRmnch.addProperty("benRegId", beneficiaryRegID);
 
-                        HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
-                        logger.info("beneficiaryDetailsRmnch request :" + request);
+                beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
 
-                        ResponseEntity<String> response = restTemplate.exchange(
-                                syncDataToAmrit,
-                                HttpMethod.POST,
-                                request,
-                                String.class
-                        );
-                        logger.info("identityResponse" +response );
+                beneficiaryDetailsRmnch.addProperty("firstName",
+                        requestObj.has("firstName") && !requestObj.get("firstName").isJsonNull()
+                                ? requestObj.get("firstName").getAsString()
+                                : "");
 
-                    }
+                beneficiaryDetailsRmnch.addProperty("lastName",
+                        requestObj.has("lastName") && !requestObj.get("lastName").isJsonNull()
+                                ? requestObj.get("lastName").getAsString()
+                                : "");
 
-                    int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
+                JsonElement fatherElement = requestObj.get("fatherName");
 
-                    if (i > 0) {
-                        if (i == 1) {
-                            responseObj.addProperty("beneficiaryID", beneficiaryID);
-                            responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
+                String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
+                        ? fatherElement.getAsString()
+                        : "";
 
+                beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
 
-                            outputResponse.setResponse(responseObj.toString());
-                            status = HttpStatus.OK;
-                        }
-                    } else {
-                        logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
-                        outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
-                        status = HttpStatus.INTERNAL_SERVER_ERROR;
-                    }
+                beneficiaryDetailsRmnch.addProperty("spouseName",
+                        requestObj.has("spouseName") && !requestObj.get("spouseName").isJsonNull()
+                                ? requestObj.get("spouseName").getAsString()
+                                : "");
 
-                } else {
-                    logger.error("Error encountered in Common-API service while registering beneficiary. "
-                            + registrationResponseObj.getString("status"));
-                    outputResponse.setError(registrationResponseObj.getInt("statusCode"), "Error encountered in Common-API service while registering beneficiary. "
-                            + registrationResponseObj.getString("status"));
+                beneficiaryDetailsRmnch.addProperty("genderID",
+                        requestObj.has("genderID") && !requestObj.get("genderID").isJsonNull()
+                                ? requestObj.get("genderID").getAsInt()
+                                : 0);
+
+                beneficiaryDetailsRmnch.addProperty("genderName",
+                        requestObj.has("genderName") && !requestObj.get("genderName").isJsonNull()
+                                ? requestObj.get("genderName").getAsString()
+                                : "");
+
+                beneficiaryDetailsRmnch.addProperty("maritalStatusID",
+                        requestObj.has("maritalStatusID") && !requestObj.get("maritalStatusID").isJsonNull()
+                                ? requestObj.get("maritalStatusID").getAsInt()
+                                : 0);
+
+                beneficiaryDetailsRmnch.addProperty("maritalStatusName",
+                        requestObj.has("maritalStatusName") && !requestObj.get("maritalStatusName").isJsonNull()
+                                ? requestObj.get("maritalStatusName").getAsString()
+                                : "");
+                if (requestObj.has("reproductiveStatusId")
+                        && !requestObj.get("reproductiveStatusId").isJsonNull()) {
+                    beneficiaryDetailsRmnch.addProperty(
+                            "reproductiveStatusId",
+                            requestObj.get("reproductiveStatusId").getAsInt()
+                    );
                 }
 
-        } catch(ResourceAccessException e){
+                if (requestObj.has("reproductiveStatus")
+                        && !requestObj.get("reproductiveStatus").isJsonNull()) {
+                    beneficiaryDetailsRmnch.addProperty(
+                            "reproductiveStatus",
+                            requestObj.get("reproductiveStatus").getAsString()
+                    );
+                }
+                beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("beneficiaryConsent",
+                        requestObj.has("beneficiaryConsent")
+                                && !requestObj.get("beneficiaryConsent").isJsonNull()
+                                && requestObj.get("beneficiaryConsent").getAsBoolean());
+
+                beneficiaryDetailsRmnch.addProperty("emergencyRegistration",
+                        requestObj.has("emergencyRegistration")
+                                && !requestObj.get("emergencyRegistration").isJsonNull()
+                                && requestObj.get("emergencyRegistration").getAsBoolean());
+
+                beneficiaryDetailsRmnch.addProperty("parkingPlaceID",
+                        requestObj.has("parkingPlaceID")
+                                && !requestObj.get("parkingPlaceID").isJsonNull()
+                                ? requestObj.get("parkingPlaceID").getAsInt()
+                                : 0);
+
+                beneficiaryDetailsRmnch.addProperty("vanID",
+                        requestObj.has("vanID")
+                                && !requestObj.get("vanID").isJsonNull()
+                                ? requestObj.get("vanID").getAsInt()
+                                : 0);
+
+                JsonElement providerServiceMapElement =
+                        requestObj.has("providerServiceMapID")
+                                ? requestObj.get("providerServiceMapID")
+                                : requestObj.get("providerServiceMapId");
+
+                beneficiaryDetailsRmnch.addProperty("providerServiceMapID",
+                        (providerServiceMapElement != null
+                                && !providerServiceMapElement.isJsonNull())
+                                ? providerServiceMapElement.getAsString()
+                                : null);
+                if (requestObj.has("i_bendemographics")) {
+                    beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
+                }
+
+                if (requestObj.has("benPhoneMaps")) {
+                    beneficiaryDetailsRmnch.add("benPhoneMaps", requestObj.getAsJsonArray("benPhoneMaps"));
+                }
+
+                if (requestObj.has("beneficiaryIdentities")) {
+                    beneficiaryDetailsRmnch.add("beneficiaryIdentities", requestObj.getAsJsonArray("beneficiaryIdentities"));
+                }
+
+                if (requestObj.has("faceEmbedding")) {
+                    beneficiaryDetailsRmnch.add("faceEmbedding", requestObj.getAsJsonArray("faceEmbedding"));
+                }
+                String jsonBody = beneficiaryDetailsRmnch.toString();
+
+                logger.info("beneficiaryDetailsRmnch json :" + jsonBody);
+
+
+                if (beneficiaryDetailsRmnch != null) {
+
+                    HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
+                    logger.info("beneficiaryDetailsRmnch request :" + request);
+
+                    ResponseEntity<String> response = restTemplate.exchange(
+                            syncDataToAmrit,
+                            HttpMethod.POST,
+                            request,
+                            String.class
+                    );
+                    logger.info("identityResponse" + response);
+
+                }
+
+                int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(comingRequest, beneficiaryRegID, beneficiaryID);
+
+                if (i > 0) {
+                    if (i == 1) {
+                        responseObj.addProperty("beneficiaryID", beneficiaryID);
+                        responseObj.addProperty("beneficiaryRegID", beneficiaryRegID);
+
+
+                        outputResponse.setResponse(responseObj.toString());
+                        status = HttpStatus.OK;
+                    }
+                } else {
+                    logger.error("Couldn't create a new benFlowStatus record for the registered beneficiary");
+                    outputResponse.setError(500, "Beneficiary creation successful but couldn't create new flow status for it.");
+                    status = HttpStatus.INTERNAL_SERVER_ERROR;
+                }
+
+            } else {
+                logger.error("Error encountered in Common-API service while registering beneficiary. "
+                        + registrationResponseObj.getString("status"));
+                outputResponse.setError(registrationResponseObj.getInt("statusCode"), "Error encountered in Common-API service while registering beneficiary. "
+                        + registrationResponseObj.getString("status"));
+            }
+
+        } catch (ResourceAccessException e) {
             logger.error("Error establishing connection with Common-API service. " + e);
             outputResponse.setError(503, "Error establishing connection with Common-API service. ");
             status = HttpStatus.SERVICE_UNAVAILABLE;
-        } catch(RestClientResponseException e){
+        } catch (RestClientResponseException e) {
             logger.error("Error encountered in Common-API service while registering beneficiary. " + e);
             outputResponse.setError(e.getRawStatusCode(), "Error encountered in Common-API service while registering beneficiary. " + e);
             status = HttpStatus.valueOf(e.getRawStatusCode());
-        } catch (JSONException e){
+        } catch (JSONException e) {
             logger.error("Encountered JSON exception " + e);
             outputResponse.setError(502, "Error registering the beneficiary.Encountered JSON exception " + e);
             status = HttpStatus.BAD_GATEWAY;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception " + e);
             outputResponse.setError(500, "Error registering the beneficiary.Encountered exception " + e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -334,12 +386,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         headers.remove("AUTHORIZATION");
 
-        return new ResponseEntity<> (outputResponse.toString(),headers,status);
+        return new ResponseEntity<>(outputResponse.toString(), headers, status);
     }
 
 
     @Override
-    public ResponseEntity<String> choAppUpdateBeneficiary(String comingRequest, String Authorization){
+    public ResponseEntity<String> choAppUpdateBeneficiary(String comingRequest, String Authorization) {
 
         OutputResponse outputResponse = new OutputResponse();
         JsonObject responseObj = new JsonObject();
@@ -372,7 +424,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
 
                 beneficiaryDetailsRmnch.addProperty("benficieryid", requestObj.get("beneficiaryID").getAsString());
-                beneficiaryDetailsRmnch.addProperty("benRegId",  requestObj.get("beneficiaryRegID").getAsLong());
+                beneficiaryDetailsRmnch.addProperty("benRegId", requestObj.get("beneficiaryRegID").getAsLong());
 
                 beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
 
@@ -489,7 +541,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 logger.info("beneficiaryDetailsRmnch json :" + jsonBody);
 
-                if(beneficiaryDetailsRmnch!=null){
+                if (beneficiaryDetailsRmnch != null) {
 
                     HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
                     logger.info("beneficiaryDetailsRmnch request :" + request);
@@ -501,7 +553,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             request,
                             String.class
                     );
-                    logger.info("identityResponse" +response );
+                    logger.info("identityResponse" + response);
                     JsonObject json = new JsonObject();
                     json.addProperty("beneficiaryID", beneficiaryID);
                     json.addProperty("beneficiaryRegID", beneficiaryRegID);
@@ -580,19 +632,19 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
 
-        } catch(ResourceAccessException e){
+        } catch (ResourceAccessException e) {
             logger.error("Error establishing connection with Common-API service. " + e);
             outputResponse.setError(503, "Error establishing connection with Common-API service. ");
             status = HttpStatus.SERVICE_UNAVAILABLE;
-        } catch(RestClientResponseException e){
+        } catch (RestClientResponseException e) {
             logger.error("Error encountered in Common-API service while registering beneficiary. " + e);
             outputResponse.setError(e.getRawStatusCode(), "Error encountered in Common-API service while registering beneficiary. " + e);
             status = HttpStatus.valueOf(e.getRawStatusCode());
-        } catch (JSONException e){
+        } catch (JSONException e) {
             logger.error("Encountered JSON exception " + e);
             outputResponse.setError(502, "Error registering the beneficiary.Encountered JSON exception " + e);
             status = HttpStatus.BAD_GATEWAY;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception " + e);
             outputResponse.setError(500, "Error registering the beneficiary.Encountered exception " + e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -600,11 +652,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         headers.remove("AUTHORIZATION");
 
-        return new ResponseEntity<> (outputResponse.toString(),headers,status);
+        return new ResponseEntity<>(outputResponse.toString(), headers, status);
     }
+
     public BeneficiaryData getBenOBJ(JsonObject benD) {
         // Initializing BeneficiaryData Class Object...
-          logger.info("Ben Obj"+ benD);
+        logger.info("Ben Obj" + benD);
         BeneficiaryData benData = new BeneficiaryData();
         if (benD.has("firstName") && !benD.get("firstName").isJsonNull())
             benData.setFirstName(benD.get("firstName").getAsString());
@@ -669,7 +722,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         try {
 
-            if(villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+            if (villageIDAndLastSyncDate.getVillageID() != null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
                     && villageIDAndLastSyncDate.getLastSyncDate() != null) {
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
@@ -686,30 +739,29 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                     JSONObject responseJSON = new JSONObject(response.getBody());
                     JSONArray jsonArray = new JSONArray(responseJSON.getJSONObject("response").getString("data"));
-                    logger.info("Get RMNC data: "+ jsonArray);
+                    logger.info("Get RMNC data: " + jsonArray);
 
                     outputResponse.setResponse(jsonArray.toString());
 
                 }
-            }else{
+            } else {
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
-                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400, "Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
-        }
-        catch(ResourceAccessException e){
+        } catch (ResourceAccessException e) {
             logger.error("Error establishing connection with Identity service. " + e);
             outputResponse.setError(503, "Error establishing connection with Identity service. ");
             statusCode = HttpStatus.SERVICE_UNAVAILABLE;
-        } catch(RestClientResponseException e){
+        } catch (RestClientResponseException e) {
             logger.error("Error encountered in Identity service while searching beneficiary based on villageIDs and lastSyncDate " + e);
             outputResponse.setError(e.getRawStatusCode(), "Error encountered in Identity service while searching beneficiary based on villageIDs and lastSyncDate " + e);
             statusCode = HttpStatus.valueOf(e.getRawStatusCode());
-        } catch (JSONException e){
+        } catch (JSONException e) {
             logger.error("Encountered JSON exception while parsing response from Identity service " + e);
             outputResponse.setError(502, "Encountered JSON exception while parsing response from Identity service " + e);
             statusCode = HttpStatus.BAD_GATEWAY;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception " + e);
             outputResponse.setError(500, "Error searching beneficiaries to sync. Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -717,7 +769,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         headers.remove("AUTHORIZATION");
 
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
 
     }
 
@@ -734,7 +786,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         try {
 
-            if(villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+            if (villageIDAndLastSyncDate.getVillageID() != null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
                     && villageIDAndLastSyncDate.getLastSyncDate() != null) {
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
@@ -757,25 +809,24 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 }
 
-            }else{
+            } else {
                 logger.error("Unable to get count of beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
-                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400, "Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
-        }
-        catch(ResourceAccessException e){
+        } catch (ResourceAccessException e) {
             logger.error("Error establishing connection with Identity service. " + e);
             outputResponse.setError(503, "Error establishing connection with Identity service. ");
             statusCode = HttpStatus.SERVICE_UNAVAILABLE;
-        } catch(RestClientResponseException e){
+        } catch (RestClientResponseException e) {
             logger.error("Error encountered in Identity service while getting count of beneficiary based on villageIDs and lastSyncDate " + e);
             outputResponse.setError(e.getRawStatusCode(), "Error encountered in Identity service while getting count of beneficiary based on villageIDs and lastSyncDate " + e);
             statusCode = HttpStatus.valueOf(e.getRawStatusCode());
-        } catch (JSONException e){
+        } catch (JSONException e) {
             logger.error("Encountered JSON exception while parsing response from Identity service " + e);
             outputResponse.setError(502, "Encountered JSON exception while parsing response from Identity service " + e);
             statusCode = HttpStatus.BAD_GATEWAY;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception " + e);
             outputResponse.setError(500, "Error getting count of beneficiaries to sync. Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -783,7 +834,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
         headers.remove("AUTHORIZATION");
 
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
 
     }
 
@@ -798,7 +849,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", "application/json");
 
         try {
-            if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+            if (villageIDAndLastSyncDate.getVillageID() != null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
                     && villageIDAndLastSyncDate.getLastSyncDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
                 DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
@@ -806,21 +857,21 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 benFlowCount = beneficiaryFlowStatusRepo.getFlowRecordsCount(villageIDAndLastSyncDate.getVillageID(),
                         new Timestamp(dt.toDate().getTime()));
                 outputResponse.setResponse(String.valueOf(benFlowCount));
-            }else{
+            } else {
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
-                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400, "Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logger.error("Encountered exception. " + e);
             outputResponse.setError(400, "Encountered exception. Exception " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while fetching ben flow status records to sync " + e);
             outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
 
     }
 
@@ -835,7 +886,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", "application/json");
 
         try {
-            if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+            if (villageIDAndLastSyncDate.getVillageID() != null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
                     && villageIDAndLastSyncDate.getLastSyncDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
                 DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
@@ -867,28 +918,28 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         }
                     }
                 }
-                logger.info("Ben FLow data"+
+                logger.info("Ben FLow data" +
                         new GsonBuilder()
                                 .excludeFieldsWithoutExposeAnnotation()
                                 .serializeNulls()
                                 .create()
                                 .toJson(benFlowList));
                 outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList));
-            }else{
+            } else {
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
-                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400, "Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logger.error("Encountered exception. " + e);
             outputResponse.setError(400, "Encountered exception. Exception " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while fetching ben flow status records to sync " + e);
             outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
 
     }
 
@@ -902,7 +953,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         headers.add("Content-Type", "application/json");
 
         try {
-            if (villageIDAndLastSyncDate.getVillageID() !=null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
+            if (villageIDAndLastSyncDate.getVillageID() != null && !villageIDAndLastSyncDate.getVillageID().isEmpty()
                     && villageIDAndLastSyncDate.getLastSyncDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
                 DateTime dt = formatter.parseDateTime(villageIDAndLastSyncDate.getLastSyncDate());
@@ -934,7 +985,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         }
                     }
                 }
-                logger.info("Ben FLow data"+
+                logger.info("Ben FLow data" +
                         new GsonBuilder()
                                 .excludeFieldsWithoutExposeAnnotation()
                                 .serializeNulls()
@@ -942,21 +993,21 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                                 .toJson(benFlowList));
                 outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList.stream().filter(beneficiaryFlowStatus -> beneficiaryFlowStatus.getReproductiveStatus()
                         .equals("Eligible Couple"))));
-            }else{
+            } else {
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
-                outputResponse.setError(400,"Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
+                outputResponse.setError(400, "Bad request. Incomplete request body - Either villageIDs or lastSyncDate missing.");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logger.error("Encountered exception. " + e);
             outputResponse.setError(400, "Encountered exception. Exception " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while fetching ben flow status records to sync " + e);
             outputResponse.setError(500, "Error fetching ben flow status records to sync . Exception " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
     }
 
     public String getRmnchData(BigInteger benId, String Authorization) {
@@ -979,7 +1030,6 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         );
 
 
-
         return response.getBody();
     }
 
@@ -992,35 +1042,35 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
 
-        try{
-            for (UserActivityLogs log : logsList){
-                if(log.getUserImage() != null) {
+        try {
+            for (UserActivityLogs log : logsList) {
+                if (log.getUserImage() != null) {
                     byte[] imageByte = Base64.getDecoder().decode(log.getUserImage());
                     log.setImageData(imageByte);
                 }
             }
-        List<UserActivityLogs> savedList = (List<UserActivityLogs>) userActivityLogsRepo.saveAll(logsList);
+            List<UserActivityLogs> savedList = (List<UserActivityLogs>) userActivityLogsRepo.saveAll(logsList);
 
-        if (savedList.size() == logsList.size()){
-            outputResponse.setResponse("Data saved successfully");
-        }else {
-            throw new Exception();
-        }
+            if (savedList.size() == logsList.size()) {
+                outputResponse.setResponse("Data saved successfully");
+            } else {
+                throw new Exception();
+            }
 
         } catch (IEMRException | DataIntegrityViolationException |
-                JsonSyntaxException | NumberFormatException e){
+                 JsonSyntaxException | NumberFormatException e) {
             logger.error("Encountered exception EITHER due to incorrect payload syntax OR" +
                     " because of missing userId. " + e);
-            outputResponse.setError(400,"Encountered exception EITHER due to incorrect payload syntax OR " +
+            outputResponse.setError(400, "Encountered exception EITHER due to incorrect payload syntax OR " +
                     "because of missing userId. Please check the payload. " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while saving UserActivityLogs. " + e);
-            outputResponse.setError(500,"Encountered exception while saving UserActivityLogs. " + e);
+            outputResponse.setError(500, "Encountered exception while saving UserActivityLogs. " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
     }
 
     @Override
@@ -1032,7 +1082,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
 
-        try{
+        try {
             JSONObject obj = new JSONObject(comingRequest);
             Long benRegID = obj.getLong("benRegID");
             Long visitCode = obj.getLong("visitCode");
@@ -1060,19 +1110,19 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             outputResponse.setError(400, "Encountered exception EITHER due to incorrect payload syntax OR " +
                     "because of missing benRegID/visitCode. Please check the payload. " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             logger.error("No ben visit detail record found. Exception encountered while setting setting variable to a null object " + e);
-            outputResponse.setError(404,"No ben visit detail record found. Please make sure the Ids in payload are correct. " + e);
+            outputResponse.setError(404, "No ben visit detail record found. Please make sure the Ids in payload are correct. " + e);
             statusCode = HttpStatus.NOT_FOUND;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while fetching nurse data(visit details,vitals,chief complaints,history,examinations)" +
                     " for beneficiary. " + e);
-            outputResponse.setError(500,"Encountered exception while fetching nurse data" +
+            outputResponse.setError(500, "Encountered exception while fetching nurse data" +
                     "(visit details,vitals,chief complaints,history,examinations) for beneficiary. " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
     }
 
     @Override
@@ -1101,18 +1151,17 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
 
                 Gson gson = new Gson();
 
-                if(responseObject.has("visitCode") && responseObject.get("visitCode")!=null){
-                    BeneficiaryVisitDetail visitDetail= benVisitDetailRepo.findByVisitCode(responseObject.get("visitCode").getAsLong());
+                if (responseObject.has("visitCode") && responseObject.get("visitCode") != null) {
+                    BeneficiaryVisitDetail visitDetail = benVisitDetailRepo.findByVisitCode(responseObject.get("visitCode").getAsLong());
                     JsonElement ele = gson.toJsonTree(visitDetail.getBenVisitID());
-                    responseObject.add("visitID",ele);
+                    responseObject.add("visitID", ele);
                     outputResponse.setResponse(gson.toJson(responseObject));
-                }
-                else {
+                } else {
                     outputResponse.setResponse(genOPDRes);
                 }
             } else {
                 logger.error("Invalid request object " + requestObj);
-                outputResponse.setError(400," Bad Request. Invalid request payload");
+                outputResponse.setError(400, " Bad Request. Invalid request payload");
                 statusCode = HttpStatus.BAD_REQUEST;
             }
         } catch (Exception e) {
@@ -1120,7 +1169,7 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             outputResponse.setError(500, "Unable to save data " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
     }
 
     @Override
@@ -1131,69 +1180,69 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
 
-        try{
+        try {
             List<PrescriptionTemplates> savedList = (List<PrescriptionTemplates>) prescriptionTemplatesRepo.saveAll(templateList);
 
-            if (savedList.size() == templateList.size()){
+            if (savedList.size() == templateList.size()) {
                 outputResponse.setResponse("Data saved successfully");
-            }else {
+            } else {
                 throw new Exception();
             }
 
         } catch (IEMRException | DataIntegrityViolationException |
-                 JsonSyntaxException | NumberFormatException e){
+                 JsonSyntaxException | NumberFormatException e) {
             logger.error("Encountered exception EITHER due to incorrect payload syntax OR" +
                     " because of missing userId. " + e);
-            outputResponse.setError(400,"Encountered exception EITHER due to incorrect payload syntax OR " +
+            outputResponse.setError(400, "Encountered exception EITHER due to incorrect payload syntax OR " +
                     "because of missing userId. Please check the payload. " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while saving Prescription templates. " + e);
-            outputResponse.setError(500,"Encountered exception while saving Prescription templates. " + e);
+            outputResponse.setError(500, "Encountered exception while saving Prescription templates. " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
     }
 
-	@Override
-	public ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization) {
-		OutputResponse outputResponse = new OutputResponse();
-		HttpStatus statusCode = HttpStatus.OK;
+    @Override
+    public ResponseEntity<String> savePrescriptionTemplatesToApp(Integer userID, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
 
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-		headers.add("Content-Type", "application/json");
-		try {
-			List<PrescriptionTemplates> templateList = prescriptionTemplatesRepo
-					.getPrescriptionTemplatesByUserID(userID);
-			outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
-					.create().toJson(templateList));
-		} catch (Exception e) {
-			logger.error("Error while fetching Prescription Templates userID : " + userID);
-			outputResponse.setError(500, "Unable to fetch Prescription Templates userID" + userID + "Exception - " + e);
-			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        try {
+            List<PrescriptionTemplates> templateList = prescriptionTemplatesRepo
+                    .getPrescriptionTemplatesByUserID(userID);
+            outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
+                    .create().toJson(templateList));
+        } catch (Exception e) {
+            logger.error("Error while fetching Prescription Templates userID : " + userID);
+            outputResponse.setError(500, "Unable to fetch Prescription Templates userID" + userID + "Exception - " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 
-		}
-		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
-	}
+        }
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+    }
 
-	@Override
-	public ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID) {
-		OutputResponse outputResponse = new OutputResponse();
-		HttpStatus statusCode = HttpStatus.OK;
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-		headers.add("Content-Type", "application/json");
-		try {
-			prescriptionTemplatesRepo.deletePrescriptionTemplatesByUserIDAndTempID(userID, tempID);
-			outputResponse.setResponse("Successfully deleted");
-		} catch (Exception e) {
-			logger.error("Error while deleting Prescription Templates userID : " + userID + " tempID : " + tempID);
-			outputResponse.setError(500, "Unable to delete Prescription Templates userID : " + userID + " tempID "
-					+ tempID + "Exception - " + e);
-			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
-	}
+    @Override
+    public ResponseEntity<String> deletePrescriptionTemplates(Integer userID, Integer tempID) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        try {
+            prescriptionTemplatesRepo.deletePrescriptionTemplatesByUserIDAndTempID(userID, tempID);
+            outputResponse.setResponse("Successfully deleted");
+        } catch (Exception e) {
+            logger.error("Error while deleting Prescription Templates userID : " + userID + " tempID : " + tempID);
+            outputResponse.setError(500, "Unable to delete Prescription Templates userID : " + userID + " tempID "
+                    + tempID + "Exception - " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
+    }
 
     @Override
     public ResponseEntity<String> createNewOutreachActivity(OutreachActivity activity, String authorization) {
@@ -1203,13 +1252,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-Type", "application/json");
 
-        try{
-            if(activity.getImg1() != null) {
+        try {
+            if (activity.getImg1() != null) {
                 byte[] imageByte1 = Base64.getDecoder().decode(activity.getImg1());
                 activity.setImg1Data(imageByte1);
             }
 
-            if(activity.getImg2() != null) {
+            if (activity.getImg2() != null) {
                 byte[] imageByte2 = Base64.getDecoder().decode(activity.getImg2());
                 activity.setImg2Data(imageByte2);
             }
@@ -1219,75 +1268,75 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
             outputResponse.setResponse("Data saved successfully");
 
         } catch (DataIntegrityViolationException |
-                 JsonSyntaxException | NumberFormatException e){
+                 JsonSyntaxException | NumberFormatException e) {
             logger.error("Encountered exception EITHER due to incorrect payload syntax OR" +
                     " because of missing userId. " + e);
-            outputResponse.setError(400,"Encountered exception EITHER due to incorrect payload syntax OR " +
+            outputResponse.setError(400, "Encountered exception EITHER due to incorrect payload syntax OR " +
                     "because of missing userId. Please check the payload. " + e);
             statusCode = HttpStatus.BAD_REQUEST;
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Encountered exception while saving outreach activity. " + e);
-            outputResponse.setError(500,"Encountered exception while saving outreach activity. " + e);
+            outputResponse.setError(500, "Encountered exception while saving outreach activity. " + e);
             statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<>(outputResponse.toString(),headers,statusCode);
+        return new ResponseEntity<>(outputResponse.toString(), headers, statusCode);
     }
 
-	@Override
-	public ResponseEntity<String> getActivitiesByUser(Integer userId, String authorization) {
-		OutputResponse outputResponse = new OutputResponse();
-		HttpStatus statusCode = HttpStatus.OK;
+    @Override
+    public ResponseEntity<String> getActivitiesByUser(Integer userId, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
 
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-		headers.add("Content-Type", "application/json");
-		try {
-			ArrayList<Object[]> activitiesObj = outreachActivityRepo.getActivitiesByUserID(userId);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        try {
+            ArrayList<Object[]> activitiesObj = outreachActivityRepo.getActivitiesByUserID(userId);
 
-			ArrayList<OutreachActivity> activities = OutreachActivity.getActivitiesForUser(activitiesObj);
+            ArrayList<OutreachActivity> activities = OutreachActivity.getActivitiesForUser(activitiesObj);
 
-			outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
-					.create().toJson(activities));
-		} catch (Exception e) {
-			logger.error("Encountered exception while fetching activity userId : " + userId);
-			outputResponse.setError(500, "Encountered exception while fetching activity. " + e);
-			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
-	}
+            outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
+                    .create().toJson(activities));
+        } catch (Exception e) {
+            logger.error("Encountered exception while fetching activity userId : " + userId);
+            outputResponse.setError(500, "Encountered exception while fetching activity. " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+    }
 
-	@Override
-	public ResponseEntity<String> getActivityById(Integer activityId, String authorization) {
-		OutputResponse outputResponse = new OutputResponse();
-		HttpStatus statusCode = HttpStatus.OK;
+    @Override
+    public ResponseEntity<String> getActivityById(Integer activityId, String authorization) {
+        OutputResponse outputResponse = new OutputResponse();
+        HttpStatus statusCode = HttpStatus.OK;
 
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-		headers.add("Content-Type", "application/json");
-		try {
-			Optional<OutreachActivity> activityOptional = outreachActivityRepo.findById(activityId);
-			if (activityOptional.isPresent()) {
-				OutreachActivity activity = activityOptional.get();
-				if (activity.getImg1Data() != null) {
-					String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());
-					activity.setImg1(img1);
-				}
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/json");
+        try {
+            Optional<OutreachActivity> activityOptional = outreachActivityRepo.findById(activityId);
+            if (activityOptional.isPresent()) {
+                OutreachActivity activity = activityOptional.get();
+                if (activity.getImg1Data() != null) {
+                    String img1 = Base64.getEncoder().encodeToString(activity.getImg1Data());
+                    activity.setImg1(img1);
+                }
 
-				if (activity.getImg2Data() != null) {
-					String img2 = Base64.getEncoder().encodeToString(activity.getImg2Data());
-					activity.setImg2(img2);
-				}
+                if (activity.getImg2Data() != null) {
+                    String img2 = Base64.getEncoder().encodeToString(activity.getImg2Data());
+                    activity.setImg2(img2);
+                }
 
-				outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
-						.create().toJson(activity));
-			}else {
-				outputResponse.setError(404, "Activity not found with ID : "+activityId);
-				statusCode = HttpStatus.NOT_FOUND;
-			}
-		} catch (Exception e) {
-			logger.error("Encountered exception while fetching activity activityId " + activityId);
-			outputResponse.setError(500, "Encountered exception while fetching activity. " + e);
-			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
-	}
+                outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls()
+                        .create().toJson(activity));
+            } else {
+                outputResponse.setError(404, "Activity not found with ID : " + activityId);
+                statusCode = HttpStatus.NOT_FOUND;
+            }
+        } catch (Exception e) {
+            logger.error("Encountered exception while fetching activity activityId " + activityId);
+            outputResponse.setError(500, "Encountered exception while fetching activity. " + e);
+            statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(outputResponse.toStringWithSerializeNulls(), headers, statusCode);
+    }
 }
