@@ -6,7 +6,7 @@ Ref: https://github.com/PSMRI/AMRIT/issues/152
 
 ## Summary
 
-HWC-API currently runs on **Spring Boot 1.5.3** (EOL since August 2019) with **Java 8** (public updates ended March 2022). Several transitive and direct dependencies are significantly behind their latest stable releases.
+HWC-API currently runs on **Spring Boot 1.5.3** (EOL since August 2019) with **Java 8** (Oracle end of public updates January 2019). Several transitive and direct dependencies are significantly behind their latest stable releases.
 
 ## Dependency Status
 
@@ -14,8 +14,8 @@ HWC-API currently runs on **Spring Boot 1.5.3** (EOL since August 2019) with **J
 
 | Dependency | Current | Latest Stable | Gap | Risk |
 |-----------|---------|--------------|-----|------|
-| Spring Boot | 1.5.3.RELEASE | 3.4.x | 6+ years, EOL | **High** — no security patches since 2019 |
-| Java | 1.8 | 21 (LTS) | Multiple LTS versions behind | **High** — no free public updates since 2022 |
+| Spring Boot | 1.5.3.RELEASE | 4.0.x | 7+ years, EOL | **High** — no security patches since 2019 |
+| Java | 1.8 | 25 (LTS) | Multiple LTS versions behind | **High** — Oracle end of public updates Jan 2019 |
 
 ### Data & Caching
 
@@ -29,10 +29,10 @@ HWC-API currently runs on **Spring Boot 1.5.3** (EOL since August 2019) with **J
 
 | Dependency | Current | Latest Stable | Gap | Notes |
 |-----------|---------|--------------|-----|-------|
-| hapi-fhir-base | 3.8.0 | 7.6.x | 4 major versions | Significant API changes between major versions |
-| hapi-fhir-structures-r4 | 3.8.0 | 7.6.x | Same | Should be upgraded together with hapi-fhir-base |
-| hapi-fhir-server | 3.8.0 | 7.6.x | Same | Same as above |
-| hapi-fhir-validation | 3.8.0 | 7.6.x | Same | Same as above |
+| hapi-fhir-base | 3.8.0 | 8.9.x | 5 major versions | Significant API changes between major versions |
+| hapi-fhir-structures-r4 | 3.8.0 | 8.9.x | Same | Should be upgraded together with hapi-fhir-base |
+| hapi-fhir-server | 3.8.0 | 8.9.x | Same | Same as above |
+| hapi-fhir-validation | 3.8.0 | 8.9.x | Same | Same as above |
 
 ### API Documentation
 
@@ -81,7 +81,7 @@ A direct jump from 1.5 to 3.x isn't practical. Here's a phased approach:
 - Upgrade Java to 17 (minimum for Boot 3.x)
 - Migrate `javax.*` imports to `jakarta.*` (biggest change)
 - Rename `mysql-connector-java` to `mysql-connector-j`
-- Upgrade HAPI FHIR to 7.x (will require API changes)
+- Upgrade HAPI FHIR to 8.x (will require API changes)
 - Update `hibernate-jpa-2.0-api` to Jakarta Persistence
 
 ## References
