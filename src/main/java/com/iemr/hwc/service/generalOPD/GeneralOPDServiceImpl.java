@@ -1008,7 +1008,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				throw new IEMRException("Error occurred while saving doctor data");
 			}
 		} else {
-			// request OBJ is null.
+			throw new IEMRException("Invalid input");
 		}
 		return saveSuccessFlag;
 	}
@@ -1658,7 +1658,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				throw new IEMRException("Error occurred while updating doctor data");
 			}
 		} else {
-			// request OBJ is null.
+			throw new IEMRException("Invalid input");
 		}
 		return updateSuccessFlag;
 	}
