@@ -51,8 +51,8 @@ public class OutputResponse {
 	public static final int ENVIRONMENT_EXCEPTION = 5006;
 	public static final int PARSE_EXCEPTION = 5007;
 	public static final int SWYMED_EXCEPTION = 5010;
-	public static final int TM_EXCEPTION = 5010;
-	public static final int BAD_REQUEST = 404;
+	public static final int TM_EXCEPTION = 5011;
+	public static final int BAD_REQUEST = 400;
 
 	@Expose
 	private int statusCode = GENERIC_FAILURE;
@@ -235,12 +235,22 @@ public class OutputResponse {
 		switch (this.statusCode) {
 		case SUCCESS:
 			return ResponseEntity.status(HttpStatus.OK).body(output);
-		case GENERIC_FAILURE:
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(output);
 		case BAD_REQUEST:
+		case OBJECT_FAILURE:
+		case PARSE_EXCEPTION:
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(output);
+		case USERID_FAILURE:
+		case PASSWORD_FAILURE:
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(output);
+		case PREVILAGE_FAILURE:
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(output);
+		case GENERIC_FAILURE:
+		case CODE_EXCEPTION:
+		case SWYMED_EXCEPTION:
+		case TM_EXCEPTION:
+		case ENVIRONMENT_EXCEPTION:
 		default:
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(output);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(output);
 		}
 
 //		if(!isSuccess())
