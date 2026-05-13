@@ -335,11 +335,11 @@ public class GeneralOPDController {
 			if (result > 0) {
 				response.setResponse("Data updated successfully");
 			} else {
-				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+				markUnableToModify(response);
 			}
 		} catch (Exception e) {
 			logger.error("Error while updating history data", e);
-			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+			markUnableToModify(response);
 		}
 
 		return response.toStringWithHttpStatus();
@@ -369,11 +369,11 @@ public class GeneralOPDController {
 			if (result > 0) {
 				response.setResponse("Data updated successfully");
 			} else {
-				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+				markUnableToModify(response);
 			}
 		} catch (Exception e) {
 			logger.error("Error while updating vital data", e);
-			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+			markUnableToModify(response);
 		}
 
 		return response.toStringWithHttpStatus();
@@ -403,11 +403,11 @@ public class GeneralOPDController {
 			if (result > 0) {
 				response.setResponse("Data updated successfully");
 			} else {
-				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+				markUnableToModify(response);
 			}
 		} catch (Exception e) {
 			logger.error("Error while updating examination data", e);
-			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+			markUnableToModify(response);
 		}
 
 		return response.toStringWithHttpStatus();
@@ -453,14 +453,18 @@ public class GeneralOPDController {
 				String responseJson = gson.toJson(responseData);
 				response.setResponse(responseJson);
 			} else {
-				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+				markUnableToModify(response);
 			}
 		} catch (Exception e) {
 			logger.error("Unable to modify data", e);
-			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
+			markUnableToModify(response);
 		}
 
 		return response.toStringWithHttpStatus();
+	}
+
+	private void markUnableToModify(OutputResponse response) {
+		response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 	}
 
 }
