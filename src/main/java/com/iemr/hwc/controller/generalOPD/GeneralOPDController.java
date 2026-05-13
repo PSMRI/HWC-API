@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -80,7 +81,7 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Save general OPD data collected by nurse")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenGenOPDNurseData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenGenOPDNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 
@@ -91,7 +92,7 @@ public class GeneralOPDController {
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 
 			try {
-				logger.info("Request object for GeneralOPD nurse data saving :" + requestObj);
+				logger.info("Request received for GeneralOPD nurse data saving");
 
 				if (jsnOBJ != null) {
 					String genOPDRes = generalOPDServiceImpl.saveNurseData(jsnOBJ, Authorization);
@@ -105,7 +106,7 @@ public class GeneralOPDController {
 				response.setError(5000, e.getMessage());
 			}
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
