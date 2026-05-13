@@ -51,57 +51,68 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(IEMRException.class)
 	public ResponseEntity<String> handleIEMRException(IEMRException ex) {
-		LOGGER.error("IEMRException raised at controller boundary", ex);
-		OutputResponse response = new OutputResponse();
-		response.setError(ex);
-		return response.toStringWithHttpStatus();
+		return respond(ex, "IEMRException raised at controller boundary");
 	}
 
 	@ExceptionHandler(TMException.class)
 	public ResponseEntity<String> handleTMException(TMException ex) {
-		LOGGER.error("TMException raised at controller boundary", ex);
+		return respond(ex, "TMException raised at controller boundary");
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+		return respond(ex, "Malformed request body received",
+				OutputResponse.BAD_REQUEST, GENERIC_BAD_REQUEST);
+	}
+
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<String> handleMissingParameter(MissingServletRequestParameterException ex) {
+		return respond(ex, "Missing required request parameter",
+				OutputResponse.BAD_REQUEST, "Missing required parameter: " + ex.getParameterName());
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<String> handleValidation(MethodArgumentNotValidException ex) {
+		return respond(ex, "Request payload failed validation",
+				OutputResponse.BAD_REQUEST, "Request payload failed validation");
+	}
+
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<String> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+		return respond(ex, "Unsupported HTTP method",
+				OutputResponse.BAD_REQUEST, "HTTP method not supported");
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleAny(Exception ex) {
+		return respond(ex, "Unhandled exception at controller boundary",
+				OutputResponse.GENERIC_FAILURE, GENERIC_SERVER_ERROR);
+	}
+
+	/**
+	 * Builds the response for exceptions whose translation is fully described by
+	 * {@link OutputResponse#setError(Throwable)} (per-type status, status text
+	 * and message handled by the legacy switch). The original exception is
+	 * recorded with its stack trace; its {@code getMessage()} is intentionally
+	 * not embedded into the log string because it may carry beneficiary values.
+	 */
+	private ResponseEntity<String> respond(Throwable ex, String logMessage) {
+		LOGGER.error(logMessage, ex);
 		OutputResponse response = new OutputResponse();
 		response.setError(ex);
 		return response.toStringWithHttpStatus();
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-		LOGGER.error("Malformed request body received", ex);
+	/**
+	 * Builds the response for exceptions where the public status code and
+	 * user-facing message are decided by the handler rather than by
+	 * {@link OutputResponse#setError(Throwable)}.
+	 */
+	private ResponseEntity<String> respond(Throwable ex, String logMessage,
+			int statusCode, String publicMessage) {
+		LOGGER.error(logMessage, ex);
 		OutputResponse response = new OutputResponse();
-		response.setError(OutputResponse.BAD_REQUEST, GENERIC_BAD_REQUEST);
-		return response.toStringWithHttpStatus();
-	}
-
-	@ExceptionHandler(MissingServletRequestParameterException.class)
-	public ResponseEntity<String> handleMissingParameter(MissingServletRequestParameterException ex) {
-		LOGGER.error("Missing required request parameter", ex);
-		OutputResponse response = new OutputResponse();
-		response.setError(OutputResponse.BAD_REQUEST, "Missing required parameter: " + ex.getParameterName());
-		return response.toStringWithHttpStatus();
-	}
-
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<String> handleValidation(MethodArgumentNotValidException ex) {
-		LOGGER.error("Request payload failed validation", ex);
-		OutputResponse response = new OutputResponse();
-		response.setError(OutputResponse.BAD_REQUEST, "Request payload failed validation");
-		return response.toStringWithHttpStatus();
-	}
-
-	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	public ResponseEntity<String> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
-		LOGGER.error("Unsupported HTTP method", ex);
-		OutputResponse response = new OutputResponse();
-		response.setError(OutputResponse.BAD_REQUEST, "HTTP method not supported");
-		return response.toStringWithHttpStatus();
-	}
-
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> handleAny(Exception ex) {
-		LOGGER.error("Unhandled exception at controller boundary", ex);
-		OutputResponse response = new OutputResponse();
-		response.setError(OutputResponse.GENERIC_FAILURE, GENERIC_SERVER_ERROR);
+		response.setError(statusCode, publicMessage);
 		return response.toStringWithHttpStatus();
 	}
 }
