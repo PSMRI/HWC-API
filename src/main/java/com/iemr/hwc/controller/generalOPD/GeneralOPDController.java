@@ -1,8 +1,8 @@
 /*
-* AMRIT – Accessible Medical Records via Integrated Technology 
-* Integrated EHR (Electronic Health Records) Solution 
+* AMRIT – Accessible Medical Records via Integrated Technology
+* Integrated EHR (Electronic Health Records) Solution
 *
-* Copyright (C) "Piramal Swasthya Management and Research Institute" 
+* Copyright (C) "Piramal Swasthya Management and Research Institute"
 *
 * This file is part of AMRIT.
 *
@@ -23,39 +23,35 @@ package com.iemr.hwc.controller.generalOPD;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
+import com.iemr.hwc.utils.logging.LogMasker;
 import com.iemr.hwc.utils.response.OutputResponse;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 /***
- * 
+ *
  * @Objective Saving General OPD data for Nurse and Doctor.
  *
  */
@@ -80,7 +76,7 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Save general OPD data collected by nurse")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenGenOPDNurseData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenGenOPDNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 
@@ -91,7 +87,7 @@ public class GeneralOPDController {
 			jsnOBJ = jsnElmnt.getAsJsonObject();
 
 			try {
-				logger.info("Request object for GeneralOPD nurse data saving :" + requestObj);
+				logger.info("Request object for GeneralOPD nurse data saving :" + LogMasker.maskJson(requestObj));
 
 				if (jsnOBJ != null) {
 					String genOPDRes = generalOPDServiceImpl.saveNurseData(jsnOBJ, Authorization);
@@ -100,12 +96,12 @@ public class GeneralOPDController {
 					response.setResponse("Invalid request");
 				}
 			} catch (Exception e) {
-				logger.error("Error in nurse data saving :" + e.getMessage());
+				logger.error("Error in nurse data saving", e);
 				generalOPDServiceImpl.deleteVisitDetails(jsnOBJ);
-				response.setError(5000, e.getMessage());
+				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to save nurse data");
 			}
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
@@ -115,11 +111,11 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Save general OPD data collected by doctor")
 	@PostMapping(value = { "/save/doctorData" })
-	public String saveBenGenOPDDoctorData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenGenOPDDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 		OutputResponse response = new OutputResponse();
 		try {
-			logger.info("Request object for GeneralOPD doctor data saving :" + requestObj);
+			logger.info("Request object for GeneralOPD doctor data saving :" + LogMasker.maskJson(requestObj));
 
 			JsonObject jsnOBJ = new JsonObject();
 			JsonParser jsnParser = new JsonParser();
@@ -154,10 +150,10 @@ public class GeneralOPDController {
 				response.setResponse("Invalid request");
 			}
 		} catch (Exception e) {
-			logger.error("Error in doctor data saving :" + e.getMessage());
-			response.setError(5000, e.getMessage());
+			logger.error("Error in doctor data saving", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to save doctor data");
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
@@ -168,11 +164,11 @@ public class GeneralOPDController {
 	@Operation(summary = "Get general OPD beneficiary visit details")
 	@PostMapping(value = { "/getBenVisitDetailsFrmNurseGOPD" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenVisitDetailsFrmNurseGOPD(
+	public ResponseEntity<String> getBenVisitDetailsFrmNurseGOPD(
 			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
-		logger.info("Request obj to fetch General OPD visit details :" + comingRequest);
+		logger.info("Request obj to fetch General OPD visit details :" + LogMasker.maskJson(comingRequest));
 		try {
 			JSONObject obj = new JSONObject(comingRequest);
 			if (obj.length() > 1) {
@@ -183,14 +179,13 @@ public class GeneralOPDController {
 				response.setResponse(res);
 			} else {
 				logger.info("Invalid Request Data.");
-				response.setError(5000, "Invalid request");
+				response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
 			}
-			logger.info("getBenDataFrmNurseScrnToDocScrnVisitDetails response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary visit data");
-			logger.error("Error in getBenDataFrmNurseScrnToDocScrnVisitDetails:" + e);
+			logger.error("Error in getBenDataFrmNurseScrnToDocScrnVisitDetails", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Error while getting beneficiary visit data");
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
@@ -200,12 +195,11 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Get general OPD beneficiary history")
 	@PostMapping(value = { "/getBenHistoryDetails" })
-
-	public String getBenHistoryDetails(
+	public ResponseEntity<String> getBenHistoryDetails(
 			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
-		logger.info("getBenHistoryDetails request:" + comingRequest);
+		logger.info("getBenHistoryDetails request :" + LogMasker.maskJson(comingRequest));
 		try {
 			JSONObject obj = new JSONObject(comingRequest);
 			if (obj.has("benRegID") && obj.has("visitCode")) {
@@ -215,14 +209,13 @@ public class GeneralOPDController {
 				String s = generalOPDServiceImpl.getBenHistoryDetails(benRegID, visitCode);
 				response.setResponse(s);
 			} else {
-				response.setError(5000, "Invalid request");
+				response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
 			}
-			logger.info("getBenHistoryDetails response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary history data");
-			logger.error("Error in getBenHistoryDetails:" + e);
+			logger.error("Error in getBenHistoryDetails", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Error while getting beneficiary history data");
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
@@ -232,11 +225,11 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Get general OPD beneficiary vitals")
 	@PostMapping(value = { "/getBenVitalDetailsFrmNurse" })
-	public String getBenVitalDetailsFrmNurse(
+	public ResponseEntity<String> getBenVitalDetailsFrmNurse(
 			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
-		logger.info("getBenVitalDetailsFrmNurse request:" + comingRequest);
+		logger.info("getBenVitalDetailsFrmNurse request :" + LogMasker.maskJson(comingRequest));
 		try {
 			JSONObject obj = new JSONObject(comingRequest);
 			if (obj.has("benRegID") && obj.has("visitCode")) {
@@ -247,14 +240,13 @@ public class GeneralOPDController {
 				response.setResponse(res);
 			} else {
 				logger.info("Invalid Request Data.");
-				response.setError(5000, "Invalid request");
+				response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
 			}
-			logger.info("getBenVitalDetailsFrmNurse response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary vital data");
-			logger.error("Error in getBenVitalDetailsFrmNurse:" + e);
+			logger.error("Error in getBenVitalDetailsFrmNurse", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Error while getting beneficiary vital data");
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
@@ -264,12 +256,11 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Get general OPD beneficiary examination details")
 	@PostMapping(value = { "/getBenExaminationDetails" })
-
-	public String getBenExaminationDetails(
+	public ResponseEntity<String> getBenExaminationDetails(
 			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
-		logger.info("getBenExaminationDetails request:" + comingRequest);
+		logger.info("getBenExaminationDetails request :" + LogMasker.maskJson(comingRequest));
 		try {
 			JSONObject obj = new JSONObject(comingRequest);
 			if (obj.has("benRegID") && obj.has("visitCode")) {
@@ -279,14 +270,13 @@ public class GeneralOPDController {
 				String s = generalOPDServiceImpl.getExaminationDetailsData(benRegID, visitCode);
 				response.setResponse(s);
 			} else {
-				response.setError(5000, "Invalid request");
+				response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
 			}
-			logger.info("getBenExaminationDetails response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary examination data");
-			logger.error("Error in getBenExaminationDetails:" + e);
+			logger.error("Error in getBenExaminationDetails", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Error while getting beneficiary examination data");
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
@@ -297,11 +287,11 @@ public class GeneralOPDController {
 	@Operation(summary = "Get general OPD beneficiary case record and referral")
 	@PostMapping(value = { "/getBenCaseRecordFromDoctorGeneralOPD" })
 	@Transactional(rollbackFor = Exception.class)
-	public String getBenCaseRecordFromDoctorGeneralOPD(
+	public ResponseEntity<String> getBenCaseRecordFromDoctorGeneralOPD(
 			@Param(value = "{\"benRegID\":\"Long\",\"visitCode\":\"Long\"}") @RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 
-		logger.info("getBenCaseRecordFromDoctorGeneralOPD request:" + comingRequest);
+		logger.info("getBenCaseRecordFromDoctorGeneralOPD request :" + LogMasker.maskJson(comingRequest));
 		try {
 			JSONObject obj = new JSONObject(comingRequest);
 			if (null != obj && obj.length() > 1 && obj.has("benRegID") && obj.has("visitCode")) {
@@ -312,18 +302,17 @@ public class GeneralOPDController {
 				response.setResponse(res);
 			} else {
 				logger.info("Invalid Request Data.");
-				response.setError(5000, "Invalid request");
+				response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
 			}
-			logger.info("getBenCaseRecordFromDoctorGeneralOPD response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting beneficiary doctor data");
-			logger.error("Error in getBenCaseRecordFromDoctorGeneralOPD:" + e);
+			logger.error("Error in getBenCaseRecordFromDoctorGeneralOPD", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Error while getting beneficiary doctor data");
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param requestObj
 	 * @return success or failure response
 	 * @objective Replace General OPD History Data entered by Nurse with the details
@@ -331,10 +320,10 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Update beneficiary history")
 	@PostMapping(value = { "/update/historyScreen" })
-	public String updateHistoryNurse(@RequestBody String requestObj) {
+	public ResponseEntity<String> updateHistoryNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
-		logger.info("Request object for history data updating :" + requestObj);
+		logger.info("Request object for history data updating :" + LogMasker.maskJson(requestObj));
 
 		JsonObject jsnOBJ = new JsonObject();
 		JsonParser jsnParser = new JsonParser();
@@ -346,19 +335,18 @@ public class GeneralOPDController {
 			if (result > 0) {
 				response.setResponse("Data updated successfully");
 			} else {
-				response.setError(500, "Unable to modify data");
+				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 			}
-			logger.info("History data update response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating history data :" + e);
+			logger.error("Error while updating history data", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 		}
 
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param requestObj
 	 * @return success or failure response
 	 * @objective Replace General OPD Vital Data entered by Nurse with the details
@@ -366,10 +354,10 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Update general OPD beneficiary vitals")
 	@PostMapping(value = { "/update/vitalScreen" })
-	public String updateVitalNurse(@RequestBody String requestObj) {
+	public ResponseEntity<String> updateVitalNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
-		logger.info("Request object for vital data updating :" + requestObj);
+		logger.info("Request object for vital data updating :" + LogMasker.maskJson(requestObj));
 
 		JsonObject jsnOBJ = new JsonObject();
 		JsonParser jsnParser = new JsonParser();
@@ -381,19 +369,18 @@ public class GeneralOPDController {
 			if (result > 0) {
 				response.setResponse("Data updated successfully");
 			} else {
-				response.setError(500, "Unable to modify data");
+				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 			}
-			logger.info("Vital data update response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating vital data :" + e);
+			logger.error("Error while updating vital data", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 		}
 
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param requestObj
 	 * @return success or failure response
 	 * @objective Replace General OPD Examination Data entered by Nurse with the
@@ -401,10 +388,10 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Update general OPD beneficiary examination data")
 	@PostMapping(value = { "/update/examinationScreen" })
-	public String updateGeneralOPDExaminationNurse(@RequestBody String requestObj) {
+	public ResponseEntity<String> updateGeneralOPDExaminationNurse(@RequestBody String requestObj) {
 
 		OutputResponse response = new OutputResponse();
-		logger.info("Request object for examination data updating :" + requestObj);
+		logger.info("Request object for examination data updating :" + LogMasker.maskJson(requestObj));
 
 		JsonObject jsnOBJ = new JsonObject();
 		JsonParser jsnParser = new JsonParser();
@@ -416,30 +403,29 @@ public class GeneralOPDController {
 			if (result > 0) {
 				response.setResponse("Data updated successfully");
 			} else {
-				response.setError(500, "Unable to modify data");
+				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 			}
-			logger.info("Examination data update response:" + response);
 		} catch (Exception e) {
-			response.setError(5000, "Unable to modify data");
-			logger.error("Error while updating examination data :" + e);
+			logger.error("Error while updating examination data", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 		}
 
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param requestObj
 	 * @return success or failure response
 	 * @objective Replace General OPD doctor data for the doctor next visit
 	 */
 	@Operation(summary = "Update general OPD beneficiary case record and referral")
 	@PostMapping(value = { "/update/doctorData" })
-	public String updateGeneralOPDDoctorData(@RequestBody String requestObj,
+	public ResponseEntity<String> updateGeneralOPDDoctorData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) {
 
 		OutputResponse response = new OutputResponse();
-		logger.info("Request object for doctor data updating :" + requestObj);
+		logger.info("Request object for doctor data updating :" + LogMasker.maskJson(requestObj));
 
 		JsonObject jsnOBJ = new JsonObject();
 		JsonParser jsnParser = new JsonParser();
@@ -467,15 +453,14 @@ public class GeneralOPDController {
 				String responseJson = gson.toJson(responseData);
 				response.setResponse(responseJson);
 			} else {
-				response.setError(500, "Unable to modify data");
+				response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 			}
-			logger.info("Doctor data update response:" + response);
 		} catch (Exception e) {
-			logger.error("Unable to modify data. " + e.getMessage());
-			response.setError(5000, e.getMessage());
+			logger.error("Unable to modify data", e);
+			response.setError(OutputResponse.GENERIC_FAILURE, "Unable to modify data");
 		}
 
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 }
