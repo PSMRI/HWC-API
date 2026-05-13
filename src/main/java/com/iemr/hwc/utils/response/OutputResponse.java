@@ -233,31 +233,17 @@ public class OutputResponse {
 		// builder.disableInnerClassSerialization();
 		String output = builder.create().toJson(this);
 
-		switch (this.statusCode) {
-		case SUCCESS:
-			return ResponseEntity.status(HttpStatus.OK).body(output);
-		case BAD_REQUEST:
-		case OBJECT_FAILURE:
-		case PARSE_EXCEPTION:
-		case TM_EXCEPTION:
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(output);
-		case USERID_FAILURE:
-		case PASSWORD_FAILURE:
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(output);
-		case PREVILAGE_FAILURE:
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(output);
-		case NOT_FOUND:
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(output);
-		case GENERIC_FAILURE:
-		case CODE_EXCEPTION:
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(output);
-		case ENVIRONMENT_EXCEPTION:
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(output);
-		case SWYMED_EXCEPTION:
-			return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(output);
-		default:
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(output);
-		}
+		HttpStatus resolvedStatus = switch (this.statusCode) {
+			case SUCCESS -> HttpStatus.OK;
+			case BAD_REQUEST, OBJECT_FAILURE, PARSE_EXCEPTION, TM_EXCEPTION -> HttpStatus.BAD_REQUEST;
+			case USERID_FAILURE, PASSWORD_FAILURE -> HttpStatus.UNAUTHORIZED;
+			case PREVILAGE_FAILURE -> HttpStatus.FORBIDDEN;
+			case NOT_FOUND -> HttpStatus.NOT_FOUND;
+			case ENVIRONMENT_EXCEPTION -> HttpStatus.SERVICE_UNAVAILABLE;
+			case SWYMED_EXCEPTION -> HttpStatus.BAD_GATEWAY;
+			default -> HttpStatus.INTERNAL_SERVER_ERROR;
+		};
+		return ResponseEntity.status(resolvedStatus).body(output);
 
 //		if(!isSuccess())
 //			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
