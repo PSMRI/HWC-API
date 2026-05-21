@@ -1,5 +1,6 @@
 package com.iemr.hwc.data.infantRegistration;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -37,4 +38,10 @@ public class InfantRegisterDTO {
     private String deliveryDischargeSummary3;
     private String deliveryDischargeSummary4;
     private String isSNCU;
+    private String outcomeAtBirth;
+    private String newbornComplications;
+    private String currentStatusOfBaby;
+    private String birthDoseVaccinesGiven;
+    private Boolean vitaminKInjectionGiven;
+    private String birthCertificateIssued;
 }

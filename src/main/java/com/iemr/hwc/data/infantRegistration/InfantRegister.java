@@ -100,4 +100,24 @@ public class InfantRegister {
 
     @Column(name = "is_sncu")
     private String isSNCU;
+
+    @Column(name = "outcome_at_birth")
+    private String outcomeAtBirth;
+
+    @Column(name = "newborn_complications")
+    private String newbornComplications;
+
+    @Column(name = "current_status_of_baby")
+    private String currentStatusOfBaby;
+
+    @Column(name = "birth_dose_vaccines_given")
+    private String birthDoseVaccinesGiven;
+
+    @Column(name = "vitamin_k_injection_given")
+    private Boolean vitaminKInjectionGiven;
+
+    @Column(name = "birth_certificate_issued")
+    private String birthCertificateIssued;
 }
+
+
