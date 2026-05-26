@@ -167,6 +167,10 @@ public class CommonBenStatusFlowServiceImpl implements CommonBenStatusFlowServic
 		if (obj.getI_bendemographics().getServicePointName() != null)
 			obj.setServicePointName(obj.getI_bendemographics().getServicePointName());
 
+		// facilityID fallback: if UI didn't send facilityID, use servicePointID
+		if (obj.getFacilityID() == null && obj.getServicePointID() != null)
+			obj.setFacilityID(obj.getServicePointID());
+
 		if (beneficiaryRegID != null && obj.getBeneficiaryRegID() == null)
 			obj.setBeneficiaryRegID(beneficiaryRegID);
 
