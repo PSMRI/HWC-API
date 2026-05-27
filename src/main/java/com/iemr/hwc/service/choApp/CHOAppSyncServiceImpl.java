@@ -257,7 +257,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                     beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
 
                     beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("vanID", requestObj.get("vanID").getAsInt());
+                    beneficiaryDetailsRmnch.addProperty("facilityID",
+                            requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                    ? requestObj.get("facilityID").getAsInt() : null);
+                    beneficiaryDetailsRmnch.addProperty("vanID",
+                            requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                    ? requestObj.get("facilityID").getAsInt()
+                                    : requestObj.get("vanID").getAsInt());
                     beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsInt());
 
                     if (requestObj.has("i_bendemographics")) {
@@ -419,7 +425,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
 
                 beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("vanID", requestObj.get("vanID").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("facilityID",
+                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                ? requestObj.get("facilityID").getAsInt() : null);
+                beneficiaryDetailsRmnch.addProperty("vanID",
+                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                ? requestObj.get("facilityID").getAsInt()
+                                : requestObj.get("vanID").getAsInt());
 
                 JsonElement psmID = requestObj.has("providerServiceMapID")
                         ? requestObj.get("providerServiceMapID")
