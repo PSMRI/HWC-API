@@ -285,31 +285,19 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                                 && !requestObj.get("emergencyRegistration").isJsonNull()
                                 && requestObj.get("emergencyRegistration").getAsBoolean());
 
-                beneficiaryDetailsRmnch.addProperty("parkingPlaceID",
-                        requestObj.has("parkingPlaceID")
-                                && !requestObj.get("parkingPlaceID").isJsonNull()
-                                ? requestObj.get("parkingPlaceID").getAsInt()
-                                : 0);
+                    beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
+                    beneficiaryDetailsRmnch.addProperty("facilityID",
+                            requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                    ? requestObj.get("facilityID").getAsInt() : null);
+                    beneficiaryDetailsRmnch.addProperty("vanID",
+                            requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                    ? requestObj.get("facilityID").getAsInt()
+                                    : requestObj.get("vanID").getAsInt());
+                    beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsInt());
 
-                beneficiaryDetailsRmnch.addProperty("vanID",
-                        requestObj.has("vanID")
-                                && !requestObj.get("vanID").isJsonNull()
-                                ? requestObj.get("vanID").getAsInt()
-                                : 0);
-
-                JsonElement providerServiceMapElement =
-                        requestObj.has("providerServiceMapID")
-                                ? requestObj.get("providerServiceMapID")
-                                : requestObj.get("providerServiceMapId");
-
-                beneficiaryDetailsRmnch.addProperty("providerServiceMapID",
-                        (providerServiceMapElement != null
-                                && !providerServiceMapElement.isJsonNull())
-                                ? providerServiceMapElement.getAsString()
-                                : null);
-                if (requestObj.has("i_bendemographics")) {
-                    beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
-                }
+                    if (requestObj.has("i_bendemographics")) {
+                        beneficiaryDetailsRmnch.add("i_bendemographics", requestObj.getAsJsonObject("i_bendemographics"));
+                    }
 
                 if (requestObj.has("benPhoneMaps")) {
                     beneficiaryDetailsRmnch.add("benPhoneMaps", requestObj.getAsJsonArray("benPhoneMaps"));
@@ -508,6 +496,19 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                             requestObj.get("reproductiveStatus").getAsString()
                     );
                 }
+                beneficiaryDetailsRmnch.addProperty("dOB", requestObj.get("dOB").getAsString());
+
+                beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
+                beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
+
+                beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
+                beneficiaryDetailsRmnch.addProperty("facilityID",
+                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                ? requestObj.get("facilityID").getAsInt() : null);
+                beneficiaryDetailsRmnch.addProperty("vanID",
+                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+                                ? requestObj.get("facilityID").getAsInt()
+                                : requestObj.get("vanID").getAsInt());
 
                 JsonElement psmID = requestObj.has("providerServiceMapID")
                         ? requestObj.get("providerServiceMapID")
