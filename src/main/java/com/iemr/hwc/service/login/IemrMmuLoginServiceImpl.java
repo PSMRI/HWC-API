@@ -230,9 +230,43 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 
 		return new Gson().toJson(resMap);
 	}
-	
+
+	@Override
+	public String getUserFacilityOnlyDetails(Integer userID, Integer providerServiceMapID) {
+		Map<String, Object> resMap = new HashMap<>();
+		ArrayList<UserVanSpDetails_View> userVanSpDetails_ViewList = new ArrayList<>();
+
+		Object[] facilityResult = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
+		if (facilityResult != null && facilityResult.length > 0 && facilityResult[0] != null) {
+			Object[] facilityDetails;
+			if (facilityResult[0] instanceof Object[]) {
+				facilityDetails = (Object[]) facilityResult[0];
+			} else {
+				facilityDetails = facilityResult;
+			}
+			if (facilityDetails != null && facilityDetails.length > 0 && facilityDetails[0] != null) {
+				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
+				facilityEntry.setUserID(userID);
+				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+				facilityEntry.setProviderServiceMapID(providerServiceMapID);
+				facilityEntry.setVanNoAndType((String) facilityDetails[1]);
+				facilityEntry.setVanSession((short) 3);
+				userVanSpDetails_ViewList.add(facilityEntry);
+			}
+		}
+
+		// No facilityID mapped — no fallback to van. HWC users must have facilityID.
+		if (userVanSpDetails_ViewList.isEmpty()) {
+			throw new RuntimeException(
+					"No facility mapped for this user. Please contact admin to complete the facility mapping.");
+		}
+
+		resMap.put("UserVanSpDetails", userVanSpDetails_ViewList);
+		return new Gson().toJson(resMap);
+	}
+
 	/* created by = DU20091017 */
-	
+
 	@Override
 	public String getUserSpokeDetails (Integer psmId)  {
 		MasterVan mVan;
