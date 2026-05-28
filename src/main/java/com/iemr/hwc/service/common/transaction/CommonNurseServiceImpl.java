@@ -535,7 +535,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 			Long benVisitId = response.getBenVisitID();
 			Integer vanId = response.getVanID();
 			Integer sessionIdObj = sessionId;
-			Long visitCode = generateVisitCode(benVisitId, vanId, sessionIdObj);
+			Long visitCode = generateVisitCode(benVisitId, vanId, sessionIdObj, facilityIdObj);
 			CDSS cdss = new CDSS();
 			cdss.setVisitCode(visitCode);
 			cdss.setBenVisitID(benVisitId);
@@ -621,8 +621,9 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	public Long generateVisitCode(Long visitID, Integer vanID, Integer sessionID, Integer facilityID) {
 		String visitCode = "";
 
-		// Use facilityID if vanID is null (new facility-based users)
-		Integer locationID = (vanID != null) ? vanID : facilityID;
+		// facilityID takes priority: HWC users always have facilityID set.
+		// vanID is used only for MMU/TM users where facilityID is null.
+		Integer locationID = (facilityID != null) ? facilityID : vanID;
 		if (locationID == null) {
 			throw new RuntimeException("Both vanID and facilityID are null. Cannot generate visit code.");
 		}

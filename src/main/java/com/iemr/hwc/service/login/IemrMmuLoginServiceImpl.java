@@ -188,7 +188,7 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 			}
 		}
 
-		// Fallback: if no facilityID in role mapping, try Van view (old users)
+		// Fallback: if no facilityID in role mapping, try Van view (MMU/TM users)
 		if (userVanSpDetails_ViewList.isEmpty()) {
 			ArrayList<Object[]> objList = userVanSpDetails_View_Repo.getUserVanSpDetails_View(userID, providerServiceMapID);
 			if (objList != null && objList.size() > 0) {
@@ -197,6 +197,16 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 							(Integer) objArray[1], (String) objArray[2], (Short) objArray[3], (Integer) objArray[4],
 							(String) objArray[5], (Integer) objArray[6], (Integer) objArray[7], 0);
 					userVanSpDetails_ViewList.add(userVanSpDetails_ViewOBJ);
+				}
+			}
+			// No van mapping either — check if this user has a role mapping with null facilityID
+			// That means they are a facility-based (HWC) user not yet mapped by admin.
+			// Failing here is correct — letting them in would give a broken empty worklist.
+			if (userVanSpDetails_ViewList.isEmpty()) {
+				Integer unmapped = facilityLoginRepo.countUnmappedFacilityUser(userID, providerServiceMapID);
+				if (unmapped != null && unmapped > 0) {
+					throw new RuntimeException(
+							"No facility mapped for this user. Please contact admin to complete the facility mapping.");
 				}
 			}
 		}

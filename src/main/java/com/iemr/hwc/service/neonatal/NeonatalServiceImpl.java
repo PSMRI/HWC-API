@@ -452,6 +452,7 @@ public class NeonatalServiceImpl implements NeonatalService {
 			// Save Beneficiary visit details
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
 			// generate visit code

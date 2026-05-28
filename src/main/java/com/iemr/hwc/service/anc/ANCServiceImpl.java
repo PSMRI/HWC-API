@@ -564,6 +564,7 @@ public class ANCServiceImpl implements ANCService {
 
 			// benVisitDetailsOBJ.setVanID(commonUtilityClass.getVanID());
 			// benVisitDetailsOBJ.setParkingPlaceID(commonUtilityClass.getParkingPlaceID());
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {
