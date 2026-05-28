@@ -101,7 +101,7 @@ public class VanSpokeController {
 			JSONObject obj = new JSONObject(comingRequest);
 			logger.info("getServicepointVillages request " + comingRequest);
 			if (obj.has("userID") && obj.has("providerServiceMapID")) {
-				String responseData = iemrMmuLoginServiceImpl.getUserVanSpDetails(obj.getInt("userID"),
+				String responseData = iemrMmuLoginServiceImpl.getUserFacilityOnlyDetails(obj.getInt("userID"),
 						obj.getInt("providerServiceMapID"));
 				response.setResponse(responseData);
 			} else {
