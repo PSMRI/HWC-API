@@ -108,7 +108,7 @@ public class VanSpokeController {
 				response.setError(5000, "Invalid request");
 			}
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting van and service points data");
+			response.setError(5000, e.getMessage() != null ? e.getMessage() : "Error while getting van and service points data");
 			logger.error("getUserVanSpDetails failed with " + e.getMessage(), e);
 
 		}

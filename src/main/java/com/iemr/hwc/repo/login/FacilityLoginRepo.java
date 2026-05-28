@@ -21,8 +21,6 @@
 */
 package com.iemr.hwc.repo.login;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -46,5 +44,14 @@ public interface FacilityLoginRepo extends CrudRepository<MasterVan, Integer> {
 			+ "AND usrm.Deleted = false AND usrm.FacilityID IS NOT NULL "
 			+ "AND f.Deleted = false LIMIT 1", nativeQuery = true)
 	Object[] getUserFacilityDetails(@Param("userID") Integer userID,
+			@Param("providerServiceMapID") Integer providerServiceMapID);
+
+	// Detects HWC users who exist in role mapping but have no facilityID set yet
+	// (admin hasn't mapped them). Used to throw a clear error instead of silently
+	// falling back to vanID (which would cause empty worklists).
+	@Query(value = "SELECT COUNT(*) FROM m_UserServiceRoleMapping usrm "
+			+ "WHERE usrm.UserID = :userID AND usrm.ProviderServiceMapID = :providerServiceMapID "
+			+ "AND usrm.Deleted = false AND usrm.FacilityID IS NULL", nativeQuery = true)
+	Integer countUnmappedFacilityUser(@Param("userID") Integer userID,
 			@Param("providerServiceMapID") Integer providerServiceMapID);
 }

@@ -280,6 +280,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 			// Save Beneficiary visit details
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {

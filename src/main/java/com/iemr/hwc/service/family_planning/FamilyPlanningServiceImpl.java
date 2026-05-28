@@ -331,7 +331,7 @@ public class FamilyPlanningServiceImpl implements FamilyPlanningService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
-
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			benVisitID = commonNurseServiceImpl.saveBeneficiaryVisitDetails(benVisitDetailsOBJ);
 
 			// 07-06-2018 visit code

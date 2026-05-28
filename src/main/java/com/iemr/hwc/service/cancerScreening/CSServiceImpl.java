@@ -370,6 +370,7 @@ public class CSServiceImpl implements CSService {
 	public Map<String, Long> saveBenVisitDetails(BeneficiaryVisitDetail benVisitDetailsOBJ,
 			CommonUtilityClass nurseUtilityClass) throws Exception {
 		Map<String, Long> visitIdAndCodeMap = new HashMap<>();
+		benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 		int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 				benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 		if (i < 1) {

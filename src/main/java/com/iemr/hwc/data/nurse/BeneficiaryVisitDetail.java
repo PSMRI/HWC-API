@@ -246,7 +246,10 @@ public class BeneficiaryVisitDetail {
 	
 	@Transient
 	private String informationGiven;
-	
+
+	@Transient
+	private Integer facilityID;
+
 
 	public BeneficiaryVisitDetail() {
 		super();

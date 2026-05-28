@@ -209,6 +209,9 @@ public class QuickConsultationServiceImpl implements QuickConsultationService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(jsnOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			// facilityID lives at the top level of the request, not inside visitDetails.
+			// Propagate it so the internal visit-code generation can use it.
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {
