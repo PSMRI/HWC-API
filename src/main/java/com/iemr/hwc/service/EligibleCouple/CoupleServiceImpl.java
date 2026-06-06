@@ -92,10 +92,10 @@ public class CoupleServiceImpl implements CoupleService {
         }
     }
     @Override
-    public String getEligibleCoupleRegRecords(GetBenRequestHandler dto) {
+    public String getEligibleCoupleRegRecords(String  userName) {
         try {
             List<EligibleCoupleRegister> eligibleCoupleRegisterList =
-                    eligibleCoupleRegisterRepo.getECRegRecords(dto.getUserName(), dto.getFromDate(), dto.getToDate());
+                    eligibleCoupleRegisterRepo.getECRegRecords(userName);
             List<EligibleCoupleDTO> list = eligibleCoupleRegisterList.stream()
                     .map(eligibleCoupleRegister -> mapper.convertValue(eligibleCoupleRegister, EligibleCoupleDTO.class))
                     .collect(Collectors.toList());
