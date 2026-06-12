@@ -314,7 +314,7 @@ public class GeneralOPDController {
 				logger.info("Invalid Request Data.");
 				response.setError(5000, "Invalid request");
 			}
-			logger.info("getBenCaseRecordFromDoctorGeneralOPD response:" + response);
+			//logger.info("getBenCaseRecordFromDoctorGeneralOPD response:" + response);
 		} catch (Exception e) {
 			response.setError(5000, "Error while getting beneficiary doctor data");
 			logger.error("Error in getBenCaseRecordFromDoctorGeneralOPD:" + e);
