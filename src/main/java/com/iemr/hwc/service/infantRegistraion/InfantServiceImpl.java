@@ -64,7 +64,7 @@ public class InfantServiceImpl implements InfantService {
     public List<InfantRegisterDTO> getInfantDetails(String userName) {
         try{
             List<InfantRegister> infantRegisterList =
-                    infantRegisterRepo.getInfantDetailsForUser(userName);
+                    infantRegisterRepo.findByCreatedByAndIsActive(userName,true);
 
             return infantRegisterList.stream()
                     .map(infantRegister -> mapper.convertValue(infantRegister, InfantRegisterDTO.class))
