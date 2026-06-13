@@ -242,8 +242,7 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
 
             List<PregnantWomanRegister> pregnantWomanRegisterList =
                     pregnantWomanRegisterRepo.getPWRWithBen(createBy);
-            logger.info("PregnantWomanRegisterList Response : {}",
-                    new Gson().toJson(pregnantWomanRegisterList));
+
             return pregnantWomanRegisterList.stream()
                     .map(pregnantWomanRegister -> mapper.convertValue(pregnantWomanRegister, PregnantWomanDTO.class))
                     .collect(Collectors.toList());

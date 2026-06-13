@@ -6,6 +6,7 @@ import com.iemr.hwc.data.deliveryOutcome.DeliveryOutcome;
 import com.iemr.hwc.data.deliveryOutcome.DeliveryOutcomeDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.repo.deliveryOutCome.DeliveryOutcomeRepo;
+import com.iemr.hwc.repo.login.UserLoginRepo;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.Validate;
 import org.modelmapper.ModelMapper;
@@ -35,6 +36,9 @@ public class DeliveryOutcomeServiceImpl implements DeliveryOutcomeService {
     ObjectMapper mapper = new ObjectMapper();
 
     ModelMapper modelMapper = new ModelMapper();
+
+    @Autowired
+    private UserLoginRepo userLoginRepo;
 
     boolean institutionalDelivery = false;
 
@@ -68,7 +72,8 @@ public class DeliveryOutcomeServiceImpl implements DeliveryOutcomeService {
     @Override
     public List<DeliveryOutcomeDTO> getDeliveryOutcome(String userName) {
         try {
-            List<DeliveryOutcome> deliveryOutcomeList = deliveryOutcomeRepo.getDeliveryOutcomeByAshaId(userName);
+            String createdBy = userLoginRepo.getUserByUserID(Long.parseLong(userName)).getUserName();
+            List<DeliveryOutcome> deliveryOutcomeList = deliveryOutcomeRepo.getDeliveryOutcomeByAshaId(createdBy);
             logger.info("DeliveryOutcome Response{}",deliveryOutcomeList);
             return deliveryOutcomeList.stream()
                     .map(deliveryOutcome -> mapper.convertValue(deliveryOutcome, DeliveryOutcomeDTO.class))
