@@ -814,7 +814,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 ObjectMapper mapper = new ObjectMapper();
 
                 for (BeneficiaryFlowStatus in : benFlowList) {
-
+                    if (in.getBeneficiaryRegID() == null) {
+                        logger.error(
+                                "BeneficiaryRegID is null for BenFlowID : {}",
+                                in.getBenFlowID()
+                        );
+                        continue;
+                    }
                     String jsonResponse = getRmnchData(BigInteger.valueOf(in.getBeneficiaryRegID()), Authorization);
 
                     if (jsonResponse != null) {
@@ -881,7 +887,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 ObjectMapper mapper = new ObjectMapper();
 
                 for (BeneficiaryFlowStatus in : benFlowList) {
-
+                    if (in.getBeneficiaryRegID() == null) {
+                        logger.error(
+                                "BeneficiaryRegID is null for BenFlowID : {}",
+                                in.getBenFlowID()
+                        );
+                        continue;
+                    }
                     String jsonResponse = getRmnchData(BigInteger.valueOf(in.getBeneficiaryRegID()), authorization);
 
                     if (jsonResponse != null) {
