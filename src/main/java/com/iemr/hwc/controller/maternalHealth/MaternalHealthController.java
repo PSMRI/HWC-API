@@ -115,6 +115,7 @@ public class MaternalHealthController {
         try {
             if (jwtToken != null) {
                 logger.info("pregnantWoman JWTToken"+jwtToken);
+
                 List<PregnantWomanDTO> result = maternalHealthService.getPregnantWoman(jwtUtil.extractUsername(jwtToken));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
                 String s = gson.toJson(result);
