@@ -1,6 +1,7 @@
 package com.iemr.hwc.service.maternalHelathService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.iemr.hwc.data.anc.ANCVisit;
 import com.iemr.hwc.data.anc.ANCVisitDTO;
 import com.iemr.hwc.data.anc.AncCare;
@@ -233,9 +234,11 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Override
     public List<PregnantWomanDTO> getPregnantWoman(String userName) {
         try {
+            logger.info("UserName: "+userName);
             List<PregnantWomanRegister> pregnantWomanRegisterList =
                     pregnantWomanRegisterRepo.getPWRWithBen(userName);
-
+            logger.info("PregnantWomanRegisterList Response : {}",
+                    new Gson().toJson(pregnantWomanRegisterList));
             return pregnantWomanRegisterList.stream()
                     .map(pregnantWomanRegister -> mapper.convertValue(pregnantWomanRegister, PregnantWomanDTO.class))
                     .collect(Collectors.toList());

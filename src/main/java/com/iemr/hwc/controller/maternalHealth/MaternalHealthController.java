@@ -22,7 +22,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/maternal", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/maternal")
 public class MaternalHealthController {
 
     private final Logger logger = LoggerFactory.getLogger(MaternalHealthController.class);
