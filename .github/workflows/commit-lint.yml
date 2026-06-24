@@ -1,0 +1,29 @@
+name: Commit Message Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate commit messages
+        run: |
+          set -eo pipefail
+          commits=$(git log --no-merges --pretty=format:"%H" "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}")
+          for sha in $commits; do
+            tmp=$(mktemp)
+            git log -1 --pretty=format:"%B" "$sha" > "$tmp"
+            npx --yes @commitlint/cli@20.4.3 --edit "$tmp"
+            rm "$tmp"
+          done
