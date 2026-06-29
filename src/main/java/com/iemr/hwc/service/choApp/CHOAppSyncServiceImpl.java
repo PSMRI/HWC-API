@@ -927,7 +927,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 ObjectMapper mapper = new ObjectMapper();
 
                 for (BeneficiaryFlowStatus in : benFlowList) {
-
+                    if (in.getBeneficiaryRegID() == null) {
+                        logger.error(
+                                "BeneficiaryRegID is null for BenFlowID : {}",
+                                in.getBenFlowID()
+                        );
+                        continue;
+                    }
                     String jsonResponse = getRmnchData(BigInteger.valueOf(in.getBeneficiaryRegID()), Authorization);
 
                     if (jsonResponse != null) {
@@ -949,12 +955,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         }
                     }
                 }
-                logger.info("Ben FLow data" +
-                        new GsonBuilder()
-                                .excludeFieldsWithoutExposeAnnotation()
-                                .serializeNulls()
-                                .create()
-                                .toJson(benFlowList));
+//                logger.info("Ben FLow data"+
+//                        new GsonBuilder()
+//                                .excludeFieldsWithoutExposeAnnotation()
+//                                .serializeNulls()
+//                                .create()
+//                                .toJson(benFlowList));
                 outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList));
             } else {
                 logger.error("Unable to search beneficiaries to sync based on villageIDs and lastSyncDate. Incomplete request body - Either villageIDs or lastSyncDate missing.");
@@ -994,7 +1000,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 ObjectMapper mapper = new ObjectMapper();
 
                 for (BeneficiaryFlowStatus in : benFlowList) {
-
+                    if (in.getBeneficiaryRegID() == null) {
+                        logger.error(
+                                "BeneficiaryRegID is null for BenFlowID : {}",
+                                in.getBenFlowID()
+                        );
+                        continue;
+                    }
                     String jsonResponse = getRmnchData(BigInteger.valueOf(in.getBeneficiaryRegID()), authorization);
 
                     if (jsonResponse != null) {

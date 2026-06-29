@@ -31,7 +31,7 @@ public interface CommonMaterService {
 			throws IEMRException;
 
 	public String getMasterDataForDoctor(Integer visitCategoryID, Integer providerServiceMapID, String gender,
-			Integer facilityID, Integer vanID);
+			Integer facilityID);
 
 	public String getVaccineDetailsForCISID(Integer CISID, Integer visitCategoryID) throws IEMRException;
 

@@ -22,7 +22,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/maternal", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/maternal")
 public class MaternalHealthController {
 
     private final Logger logger = LoggerFactory.getLogger(MaternalHealthController.class);
@@ -114,6 +114,7 @@ public class MaternalHealthController {
         OutputResponse response = new OutputResponse();
         try {
             if (jwtToken != null) {
+                logger.info("pregnantWoman JWTToken"+jwtToken);
 
                 List<PregnantWomanDTO> result = maternalHealthService.getPregnantWoman(jwtUtil.extractUsername(jwtToken));
                 Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy h:mm:ss a").create();
