@@ -214,40 +214,78 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 beneficiaryDetailsRmnch.addProperty("benficieryid", beneficiaryID);
                 beneficiaryDetailsRmnch.addProperty("benRegId", beneficiaryRegID);
 
-                beneficiaryDetailsRmnch.addProperty("createdBy", requestObj.get("createdBy").getAsString());
+                    beneficiaryDetailsRmnch.addProperty("createdBy", getString(requestObj,"createdBy"));
 
-                beneficiaryDetailsRmnch.addProperty("firstName",
-                        requestObj.has("firstName") && !requestObj.get("firstName").isJsonNull()
-                                ? requestObj.get("firstName").getAsString()
-                                : "");
+                    beneficiaryDetailsRmnch.addProperty("firstName",getString(requestObj,"firstName"));
+                    beneficiaryDetailsRmnch.addProperty("lastName", getString(requestObj,"lastName"));
+                    JsonElement fatherElement = requestObj.get("fatherName");
 
-                beneficiaryDetailsRmnch.addProperty("lastName",
-                        requestObj.has("lastName") && !requestObj.get("lastName").isJsonNull()
-                                ? requestObj.get("lastName").getAsString()
-                                : "");
+                    String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
+                            ? fatherElement.getAsString()
+                            : "";
+                    beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
+                    beneficiaryDetailsRmnch.addProperty("spouseName", getString(requestObj,"spouseName"));
 
-                JsonElement fatherElement = requestObj.get("fatherName");
+                    Integer genderID = getInt(requestObj, "genderID");
+                    if (genderID != null) {
+                        beneficiaryDetailsRmnch.addProperty("genderID", genderID);
+                    }
 
-                String fatherName = (fatherElement != null && !fatherElement.isJsonNull())
-                        ? fatherElement.getAsString()
-                        : "";
+                    beneficiaryDetailsRmnch.addProperty("genderName",
+                            getString(requestObj, "genderName"));
 
-                beneficiaryDetailsRmnch.addProperty("fatherName", fatherName);
+                    Integer maritalStatusID = getInt(requestObj, "maritalStatusID");
+                    if (maritalStatusID != null) {
+                        beneficiaryDetailsRmnch.addProperty("maritalStatusID", maritalStatusID);
+                    }
 
-                beneficiaryDetailsRmnch.addProperty("spouseName",
-                        requestObj.has("spouseName") && !requestObj.get("spouseName").isJsonNull()
-                                ? requestObj.get("spouseName").getAsString()
-                                : "");
+                    beneficiaryDetailsRmnch.addProperty("maritalStatusName",
+                            getString(requestObj, "maritalStatusName"));
 
-                    beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("facilityID",
-                            requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
-                                    ? requestObj.get("facilityID").getAsInt() : null);
-                    beneficiaryDetailsRmnch.addProperty("vanID",
-                            requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
-                                    ? requestObj.get("facilityID").getAsInt()
-                                    : requestObj.get("vanID").getAsInt());
-                    beneficiaryDetailsRmnch.addProperty("providerServiceMapID", requestObj.get("providerServiceMapID").getAsInt());
+                    if (requestObj.has("genderID")
+                            && !requestObj.get("genderID").isJsonNull()
+                            && requestObj.get("genderID").getAsInt() == 2) {
+
+                        if (requestObj.has("reproductiveStatus")
+                                && !requestObj.get("reproductiveStatus").isJsonNull()) {
+                            beneficiaryDetailsRmnch.addProperty(
+                                    "reproductiveStatus",
+                                    requestObj.get("reproductiveStatus").getAsString()
+                            );
+                        }
+                    }
+                    beneficiaryDetailsRmnch.addProperty("dOB",
+                            getString(requestObj, "dOB"));
+
+                    Boolean beneficiaryConsent = getBoolean(requestObj, "beneficiaryConsent");
+                    if (beneficiaryConsent != null) {
+                        beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", beneficiaryConsent);
+                    }
+
+                    Boolean emergencyRegistration = getBoolean(requestObj, "emergencyRegistration");
+                    if (emergencyRegistration != null) {
+                        beneficiaryDetailsRmnch.addProperty("emergencyRegistration", emergencyRegistration);
+                    }
+
+                    Integer parkingPlaceID = getInt(requestObj, "parkingPlaceID");
+                    if (parkingPlaceID != null) {
+                        beneficiaryDetailsRmnch.addProperty("parkingPlaceID", parkingPlaceID);
+                    }
+
+                    Integer facilityID = getInt(requestObj, "facilityID");
+                    if (facilityID != null) {
+                        beneficiaryDetailsRmnch.addProperty("facilityID", facilityID);
+                        beneficiaryDetailsRmnch.addProperty("vanID", facilityID);
+                    }
+
+                    Integer providerServiceMapID = getInt(requestObj, "providerServiceMapID");
+                    if (providerServiceMapID == null) {
+                        providerServiceMapID = getInt(requestObj, "providerServiceMapId");
+                    }
+
+                    if (providerServiceMapID != null) {
+                        beneficiaryDetailsRmnch.addProperty("providerServiceMapID", providerServiceMapID);
+                    }
 
                 beneficiaryDetailsRmnch.addProperty("genderName",
                         requestObj.has("genderName") && !requestObj.get("genderName").isJsonNull()
@@ -400,6 +438,24 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
         return new ResponseEntity<>(outputResponse.toString(), headers, status);
     }
 
+
+    private String getString(JsonObject obj, String key) {
+        return obj.has(key) && !obj.get(key).isJsonNull()
+                ? obj.get(key).getAsString()
+                : "";
+    }
+
+    private Integer getInt(JsonObject obj, String key) {
+        return obj.has(key) && !obj.get(key).isJsonNull()
+                ? obj.get(key).getAsInt()
+                : null;
+    }
+
+    private Boolean getBoolean(JsonObject obj, String key) {
+        return obj.has(key) && !obj.get(key).isJsonNull()
+                ? obj.get(key).getAsBoolean()
+                : null;
+    }
 
     @Override
     public ResponseEntity<String> choAppUpdateBeneficiary(String comingRequest, String Authorization) {
