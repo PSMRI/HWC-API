@@ -73,7 +73,6 @@ import com.iemr.hwc.repo.doctor.DrugDurationUnitMasterRepo;
 import com.iemr.hwc.repo.doctor.DrugFrequencyMasterRepo;
 import com.iemr.hwc.repo.foetalmonitor.FoetalMonitorTestsRepo;
 import com.iemr.hwc.repo.labModule.ProcedureRepo;
-import com.iemr.hwc.repo.login.MasterVanRepo;
 import com.iemr.hwc.repo.masterrepo.anc.AllergicReactionTypesRepo;
 import com.iemr.hwc.repo.masterrepo.anc.BloodGroupsRepo;
 import com.iemr.hwc.repo.masterrepo.anc.ChildVaccinationsRepo;
@@ -188,9 +187,6 @@ public class ANCMasterDataServiceImpl {
 	private CovidContactHistoryMasterRepo covidContactHistoryMasterRepo;
 	@Autowired
 	private CovidRecommnedationMasterRepo covidRecommnedationMasterRepo;
-
-	@Autowired
-	private MasterVanRepo masterVanRepo;
 
 	@Autowired
 	private FoetalMonitorTestsRepo foetalMonitorTestRepo;
@@ -642,7 +638,7 @@ public class ANCMasterDataServiceImpl {
 	private NextImmunizationLocationMasterRepo nextImmunizationLocationMasterRepo;
 
 	public String getCommonDoctorMasterDataForGenopdAncNcdcarePnc(Integer visitCategoryID, int psmID, String gender,
-			Integer facilityID, Integer vanID) {
+			Integer facilityID) {
 		Map<String, Object> resMap = new HashMap<>();
 
 		ArrayList<Object[]> additionalServices = serviceMasterRepo.getAdditionalServices();
@@ -677,12 +673,6 @@ public class ANCMasterDataServiceImpl {
 				NonedlList.get(i).setUnitOfMeasurement(NonedlList.get(i).getUom().getuOMName());
 		}
 		ArrayList<V_DrugPrescription> itemList = new ArrayList<>();
-		if (facilityID == null || facilityID <= 0) {
-			Integer fID = masterVanRepo.getFacilityID(vanID);
-			if (fID != null && fID > 0)
-				facilityID = fID;
-		}
-
 		itemList = v_DrugPrescriptionRepo.getItemListForFacility(facilityID);
 		// ArrayList<ItemMaster> edlList=new ArrayList<>();
 		// edlList=itemMasterRepo.findByEdl();

@@ -171,7 +171,7 @@ public class CommonMasterServiceImpl implements CommonMaterService {
 
 	@Override
 	public String getMasterDataForDoctor(Integer visitCategoryID, Integer providerServiceMapID, String gender,
-			Integer facilityID, Integer vanID) {
+			Integer facilityID) {
 		String doctorMasterData = null;
 		if (null != visitCategoryID) {
 			switch (visitCategoryID) {
@@ -187,34 +187,34 @@ public class CommonMasterServiceImpl implements CommonMaterService {
 				// TODO: NCD SCreening Master Data call
 //				doctorMasterData = "No Master Data found for NCD SCreening";
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case 3: {
 				// 3 : NCD care
 				// TODO: NCD Care Master Data call
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case 4: {
 				// 4 : ANC
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case 5: {
 				// 5 : PNC
 				// TODO: PNC Master Data call - tmprlly calling ANC master Data
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case 6: {
 				// 6 : General OPD
 				// TODO: General OPD Master Data call - tmprlly calling ANC master Data
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case 7: {
@@ -226,33 +226,33 @@ public class CommonMasterServiceImpl implements CommonMaterService {
 
 				// ne298657 have commented the code on 27-07-2018
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case 8: {
 				// 8, covid
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 
 			case 9: {
 				// 9 : FP - contraceptive service
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 			}
 				break;
 			case (10): {
 				// 12 : Neonatal and infant health care services
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 
 			}
 				break;
 			case (11): {
 				//11 : Childhood & Adolescent Healthcare Services
 				doctorMasterData = ancMasterDataServiceImpl.getCommonDoctorMasterDataForGenopdAncNcdcarePnc(
-						visitCategoryID, providerServiceMapID, gender, facilityID, vanID);
+						visitCategoryID, providerServiceMapID, gender, facilityID);
 				
 			}
 			    break;
