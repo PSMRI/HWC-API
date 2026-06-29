@@ -334,17 +334,17 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                                 ? requestObj.get("parkingPlaceID").getAsInt()
                                 : 0);
 
-                beneficiaryDetailsRmnch.addProperty("facilityID",
-                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
-                                ? requestObj.get("facilityID").getAsInt()
-                                : null);
+//                beneficiaryDetailsRmnch.addProperty("facilityID",
+//                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+//                                ? requestObj.get("facilityID").getAsInt()
+//                                : null);
 
-                beneficiaryDetailsRmnch.addProperty("vanID",
-                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
-                                ? requestObj.get("facilityID").getAsInt()
-                                : requestObj.has("vanID") && !requestObj.get("vanID").isJsonNull()
-                                        ? requestObj.get("vanID").getAsInt()
-                                        : 0);
+//                beneficiaryDetailsRmnch.addProperty("vanID",
+//                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+//                                ? requestObj.get("facilityID").getAsInt()
+//                                : requestObj.has("vanID") && !requestObj.get("vanID").isJsonNull()
+//                                        ? requestObj.get("vanID").getAsInt()
+//                                        : 0);
 
                 JsonElement providerServiceMapElement =
                         requestObj.has("providerServiceMapID")
@@ -588,13 +588,13 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
 
                 beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("facilityID",
-                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
-                                ? requestObj.get("facilityID").getAsInt() : null);
-                beneficiaryDetailsRmnch.addProperty("vanID",
-                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
-                                ? requestObj.get("facilityID").getAsInt()
-                                : requestObj.get("vanID").getAsInt());
+//                beneficiaryDetailsRmnch.addProperty("facilityID",
+//                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+//                                ? requestObj.get("facilityID").getAsInt() : null);
+//                beneficiaryDetailsRmnch.addProperty("vanID",
+//                        requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
+//                                ? requestObj.get("facilityID").getAsInt()
+//                                : requestObj.get("vanID").getAsInt());
 
                 JsonElement psmID = requestObj.has("providerServiceMapID")
                         ? requestObj.get("providerServiceMapID")
@@ -1084,12 +1084,12 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         }
                     }
                 }
-                logger.info("Ben FLow data" +
-                        new GsonBuilder()
-                                .excludeFieldsWithoutExposeAnnotation()
-                                .serializeNulls()
-                                .create()
-                                .toJson(benFlowList));
+//                logger.info("Ben FLow data" +
+//                        new GsonBuilder()
+//                                .excludeFieldsWithoutExposeAnnotation()
+//                                .serializeNulls()
+//                                .create()
+//                                .toJson(benFlowList));
                 outputResponse.setResponse(new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create().toJson(benFlowList.stream().filter(beneficiaryFlowStatus -> beneficiaryFlowStatus.getReproductiveStatus()
                         .equals("Eligible Couple"))));
             } else {
