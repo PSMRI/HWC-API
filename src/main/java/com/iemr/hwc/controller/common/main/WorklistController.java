@@ -73,13 +73,13 @@ public class WorklistController {
 	}
 
 	@Operation(summary = "Get doctor worklist")
-	@GetMapping(value = { "/getDocWorklistNew/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getDocWorklistNew/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getDocWorkListNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("serviceID") Integer serviceID, @PathVariable("vanID") Integer vanID) {
+			@PathVariable("serviceID") Integer serviceID, @PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
 			if (providerServiceMapID != null && serviceID != null) {
-				String s = commonDoctorServiceImpl.getDocWorkListNew(providerServiceMapID, serviceID, vanID);
+				String s = commonDoctorServiceImpl.getDocWorkListNew(providerServiceMapID, serviceID, facilityID);
 				if (s != null)
 					response.setResponse(s);
 			} else {
@@ -96,15 +96,15 @@ public class WorklistController {
 
 	// doc worklist new (TM future scheduled beneficiary)
 	@Operation(summary = "Get doctor future worklist scheduled for telemedicine")
-	@GetMapping(value = { "/getDocWorkListNewFutureScheduledForTM/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getDocWorkListNewFutureScheduledForTM/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getDocWorkListNewFutureScheduledForTM(
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("serviceID") Integer serviceID, @PathVariable("vanID") Integer vanID) {
+			@PathVariable("serviceID") Integer serviceID, @PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
 			if (providerServiceMapID != null && serviceID != null) {
 				String s = commonDoctorServiceImpl.getDocWorkListNewFutureScheduledForTM(providerServiceMapID,
-						serviceID, vanID);
+						serviceID, facilityID);
 				if (s != null)
 					response.setResponse(s);
 			} else {
@@ -122,12 +122,12 @@ public class WorklistController {
 
 	// nurse worklist new
 	@Operation(summary = "Get nurse worklist")
-	@GetMapping(value = { "/getNurseWorklistNew/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getNurseWorklistNew/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getNurseWorkListNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getNurseWorkListNew(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getNurseWorkListNew(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else
@@ -142,12 +142,12 @@ public class WorklistController {
 
 	// nurse worklist TC schedule (current-date) new
 	@Operation(summary = "Get worklist for teleconsultation for the current date")
-	@GetMapping(value = { "/getNurseWorkListTcCurrentDate/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getNurseWorkListTcCurrentDate/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getNurseWorkListTcCurrentDateNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getNurseWorkListTcCurrentDate(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getNurseWorkListTcCurrentDate(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else
@@ -161,12 +161,12 @@ public class WorklistController {
 
 	// nurse worklist TC schedule (future-date) new
 	@Operation(summary = "Get worklist for teleconsultation for the future date")
-	@GetMapping(value = { "/getNurseWorkListTcFutureDate/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getNurseWorkListTcFutureDate/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getNurseWorkListTcFutureDateNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getNurseWorkListTcFutureDate(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getNurseWorkListTcFutureDate(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else
@@ -204,12 +204,12 @@ public class WorklistController {
 
 	// Get Lab technician worklist new
 	@Operation(summary = "Get lab technician worklist")
-	@GetMapping(value = { "/getLabWorklistNew/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getLabWorklistNew/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getLabWorkListNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getLabWorkListNew(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getLabWorkListNew(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else
@@ -223,12 +223,12 @@ public class WorklistController {
 
 	// Get radiologist worklist new
 	@Operation(summary = "Get radiologist worklist")
-	@PostMapping(value = { "/getRadiologist-worklist-New/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@PostMapping(value = { "/getRadiologist-worklist-New/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getRadiologistWorklistNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getRadiologistWorkListNew(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getRadiologistWorkListNew(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else
@@ -242,12 +242,12 @@ public class WorklistController {
 
 	// Get oncologist worklist new
 	@Operation(summary = "Get oncologist worklist")
-	@PostMapping(value = { "/getOncologist-worklist-New/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@PostMapping(value = { "/getOncologist-worklist-New/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getOncologistWorklistNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getOncologistWorkListNew(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getOncologistWorkListNew(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else
@@ -261,12 +261,12 @@ public class WorklistController {
 
 	// Get pharma worklist new
 	@Operation(summary = "Get pharmacist worklist")
-	@GetMapping(value = { "/getPharma-worklist-New/{providerServiceMapID}/{serviceID}/{vanID}" })
+	@GetMapping(value = { "/getPharma-worklist-New/{providerServiceMapID}/{serviceID}/{facilityID}" })
 	public String getPharmaWorklistNew(@PathVariable("providerServiceMapID") Integer providerServiceMapID,
-			@PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		OutputResponse response = new OutputResponse();
 		try {
-			String s = commonNurseServiceImpl.getPharmaWorkListNew(providerServiceMapID, vanID);
+			String s = commonNurseServiceImpl.getPharmaWorkListNew(providerServiceMapID, facilityID);
 			if (s != null)
 				response.setResponse(s);
 			else

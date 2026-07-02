@@ -13,7 +13,7 @@ public interface CoupleService {
 
     String registerEligibleCouple(List<EligibleCoupleDTO> eligibleCoupleDTOs, MultipartFile kitPhoto1, MultipartFile kitPhoto2);
 
-    String getEligibleCoupleRegRecords(GetBenRequestHandler dto);
+    String getEligibleCoupleRegRecords(String  userName);
 
 
     List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(String userName);

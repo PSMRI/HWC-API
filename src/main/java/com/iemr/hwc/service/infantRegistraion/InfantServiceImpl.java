@@ -6,6 +6,8 @@ import com.iemr.hwc.data.infantRegistration.InfantRegister;
 import com.iemr.hwc.data.infantRegistration.InfantRegisterDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.repo.infantRegistraion.InfantRegisterRepo;
+import com.iemr.hwc.repo.login.UserLoginRepo;
+import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,9 @@ public class InfantServiceImpl implements InfantService {
 
     @Autowired
     private InfantRegisterRepo infantRegisterRepo;
+
+    @Autowired
+     private UserLoginRepo userLoginRepo;
 
 
 
@@ -63,8 +68,9 @@ public class InfantServiceImpl implements InfantService {
     @Override
     public List<InfantRegisterDTO> getInfantDetails(String userName) {
         try{
+             String createdBy = userLoginRepo.getUserByUserID(Long.parseLong(userName)).getUserName();
             List<InfantRegister> infantRegisterList =
-                    infantRegisterRepo.getInfantDetailsForUser(userName);
+                    infantRegisterRepo.findByCreatedByAndIsActive(createdBy,true);
 
             return infantRegisterList.stream()
                     .map(infantRegister -> mapper.convertValue(infantRegister, InfantRegisterDTO.class))

@@ -350,6 +350,65 @@ public class LocationServiceImpl implements LocationService {
 		return new Gson().toJson(resMap);
 	}
 
+	// Facility-based location — no Van dependency
+	public String getLocDetailsByFacilityID(Integer facilityID, Integer spPSMID) {
+		Map<String, Object> resMap = new HashMap<String, Object>();
+
+		// Get location from m_facility directly — matches old getLocDetailsNew response format
+		Map<String, Object> otherLoc = new HashMap<>();
+		Object[] facilityResult = districtMasterRepo.getFacilityLocation(facilityID);
+		if (facilityResult != null && facilityResult.length > 0) {
+			Object[] facilityLoc;
+			if (facilityResult[0] instanceof Object[]) {
+				facilityLoc = (Object[]) facilityResult[0];
+			} else {
+				facilityLoc = facilityResult;
+			}
+			if (facilityLoc != null && facilityLoc.length > 0) {
+				otherLoc.put("stateID", facilityLoc[0]);
+				otherLoc.put("parkingPlaceID", null);
+
+				Map<String, Object> distMap = new HashMap<>();
+				distMap.put("districtID", facilityLoc[1]);
+				distMap.put("districtName", facilityLoc[2]);
+				distMap.put("blockId", facilityLoc[3]);
+				distMap.put("blockName", facilityLoc[4]);
+
+				// Villages from facility_village_mapping
+				ArrayList<Map<String, Object>> villageList = new ArrayList<>();
+				ArrayList<Object[]> villages = districtMasterRepo.getFacilityVillages(facilityID);
+				if (villages != null) {
+					for (Object[] village : villages) {
+						Map<String, Object> villageMap = new HashMap<>();
+						villageMap.put("districtBranchID", String.valueOf(village[0]));
+						villageMap.put("villageName", village[1]);
+						villageList.add(villageMap);
+					}
+				}
+				distMap.put("villageList", villageList);
+
+				ArrayList<Map<String, Object>> distList = new ArrayList<>();
+				distList.add(distMap);
+				otherLoc.put("districtList", distList);
+			}
+		}
+
+		// State master
+		ArrayList<States> stateList = new ArrayList<>();
+		ArrayList<Object[]> stateMasterList = stateMasterRepo.getStateMaster();
+		if (stateMasterList != null && stateMasterList.size() > 0) {
+			for (Object[] objArr : stateMasterList) {
+				States states = new States((Integer) objArr[0], (String) objArr[1], (Integer) objArr[2]);
+				stateList.add(states);
+			}
+		}
+
+		resMap.put("otherLoc", otherLoc);
+		resMap.put("stateMaster", stateList);
+
+		return new Gson().toJson(resMap);
+	}
+
 	private Map<String, Object> getDefaultLocDetails(ArrayList<Object[]> objList) {
 		Map<String, Object> returnObj = new HashMap<>();
 		Map<String, Object> distMap = new HashMap<>();

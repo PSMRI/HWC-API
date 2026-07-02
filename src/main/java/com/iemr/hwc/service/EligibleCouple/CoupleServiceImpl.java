@@ -11,6 +11,7 @@ import com.iemr.hwc.data.eligibleCouple.EligibleCoupleTrackingDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.repo.couple.EligibleCoupleRegisterRepo;
 import com.iemr.hwc.repo.eligibleCouple.EligibleCoupleTrackingRepo;
+import com.iemr.hwc.repo.login.UserLoginRepo;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,9 @@ public class CoupleServiceImpl implements CoupleService {
     @Autowired
     private EligibleCoupleTrackingRepo eligibleCoupleTrackingRepo;
     private final Logger logger = LoggerFactory.getLogger(CoupleServiceImpl.class);
+
+    @Autowired
+    private UserLoginRepo userLoginRepo;
 
 
     @Override
@@ -92,10 +96,12 @@ public class CoupleServiceImpl implements CoupleService {
         }
     }
     @Override
-    public String getEligibleCoupleRegRecords(GetBenRequestHandler dto) {
+    public String getEligibleCoupleRegRecords(String  userName) {
         try {
+            String createBy = userLoginRepo.getUserByUserID(Long.parseLong(userName)).getUserName();
+
             List<EligibleCoupleRegister> eligibleCoupleRegisterList =
-                    eligibleCoupleRegisterRepo.getECRegRecords(dto.getUserName(), dto.getFromDate(), dto.getToDate());
+                    eligibleCoupleRegisterRepo.getECRegRecords(createBy);
             List<EligibleCoupleDTO> list = eligibleCoupleRegisterList.stream()
                     .map(eligibleCoupleRegister -> mapper.convertValue(eligibleCoupleRegister, EligibleCoupleDTO.class))
                     .collect(Collectors.toList());
@@ -111,6 +117,7 @@ public class CoupleServiceImpl implements CoupleService {
     @Override
     public String registerEligibleCoupleTracking(List<EligibleCoupleTrackingDTO> eligibleCoupleTrackingDTOs) {
         try {
+
             List<EligibleCoupleTracking> ectList = new ArrayList<>();
             eligibleCoupleTrackingDTOs.forEach(it -> {
                 EligibleCoupleTracking ect =
@@ -137,9 +144,9 @@ public class CoupleServiceImpl implements CoupleService {
     public List<EligibleCoupleTrackingDTO> getEligibleCoupleTracking(String userName) {
 
         try {
-
+            String createBy = userLoginRepo.getUserByUserID(Long.parseLong(userName)).getUserName();
             List<EligibleCoupleTracking> eligibleCoupleTrackingList =
-                    eligibleCoupleTrackingRepo.getECTrackRecords(userName);
+                    eligibleCoupleTrackingRepo.getECTrackRecords(createBy);
 
             return eligibleCoupleTrackingList.stream()
                     .map(ect -> mapper.convertValue(ect, EligibleCoupleTrackingDTO.class))

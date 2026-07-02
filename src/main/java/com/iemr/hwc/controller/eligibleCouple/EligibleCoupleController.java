@@ -76,13 +76,14 @@ public class EligibleCoupleController {
 
     @Operation(summary = "get List of eligible couple registration details")
     @RequestMapping(value = { "/register/getAll" }, method = { RequestMethod.POST })
-    public String getEligibleCouple(@RequestBody GetBenRequestHandler requestDTO,
-                                    @RequestHeader(value = "Authorization") String Authorization) {
+    public String getEligibleCouple(@RequestHeader(value = "jwtToken") String jwttoken) {
         OutputResponse response = new OutputResponse();
         try {
-            if (requestDTO != null) {
-                logger.info("fetching All Eligible Couple Details for user: " + requestDTO.getAshaId());
-                String s = coupleService.getEligibleCoupleRegRecords(requestDTO);
+            if (jwttoken != null) {
+                String  userName= jwtUtil.extractUsername(jwttoken);
+                logger.info("userName:"+userName);
+                String s = coupleService.getEligibleCoupleRegRecords(userName);
+                logger.info("Response:"+s);
 
                 if (s != null)
                     response.setResponse(s);
