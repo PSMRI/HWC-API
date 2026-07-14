@@ -118,6 +118,37 @@ public class CommonDoctorServiceImpl {
 	@Autowired
 	private PNCDiagnosisRepo pNCDiagnosisRepo;
 	@Autowired
+	private com.iemr.hwc.repo.nurse.BenVisitDetailRepo benVisitDetailRepo;
+	@Autowired
+	private com.iemr.hwc.repo.login.UserLoginRepo userLoginRepo;
+
+	/**
+	 * Resolve the numeric user ID of the responsible staff member from the username
+	 * captured in createdBy/modifiedBy. Returns null if it cannot be resolved so an
+	 * unknown staff member never blocks the flow.
+	 */
+	private Long resolveUserId(String username) {
+		if (username == null || username.trim().isEmpty())
+			return null;
+		com.iemr.hwc.data.login.Users user = userLoginRepo.getUserByUsername(username.trim());
+		return user != null ? user.getUserID() : null;
+	}
+
+	/**
+	 * Store the responsible doctor's user ID on the visit record. The doctor's
+	 * identity is taken from createdBy, falling back to modifiedBy.
+	 */
+	private void storeDoctorIDOnVisit(CommonUtilityClass commonUtilityClass) {
+		if (commonUtilityClass == null || commonUtilityClass.getVisitCode() == null)
+			return;
+		String username = commonUtilityClass.getCreatedBy();
+		if (username == null || username.trim().isEmpty())
+			username = commonUtilityClass.getModifiedBy();
+		Long doctorID = resolveUserId(username);
+		if (doctorID != null)
+			benVisitDetailRepo.updateDoctorID(doctorID, commonUtilityClass.getVisitCode());
+	}
+	@Autowired
 	private PrescriptionDetailRepo prescriptionDetailRepo;
 	@Autowired
 	private NCDCareDiagnosisRepo NCDCareDiagnosisRepo;
@@ -755,6 +786,9 @@ public class CommonDoctorServiceImpl {
 		Long tmpBenVisitID = commonUtilityClass.getBenVisitID();
 		Long tmpbeneficiaryRegID = commonUtilityClass.getBeneficiaryRegID();
 
+		// Store the responsible doctor's user ID against the visit
+		storeDoctorIDOnVisit(commonUtilityClass);
+
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 9) {
 			ArrayList<FoetalMonitor> foetalMonitorData = foetalMonitorRepo
@@ -894,6 +928,9 @@ public class CommonDoctorServiceImpl {
 		Long tmpBeneficiaryID = commonUtilityClass.getBeneficiaryID();
 		Long tmpBenVisitID = commonUtilityClass.getBenVisitID();
 		Long tmpbeneficiaryRegID = commonUtilityClass.getBeneficiaryRegID();
+
+		// Store the responsible doctor's user ID against the visit
+		storeDoctorIDOnVisit(commonUtilityClass);
 
 		if (commonUtilityClass != null && commonUtilityClass.getVisitCategoryID() != null
 				&& commonUtilityClass.getVisitCategoryID() == 9) {
