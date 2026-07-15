@@ -234,6 +234,9 @@ public class MentalHealthScreening {
     @Column(name = "reason_for_referral", columnDefinition = "TEXT")
     private String reasonForReferral;
 
+    @Column(name = "referral_priority", columnDefinition = "TEXT")
+    private String referralPriority;
+
     @Column(name = "referral_date")
     private String referralDate;
 
