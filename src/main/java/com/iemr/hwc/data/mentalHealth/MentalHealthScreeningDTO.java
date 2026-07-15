@@ -78,6 +78,7 @@ public class MentalHealthScreeningDTO {
     private Boolean referralRequired;
     private String referralLevel;
     private String reasonForReferral;
+    private String referralPriority;
     private String referralDate;
     private Boolean followUpRequired;
     private String followUpDate;
