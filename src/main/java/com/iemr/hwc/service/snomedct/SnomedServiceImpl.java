@@ -21,6 +21,7 @@
 */
 package com.iemr.hwc.service.snomedct;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,30 @@ public class SnomedServiceImpl implements SnomedService {
 		} else
 			throw new Exception("invalid request");
 
+	}
+
+	@Override
+	public String findSnomedCTRecordList() throws Exception {
+
+		List<SCTDescription> allRecords = new ArrayList<>();
+
+		int page = 0;
+		Page<SCTDescription> sctList;
+
+		do {
+			PageRequest pageRequest = PageRequest.of(page, snomedCTPageSize);
+			sctList = snomedRepository.findSnomedCTRecordList(pageRequest);
+
+			allRecords.addAll(sctList.getContent());
+			page++;
+
+		} while (sctList.hasNext());
+
+		Map<String, Object> dataMap = new HashMap<>();
+		dataMap.put("sctMaster", allRecords);
+		dataMap.put("totalRecords", allRecords.size());
+
+		return OutputMapper.gson().toJson(dataMap);
 	}
 
 }
