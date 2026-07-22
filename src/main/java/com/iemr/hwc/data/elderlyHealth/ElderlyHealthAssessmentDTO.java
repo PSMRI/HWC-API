@@ -41,4 +41,5 @@ public class ElderlyHealthAssessmentDTO {
     private Integer totalScore;
     private String functionalStatus;
     private Boolean functionalDeclineFlag;
+    private String referralPriority;
 }
