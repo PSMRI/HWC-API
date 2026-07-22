@@ -122,4 +122,7 @@ public class ElderlyHealthAssessment {
 
     @Column(name = "functional_decline_flag")
     private Boolean functionalDeclineFlag;
+
+    @Column(name = "referral_priority")
+    private String  referralPriority;
 }

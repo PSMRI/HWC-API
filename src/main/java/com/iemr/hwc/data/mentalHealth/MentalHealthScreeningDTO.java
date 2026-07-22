@@ -2,6 +2,8 @@ package com.iemr.hwc.data.mentalHealth;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Data
 public class MentalHealthScreeningDTO {
 
@@ -85,4 +87,6 @@ public class MentalHealthScreeningDTO {
     private String improvementNoted;
     private Boolean referralEscalationRequired;
     private String caseClosureReason;
+    private String caseStatus;
+    private Timestamp dateOfDeath;
 }

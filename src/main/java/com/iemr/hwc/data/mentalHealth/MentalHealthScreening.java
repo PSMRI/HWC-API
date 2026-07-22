@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "mental_health_screening")
 @Data
@@ -254,4 +256,10 @@ public class MentalHealthScreening {
 
     @Column(name = "case_closure_reason")
     private String caseClosureReason;
+
+    @Column(name = "case_status")
+    private String caseStatus;
+
+    @Column(name = "date_of_death")
+    private Timestamp dateOfDeath;
 }
