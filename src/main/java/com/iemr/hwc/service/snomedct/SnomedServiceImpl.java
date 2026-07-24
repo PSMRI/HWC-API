@@ -85,7 +85,7 @@ public class SnomedServiceImpl implements SnomedService {
 		List<SCTDescription> allRecords = new ArrayList<>();
 
 		int page = 0;
-		int pageSize= 10;
+		int pageSize= 50;
 		Page<SCTDescription> sctList;
 		PageRequest pageRequest = PageRequest.of(page, pageSize);
 		sctList = snomedRepository.findSnomedCTRecordList(pageRequest);
