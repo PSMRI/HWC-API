@@ -85,16 +85,17 @@ public class SnomedServiceImpl implements SnomedService {
 		List<SCTDescription> allRecords = new ArrayList<>();
 
 		int page = 0;
-		int pageSize= 50;
+		int pageSize = 50;
+
 		Page<SCTDescription> sctList;
-		PageRequest pageRequest = PageRequest.of(page, pageSize);
-		sctList = snomedRepository.findSnomedCTRecordList(pageRequest);
 
 		do {
+			PageRequest pageRequest = PageRequest.of(page, pageSize);
+			sctList = snomedRepository.findSnomedCTRecordList(pageRequest);
+
 			allRecords.addAll(sctList.getContent());
 
 			page++;
-
 		} while (sctList.hasNext());
 
 		Map<String, Object> dataMap = new HashMap<>();
