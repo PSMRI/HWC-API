@@ -536,7 +536,6 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 			Long benVisitId = response.getBenVisitID();
 			Integer vanId = response.getVanID();
 			Integer sessionIdObj = sessionId;
-			Integer facilityIdObj = beneficiaryVisitDetail.getFacilityID();
 			Long visitCode = generateVisitCode(benVisitId, vanId, sessionIdObj, facilityIdObj);
 			CDSS cdss = new CDSS();
 			cdss.setVisitCode(visitCode);
