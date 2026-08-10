@@ -142,6 +142,22 @@ public class BeneficiaryVisitDetail {
 	private @SQLInjectionSafe String visitFlowStatusFlag;
 
 	@Expose
+	@Column(name = "NurseID")
+	private Long nurseID;
+
+	@Expose
+	@Column(name = "DoctorID")
+	private Long doctorID;
+
+	@Expose
+	@Column(name = "PharmacistID")
+	private Long pharmacistID;
+
+	@Expose
+	@Column(name = "LabTechnicianID")
+	private Long labTechnicianID;
+
+	@Expose
 	@Column(name = "VanSerialNo")
 	private Long vanSerialNo;
 

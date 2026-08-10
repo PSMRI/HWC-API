@@ -159,6 +159,21 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	private BenVisitDetailRepo benVisitDetailRepo;
 
+	@Autowired
+	private com.iemr.hwc.repo.login.UserLoginRepo userLoginRepo;
+
+	/**
+	 * Resolve the numeric user ID of the responsible staff member from the username
+	 * captured in createdBy/modifiedBy. Returns null if the username is blank or
+	 * cannot be resolved, so an unknown staff member never blocks the save.
+	 */
+	private Long resolveUserId(String username) {
+		if (username == null || username.trim().isEmpty())
+			return null;
+		com.iemr.hwc.data.login.Users user = userLoginRepo.getUserByUsername(username.trim());
+		return user != null ? user.getUserID() : null;
+	}
+
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	private BenMedHistoryRepo benMedHistoryRepo;
 	private BencomrbidityCondRepo bencomrbidityCondRepo;
@@ -449,6 +464,10 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		}
 
+		// Store the responsible nurse's user ID (resolved from the createdBy username)
+		if (beneficiaryVisitDetail.getNurseID() == null)
+			beneficiaryVisitDetail.setNurseID(resolveUserId(beneficiaryVisitDetail.getCreatedBy()));
+
 		response = benVisitDetailRepo.save(beneficiaryVisitDetail);
 
 		if (response != null) {
@@ -507,6 +526,10 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		}
 
 		Integer facilityIdObj = beneficiaryVisitDetail.getFacilityID();
+		// Store the responsible nurse's user ID (resolved from the createdBy username)
+		if (beneficiaryVisitDetail.getNurseID() == null)
+			beneficiaryVisitDetail.setNurseID(resolveUserId(beneficiaryVisitDetail.getCreatedBy()));
+
 		response = benVisitDetailRepo.save(beneficiaryVisitDetail);
 
 		if (response != null) {
