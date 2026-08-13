@@ -116,6 +116,30 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
+	@Operation(summary = "Get user van details")
+	@PostMapping(value = "/getUserVanSpDetails", produces = { "application/json" })
+	public String getUserVanSpDetails(@RequestBody String comingRequest) {
+		OutputResponse response = new OutputResponse();
+		try {
+
+			JSONObject obj = new JSONObject(comingRequest);
+			logger.info("getServicepointVillages request " + comingRequest);
+			if (obj.has("userID") && obj.has("providerServiceMapID")) {
+				String responseData = iemrMmuLoginServiceImpl.getUserVanSpDetails(obj.getInt("userID"),
+						obj.getInt("providerServiceMapID"));
+				response.setResponse(responseData);
+			} else {
+				response.setError(5000, "Invalid request");
+			}
+		} catch (Exception e) {
+			response.setError(5000, "Error while getting van and service points data");
+			logger.error("getUserVanSpDetails failed with " + e.getMessage(), e);
+
+		}
+		logger.info("getUserVanSpDetails response " + response.toString());
+		return response.toString();
+	}
+
 	@Operation(summary = "Get user spoke details")
 	@GetMapping(value = "/getUserSpokeDetails/{psmId}")
 	public String getUserSpokeDetails(@PathVariable("psmId") Integer psmId) {
