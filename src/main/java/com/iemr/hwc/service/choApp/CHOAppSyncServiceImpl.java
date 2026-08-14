@@ -276,10 +276,15 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                         beneficiaryDetailsRmnch.addProperty("emergencyRegistration", emergencyRegistration);
                     }
 
-                    Integer parkingPlaceID = getInt(requestObj, "parkingPlaceID");
-                    if (parkingPlaceID != null) {
-                        beneficiaryDetailsRmnch.addProperty("parkingPlaceID", parkingPlaceID);
+                    JsonElement parkingPlaceElement = requestObj.get("parkingPlaceID");
+
+                    if (parkingPlaceElement != null && !parkingPlaceElement.isJsonNull()) {
+                        beneficiaryDetailsRmnch.addProperty(
+                                "parkingPlaceID",
+                                parkingPlaceElement.getAsInt()
+                        );
                     }
+
 
                     Integer facilityID = getInt(requestObj, "facilityID");
                     if (facilityID != null) {
