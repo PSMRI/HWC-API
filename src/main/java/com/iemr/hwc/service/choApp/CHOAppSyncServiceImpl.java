@@ -477,8 +477,16 @@ public class CHOAppSyncServiceImpl implements CHOAppSyncService {
                 beneficiaryDetailsRmnch.addProperty("beneficiaryConsent", requestObj.get("beneficiaryConsent").getAsBoolean());
                 beneficiaryDetailsRmnch.addProperty("emergencyRegistration", requestObj.get("emergencyRegistration").getAsBoolean());
 
-                beneficiaryDetailsRmnch.addProperty("parkingPlaceID", requestObj.get("parkingPlaceID").getAsInt());
-                beneficiaryDetailsRmnch.addProperty("facilityID",
+                // parkingPlaceID is optional
+                JsonElement parkingPlaceElement = requestObj.get("parkingPlaceID");
+
+                if (parkingPlaceElement != null && !parkingPlaceElement.isJsonNull()) {
+                    beneficiaryDetailsRmnch.addProperty(
+                            "parkingPlaceID",
+                            parkingPlaceElement.getAsInt()
+                    );
+                }                beneficiaryDetailsRmnch.addProperty("facilityID",
+
                         requestObj.has("facilityID") && !requestObj.get("facilityID").isJsonNull()
                                 ? requestObj.get("facilityID").getAsInt() : null);
                 beneficiaryDetailsRmnch.addProperty("vanID",
