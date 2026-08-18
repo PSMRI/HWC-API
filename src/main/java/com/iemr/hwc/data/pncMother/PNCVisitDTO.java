@@ -34,5 +34,10 @@ public class PNCVisitDTO {
     private String  deliveryDischargeSummary2;
     private String  deliveryDischargeSummary3;
     private String  deliveryDischargeSummary4;
+    private Integer calciumSupplementation;
+    private String anyDangerSign;
+    private String maternalSymptoms;
+    private String pallor;
+    private String vaginalBleeding;
 
 }

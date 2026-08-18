@@ -94,4 +94,19 @@ public class PNCVisit {
 
     @Column(name = "delivery_discharge_summary_image4")
     private String  deliveryDischargeSummary4;
+
+    @Column(name = "calcium_supplementation")
+    private Integer calciumSupplementation;
+
+    @Column(name = "any_danger_sign")
+    private String anyDangerSign;
+
+    @Column(name = "maternal_symptoms")
+    private String maternalSymptoms;
+
+    @Column(name = "pallor")
+    private String pallor;
+
+    @Column(name = "vaginal_bleeding")
+    private String vaginalBleeding;
 }
