@@ -362,6 +362,13 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					cbacDetails.setParkingPlaceId(nurseUtilityClass.getParkingPlaceID());
 
 					cbacDetails.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
+					if (cbacDetails.getSyncedDate() == null) {
+						cbacDetails.setSyncedDate(new Timestamp(System.currentTimeMillis()));
+					}
+
+					if (cbacDetails.getSyncedBy() == null || cbacDetails.getSyncedBy().trim().isEmpty()) {
+						cbacDetails.setSyncedBy(nurseUtilityClass.getCreatedBy());
+					}
 					if(benVisitCode!=null){
 						cbacDetails.setVisitCode(benVisitCode);
 
