@@ -1950,6 +1950,9 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 	@Override
 	public String getCbacData(String userName) throws IEMRException {
 		try {
+			logger.info("--------------------------------------------");
+			logger.info("CBAC API Called");
+			logger.info("--------------------------------------------");
 			List<CbacDetails> cbac = cbacDetailsRepo.findByCreatedBy(userName);
 			cbac.forEach(cbacDetails -> {
 				if(cbacDetailsRepo.getBeneficiaryId(cbacDetails.getBeneficiaryRegId())!=null){
