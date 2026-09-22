@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.google.gson.JsonParser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.MediaType;
 
@@ -555,6 +556,12 @@ public class RegistrarServiceImpl implements RegistrarService {
 		return response;
 	}
 
+	private void  updateStatusOfWomen(JsonObject benD){
+		BeneficiaryData beneficiaryData = getBenOBJ(benD);
+
+
+	}
+
 	@Override
 	public int updateBeneficiaryDemographic(JsonObject benD, Long benRegID) {
 		Long tmpBenDemoID = null;
@@ -788,6 +795,7 @@ public class RegistrarServiceImpl implements RegistrarService {
 		return returnOBJ;
 	}
 
+
 	// beneficiary quick search new integrated with common and identity
 	public String beneficiaryQuickSearch(String requestObj, String Authorization) {
 		String returnOBJ = null;
@@ -876,7 +884,19 @@ public String beneficiaryAdvancedSearchES(String requestObj, String Authorizatio
 }
 
 	public int searchAndSubmitBeneficiaryToNurse(String requestOBJ) throws Exception {
-		int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(requestOBJ, null, null);
+		JsonObject requestObj = JsonParser.parseString(requestOBJ).getAsJsonObject();
+
+		Long beneficiaryRegID = requestObj.has("beneficiaryRegID")
+				&& !requestObj.get("beneficiaryRegID").isJsonNull()
+				? requestObj.get("beneficiaryRegID").getAsLong()
+				: null;
+
+		Long beneficiaryID = requestObj.has("beneficiaryID")
+				&& !requestObj.get("beneficiaryID").isJsonNull()
+				? requestObj.get("beneficiaryID").getAsLong()
+				: null;
+
+		int i = commonBenStatusFlowServiceImpl.createBenFlowRecord(requestOBJ, beneficiaryRegID, beneficiaryID);
 		return i;
 	}
 

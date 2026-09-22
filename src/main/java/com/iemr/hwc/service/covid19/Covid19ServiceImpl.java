@@ -176,7 +176,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 				 * We have to write new code to update ben status flow new logic
 				 */
 				int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-						nurseUtilityClass.getVanID(), tcRequestOBJ);
+						nurseUtilityClass.getFacilityID(), tcRequestOBJ);
 
 				if (J > 0)
 					saveSuccessFlag = historySaveSuccessFlag;
@@ -245,6 +245,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {
@@ -252,7 +253,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 
 				// 11-06-2018 visit code
 				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-						nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
 					if (visitDetailsOBJ.has("cdss") && !visitDetailsOBJ.get("cdss").isJsonNull()) {
 						JsonObject cdssObj = visitDetailsOBJ.getAsJsonObject("cdss");
@@ -626,7 +627,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenFlowNurseAfterNurseActivityANC(JsonObject tmpOBJ, Long benVisitID, Long benFlowID,
-			Long benVisitCode, Integer vanID, TeleconsultationRequestOBJ tcRequestOBJ) {
+			Long benVisitCode, Integer facilityID, TeleconsultationRequestOBJ tcRequestOBJ) {
 		short nurseFlag;
 		short docFlag;
 		short labIteration;
@@ -649,7 +650,7 @@ public class Covid19ServiceImpl implements Covid19Service {
 		int rs = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID,
 				tmpOBJ.get("beneficiaryRegID").getAsLong(), benVisitID, tmpOBJ.get("visitReason").getAsString(),
 				tmpOBJ.get("visitCategory").getAsString(), nurseFlag, docFlag, labIteration, (short) 0, (short) 0,
-				benVisitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+				benVisitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 
 		return rs;
 	}

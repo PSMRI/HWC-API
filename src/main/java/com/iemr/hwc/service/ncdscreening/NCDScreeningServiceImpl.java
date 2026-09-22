@@ -362,6 +362,13 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					cbacDetails.setParkingPlaceId(nurseUtilityClass.getParkingPlaceID());
 
 					cbacDetails.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
+					if (cbacDetails.getSyncedDate() == null) {
+						cbacDetails.setSyncedDate(new Timestamp(System.currentTimeMillis()));
+					}
+
+					if (cbacDetails.getSyncedBy() == null || cbacDetails.getSyncedBy().trim().isEmpty()) {
+						cbacDetails.setSyncedBy(nurseUtilityClass.getCreatedBy());
+					}
 					if(benVisitCode!=null){
 						cbacDetails.setVisitCode(benVisitCode);
 
@@ -380,7 +387,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
                 if( isFlw!=null){
 					if(!isFlw){
 						int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-								nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+								nurseUtilityClass.getFacilityID(), tcRequestOBJ, isDocVisitRequired);
 
 						if (J > 0)
 							saveSuccessFlag = benVisitCode;
@@ -401,7 +408,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 					}
 				}else {
 					int J = updateBenFlowNurseAfterNurseActivityANC(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-							nurseUtilityClass.getVanID(), tcRequestOBJ, isDocVisitRequired);
+							nurseUtilityClass.getFacilityID(), tcRequestOBJ, isDocVisitRequired);
 
 					if (J > 0)
 						saveSuccessFlag = benVisitCode;
@@ -466,7 +473,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenFlowNurseAfterNurseActivityANC(JsonObject tmpOBJ, Long benVisitID, Long benFlowID,
-			Long benVisitCode, Integer vanID, TeleconsultationRequestOBJ tcRequestOBJ, boolean isDocVisitRequired) {
+			Long benVisitCode, Integer facilityID, TeleconsultationRequestOBJ tcRequestOBJ, boolean isDocVisitRequired) {
 		short nurseFlag = (short) 9;
 		short docFlag = (short) 0;
 
@@ -491,7 +498,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 		int i = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID,
 				tmpOBJ.get("beneficiaryRegID").getAsLong(), benVisitID, tmpOBJ.get("visitReason").getAsString(),
 				tmpOBJ.get("visitCategory").getAsString(), nurseFlag, docFlag, labIteration, (short) 0, (short) 0,
-				benVisitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+				benVisitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 
 		return i;
 
@@ -513,6 +520,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {
@@ -520,7 +528,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 				// 11-06-2018 visit code
 				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-						nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 
 				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
 					if (visitDetailsOBJ.has("chiefComplaints")
@@ -623,7 +631,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 	}
 
 	private int updateBenFlowNurseAfterNurseActivityANC(Long benRegID, Long benVisitID, Long benFlowID,
-			String visitReason, String visitCategory, Boolean isScreeningDone, Long benVisitCode, Integer vanID) {
+			String visitReason, String visitCategory, Boolean isScreeningDone, Long benVisitCode, Integer facilityID) {
 		short nurseFlag;
 		short docFlag = (short) 0;
 		short labIteration = (short) 0;
@@ -638,7 +646,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 			nurseFlag = (short) 100;
 
 		int rs = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID, benRegID, benVisitID,
-				visitReason, visitCategory, nurseFlag, docFlag, labIteration, (short) 0, (short) 0, benVisitCode, vanID,
+				visitReason, visitCategory, nurseFlag, docFlag, labIteration, (short) 0, (short) 0, benVisitCode, facilityID,
 				specialistFlag, tcDate, tcSpecialistUserID);
 
 		return rs;

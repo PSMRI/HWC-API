@@ -97,6 +97,18 @@ public interface BenVisitDetailRepo extends CrudRepository<BeneficiaryVisitDetai
 	@Query("UPDATE BeneficiaryVisitDetail set subVisitCategory = :subVisitCategory where visitCode = :visitCode ")
 	public Integer updateSubVisitCategory(@Param("subVisitCategory") String subVisitCategory, @Param("visitCode") Long visitCode);
 
+	// store responsible doctor's user ID against the visit
+	@Transactional
+	@Modifying
+	@Query("UPDATE BeneficiaryVisitDetail set doctorID = :doctorID where visitCode = :visitCode ")
+	public Integer updateDoctorID(@Param("doctorID") Long doctorID, @Param("visitCode") Long visitCode);
+
+	// store responsible lab technician's user ID against the visit
+	@Transactional
+	@Modifying
+	@Query("UPDATE BeneficiaryVisitDetail set labTechnicianID = :labTechnicianID where visitCode = :visitCode ")
+	public Integer updateLabTechnicianID(@Param("labTechnicianID") Long labTechnicianID, @Param("visitCode") Long visitCode);
+
 
 	// get file uuid from file id
 	@Query(nativeQuery = true, value = " SELECT FileUID from t_kmfilemanager where KmFileManagerID = :fileID ")
