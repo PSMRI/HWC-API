@@ -63,6 +63,13 @@
 					<groupId>com.jayway.jsonpath</groupId>
 					<artifactId>json-path</artifactId>
 				</exclusion>
+				<!-- android-json ships its own stripped org.json.* classes, which shadow
+				     org.json:json on the test classpath and make the production JSON code
+				     fail with NoSuchMethodError under test only. -->
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -424,6 +431,25 @@
 				<version>3.2.5</version>
 				<configuration>
 					<testFailureIgnore>true</testFailureIgnore>
+					<!-- The sweeps drive production code that logs and prints stack traces on
+					     every attempt, which buries the run's own progress in hundreds of MB of
+					     console output. It goes to target/surefire-reports/*-output.txt instead. -->
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<!-- A backstop: no forked run may sit there indefinitely. -->
+					<forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
+					<!-- DownloadDataFromServerImpl starts a thread pool per call and never
+					     shuts it down, so the forked JVM has live non-daemon threads when the
+					     run ends and would sit there until surefire killed it - taking the
+					     JaCoCo dump with it. Exiting instead runs the shutdown hooks. -->
+					<shutdown>exit</shutdown>
+					<!-- The sweep tests reflect over JDK types held by the entities, which the
+					     JDK 17 module system blocks by default. @{argLine} keeps the JaCoCo
+					     agent contributed by jacoco:prepare-agent. -->
+					<argLine>@{argLine} --add-opens=java.base/java.text=ALL-UNNAMED
+						--add-opens=java.base/java.lang=ALL-UNNAMED
+						--add-opens=java.base/java.util=ALL-UNNAMED
+						--add-opens=java.base/java.time=ALL-UNNAMED
+						--add-opens=java.base/java.math=ALL-UNNAMED</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
