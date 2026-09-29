@@ -148,6 +148,9 @@ public class BenReferDetails {
 	@Expose
 	@Column(name = "OtherReferralReason")
 	private String otherReferralReason;
+
+	@Column(name = "referral_type")
+	private String type;
 	@Expose
 	@Transient
 	private Long benId;
@@ -444,4 +447,15 @@ public class BenReferDetails {
 		this.vanID = vanID;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Long getBenId() {
+		return benId;
+	}
 }
