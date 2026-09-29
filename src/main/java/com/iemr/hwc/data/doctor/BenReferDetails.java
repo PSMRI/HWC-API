@@ -49,6 +49,8 @@ public class BenReferDetails {
 	@Column(name = "BeneficiaryRegID")
 	private Long beneficiaryRegID;
 
+
+
 	@Expose
 	@Column(name = "BenVisitID")
 	private Long benVisitID;
@@ -152,7 +154,7 @@ public class BenReferDetails {
 	@Column(name = "referral_type")
 	private String type;
 	@Expose
-	@Transient
+	@Column(name = "benId")
 	private Long benId;
 
 	public Long getBeId() {
