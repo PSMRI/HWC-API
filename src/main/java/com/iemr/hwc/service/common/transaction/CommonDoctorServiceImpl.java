@@ -529,6 +529,15 @@ public class CommonDoctorServiceImpl {
 		BenReferDetails referDetails = InputMapper.gson().fromJson(obj, BenReferDetails.class);
 		CommonUtilityClass cuc = InputMapper.gson().fromJson(obj, CommonUtilityClass.class);
 
+		logger.info(
+				"Referral save request: BeneficiaryRegID={}, BenVisitID={}, VisitCode={}, ProviderServiceMapID={}, serviceID={}",
+				referDetails.getBeneficiaryRegID(),
+				referDetails.getBenVisitID(),
+				referDetails.getVisitCode(),
+				referDetails.getProviderServiceMapID(),
+				referDetails.getServiceID()
+		);
+
 		// referral reason list
 		if (referDetails != null) {
 			if (rrList != null && rrList) {
