@@ -562,6 +562,15 @@ public class CommonDoctorServiceImpl {
 					referDetails.setServiceName(sb.substring(0, (sb.length() - 2)));
 
 			}
+			if (referDetails.getBenVisitID() != null && referDetails.getBenVisitID() == 0) {
+				referDetails.setBenVisitID(null);
+			}
+
+			if (referDetails.getVisitCode() != null && referDetails.getVisitCode() == 0) {
+				referDetails.setVisitCode(null);
+			}
+
+			benReferDetailsRepo.save(referDetails);
 
 			benReferDetailsRepo.save(referDetails);
 		}
