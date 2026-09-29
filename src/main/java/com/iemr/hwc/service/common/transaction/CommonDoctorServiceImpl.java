@@ -590,6 +590,10 @@ public class CommonDoctorServiceImpl {
 				if (referDetails != null && referDetails.getServiceName() != null) {
 					referDetails.setRefrredToAdditionalServiceList(referDetails.getServiceName().split("\\|\\|"));
 				}
+				if(referDetails.getBenId()==null){
+					referDetails.setBenId(referDetails.getBeneficiaryRegID());
+
+				}
 
 			}
 		}

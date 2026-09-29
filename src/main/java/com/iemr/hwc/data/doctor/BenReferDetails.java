@@ -167,7 +167,6 @@ public class BenReferDetails {
 
 
 
-
 	@Expose
 	@Transient
 	private String[] referralReasonList;
