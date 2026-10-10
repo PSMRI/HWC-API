@@ -61,6 +61,14 @@ public class CHOAppSyncController {
         return choappSyncService.registerCHOAPPBeneficiary(comingReq, Authorization);
     }
 
+    @Operation(summary = "Sync new beneficiaries to AMRIT server")
+    @PostMapping(value = { "/update/beneficiariesToServer" })
+    public ResponseEntity<String> beneficiaryUpdateSyncToServer(@RequestBody String comingReq,
+                                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+
+        return choappSyncService.choAppUpdateBeneficiary(comingReq, Authorization);
+    }
+
     // beneficiary registration sync from AMRIT server to CHO app with identity new
     @Operation(summary = "Sync beneficiaries from AMRIT server to CHO App")
     @PostMapping(value = { "/beneficiariesToApp" })
@@ -100,6 +108,14 @@ public class CHOAppSyncController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
 
         return choappSyncService.getFlowRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
+    }
+
+    @Operation(summary = "Sync beneficiaries flow status records ")
+    @PostMapping(value = { "/couple/getAll" })
+    public ResponseEntity<String> getCoupleTracking(@RequestBody SyncSearchRequest villageIDAndLastSyncDate,
+                                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String Authorization) {
+
+        return choappSyncService.getCoupleRecordsByVillageIDAndLastModifiedDate(villageIDAndLastSyncDate, Authorization);
     }
 
     // Login logout logs sync from CHO app to AMRIT server

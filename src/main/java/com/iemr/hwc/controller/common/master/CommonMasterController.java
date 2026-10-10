@@ -96,15 +96,15 @@ public class CommonMasterController {
 	 * @return doctor master data for the provided visitCategoryID
 	 */
 	@Operation(summary = "Get master data for selected beneficiary for doctor")
-	@GetMapping(value = "/doctor/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}/{facilityID}/{vanID}", produces = MediaType.APPLICATION_JSON)
+	@GetMapping(value = "/doctor/masterData/{visitCategoryID}/{providerServiceMapID}/{gender}/{facilityID}", produces = MediaType.APPLICATION_JSON)
 	public String DoctorMasterData(@PathVariable("visitCategoryID") Integer visitCategoryID,
 			@PathVariable("providerServiceMapID") Integer providerServiceMapID, @PathVariable("gender") String gender,
-			@PathVariable("facilityID") Integer facilityID, @PathVariable("vanID") Integer vanID) {
+			@PathVariable("facilityID") Integer facilityID) {
 		logger.info("Doctor master Data for categoryID:" + visitCategoryID + " and providerServiceMapID:"
 				+ providerServiceMapID);
 		OutputResponse response = new OutputResponse();
 		response.setResponse(commonMasterServiceImpl.getMasterDataForDoctor(visitCategoryID, providerServiceMapID,
-				gender, facilityID, vanID));
+				gender, facilityID, 0));
 		logger.info("Doctor master Data for categoryID:" + response.toString());
 		return response.toString();
 	}

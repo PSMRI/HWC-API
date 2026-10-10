@@ -102,4 +102,26 @@ public class SnomedController {
 		return output.toString();
 	}
 
+	@Operation(summary = "Master data for  Snomed clinical term list")
+	@PostMapping(value = "/getMasterSnomedCTRecordList", headers = "Authorization")
+	public String getSnomedCTRecordList() {
+		OutputResponse output = new OutputResponse();
+		try {
+
+
+			String sctList = snomedService.findSnomedCTRecordList();
+
+			if (sctList != null)
+				output.setResponse(sctList);
+			else
+				output.setResponse("No Records Found");
+
+			logger.info("ggetSnomedCTRecord response: " + output);
+		} catch (Exception e) {
+			logger.error("ggetSnomedCTRecord failed with error " + e.getMessage(), e);
+			output.setError(e);
+		}
+		return output.toString();
+	}
+
 }

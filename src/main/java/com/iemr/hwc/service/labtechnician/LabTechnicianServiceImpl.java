@@ -50,6 +50,22 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 	private ProcedureCompMappedMasterRepo procedureCompMappedMasterRepo;
 
+	@org.springframework.beans.factory.annotation.Autowired
+	private com.iemr.hwc.repo.nurse.BenVisitDetailRepo benVisitDetailRepo;
+	@org.springframework.beans.factory.annotation.Autowired
+	private com.iemr.hwc.repo.login.UserLoginRepo userLoginRepo;
+
+	/**
+	 * Resolve the numeric user ID of the responsible staff member from the username
+	 * captured in createdBy. Returns null if it cannot be resolved.
+	 */
+	private Long resolveUserId(String username) {
+		if (username == null || username.trim().isEmpty())
+			return null;
+		com.iemr.hwc.data.login.Users user = userLoginRepo.getUserByUsername(username.trim());
+		return user != null ? user.getUserID() : null;
+	}
+
 
 	@Autowired
 	public void setCommonBenStatusFlowServiceImpl(CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl) {
@@ -359,6 +375,12 @@ public class LabTechnicianServiceImpl implements LabTechnicianService {
 			labResultSaveFlag = saveLabTestResult(wrapperLabResults);
 
 			if (labResultSaveFlag == 1) {
+				// Store the responsible lab technician's user ID against the visit
+				if (wrapperLabResults.getVisitCode() != null) {
+					Long labTechnicianID = resolveUserId(wrapperLabResults.getCreatedBy());
+					if (labTechnicianID != null)
+						benVisitDetailRepo.updateLabTechnicianID(labTechnicianID, wrapperLabResults.getVisitCode());
+				}
 				int i = updateBenFlowStatusFlagAfterLabResultEntry(wrapperLabResults.getLabCompleted(),
 						wrapperLabResults.getBenFlowID(), wrapperLabResults.getBeneficiaryRegID(),
 						wrapperLabResults.getVisitID(), wrapperLabResults.getNurseFlag(),

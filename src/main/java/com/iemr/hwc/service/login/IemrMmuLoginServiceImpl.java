@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.iemr.hwc.data.login.MasterVan;
 import com.iemr.hwc.data.login.ServicePointVillageMapping;
 import com.iemr.hwc.data.login.UserVanSpDetails_View;
+import com.iemr.hwc.repo.login.FacilityLoginRepo;
 import com.iemr.hwc.repo.login.MasterVanRepo;
 import com.iemr.hwc.repo.login.ServicePointVillageMappingRepo;
 import com.iemr.hwc.repo.login.UserParkingplaceMappingRepo;
@@ -50,6 +51,12 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 	private VanServicepointMappingRepo vanServicepointMappingRepo;
 	private ServicePointVillageMappingRepo servicePointVillageMappingRepo;
 	private UserVanSpDetails_View_Repo userVanSpDetails_View_Repo;
+	private FacilityLoginRepo facilityLoginRepo;
+
+	@Autowired
+	public void setFacilityLoginRepo(FacilityLoginRepo facilityLoginRepo) {
+		this.facilityLoginRepo = facilityLoginRepo;
+	}
 
 	@Autowired
 	public void setUserVanSpDetails_View_Repo(UserVanSpDetails_View_Repo userVanSpDetails_View_Repo) {
@@ -158,23 +165,58 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 	@Override
 	public String getUserVanSpDetails(Integer userID, Integer providerServiceMapID) {
 		Map<String, Object> resMap = new HashMap<>();
-		ArrayList<Object[]> objList = userVanSpDetails_View_Repo.getUserVanSpDetails_View(userID, providerServiceMapID);
 		ArrayList<UserVanSpDetails_View> userVanSpDetails_ViewList = new ArrayList<>();
-		if (objList.size() > 0) {
-			for (Object[] objArray : objList) {
-				UserVanSpDetails_View userVanSpDetails_ViewOBJ = new UserVanSpDetails_View((Integer) objArray[0],
-						(Integer) objArray[1], (String) objArray[2], (Short) objArray[3], (Integer) objArray[4],
-						(String) objArray[5], (Integer) objArray[6], (Integer) objArray[7], 0);
-				userVanSpDetails_ViewList.add(userVanSpDetails_ViewOBJ);
+
+		// First: check m_UserServiceRoleMapping for facilityID (facility-based users)
+		Object[] facilityResult = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
+		if (facilityResult != null && facilityResult.length > 0 && facilityResult[0] != null) {
+			// Native query with LIMIT 1 may return Object[] where first element is the row
+			Object[] facilityDetails;
+			if (facilityResult[0] instanceof Object[]) {
+				facilityDetails = (Object[]) facilityResult[0];
+			} else {
+				facilityDetails = facilityResult;
+			}
+			if (facilityDetails != null && facilityDetails.length > 0 && facilityDetails[0] != null) {
+				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
+				facilityEntry.setUserID(userID);
+				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+				facilityEntry.setProviderServiceMapID(providerServiceMapID);
+				facilityEntry.setVanNoAndType((String) facilityDetails[1]); // facilityName
+				facilityEntry.setVanSession((short) 3);
+				userVanSpDetails_ViewList.add(facilityEntry);
 			}
 		}
+
+		// Fallback: if no facilityID in role mapping, try Van view (MMU/TM users)
+		if (userVanSpDetails_ViewList.isEmpty()) {
+			ArrayList<Object[]> objList = userVanSpDetails_View_Repo.getUserVanSpDetails_View(userID, providerServiceMapID);
+			if (objList != null && objList.size() > 0) {
+				for (Object[] objArray : objList) {
+					UserVanSpDetails_View userVanSpDetails_ViewOBJ = new UserVanSpDetails_View((Integer) objArray[0],
+							(Integer) objArray[1], (String) objArray[2], (Short) objArray[3], (Integer) objArray[4],
+							(String) objArray[5], (Integer) objArray[6], (Integer) objArray[7], 0);
+					userVanSpDetails_ViewList.add(userVanSpDetails_ViewOBJ);
+				}
+			}
+			// No van mapping either — check if this user has a role mapping with null facilityID
+			// That means they are a facility-based (HWC) user not yet mapped by admin.
+			// Failing here is correct — letting them in would give a broken empty worklist.
+			if (userVanSpDetails_ViewList.isEmpty()) {
+				Integer unmapped = facilityLoginRepo.countUnmappedFacilityUser(userID, providerServiceMapID);
+				if (unmapped != null && unmapped > 0) {
+					throw new RuntimeException(
+							"No facility mapped for this user. Please contact admin to complete the facility mapping.");
+				}
+			}
+		}
+
 		resMap.put("UserVanSpDetails", userVanSpDetails_ViewList);
-		// System.out.println("helloo bhai---" + new Gson().toJson(resMap));
-		// Later will remove below part till 1.1 new api is getting called on
-		// continue button
-		List<Object[]> parkingPlaceList = userParkingplaceMappingRepo.getUserParkingPlce(userID);
+
+		// Location details from parking place (for old Van-based users)
 		Map<String, Object> parkingPlaceLocationMap = new HashMap<>();
-		if (parkingPlaceList.size() > 0) {
+		List<Object[]> parkingPlaceList = userParkingplaceMappingRepo.getUserParkingPlce(userID);
+		if (parkingPlaceList != null && parkingPlaceList.size() > 0) {
 			Object[] obj1 = parkingPlaceList.get(0);
 			parkingPlaceLocationMap.put("parkingPlaceID", obj1[0]);
 			parkingPlaceLocationMap.put("stateID", obj1[1]);
@@ -185,12 +227,46 @@ public class IemrMmuLoginServiceImpl implements IemrMmuLoginService {
 			parkingPlaceLocationMap.put("blockName", obj1[6]);
 		}
 		resMap.put("UserLocDetails", parkingPlaceLocationMap);
-		// 1.1
+
 		return new Gson().toJson(resMap);
 	}
-	
+
+	@Override
+	public String getUserFacilityOnlyDetails(Integer userID, Integer providerServiceMapID) {
+		Map<String, Object> resMap = new HashMap<>();
+		ArrayList<UserVanSpDetails_View> userVanSpDetails_ViewList = new ArrayList<>();
+
+		Object[] facilityResult = facilityLoginRepo.getUserFacilityDetails(userID, providerServiceMapID);
+		if (facilityResult != null && facilityResult.length > 0 && facilityResult[0] != null) {
+			Object[] facilityDetails;
+			if (facilityResult[0] instanceof Object[]) {
+				facilityDetails = (Object[]) facilityResult[0];
+			} else {
+				facilityDetails = facilityResult;
+			}
+			if (facilityDetails != null && facilityDetails.length > 0 && facilityDetails[0] != null) {
+				UserVanSpDetails_View facilityEntry = new UserVanSpDetails_View();
+				facilityEntry.setUserID(userID);
+				facilityEntry.setFacilityID((Integer) facilityDetails[0]);
+				facilityEntry.setProviderServiceMapID(providerServiceMapID);
+				facilityEntry.setVanNoAndType((String) facilityDetails[1]);
+				facilityEntry.setVanSession((short) 3);
+				userVanSpDetails_ViewList.add(facilityEntry);
+			}
+		}
+
+		// No facilityID mapped — no fallback to van. HWC users must have facilityID.
+		if (userVanSpDetails_ViewList.isEmpty()) {
+			throw new RuntimeException(
+					"No facility mapped for this user. Please contact admin to complete the facility mapping.");
+		}
+
+		resMap.put("UserVanSpDetails", userVanSpDetails_ViewList);
+		return new Gson().toJson(resMap);
+	}
+
 	/* created by = DU20091017 */
-	
+
 	@Override
 	public String getUserSpokeDetails (Integer psmId)  {
 		MasterVan mVan;

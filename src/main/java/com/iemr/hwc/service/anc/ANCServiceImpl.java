@@ -244,7 +244,7 @@ public class ANCServiceImpl implements ANCService {
 
 				int j = updateBenFlowNurseAfterNurseActivityANC(
 						requestOBJ.getAsJsonObject("visitDetails").getAsJsonObject("investigation"), tmpOBJ, benVisitID,
-						benFlowID, benVisitCode, nurseUtilityClass.getVanID(), tcRequestOBJ);
+						benFlowID, benVisitCode, nurseUtilityClass.getFacilityID(), tcRequestOBJ);
 
 				if (j > 0)
 					saveSuccessFlag = ancSaveSuccessFlag;
@@ -299,7 +299,7 @@ public class ANCServiceImpl implements ANCService {
 	}
 
 	private int updateBenFlowNurseAfterNurseActivityANC(JsonObject investigationDataCheck, JsonObject tmpOBJ,
-			Long benVisitID, Long benFlowID, Long visitCode, Integer vanID, TeleconsultationRequestOBJ tcRequestOBJ) {
+			Long benVisitID, Long benFlowID, Long visitCode, Integer facilityID, TeleconsultationRequestOBJ tcRequestOBJ) {
 		short nurseFlag;
 		short docFlag;
 		short labIteration;
@@ -345,7 +345,7 @@ public class ANCServiceImpl implements ANCService {
 		int rs = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivityANC(benFlowID,
 				tmpOBJ.get("beneficiaryRegID").getAsLong(), benVisitID, tmpOBJ.get("visitReason").getAsString(),
 				tmpOBJ.get("visitCategory").getAsString(), nurseFlag, docFlag, labIteration, (short) 0, (short) 0,
-				visitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID, labTechnicianFlag);
+				visitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID, labTechnicianFlag);
 
 		return rs;
 	}
@@ -564,6 +564,7 @@ public class ANCServiceImpl implements ANCService {
 
 			// benVisitDetailsOBJ.setVanID(commonUtilityClass.getVanID());
 			// benVisitDetailsOBJ.setParkingPlaceID(commonUtilityClass.getParkingPlaceID());
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {
@@ -571,7 +572,7 @@ public class ANCServiceImpl implements ANCService {
 
 				// 07-06-2018 visit code
 				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-						nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 
 				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
 					if (visitDetailsOBJ.has("chiefComplaints")

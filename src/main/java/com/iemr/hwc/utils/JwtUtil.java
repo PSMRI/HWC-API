@@ -3,6 +3,7 @@ package com.iemr.hwc.utils;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 
+import com.iemr.hwc.utils.exception.IEMRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -63,5 +64,23 @@ public class JwtUtil {
 	private Claims extractAllClaims(String token) {
 		JwtParser parser = Jwts.parser().verifyWith(getSigningKey()).build();
 		return parser.parseSignedClaims(token).getPayload();
+	}
+	public Integer extractUserId(String jwtToken) throws IEMRException {
+		try {
+			// Validate JWT token and extract claims
+			Claims claims = validateToken(jwtToken);
+
+			if (claims == null) {
+				throw new IEMRException("Invalid JWT token.");
+			}
+
+			String userId = claims.get("userId", String.class);
+
+			return Integer.parseInt(userId);
+
+		} catch (Exception e) {
+			throw new IEMRException("Validation error: " + e.getMessage(), e);
+		}
+
 	}
 }

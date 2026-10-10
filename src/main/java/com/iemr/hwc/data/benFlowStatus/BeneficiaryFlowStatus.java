@@ -45,6 +45,7 @@ import com.google.gson.annotations.Expose;
 import com.iemr.hwc.annotation.sqlInjectionSafe.SQLInjectionSafe;
 import com.iemr.hwc.data.login.MasterVan;
 import com.iemr.hwc.data.masterdata.registrar.GenderMaster;
+import lombok.Data;
 
 /***
  * 
@@ -53,6 +54,7 @@ import com.iemr.hwc.data.masterdata.registrar.GenderMaster;
  */
 @Entity
 @Table(name = "i_ben_flow_outreach")
+@Data
 public class BeneficiaryFlowStatus {
 
 	@Id
@@ -237,6 +239,10 @@ public class BeneficiaryFlowStatus {
 	private Integer vanID;
 
 	@Expose
+	@Column(name = "facilityID")
+	private Integer facilityID;
+
+	@Expose
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "vanID", referencedColumnName = "vanID", insertable = false, updatable = false)
 	private MasterVan masterVan;
@@ -344,7 +350,30 @@ public class BeneficiaryFlowStatus {
 	private String bloodGroup;
 	@Transient
 	private String subVisitCategory;
-	
+
+		@Transient
+		@Expose
+		private Integer reproductiveStatusId;
+
+		@Transient
+		@Expose
+		private String  reproductiveStatus;
+
+	public Integer getReproductiveStatusId() {
+		return reproductiveStatusId;
+	}
+
+	public void setReproductiveStatusId(Integer reproductiveStatusId) {
+		this.reproductiveStatusId = reproductiveStatusId;
+	}
+
+	public String getReproductiveStatus() {
+		return reproductiveStatus;
+	}
+
+	public void setReproductiveStatus(String reproductiveStatus) {
+		this.reproductiveStatus = reproductiveStatus;
+	}
 
 	// new variable added for patient app
 	@Transient
@@ -487,6 +516,14 @@ public class BeneficiaryFlowStatus {
 
 	public void setVanID(Integer vanID) {
 		this.vanID = vanID;
+	}
+
+	public Integer getFacilityID() {
+		return facilityID;
+	}
+
+	public void setFacilityID(Integer facilityID) {
+		this.facilityID = facilityID;
 	}
 
 	public String getVanNo() {
