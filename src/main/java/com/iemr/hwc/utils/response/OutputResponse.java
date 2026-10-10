@@ -232,16 +232,17 @@ public class OutputResponse {
 		// builder.disableInnerClassSerialization();
 		String output = builder.create().toJson(this);
 
-		switch (this.statusCode) {
-		case SUCCESS:
-			return ResponseEntity.status(HttpStatus.OK).body(output);
-		case GENERIC_FAILURE:
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(output);
-		case BAD_REQUEST:
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(output);
-		default:
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(output);
-		}
+		HttpStatus resolvedStatus = switch (this.statusCode) {
+			case SUCCESS -> HttpStatus.OK;
+			case BAD_REQUEST, OBJECT_FAILURE, PARSE_EXCEPTION, TM_EXCEPTION -> HttpStatus.BAD_REQUEST;
+			case USERID_FAILURE, PASSWORD_FAILURE -> HttpStatus.UNAUTHORIZED;
+			case PREVILAGE_FAILURE -> HttpStatus.FORBIDDEN;
+			case NOT_FOUND -> HttpStatus.NOT_FOUND;
+			case ENVIRONMENT_EXCEPTION -> HttpStatus.SERVICE_UNAVAILABLE;
+			case SWYMED_EXCEPTION -> HttpStatus.BAD_GATEWAY;
+			default -> HttpStatus.INTERNAL_SERVER_ERROR;
+		};
+		return ResponseEntity.status(resolvedStatus).body(output);
 
 //		if(!isSuccess())
 //			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
