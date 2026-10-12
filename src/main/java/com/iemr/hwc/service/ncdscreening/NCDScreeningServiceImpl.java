@@ -371,6 +371,8 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 
 					if (createdDateMillis != null) {
 						cbacDetails.setCreatedDate(new Timestamp(createdDateMillis));
+					} else {
+						cbacDetails.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 					}
 
 					cbacDetails.setCreatedBy(nurseUtilityClass.getCreatedBy());
