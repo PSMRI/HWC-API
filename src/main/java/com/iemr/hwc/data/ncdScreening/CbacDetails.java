@@ -323,14 +323,4 @@ public class CbacDetails {
 	@Column(name = "is_refer")
 	private Boolean isRefer;
 
-
-	@JsonSetter("createdDate")
-	public void setCreatedDateFromMillis(Long createdDate) {
-		if (createdDate != null) {
-			this.createdDate = new Timestamp(createdDate);
-		}
-	}
-
-
-
 }
