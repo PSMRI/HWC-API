@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.iemr.hwc.service.generalOPD.GeneralOPDServiceImpl;
 import com.iemr.hwc.utils.response.OutputResponse;
@@ -80,32 +82,35 @@ public class GeneralOPDController {
 	 */
 	@Operation(summary = "Save general OPD data collected by nurse")
 	@PostMapping(value = { "/save/nurseData" })
-	public String saveBenGenOPDNurseData(@RequestBody String requestObj,
+	public ResponseEntity<String> saveBenGenOPDNurseData(@RequestBody String requestObj,
 			@RequestHeader(value = "Authorization") String Authorization) throws Exception {
 		OutputResponse response = new OutputResponse();
 
 		if (null != requestObj) {
-			JsonObject jsnOBJ = new JsonObject();
-			JsonParser jsnParser = new JsonParser();
-			JsonElement jsnElmnt = jsnParser.parse(requestObj);
-			jsnOBJ = jsnElmnt.getAsJsonObject();
+			JsonObject jsnOBJ = null;
 
 			try {
-				logger.info("Request object for GeneralOPD nurse data saving :" + requestObj);
+				logger.info("Request received for GeneralOPD nurse data saving");
 
-				if (jsnOBJ != null) {
-					String genOPDRes = generalOPDServiceImpl.saveNurseData(jsnOBJ, Authorization);
-					response.setResponse(genOPDRes);
-				} else {
-					response.setResponse("Invalid request");
+				JsonElement jsnElmnt = JsonParser.parseString(requestObj);
+				if (!jsnElmnt.isJsonObject()) {
+					response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
+					return response.toStringWithHttpStatus();
 				}
+				jsnOBJ = jsnElmnt.getAsJsonObject();
+
+				String genOPDRes = generalOPDServiceImpl.saveNurseData(jsnOBJ, Authorization);
+				response.setResponse(genOPDRes);
+			} catch (JsonParseException e) {
+				logger.error("Invalid request body for nurse data saving :" + e.getMessage());
+				response.setError(OutputResponse.BAD_REQUEST, "Invalid request");
 			} catch (Exception e) {
 				logger.error("Error in nurse data saving :" + e.getMessage());
 				generalOPDServiceImpl.deleteVisitDetails(jsnOBJ);
 				response.setError(5000, e.getMessage());
 			}
 		}
-		return response.toString();
+		return response.toStringWithHttpStatus();
 	}
 
 	/**
