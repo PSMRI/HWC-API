@@ -325,12 +325,10 @@ public class CbacDetails {
 
 
 	@JsonSetter("createdDate")
-	public void setCreatedDateFromMillis(Long createdDate) {
+	public void setCreatedDate(Long createdDate) {
 		if (createdDate != null) {
 			this.createdDate = new Timestamp(createdDate);
 		}
 	}
-
-
 
 }
