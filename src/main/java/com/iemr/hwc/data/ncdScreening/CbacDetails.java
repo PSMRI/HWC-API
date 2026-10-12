@@ -235,7 +235,7 @@ public class CbacDetails {
 	private String createdBy;
 
 	@Expose
-	@Column(name = "CreatedDate", insertable = false, updatable = false)
+	@Column(name = "CreatedDate", nullable = false)
 	private Timestamp createdDate;
 
 	@Expose

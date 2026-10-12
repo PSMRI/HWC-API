@@ -366,6 +366,7 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 						cbacDetails.setSyncedDate(new Timestamp(System.currentTimeMillis()));
 					}
 
+
 					if (cbacDetails.getSyncedBy() == null || cbacDetails.getSyncedBy().trim().isEmpty()) {
 						cbacDetails.setSyncedBy(nurseUtilityClass.getCreatedBy());
 					}
