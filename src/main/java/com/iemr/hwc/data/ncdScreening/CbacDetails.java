@@ -23,6 +23,7 @@ package com.iemr.hwc.data.ncdScreening;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.persistence.*;
 
 import com.google.gson.annotations.Expose;
@@ -323,7 +324,12 @@ public class CbacDetails {
 	private Boolean isRefer;
 
 
-
+	@JsonSetter("createdDate")
+	public void setCreatedDateFromMillis(Long createdDate) {
+		if (createdDate != null) {
+			this.createdDate = new Timestamp(createdDate);
+		}
+	}
 
 
 
