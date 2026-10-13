@@ -1,248 +1,266 @@
-/*
-* AMRIT – Accessible Medical Records via Integrated Technology
-* Integrated EHR (Electronic Health Records) Solution
-*
-* Copyright (C) "Piramal Swasthya Management and Research Institute"
-*
-* This file is part of AMRIT.
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see https://www.gnu.org/licenses/.
-*/
 package com.iemr.hwc.service.ncdscreening;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.iemr.hwc.data.ncdScreening.BreastCancerScreening;
-import com.iemr.hwc.data.ncdScreening.CbacDetails;
-import com.iemr.hwc.data.ncdScreening.CervicalCancerScreening;
-import com.iemr.hwc.data.ncdScreening.DiabetesScreening;
-import com.iemr.hwc.data.ncdScreening.HypertensionScreening;
-import com.iemr.hwc.data.ncdScreening.OralCancerScreening;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.iemr.hwc.data.nurse.BeneficiaryVisitDetail;
 import com.iemr.hwc.repo.nurse.ncdscreening.BreastCancerScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.CbacDetailsRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.CervicalCancerScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.DiabetesScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.HypertensionScreeningRepo;
 import com.iemr.hwc.repo.nurse.ncdscreening.OralCancerScreeningRepo;
-import com.iemr.hwc.utils.exception.IEMRException;
+import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
+import com.iemr.hwc.repo.quickConsultation.BenChiefComplaintRepo;
+import com.iemr.hwc.service.benFlowStatus.CommonBenStatusFlowServiceImpl;
+import com.iemr.hwc.service.common.transaction.CommonDoctorServiceImpl;
+import com.iemr.hwc.service.common.transaction.CommonNurseServiceImpl;
+import com.iemr.hwc.testutil.NurseVisitRequest;
+import com.iemr.hwc.testutil.PopulatedMocks;
 
-@ExtendWith(MockitoExtension.class)
+/**
+ * The NCD screening service records a screening visit: the visit itself, the history and
+ * vitals, the CBAC and IDRS questionnaires, the physical activity history and the four
+ * screening forms - diabetes, hypertension, oral, breast and cervical.
+ */
+@DisplayName("NCDScreeningServiceImpl")
 class NCDScreeningServiceImplTest {
 
-    @Mock
-    private DiabetesScreeningRepo diabetesScreeningRepo;
-    @Mock
-    private HypertensionScreeningRepo hypertensionScreeningRepo;
-    @Mock
-    private OralCancerScreeningRepo oralCancerScreeningRepo;
-    @Mock
-    private BreastCancerScreeningRepo breastCancerScreeningRepo;
-    @Mock
-    private CervicalCancerScreeningRepo cervicalCancerScreeningRepo;
-    @Mock
-    private CbacDetailsRepo cbacDetailsRepo;
+	private NCDScreeningServiceImpl service;
+	private CommonNurseServiceImpl commonNurseServiceImpl;
+	private CommonDoctorServiceImpl commonDoctorServiceImpl;
+	private NCDScreeningNurseServiceImpl ncdScreeningNurseServiceImpl;
+	private NCDSCreeningDoctorServiceImpl ncdSCreeningDoctorServiceImpl;
+	private CommonBenStatusFlowServiceImpl commonBenStatusFlowServiceImpl;
 
-    @InjectMocks
-    private NCDScreeningServiceImpl ncdScreeningService;
+	@BeforeEach
+	void setUp() throws Exception {
+		service = new NCDScreeningServiceImpl();
+		commonNurseServiceImpl = PopulatedMocks.inject(service, "commonNurseServiceImpl",
+				CommonNurseServiceImpl.class);
+		commonDoctorServiceImpl = PopulatedMocks.inject(service, "commonDoctorServiceImpl",
+				CommonDoctorServiceImpl.class);
+		ncdScreeningNurseServiceImpl = PopulatedMocks.inject(service, "ncdScreeningNurseServiceImpl",
+				NCDScreeningNurseServiceImpl.class);
+		ncdSCreeningDoctorServiceImpl = PopulatedMocks.inject(service, "ncdSCreeningDoctorServiceImpl",
+				NCDSCreeningDoctorServiceImpl.class);
+		commonBenStatusFlowServiceImpl = PopulatedMocks.inject(service, "commonBenStatusFlowServiceImpl",
+				CommonBenStatusFlowServiceImpl.class);
+		PopulatedMocks.injectCollaborators(service);
 
-    private DiabetesScreening diabetesScreening;
-    private HypertensionScreening hypertensionScreening;
-    private OralCancerScreening oralCancerScreening;
-    private BreastCancerScreening breastCancerScreening;
-    private CervicalCancerScreening cervicalCancerScreening;
-    private CbacDetails cbacDetails;
+		// Each screening form is saved through its own repository and the service then reads
+		// the generated id back to decide whether the save worked, so the saved records have
+		// to come back with one.
+		stampIdsOnSavedScreeningForms();
 
-    @BeforeEach
-    void setUp() {
-        diabetesScreening = new DiabetesScreening();
-        diabetesScreening.setId(1L);
+		doReturn(0).when(commonNurseServiceImpl).getMaxCurrentdate(any(), any(), any());
+		doReturn(10L).when(commonNurseServiceImpl).saveBeneficiaryVisitDetails(any(BeneficiaryVisitDetail.class));
+		doReturn(20L).when(commonNurseServiceImpl).generateVisitCode(anyLong(), any(), any());
+	}
 
-        hypertensionScreening = new HypertensionScreening();
-        hypertensionScreening.setId(1L);
+	/**
+	 * Makes every screening repository hand back a record carrying an id, the way a real save
+	 * does. The populated mocks echo the record they were given, which has no id yet.
+	 */
+	private void stampIdsOnSavedScreeningForms() {
+		CbacDetailsRepo cbacDetailsRepo = PopulatedMocks.inject(service, "cbacDetailsRepo", CbacDetailsRepo.class);
+		doAnswer(saveWithId(1L)).when(cbacDetailsRepo).save(any());
+		BreastCancerScreeningRepo breastRepo = PopulatedMocks.inject(service, "breastCancerScreeningRepo",
+				BreastCancerScreeningRepo.class);
+		doAnswer(saveWithId(1L)).when(breastRepo).save(any());
+		CervicalCancerScreeningRepo cervicalRepo = PopulatedMocks.inject(service, "cervicalCancerScreeningRepo",
+				CervicalCancerScreeningRepo.class);
+		doAnswer(saveWithId(1L)).when(cervicalRepo).save(any());
+		DiabetesScreeningRepo diabetesRepo = PopulatedMocks.inject(service, "diabetesScreeningRepo",
+				DiabetesScreeningRepo.class);
+		doAnswer(saveWithId(1L)).when(diabetesRepo).save(any());
+		HypertensionScreeningRepo hypertensionRepo = PopulatedMocks.inject(service, "hypertensionScreeningRepo",
+				HypertensionScreeningRepo.class);
+		doAnswer(saveWithId(1L)).when(hypertensionRepo).save(any());
+		OralCancerScreeningRepo oralRepo = PopulatedMocks.inject(service, "oralCancerScreeningRepo",
+				OralCancerScreeningRepo.class);
+		doAnswer(saveWithId(1L)).when(oralRepo).save(any());
+	}
 
-        oralCancerScreening = new OralCancerScreening();
-        oralCancerScreening.setId(1L);
+	/** Echoes the saved record back with {@code id} set, as the database would. */
+	private static org.mockito.stubbing.Answer<Object> saveWithId(Long id) {
+		return invocation -> {
+			Object saved = invocation.getArgument(0);
+			org.springframework.test.util.ReflectionTestUtils.setField(saved, "id", id);
+			return saved;
+		};
+	}
 
-        breastCancerScreening = new BreastCancerScreening();
-        breastCancerScreening.setId(1L);
+	/** A screening request carrying every form the save reads. */
+	private static JsonObject nurseRequest() {
+		// The physical activity form is filled in as part of the history, so the service reads
+		// it from inside that section rather than from the top of the request.
+		JsonObject historyDetails = NurseVisitRequest.sections(NurseVisitRequest.HISTORY_SECTIONS);
+		historyDetails.add("physicalActivityHistory", new JsonObject());
 
-        cervicalCancerScreening = new CervicalCancerScreening();
-        cervicalCancerScreening.setId(1L);
+		return NurseVisitRequest.forCategory("NCD screening").with("historyDetails", historyDetails)
+				.with("vitalDetails", new JsonObject()).with("idrsDetails", new JsonObject())
+				.with("cbac", new JsonObject())
+				.with("diabetes", new JsonObject()).with("hypertension", new JsonObject())
+				.with("oral", new JsonObject()).with("breast", new JsonObject())
+				.with("cervical", new JsonObject()).build();
+	}
 
-        cbacDetails = new CbacDetails();
-        cbacDetails.setId(1L);
-    }
+	private static JsonObject doctorRequest() {
+		JsonObject diagnosis = new JsonObject();
+		diagnosis.addProperty("specialistDiagnosis", "advice recorded");
+		diagnosis.add("provisionalDiagnosisList", new JsonArray());
+		return NurseVisitRequest.forCategory("NCD screening").with("findings", new JsonObject())
+				.with("prescription", new JsonArray()).with("diagnosis", diagnosis)
+				.with("refer", new JsonObject()).field("doctorSignatureFlag", "true")
+				.field("isSpecialist", "true").build();
+	}
 
-    // -------------------- saveDiabetesDetails --------------------
+	@Nested
+	@DisplayName("saving a nurse visit")
+	class SavingANurseVisit {
 
-    @Test
-    void saveDiabetesDetails_success_returnsId() throws IEMRException {
-        when(diabetesScreeningRepo.save(diabetesScreening)).thenReturn(diabetesScreening);
+		@Test
+		@DisplayName("saves every screening form and answers with the visit code and visit id")
+		void savesEveryScreeningForm() throws Exception {
+			String response = service.saveNCDScreeningNurseData(nurseRequest(), "Bearer token");
 
-        Long result = ncdScreeningService.saveDiabetesDetails(diabetesScreening);
+			assertThat(response).contains("\"visitCode\":\"20\"").contains("\"benVisitID\":\"10\"")
+					.contains("Data saved successfully");
+			verify(commonNurseServiceImpl).saveBeneficiaryVisitDetails(any(BeneficiaryVisitDetail.class));
+			verify(commonNurseServiceImpl).savePhysicalActivity(any());
+			verify(commonNurseServiceImpl).saveIDRS(any());
+		}
 
-        assertEquals(1L, result);
-        verify(diabetesScreeningRepo).save(diabetesScreening);
-    }
+		@Test
+		@DisplayName("reports the visit as already captured when one is recorded for the same reason")
+		void reportsAnAlreadyCapturedVisit() throws Exception {
+			doReturn(1).when(commonNurseServiceImpl).getMaxCurrentdate(any(), any(), any());
 
-    @Test
-    void saveDiabetesDetails_repoReturnsNull_throwsIEMRException() {
-        when(diabetesScreeningRepo.save(diabetesScreening)).thenReturn(null);
+			assertThat(service.saveNCDScreeningNurseData(nurseRequest(), "Bearer token"))
+					.contains("Data already saved");
+		}
 
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveDiabetesDetails(diabetesScreening));
+		@Test
+		@DisplayName("rejects a request that carries no visit details")
+		void rejectsARequestWithoutVisitDetails() {
+			assertThatThrownBy(() -> service.saveNCDScreeningNurseData(new JsonObject(), "Bearer token"))
+					.isInstanceOf(Exception.class).hasMessage("Invalid input");
+		}
 
-        assertEquals("Error while saving diabetes screening data", ex.getMessage());
-    }
+		@Test
+		@DisplayName("saves a visit whose screening forms were left blank")
+		void savesAVisitWithoutScreeningForms() throws Exception {
+			JsonObject request = NurseVisitRequest.forCategory("NCD screening")
+					.with("historyDetails", NurseVisitRequest.HISTORY_SECTIONS)
+					.with("vitalDetails", new JsonObject()).build();
 
-    @Test
-    void saveDiabetesDetails_repoReturnsObjectWithNullId_throwsIEMRException() {
-        DiabetesScreening noId = new DiabetesScreening();
-        when(diabetesScreeningRepo.save(noId)).thenReturn(noId);
+			assertThat(service.saveNCDScreeningNurseData(request, "Bearer token")).contains("visitCode");
+		}
 
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveDiabetesDetails(noId));
+		@Test
+		@DisplayName("moves the beneficiary on to the next desk once the visit is saved")
+		void movesTheBeneficiaryOn() throws Exception {
+			service.saveNCDScreeningNurseData(nurseRequest(), "Bearer token");
 
-        assertEquals("Error while saving diabetes screening data", ex.getMessage());
-    }
+			verify(commonBenStatusFlowServiceImpl).updateBenFlowNurseAfterNurseActivity(any(), any(), any(), any(),
+					any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+		}
+	}
 
-    // -------------------- saveHypertensionDetails --------------------
+	@Nested
+	@DisplayName("saving doctor data")
+	class SavingDoctorData {
 
-    @Test
-    void saveHypertensionDetails_success_returnsId() throws IEMRException {
-        when(hypertensionScreeningRepo.save(hypertensionScreening)).thenReturn(hypertensionScreening);
+		@Test
+		@DisplayName("records the findings, investigation and prescription of the consultation")
+		void recordsTheConsultation() throws Exception {
+			assertThat(service.saveDoctorData(doctorRequest(), "Bearer token")).isNotNull();
 
-        Long result = ncdScreeningService.saveHypertensionDetails(hypertensionScreening);
+			verify(commonDoctorServiceImpl).saveDocFindings(any());
+		}
+	}
 
-        assertEquals(1L, result);
-        verify(hypertensionScreeningRepo).save(hypertensionScreening);
-    }
+	@Nested
+	@DisplayName("reading a screening record back")
+	class ReadingAScreeningRecord {
 
-    @Test
-    void saveHypertensionDetails_repoReturnsNull_throwsIEMRException() {
-        when(hypertensionScreeningRepo.save(hypertensionScreening)).thenReturn(null);
+		@Test
+		@DisplayName("gathers the nurse sections of a visit into one document")
+		void gathersTheNurseSections() {
+			assertThat(service.getBenVisitDetailsFrmNurseNCDScreening(1L, 20L)).isNotNull();
+			assertThat(service.getBenHistoryDetails(1L, 20L)).isNotNull();
+			assertThat(service.getNCDScreeningDetails(1L, 20L)).isNotNull();
+		}
 
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveHypertensionDetails(hypertensionScreening));
+		@Test
+		@DisplayName("gathers the doctor sections of a visit into one document")
+		void gathersTheDoctorSections() {
+			doReturn("{\"counsellingProvided\":\"a||b\"}").when(ncdSCreeningDoctorServiceImpl)
+					.getNCDDiagnosisData(anyLong(), anyLong());
 
-        assertEquals("Error while saving hypertension screening data", ex.getMessage());
-    }
+			assertThat(service.getBenCaseRecordFromDoctorNCDScreening(1L, 20L)).isNotNull().contains("findings");
+		}
 
-    @Test
-    void saveHypertensionDetails_repoReturnsObjectWithNullId_throwsIEMRException() {
-        HypertensionScreening noId = new HypertensionScreening();
-        when(hypertensionScreeningRepo.save(noId)).thenReturn(noId);
+		@Test
+		@DisplayName("counts the screening visits recorded for a beneficiary")
+		void countsTheScreeningVisits() {
+			assertThat(service.getNcdScreeningVisitCnt(1L)).isNotNull();
+		}
+	}
 
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveHypertensionDetails(noId));
+	@Nested
+	@DisplayName("updating a recorded visit")
+	class UpdatingARecordedVisit {
 
-        assertEquals("Error while saving hypertension screening data", ex.getMessage());
-    }
+		@Test
+		@DisplayName("updates the vitals of a recorded visit")
+		void updatesTheVitals() throws Exception {
+			assertThat(service.updateBenVitalDetails(new JsonObject())).isNotNegative();
+		}
+	}
 
-    // -------------------- saveOralCancerDetails --------------------
+	@Nested
+	@DisplayName("rolling a failed save back")
+	class RollingAFailedSaveBack {
 
-    @Test
-    void saveOralCancerDetails_success_returnsId() throws IEMRException {
-        when(oralCancerScreeningRepo.save(oralCancerScreening)).thenReturn(oralCancerScreening);
+		@Test
+		@DisplayName("deletes the records a failed nurse save had already written")
+		void deletesTheRecordsOfAFailedSave() throws Exception {
+			BenVisitDetailRepo benVisitDetailRepo = PopulatedMocks.inject(service, "benVisitDetailRepo",
+					BenVisitDetailRepo.class);
+			BenChiefComplaintRepo benChiefComplaintRepo = PopulatedMocks.inject(service, "benChiefComplaintRepo",
+					BenChiefComplaintRepo.class);
+			doReturn(20L).when(benVisitDetailRepo).getVisitCode(any(), any());
 
-        Long result = ncdScreeningService.saveOralCancerDetails(oralCancerScreening);
+			service.deleteVisitDetails(nurseRequest());
 
-        assertEquals(1L, result);
-        verify(oralCancerScreeningRepo).save(oralCancerScreening);
-    }
+			verify(benChiefComplaintRepo).deleteVisitDetails(20L);
+			verify(benVisitDetailRepo).deleteVisitDetails(20L);
+		}
 
-    @Test
-    void saveOralCancerDetails_repoReturnsNull_throwsIEMRException() {
-        when(oralCancerScreeningRepo.save(oralCancerScreening)).thenReturn(null);
+		@Test
+		@DisplayName("does nothing for a request that never created a visit")
+		void doesNothingWithoutVisitDetails() throws Exception {
+			BenVisitDetailRepo benVisitDetailRepo = PopulatedMocks.inject(service, "benVisitDetailRepo",
+					BenVisitDetailRepo.class);
 
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveOralCancerDetails(oralCancerScreening));
+			service.deleteVisitDetails(new JsonObject());
 
-        assertEquals("Error while saving oral screening", ex.getMessage());
-    }
-
-    // -------------------- saveBreastCancerDetails --------------------
-
-    @Test
-    void saveBreastCancerDetails_success_returnsId() throws IEMRException {
-        when(breastCancerScreeningRepo.save(breastCancerScreening)).thenReturn(breastCancerScreening);
-
-        Long result = ncdScreeningService.saveBreastCancerDetails(breastCancerScreening);
-
-        assertEquals(1L, result);
-        verify(breastCancerScreeningRepo).save(breastCancerScreening);
-    }
-
-    @Test
-    void saveBreastCancerDetails_repoReturnsNull_throwsIEMRException() {
-        when(breastCancerScreeningRepo.save(breastCancerScreening)).thenReturn(null);
-
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveBreastCancerDetails(breastCancerScreening));
-
-        assertEquals("Error while saving breast cancer screening", ex.getMessage());
-    }
-
-    // -------------------- saveCervicalDetails --------------------
-
-    @Test
-    void saveCervicalDetails_success_returnsId() throws IEMRException {
-        when(cervicalCancerScreeningRepo.save(cervicalCancerScreening)).thenReturn(cervicalCancerScreening);
-
-        Long result = ncdScreeningService.saveCervicalDetails(cervicalCancerScreening);
-
-        assertEquals(1L, result);
-        verify(cervicalCancerScreeningRepo).save(cervicalCancerScreening);
-    }
-
-    @Test
-    void saveCervicalDetails_repoReturnsNull_throwsIEMRException() {
-        when(cervicalCancerScreeningRepo.save(cervicalCancerScreening)).thenReturn(null);
-
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveCervicalDetails(cervicalCancerScreening));
-
-        assertEquals("Error while saving cervical screening", ex.getMessage());
-    }
-
-    // -------------------- saveCbacDetails --------------------
-
-    @Test
-    void saveCbacDetails_success_returnsId() throws IEMRException {
-        when(cbacDetailsRepo.save(cbacDetails)).thenReturn(cbacDetails);
-
-        Long result = ncdScreeningService.saveCbacDetails(cbacDetails);
-
-        assertEquals(1L, result);
-        verify(cbacDetailsRepo).save(cbacDetails);
-    }
-
-    @Test
-    void saveCbacDetails_repoReturnsNull_throwsIEMRException() {
-        when(cbacDetailsRepo.save(cbacDetails)).thenReturn(null);
-
-        IEMRException ex = assertThrows(IEMRException.class,
-                () -> ncdScreeningService.saveCbacDetails(cbacDetails));
-
-        assertEquals("Error while saving Cbac details", ex.getMessage());
-    }
+			verify(benVisitDetailRepo, never()).getVisitCode(any(), any());
+		}
+	}
 }
