@@ -529,6 +529,15 @@ public class CommonDoctorServiceImpl {
 		BenReferDetails referDetails = InputMapper.gson().fromJson(obj, BenReferDetails.class);
 		CommonUtilityClass cuc = InputMapper.gson().fromJson(obj, CommonUtilityClass.class);
 
+		logger.info(
+				"Referral save request: BeneficiaryRegID={}, BenVisitID={}, VisitCode={}, ProviderServiceMapID={}, serviceID={}",
+				referDetails.getBeneficiaryRegID(),
+				referDetails.getBenVisitID(),
+				referDetails.getVisitCode(),
+				referDetails.getProviderServiceMapID(),
+				referDetails.getServiceID()
+		);
+
 		// referral reason list
 		if (referDetails != null) {
 			if (rrList != null && rrList) {
@@ -553,6 +562,15 @@ public class CommonDoctorServiceImpl {
 					referDetails.setServiceName(sb.substring(0, (sb.length() - 2)));
 
 			}
+			if (referDetails.getBenVisitID() != null && referDetails.getBenVisitID() == 0) {
+				referDetails.setBenVisitID(null);
+			}
+
+			if (referDetails.getVisitCode() != null && referDetails.getVisitCode() == 0) {
+				referDetails.setVisitCode(null);
+			}
+
+			benReferDetailsRepo.save(referDetails);
 
 			benReferDetailsRepo.save(referDetails);
 		}
@@ -572,7 +590,10 @@ public class CommonDoctorServiceImpl {
 				if (referDetails != null && referDetails.getServiceName() != null) {
 					referDetails.setRefrredToAdditionalServiceList(referDetails.getServiceName().split("\\|\\|"));
 				}
-				referDetails.setBenId(referDetails.getBeneficiaryRegID());
+				if(referDetails.getBenId()==null){
+					referDetails.setBenId(referDetails.getBeneficiaryRegID());
+
+				}
 
 			}
 		}

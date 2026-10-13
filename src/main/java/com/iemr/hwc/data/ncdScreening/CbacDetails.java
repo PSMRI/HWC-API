@@ -323,4 +323,13 @@ public class CbacDetails {
 	@Column(name = "is_refer")
 	private Boolean isRefer;
 
+	@Expose
+	@Column(name = "cbac_occupational_exposure_other")
+	private String CbacOccupationalExposureOther;
+
+
+
+
+
+
 }
