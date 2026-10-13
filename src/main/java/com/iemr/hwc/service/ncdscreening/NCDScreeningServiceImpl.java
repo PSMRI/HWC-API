@@ -355,16 +355,36 @@ public class NCDScreeningServiceImpl implements NCDScreeningService {
 				}
 				// CBAC
 				if (requestOBJ.has("cbac") && requestOBJ.get("cbac") != null && !requestOBJ.get("cbac").isJsonNull()) {
-					CbacDetails cbacDetails = InputMapper.gson().fromJson(requestOBJ.getAsJsonObject("cbac"),
-							CbacDetails.class);
+					JsonObject cbacJson =
+							requestOBJ.getAsJsonObject("cbac").deepCopy();
+
+					Long createdDateMillis = null;
+
+					if (cbacJson.has("createdDate")
+							&& !cbacJson.get("createdDate").isJsonNull()) {
+						createdDateMillis = cbacJson.get("createdDate").getAsLong();
+						cbacJson.remove("createdDate");
+					}
+
+					CbacDetails cbacDetails =
+							InputMapper.gson().fromJson(cbacJson, CbacDetails.class);
+
+					if (createdDateMillis != null) {
+						cbacDetails.setCreatedDate(new Timestamp(createdDateMillis));
+					} else {
+						cbacDetails.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+					}
+
 					cbacDetails.setCreatedBy(nurseUtilityClass.getCreatedBy());
 					cbacDetails.setVanId(nurseUtilityClass.getVanID());
 					cbacDetails.setParkingPlaceId(nurseUtilityClass.getParkingPlaceID());
+
 
 					cbacDetails.setBeneficiaryRegId(nurseUtilityClass.getBeneficiaryRegID());
 					if (cbacDetails.getSyncedDate() == null) {
 						cbacDetails.setSyncedDate(new Timestamp(System.currentTimeMillis()));
 					}
+
 
 					if (cbacDetails.getSyncedBy() == null || cbacDetails.getSyncedBy().trim().isEmpty()) {
 						cbacDetails.setSyncedBy(nurseUtilityClass.getCreatedBy());
