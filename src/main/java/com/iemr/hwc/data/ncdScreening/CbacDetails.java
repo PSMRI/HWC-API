@@ -23,6 +23,7 @@ package com.iemr.hwc.data.ncdScreening;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.persistence.*;
 
 import com.google.gson.annotations.Expose;
@@ -235,7 +236,7 @@ public class CbacDetails {
 	private String createdBy;
 
 	@Expose
-	@Column(name = "CreatedDate", insertable = false, updatable = false)
+	@Column(name = "CreatedDate", nullable = false)
 	private Timestamp createdDate;
 
 	@Expose
@@ -322,9 +323,8 @@ public class CbacDetails {
 	@Column(name = "is_refer")
 	private Boolean isRefer;
 
+	@Expose
+	@Column(name = "cbac_occupational_exposure_other")
+	private String CbacOccupationalExposureOther;
 
-
-
-
-
-}
+ }
