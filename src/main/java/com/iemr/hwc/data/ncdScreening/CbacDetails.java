@@ -327,9 +327,4 @@ public class CbacDetails {
 	@Column(name = "cbac_occupational_exposure_other")
 	private String CbacOccupationalExposureOther;
 
-
-
-
-
-
-}
+ }

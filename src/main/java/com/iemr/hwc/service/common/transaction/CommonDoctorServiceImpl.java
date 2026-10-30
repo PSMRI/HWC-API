@@ -571,8 +571,6 @@ public class CommonDoctorServiceImpl {
 			}
 
 			benReferDetailsRepo.save(referDetails);
-
-			benReferDetailsRepo.save(referDetails);
 		}
 
 		return ID;
