@@ -61,9 +61,14 @@ public class UptsuServiceImpl implements UptsuService {
 
 	@Override
 	public String getWorklist(Integer vanID) {
+		Integer facilityID = uptsuRepository.getFacilityId(vanID);
+		return getWorklistByFacilityID(facilityID);
+	}
+
+	@Override
+	public String getWorklistByFacilityID(Integer facilityID) {
 		List<Worklist104Data> listOfData = new ArrayList<Worklist104Data>();
 
-		Integer facilityID = uptsuRepository.getFacilityId(vanID);
 		String facilityCode = uptsuRepository.getfacilityCode(facilityID);
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();

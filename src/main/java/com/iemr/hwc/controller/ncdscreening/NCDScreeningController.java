@@ -458,6 +458,9 @@ public class NCDScreeningController {
 			@RequestBody Map<String, String> requestBody) {
 
 
+		logger.info("--------------------------------------------");
+		logger.info("CBAC API Called");
+		logger.info("--------------------------------------------");
 
 		OutputResponse response = new OutputResponse();
 		try {

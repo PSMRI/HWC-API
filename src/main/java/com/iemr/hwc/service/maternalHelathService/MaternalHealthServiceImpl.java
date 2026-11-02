@@ -1,6 +1,7 @@
 package com.iemr.hwc.service.maternalHelathService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.iemr.hwc.data.anc.ANCVisit;
 import com.iemr.hwc.data.anc.ANCVisitDTO;
 import com.iemr.hwc.data.anc.AncCare;
@@ -11,6 +12,7 @@ import com.iemr.hwc.data.pregnantWomen.PregnantWomanDTO;
 import com.iemr.hwc.data.pregnantWomen.PregnantWomanRegister;
 import com.iemr.hwc.repo.ancVisit.ANCVisitRepo;
 import com.iemr.hwc.repo.ancVisit.AncCareRepo;
+import com.iemr.hwc.repo.login.UserLoginRepo;
 import com.iemr.hwc.repo.nurse.BenVisitDetailRepo;
 import com.iemr.hwc.repo.nurse.pnc.PNCCareRepo;
 import com.iemr.hwc.repo.pncRepo.PNCVisitRepo;
@@ -60,7 +62,8 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
 
     ModelMapper modelMapper = new ModelMapper();
 
-
+    @Autowired
+    private UserLoginRepo userLoginRepo;
 
     public static final List<String> PNC_PERIODS =
             Arrays.asList("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day");
@@ -68,7 +71,8 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Override
     public List<ANCVisitDTO> getANCVisits(String userName) {
         try {
-            List<ANCVisit> ancVisits = ancVisitRepo.getANCForPW(userName);
+            String createBy = userLoginRepo.getUserByUserID(Long.parseLong(userName)).getUserName();
+            List<ANCVisit> ancVisits = ancVisitRepo.getANCForPW(createBy);
             return ancVisits.stream()
                     .map(anc -> mapper.convertValue(anc, ANCVisitDTO.class))
                     .collect(Collectors.toList());
@@ -233,8 +237,11 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Override
     public List<PregnantWomanDTO> getPregnantWoman(String userName) {
         try {
+            logger.info("UserName: "+userName);
+            String createBy  = userLoginRepo.getUserByUserID(Long.valueOf(userName)).getUserName();
+
             List<PregnantWomanRegister> pregnantWomanRegisterList =
-                    pregnantWomanRegisterRepo.getPWRWithBen(userName);
+                    pregnantWomanRegisterRepo.getPWRWithBen(createBy);
 
             return pregnantWomanRegisterList.stream()
                     .map(pregnantWomanRegister -> mapper.convertValue(pregnantWomanRegister, PregnantWomanDTO.class))
@@ -248,7 +255,9 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Override
     public List<PNCVisitDTO> getPNCVisits(String userName) {
         try {
-            List<PNCVisit> pncVisits = pncVisitRepo.getPNCForPW(userName);
+            String createBy = userLoginRepo.getUserByUserID(Long.parseLong(userName)).getUserName();
+
+            List<PNCVisit> pncVisits = pncVisitRepo.getPNCForPW(createBy);
             return pncVisits.stream()
                     .map(pnc -> mapper.convertValue(pnc, PNCVisitDTO.class))
                     .collect(Collectors.toList());

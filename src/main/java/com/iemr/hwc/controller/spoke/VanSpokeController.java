@@ -92,23 +92,23 @@ public class VanSpokeController {
 		return response.toString();
 	}
 
-	@Operation(summary = "Get user van details")
-	@PostMapping(value = "/getUserVanSpDetails", produces = { "application/json" })
-	public String getUserVanSpDetails(@RequestBody String comingRequest) {
+	@Operation(summary = "Get user facility details")
+	@PostMapping(value = "/getUserFacilityDetails", produces = { "application/json" })
+	public String getUserFacilityDetails(@RequestBody String comingRequest) {
 		OutputResponse response = new OutputResponse();
 		try {
 
 			JSONObject obj = new JSONObject(comingRequest);
 			logger.info("getServicepointVillages request " + comingRequest);
 			if (obj.has("userID") && obj.has("providerServiceMapID")) {
-				String responseData = iemrMmuLoginServiceImpl.getUserVanSpDetails(obj.getInt("userID"),
+				String responseData = iemrMmuLoginServiceImpl.getUserFacilityOnlyDetails(obj.getInt("userID"),
 						obj.getInt("providerServiceMapID"));
 				response.setResponse(responseData);
 			} else {
 				response.setError(5000, "Invalid request");
 			}
 		} catch (Exception e) {
-			response.setError(5000, "Error while getting van and service points data");
+			response.setError(5000, e.getMessage() != null ? e.getMessage() : "Error while getting van and service points data");
 			logger.error("getUserVanSpDetails failed with " + e.getMessage(), e);
 
 		}

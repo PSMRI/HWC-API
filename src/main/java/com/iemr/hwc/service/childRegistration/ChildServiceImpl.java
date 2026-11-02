@@ -6,6 +6,7 @@ import com.iemr.hwc.data.childRegistration.ChildRegister;
 import com.iemr.hwc.data.childRegistration.ChildRegisterDTO;
 import com.iemr.hwc.data.requestDTO.GetBenRequestHandler;
 import com.iemr.hwc.repo.childRegsitration.ChildRegisterRepo;
+import com.iemr.hwc.repo.login.UserLoginRepo;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,13 @@ public class ChildServiceImpl implements ChildService {
     @Autowired
     private ChildRegisterRepo childRepo;
 
+    @Autowired
+    private UserLoginRepo userLoginRepo;
+
     public String getChildDataByUserName(String  userName) {
         try {
-            List<ChildRegister> childRegisterList = childRepo.getChildDetailsForUser(userName);
+            String createBy  = userLoginRepo.getUserByUserID(Long.valueOf(userName)).getUserName();
+            List<ChildRegister> childRegisterList = childRepo.getChildDetailsForUser(createBy);
 
 //            List<ChildRegisterDTO> result = new ArrayList<>();
 //            childRegisterList.forEach(childRegister -> {

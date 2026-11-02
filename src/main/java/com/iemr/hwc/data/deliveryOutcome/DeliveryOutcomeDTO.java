@@ -34,4 +34,10 @@ public class DeliveryOutcomeDTO {
     private String createdBy;
     private Timestamp updatedDate;
     private String updatedBy;
+    private String indicationForLSCS;
+    private String indicationForLSCSOther;
+    private String maternalComplications;
+    private String motherCurrentlyAdmitted;
+    private String maternalComplicationsOther;
+
 }

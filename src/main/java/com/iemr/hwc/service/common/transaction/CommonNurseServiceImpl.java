@@ -159,6 +159,21 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 	private BenVisitDetailRepo benVisitDetailRepo;
 
+	@Autowired
+	private com.iemr.hwc.repo.login.UserLoginRepo userLoginRepo;
+
+	/**
+	 * Resolve the numeric user ID of the responsible staff member from the username
+	 * captured in createdBy/modifiedBy. Returns null if the username is blank or
+	 * cannot be resolved, so an unknown staff member never blocks the save.
+	 */
+	private Long resolveUserId(String username) {
+		if (username == null || username.trim().isEmpty())
+			return null;
+		com.iemr.hwc.data.login.Users user = userLoginRepo.getUserByUsername(username.trim());
+		return user != null ? user.getUserID() : null;
+	}
+
 	private BenChiefComplaintRepo benChiefComplaintRepo;
 	private BenMedHistoryRepo benMedHistoryRepo;
 	private BencomrbidityCondRepo bencomrbidityCondRepo;
@@ -449,6 +464,10 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		}
 
+		// Store the responsible nurse's user ID (resolved from the createdBy username)
+		if (beneficiaryVisitDetail.getNurseID() == null)
+			beneficiaryVisitDetail.setNurseID(resolveUserId(beneficiaryVisitDetail.getCreatedBy()));
+
 		response = benVisitDetailRepo.save(beneficiaryVisitDetail);
 
 		if (response != null) {
@@ -506,13 +525,18 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 
 		}
 
+		Integer facilityIdObj = beneficiaryVisitDetail.getFacilityID();
+		// Store the responsible nurse's user ID (resolved from the createdBy username)
+		if (beneficiaryVisitDetail.getNurseID() == null)
+			beneficiaryVisitDetail.setNurseID(resolveUserId(beneficiaryVisitDetail.getCreatedBy()));
+
 		response = benVisitDetailRepo.save(beneficiaryVisitDetail);
 
 		if (response != null) {
 			Long benVisitId = response.getBenVisitID();
 			Integer vanId = response.getVanID();
 			Integer sessionIdObj = sessionId;
-			Long visitCode = generateVisitCode(benVisitId, vanId, sessionIdObj);
+			Long visitCode = generateVisitCode(benVisitId, vanId, sessionIdObj, facilityIdObj);
 			CDSS cdss = new CDSS();
 			cdss.setVisitCode(visitCode);
 			cdss.setBenVisitID(benVisitId);
@@ -592,16 +616,26 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	}
 
 	public Long generateVisitCode(Long visitID, Integer vanID, Integer sessionID) {
+		return generateVisitCode(visitID, vanID, sessionID, null);
+	}
+
+	public Long generateVisitCode(Long visitID, Integer vanID, Integer sessionID, Integer facilityID) {
 		String visitCode = "";
 
-		// van & session ID
-		String vanIDString = "";
-		int vanIdLength = (int) (Math.log10(vanID) + 1);
-
-		for (int i = 0; i < 5 - vanIdLength; i++) {
-			vanIDString += "0";
+		// facilityID takes priority: HWC users always have facilityID set.
+		// vanID is used only for MMU/TM users where facilityID is null.
+		Integer locationID = (facilityID != null) ? facilityID : vanID;
+		if (locationID == null) {
+			throw new RuntimeException("Both vanID and facilityID are null. Cannot generate visit code.");
 		}
-		vanIDString += vanID;
+
+		String locationIDString = "";
+		int locationIdLength = (int) (Math.log10(locationID) + 1);
+
+		for (int i = 0; i < 5 - locationIdLength; i++) {
+			locationIDString += "0";
+		}
+		locationIDString += locationID;
 		String visitIDString = "";
 		int visitIdLength = (int) (Math.log10(visitID) + 1);
 		for (int i = 0; i < 8 - visitIdLength; i++) {
@@ -613,7 +647,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		// visitCode += sessionID + dayString + monthString + vanIDString +
 		// visitIDString;
 		// changed logic 14 digit visit code, removed day & month
-		visitCode += sessionID + vanIDString + visitIDString;
+		visitCode += sessionID + locationIDString + visitIDString;
 
 		int i = benVisitDetailRepo.updateVisitCode(Long.valueOf(visitCode), visitID);
 		if (i > 0)
@@ -3391,7 +3425,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 							}
 						} else {
 							if (frequency.equalsIgnoreCase("Single Dose") || frequency.equalsIgnoreCase("Stat Dose")|| 
-									frequency.equalsIgnoreCase("Single Dose Before  Food") || frequency.equalsIgnoreCase("Single Dose After Food")) {
+									frequency.equalsIgnoreCase("Single Dose Before  Food") || frequency.equalsIgnoreCase("Single Dose After  Food")) {
 								if (form.equalsIgnoreCase("Tablet")) {
 									if (dose.equalsIgnoreCase("Half Tab")) {
 										qtyInOneDay = .5;
@@ -3554,7 +3588,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	}
 
 	// New Nurse worklist.... 26-03-2018
-	public String getNurseWorkListNew(Integer providerServiceMapId, Integer vanID) {
+	public String getNurseWorkListNew(Integer providerServiceMapId, Integer facilityID) {
 		Calendar cal = Calendar.getInstance();
 		if (nurseWL != null && nurseWL > 0 && nurseWL <= 30)
 			cal.add(Calendar.DAY_OF_YEAR, -nurseWL);
@@ -3564,7 +3598,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		Timestamp fromDate = new Timestamp(sevenDaysAgo);
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getNurseWorklistNew(providerServiceMapId,
-				vanID, fromDate);
+				facilityID, fromDate);
 
 		for (BeneficiaryFlowStatus beneficiaryFlowStatus : obj) {
 			Boolean isHighrisk = beneficiaryFlowStatusRepo.getIsHighrisk(beneficiaryFlowStatus.getBeneficiaryID());
@@ -3575,7 +3609,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 	}
 
 	// nurse worklist TC schedule (current-date) new ... 05-02-2019
-	public String getNurseWorkListTcCurrentDate(Integer providerServiceMapId, Integer vanID) {
+	public String getNurseWorkListTcCurrentDate(Integer providerServiceMapId, Integer facilityID) {
 		Calendar cal = Calendar.getInstance();
 		if (nurseTCWL != null && nurseTCWL > 0 && nurseTCWL <= 30)
 			cal.add(Calendar.DAY_OF_YEAR, -nurseTCWL);
@@ -3584,21 +3618,21 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo
-				.getNurseWorklistCurrentDate(providerServiceMapId, new Timestamp(sevenDaysAgo), vanID);
+				.getNurseWorklistCurrentDate(providerServiceMapId, new Timestamp(sevenDaysAgo), facilityID);
 
 		return new Gson().toJson(obj);
 	}
 
 	// nurse worklist TC schedule (future-date) new ... 05-02-2019
-	public String getNurseWorkListTcFutureDate(Integer providerServiceMapId, Integer vanID) {
+	public String getNurseWorkListTcFutureDate(Integer providerServiceMapId, Integer facilityID) {
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo
-				.getNurseWorklistFutureDate(providerServiceMapId, vanID);
+				.getNurseWorklistFutureDate(providerServiceMapId, facilityID);
 
 		return new Gson().toJson(obj);
 	}
 
 	// New Lab worklist.... 26-03-2018
-	public String getLabWorkListNew(Integer providerServiceMapId, Integer vanID) {
+	public String getLabWorkListNew(Integer providerServiceMapId, Integer facilityID) {
 		Calendar cal = Calendar.getInstance();
 		if (labWL != null && labWL > 0 && labWL <= 30)
 			cal.add(Calendar.DAY_OF_YEAR, -labWL);
@@ -3607,13 +3641,13 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getLabWorklistNew(providerServiceMapId,
-				new Timestamp(sevenDaysAgo), vanID);
+				new Timestamp(sevenDaysAgo), facilityID);
 
 		return new Gson().toJson(obj);
 	}
 
 	// New radiologist worklist.... 26-03-2018
-	public String getRadiologistWorkListNew(Integer providerServiceMapId, Integer vanID) {
+	public String getRadiologistWorkListNew(Integer providerServiceMapId, Integer facilityID) {
 		Calendar cal = Calendar.getInstance();
 		if (radioWL != null && radioWL > 0 && radioWL <= 30)
 			cal.add(Calendar.DAY_OF_YEAR, -radioWL);
@@ -3622,13 +3656,13 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getRadiologistWorkListNew(providerServiceMapId,
-				new Timestamp(sevenDaysAgo), vanID);
+				new Timestamp(sevenDaysAgo), facilityID);
 
 		return new Gson().toJson(obj);
 	}
 
 	// New oncologist worklist.... 26-03-2018
-	public String getOncologistWorkListNew(Integer providerServiceMapId, Integer vanID) {
+	public String getOncologistWorkListNew(Integer providerServiceMapId, Integer facilityID) {
 
 		Calendar cal = Calendar.getInstance();
 		if (oncoWL != null && oncoWL > 0 && oncoWL <= 30)
@@ -3638,13 +3672,13 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getOncologistWorkListNew(providerServiceMapId,
-				new Timestamp(sevenDaysAgo), vanID);
+				new Timestamp(sevenDaysAgo), facilityID);
 
 		return new Gson().toJson(obj);
 	}
 
 	// New pharma worklist.... 26-03-2018
-	public String getPharmaWorkListNew(Integer providerServiceMapId, Integer vanID) {
+	public String getPharmaWorkListNew(Integer providerServiceMapId, Integer facilityID) {
 
 		Calendar cal = Calendar.getInstance();
 		if (pharmaWL != null && pharmaWL > 0 && pharmaWL <= 30)
@@ -3654,7 +3688,7 @@ public class CommonNurseServiceImpl implements CommonNurseService {
 		long sevenDaysAgo = cal.getTimeInMillis();
 
 		ArrayList<BeneficiaryFlowStatus> obj = beneficiaryFlowStatusRepo.getPharmaWorkListNew(providerServiceMapId,
-				new Timestamp(sevenDaysAgo), vanID);
+				new Timestamp(sevenDaysAgo), facilityID);
 
 		return new Gson().toJson(obj);
 	}

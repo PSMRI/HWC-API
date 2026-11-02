@@ -50,9 +50,9 @@ public class OutputResponse {
 	public static final int CODE_EXCEPTION = 5005;
 	public static final int ENVIRONMENT_EXCEPTION = 5006;
 	public static final int PARSE_EXCEPTION = 5007;
-	public static final int SWYMED_EXCEPTION = 5010;
-	public static final int TM_EXCEPTION = 5010;
-	public static final int BAD_REQUEST = 404;
+	public static final int SWYMED_EXCEPTION = 5008;
+	public static final int TM_EXCEPTION = 5009;
+	public static final int BAD_REQUEST = 400;
 
 	@Expose
 	private int statusCode = GENERIC_FAILURE;

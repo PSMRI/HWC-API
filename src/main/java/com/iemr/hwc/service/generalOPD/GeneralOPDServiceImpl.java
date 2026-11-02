@@ -177,7 +177,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 					examtnSaveSuccessFlag = saveBenExaminationDetails(requestOBJ.getAsJsonObject("examinationDetails"),
 							benVisitID, benVisitCode);
 			} else {
-				throw new RuntimeException("Error occurred while creating beneficiary visit");
+				throw new IEMRException("Error occurred while creating beneficiary visit");
 			}
 
 			if ((null != historySaveSuccessFlag && historySaveSuccessFlag > 0)
@@ -189,7 +189,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				 */
 
 				int i = updateBenStatusFlagAfterNurseSaveSuccess(tmpOBJ, benVisitID, benFlowID, benVisitCode,
-						nurseUtilityClass.getVanID(), tcRequestOBJ);
+						nurseUtilityClass.getFacilityID(), tcRequestOBJ);
 
 				// if (i > 0)
 				saveSuccessFlag = historySaveSuccessFlag;
@@ -207,10 +207,10 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				}
 
 			} else {
-				throw new RuntimeException("Error occurred while saving data");
+				throw new IEMRException("Error occurred while saving data");
 			}
 		} else {
-			throw new Exception("Invalid input");
+			throw new IEMRException("Invalid input");
 		}
 		Map<String, String> responseMap = new HashMap<String, String>();
 		if (benVisitCode != null) {
@@ -246,7 +246,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 	// method for updating ben flow status flag for nurse
 	private int updateBenStatusFlagAfterNurseSaveSuccess(JsonObject tmpOBJ, Long benVisitID, Long benFlowID,
-			Long benVisitCode, Integer vanID, TeleconsultationRequestOBJ tcRequestOBJ) {
+			Long benVisitCode, Integer facilityID, TeleconsultationRequestOBJ tcRequestOBJ) {
 		short nurseFlag = (short) 9;
 		short docFlag = (short) 1;
 		short labIteration = (short) 0;
@@ -265,7 +265,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 		int i = commonBenStatusFlowServiceImpl.updateBenFlowNurseAfterNurseActivity(benFlowID,
 				tmpOBJ.get("beneficiaryRegID").getAsLong(), benVisitID, tmpOBJ.get("visitReason").getAsString(),
 				tmpOBJ.get("visitCategory").getAsString(), nurseFlag, docFlag, labIteration, (short) 0, (short) 0,
-				benVisitCode, vanID, specialistFlag, tcDate, tcSpecialistUserID);
+				benVisitCode, facilityID, specialistFlag, tcDate, tcSpecialistUserID);
 
 		return i;
 	}
@@ -280,6 +280,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 			// Save Beneficiary visit details
 			BeneficiaryVisitDetail benVisitDetailsOBJ = InputMapper.gson().fromJson(visitDetailsOBJ.get("visitDetails"),
 					BeneficiaryVisitDetail.class);
+			benVisitDetailsOBJ.setFacilityID(nurseUtilityClass.getFacilityID());
 			int i = commonNurseServiceImpl.getMaxCurrentdate(benVisitDetailsOBJ.getBeneficiaryRegID(),
 					benVisitDetailsOBJ.getVisitReason(), benVisitDetailsOBJ.getVisitCategory());
 			if (i < 1) {
@@ -287,7 +288,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 
 				// 07-06-2018 visit code
 				Long benVisitCode = commonNurseServiceImpl.generateVisitCode(benVisitID, nurseUtilityClass.getVanID(),
-						nurseUtilityClass.getSessionID());
+					nurseUtilityClass.getSessionID(), nurseUtilityClass.getFacilityID());
 
 				if (benVisitID != null && benVisitID > 0 && benVisitCode != null && benVisitCode > 0) {
 					if (visitDetailsOBJ.has("chiefComplaints")
@@ -993,7 +994,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				if (i > 0)
 					saveSuccessFlag = investigationSuccessFlag;
 				else
-					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+					throw new IEMRException("Error occurred while saving data. Beneficiary status update failed");
 
 				if (i > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
 					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", commonUtilityClass.getBeneficiaryRegID(),
@@ -1005,10 +1006,10 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				}
 
 			} else {
-				throw new RuntimeException();
+				throw new IEMRException("Error occurred while saving doctor data");
 			}
 		} else {
-			// request OBJ is null.
+			throw new IEMRException("Invalid input");
 		}
 		return saveSuccessFlag;
 	}
@@ -1643,7 +1644,7 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				if (i > 0)
 					updateSuccessFlag = investigationSuccessFlag;
 				else
-					throw new RuntimeException("Error occurred while saving data. Beneficiary status update failed");
+					throw new IEMRException("Error occurred while updating data. Beneficiary status update failed");
 
 				if (i > 0 && tcRequestOBJ != null && tcRequestOBJ.getWalkIn() == false) {
 					int k = sMSGatewayServiceImpl.smsSenderGateway("schedule", commonUtilityClass.getBeneficiaryRegID(),
@@ -1655,10 +1656,10 @@ public class GeneralOPDServiceImpl implements GeneralOPDService {
 				}
 
 			} else {
-				throw new RuntimeException();
+				throw new IEMRException("Error occurred while updating doctor data");
 			}
 		} else {
-			// request OBJ is null.
+			throw new IEMRException("Invalid input");
 		}
 		return updateSuccessFlag;
 	}
